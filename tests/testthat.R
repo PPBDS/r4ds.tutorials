@@ -1,12 +1,22 @@
-# This file is part of the standard setup for testthat.
-# It is recommended that you do not modify it.
-#
-# Where should you do additional test configuration?
-# Learn more about the roles of various files in:
-# * https://r-pkgs.org/tests.html
-# * https://testthat.r-lib.org/reference/test_package.html#special-files
-
 library(testthat)
+library(dplyr)
+library(learnr)
 library(r4ds.tutorials)
 
-# test_check("r4ds.tutorials")
+# This testing approach only works, I think, when you click `Build -> Check`.
+# Otherwise, the tutorials you are testing might be those you installed
+# previously, not the ones you just edited. See discussion in
+# all.primer.tutorials.
+
+package_location <- system.file("tutorials", package = "r4ds.tutorials")
+
+tutorial_paths <-
+  available_tutorials("r4ds.tutorials") |>
+  mutate(path = paste0(package_location, "/", name, "/tutorial.Rmd")) |>
+  pull(path)
+
+stopifnot(length(tutorial_paths) >= 1)
+
+# We use the tutorial_paths vector in the testing functions which now get run.
+
+test_check("r4ds.tutorials")

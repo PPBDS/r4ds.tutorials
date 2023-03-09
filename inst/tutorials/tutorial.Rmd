@@ -1,0 +1,720 @@
+---
+title: 'Web scraping'
+author: 'David Kane'
+tutorial:
+  id: web-scraping
+output:
+  learnr::tutorial:
+    progressive: yes
+    allow_skip: yes
+runtime: shiny_prerendered
+description: 'Tutorial for Chapter 25: Web scraping'
+---
+
+```{r setup, include = FALSE}
+library(learnr)
+library(r4ds.tutorials)
+library(tidyverse)
+library(rvest)
+knitr::opts_chunk$set(echo = FALSE)
+options(tutorial.exercise.timelimit = 60, 
+        tutorial.storage = "local") 
+
+
+html_2 <- minimal_html("
+  <h1>This is a heading</h1>
+  <p id='first'>This is a paragraph</p>
+  <p class='important'>This is an important paragraph</p>
+")
+
+html_3 <- minimal_html("
+  <ul>
+    <li><b>C-3PO</b> is a <i>droid</i> that weighs <span class='weight'>167 kg</span></li>
+    <li><b>R2-D2</b> is a <i>droid</i> that weighs <span class='weight'>96 kg</span></li>
+    <li><b>Yoda</b> weighs <span class='weight'>66 kg</span></li>
+    <li><b>R4-P17</b> is a <i>droid</i></li>
+  </ul>
+  ")
+
+html_4 <- minimal_html("
+  <table class='mytable'>
+    <tr><th>x</th>   <th>y</th></tr>
+    <tr><td>1.5</td> <td>2.7</td></tr>
+    <tr><td>4.9</td> <td>1.3</td></tr>
+    <tr><td>7.2</td> <td>8.1</td></tr>
+  </table>
+  ")
+
+```
+
+```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
+```
+
+```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
+```
+
+## Introduction
+### 
+
+This tutorial covers [Chapter 25: Web scraping](https://r4ds.hadley.nz/webscraping.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
+
+
+## Web scaping basics
+### 
+
+
+
+### Exercise 1
+
+The key package for web scraping with R is [**rvest**](https://rvest.tidyverse.org/). Load the **rvest** library.
+
+```{r web-scaping-basics-1, exercise = TRUE}
+
+```
+
+```{r web-scaping-basics-1-hint-1, eval = FALSE}
+library(rvest)
+```
+
+### 
+
+The "Web Scraping 101" [article](https://rvest.tidyverse.org/articles/rvest.html) from the **rvest** [homepage](https://rvest.tidyverse.org/) provides useful background. 
+
+### Exercise 2
+
+Look up the help page for the **rvest** package using the `help()` function. Don't forget to use the `package` argument.
+
+```{r web-scaping-basics-2, exercise = TRUE}
+
+```
+
+```{r web-scaping-basics-2-hint-1, eval = FALSE}
+help(package = "...")
+```
+
+### 
+
+The help page for a package provides a listing of all the functions in a package. Note that there are both `html_text()` and `html_text2()` functions. You should always use `html_text2()` unless you have a good reason not to.
+
+### Exercise 3
+
+Click on the link to the DESCRIPTION file which appeared when you looked up the help page for **rvest**. Copy the the first two lines (Package and Title) below.
+
+```{r web-scaping-basics-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+As the DESCRIPTION file mentions, **rvest** is mostly supplying wrappers for the more lower level (but harder to use) **xml2** and **httr** packages. (As always, note how we, and everyone else uses the words "package" and "library" interchangeably.)
+
+### Exercise 4
+
+`minimal_html()` is an **rvest** function used for teaching. It turns text into an HTML document. Run `minimal_html()` with "test" as its first argument.
+
+```{r web-scaping-basics-4, exercise = TRUE}
+
+```
+
+```{r web-scaping-basics-4-hint-1, eval = FALSE}
+minimal_html("test")
+```
+
+### 
+
+HTML stands for **H**yper**T**ext **M**arkup **L**anguage, the underlying text of the web. The main difference between HTML and plain text is the use of various "elements" and "attributes" which tell your browser how to display the text.
+
+### Exercise 5
+
+Rerun the code above, but assign the result of the call to `minimal_html()` to an object called `html_1`. Then, on the next line, pass `html_1` as the argument to the function `class()`.
+
+
+```{r web-scaping-basics-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-basics-5-hint-1, eval = FALSE}
+html_1 <- minimal_html("test")
+class(html_1)
+```
+
+### 
+
+HTML documents are an example from the broader class of XML objects. Recall that **rvest** is mostly a wrapper for the **xml2** package, which allows us to work with XML objects.
+
+### Exercise 6
+
+Use `minimal_html()` to create a more complex HTML document by running this code. Then, below this code, add `html_2` so that we can examine the object.
+
+
+```{r web-scaping-basics-6, exercise = TRUE}
+html_2 <- minimal_html("
+  <h1>This is a heading</h1>
+  <p id='first'>This is a paragraph</p>
+  <p class='important'>This is an important paragraph</p>
+")
+
+
+```
+
+```{r web-scaping-basics-6-hint-1, eval = FALSE}
+html_2 <- minimal_html("
+  <h1>This is a heading</h1>
+  <p id='first'>This is a paragraph</p>
+  <p class='important'>This is an important paragraph</p>
+")
+
+html_2
+```
+
+### 
+
+Just typing/returning `html_2` produces the same result as `print(html_2)`. By design, the `print()` function should provide the key information about the object being printed. The first line tells us that `html_2` is an HTML document. The two listed elements ("head" and "body") are the two key parts of every HTML document. The "body" is the more important part since it contains all the information.
+
+### Exercise 7
+
+We have added `html_2` to your workspace so that you can use it to start pipes. Pipe `html_2` to `html_elements("p")`.
+
+```{r web-scaping-basics-7, exercise = TRUE}
+
+```
+
+```{r web-scaping-basics-7-hint-1, eval = FALSE}
+html_2 |> 
+  html_elements("...")
+```
+
+### 
+
+`html_elements()` pulls out all the elements that match the selector, which is provided to the `css` argument. "Elements" consist of a start tag (e.g. <p>), optional attributes (id='first'), an end tag4 (like </p>). The "contents" of an element are everything in between the start and end tag.
+
+Since there are two elements with the "p" tag, where the "p" is for "paragraph," the result from `html_elements()` are those two elements. The element with the "h1" tag is not included.
+
+### Exercise 8
+
+Pipe `html_2` to `html_elements(".important")`. Note that the `css` argument is ".important" --- with a leading dot --- even though the attribute is "important" without a dot. 
+
+
+```{r web-scaping-basics-8, exercise = TRUE}
+
+```
+
+```{r web-scaping-basics-8-hint-1, eval = FALSE}
+html_2 |> 
+  html_elements(".important")
+```
+
+### 
+
+When using `html_elements()` to select nodes on the basis of the class attribute rather than a tags we need a leading dot. Tags, on the other hand, are provided as is. Notice that the result of a call to `html_elements()` is an "xml_nodeset" rather than a full HTML document.
+
+### Exercise 9
+
+Pipe `html_2` to `html_elements("#first")`. Note that the `css` argument is "#first" --- with a leading hash mark --- even though the attribute, an id in this case, is "first" without a hash mark 
+
+```{r web-scaping-basics-9, exercise = TRUE}
+
+```
+
+```{r web-scaping-basics-9-hint-1, eval = FALSE}
+html_2 |> 
+  html_elements("...")
+```
+
+### 
+
+Id attributes must be unique within a document, so this will only ever select a single element.
+
+
+
+### Exercise 10
+
+Let's consider another piece of html. Run this code and then, below it, add `print(hmtl_3)`.
+
+```{r web-scaping-basics-10, exercise = TRUE}
+html_3 <- minimal_html("
+  <ul>
+    <li><b>C-3PO</b> is a <i>droid</i> that weighs <span class='weight'>167 kg</span></li>
+    <li><b>R2-D2</b> is a <i>droid</i> that weighs <span class='weight'>96 kg</span></li>
+    <li><b>Yoda</b> weighs <span class='weight'>66 kg</span></li>
+    <li><b>R4-P17</b> is a <i>droid</i></li>
+  </ul>
+  ")
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-basics-10-hint-1, eval = FALSE}
+...
+
+print(html_3)
+```
+
+### 
+
+Notice how the "body" portion of the html_document includes the raw html text, especially the nested list. The <ul> tag starts an **u**nordered **l**ist. The <li> tag starts an ordered **li**st.
+
+### Exercise 11
+
+Pipe `html_3` to `html_elements("li")` in order to make a vector where each element corresponds to a different character.
+
+```{r web-scaping-basics-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-basics-11-hint-1, eval = FALSE}
+html_3 |> 
+  html_elements("..")
+```
+
+### 
+
+There’s an important difference between `html_element()` and `html_elements()` when you use a selector that doesn’t match any elements. html_elements() returns a vector of length 0, where html_element() returns a missing value. 
+
+### Exercise 12
+
+Continue the pipe to `html_element("b")`, which will pull out the elements from the list which are tagged with a "b", for **b**olded. Note that this is `html_element()`, not `html_elements()`. 
+
+```{r web-scaping-basics-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-basics-12-hint-1, eval = FALSE}
+... |> 
+  html_element("b")
+```
+
+### 
+
+We are using clues in the html formatting --- bolding, in this case --- to determine a substantive issue, what are the names of the characters. Nothing guarantees that this two things are connected. They don't have to me! And, if the html document itself is sloppy or inconsistent, they won't be. 
+
+You need to look closely at your results as you build your pipe, step-by-step.
+
+### Exercise 13
+
+Continue the pipe to `html_text2()`.
+
+```{r web-scaping-basics-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-basics-13-hint-1, eval = FALSE}
+... |> 
+  html_text2()
+```
+
+### 
+
+The last step of a web scrape is often `html_text2()`, since we (almost always) want to get rid of any weird formatting.
+
+<!-- DK: The chapter includes an example of how html_element() differs from html_elements(), but I don't think it merits inclusion. I also skipped the use of html_attr(). -->
+
+### Exercise 14
+
+The last web scraping trick we cover involves how to handle html tables. HTML tables are built up from four main elements: <table>, <tr> (table row), <th> (table heading), and <td> (table data). 
+
+Run this code to create a simple HTML table with two columns and three rows. Then, add `print(html_4)` to the end.
+
+```{r web-scaping-basics-14, exercise = TRUE}
+html_4 <- minimal_html("
+  <table class='mytable'>
+    <tr><th>x</th>   <th>y</th></tr>
+    <tr><td>1.5</td> <td>2.7</td></tr>
+    <tr><td>4.9</td> <td>1.3</td></tr>
+    <tr><td>7.2</td> <td>8.1</td></tr>
+  </table>
+  ")
+
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-basics-14-hint-1, eval = FALSE}
+...
+
+print(html_4)
+```
+
+### 
+
+Note how the <body> section of the html_document begins with the <table> element. Also, note how the class of the table object is "mytable".
+
+### Exercise 15
+
+Pipe `html_4` to `html_element(".mytable")`
+
+
+```{r web-scaping-basics-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-basics-15-hint-1, eval = FALSE}
+html_4 |> 
+  html_element("..")
+```
+
+### 
+
+We are using the fact that the object has class "mytable." Recall that, when accessing objects using their class, you must place a `.` in front of the name of the class.
+
+### Exercise 16
+
+Continue the pipe to `html_table()`.
+
+```{r web-scaping-basics-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-basics-16-hint-1, eval = FALSE}
+... |> 
+  html_table()
+```
+
+### 
+
+You won't always be lucky enough to have the data you want in a table, but, if you are, `html_table()` is magic.
+
+With tools like  `html_element(s)()`, `html_text2()` and `html_table()`, you are ready to deal with html documents from the wild.
+
+
+
+## Web scaping examples
+### 
+
+Consider two examples of material we might want to scrape. The [first](https://rvest.tidyverse.org/articles/starwars.html) is information about 7 Star Wars films from a vignette from the **rvest** package. The second involves the [250 highest rated films](https://www.imdb.com/chart/top) from IMDB. In this Section, we will scape and organize information from both.
+
+### Exercise 1
+
+Examine the [webpage](https://rvest.tidyverse.org/articles/starwars.html) for the Star Wars films. The url is `https://rvest.tidyverse.org/articles/starwars.html`. Pipe this url to `read_html()`. (Be sure to surround the url with quotation marks.)
+
+```{r web-scaping-examples-1, exercise = TRUE}
+
+```
+
+```{r web-scaping-examples-1-hint-1, eval = FALSE}
+"https://rvest.tidyverse.org/articles/starwars.html" |> 
+  read_..()
+```
+
+### 
+
+The structure of the underlying HTML looks like this:
+
+````
+<section>
+  <h2 data-id="1">The Phantom Menace</h2>
+  <p>Released: 1999-05-19</p>
+  <p>Director: <span class="director">George Lucas</span></p>
+  
+  <div class="crawl">
+    <p>...</p>
+    <p>...</p>
+    <p>...</p>
+  </div>
+</section>
+````
+
+### Exercise 2
+
+Continue the pipe with `html_elements("section")`
+
+```{r web-scaping-examples-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-examples-2-hint-1, eval = FALSE}
+... |> 
+  html_elements("..")
+
+```
+
+### 
+
+We almost always begin scraping by creating an html document which can then be manipulated with functions like `html_elements()`. Note that `html_elements()` is not the same thing as `html_element()`, without the "s".
+
+### Exercise 3
+
+Continue the pipe with `html_element("h2")`. We want to pull out just the title of each movie. We can see that the titles are tagged with "h2".
+
+```{r web-scaping-examples-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-examples-3-hint-1, eval = FALSE}
+... |> 
+  html_element("h2")
+```
+
+### 
+
+Note that we used `html_element()` in this example, as opposed to `html_elements()` (with the "s") last time. In this case, both functions produce the same answer.
+
+### Exercise 4
+
+Continue the pipe with `html_text2()`. We almost always want to clean up the underlying text before making use of it. Never use `html_text()` (without the "2") unless you have a good reason to.
+
+
+```{r web-scaping-examples-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-examples-4-hint-1, eval = FALSE}
+... |> 
+  html_...()
+```
+
+This character vector is the result we are looking for. 
+
+### Exercise 5
+
+Place the above chunk of code into the middle of a call to `tibble()` in which you are creating a tibble with one variable, `title`, which is the title of each movie. The resulting tibble should have one column and seven rows.
+
+
+```{r web-scaping-examples-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-examples-5-hint-1, eval = FALSE}
+tibble(title = 
+         "https://rvest.tidyverse.org/articles/starwars.html" |> 
+         read_html() |> 
+         html_elements("section") |> 
+         html_elements("h2") |> 
+         html_text2())
+```
+
+### 
+
+We can use the same approach to add other variables to this tibble, like the director and release date. To avoid code duplication, we should create an object, perhaps called `section`, which is the result of the first three steps in the pipe. Then, each variable creation would look something like
+
+```{r echo = TRUE}
+section <- "https://rvest.tidyverse.org/articles/starwars.html" |> 
+         read_html() |> 
+         html_elements("section")
+
+tibble(title = section |> html_elements("h2") |> html_text2(),
+       director = section |> html_element(".director") |> html_text2())
+```
+
+<!-- DK: Might split the above up into a couple of questions, fully replicating the example in the book. -->
+
+### Exercise 6
+
+Consider [the highest rated movies](https://www.imdb.com/chart/top) on [IMDb](https://en.wikipedia.org/wiki/IMDb), the Internet Movie Database. The url is `https://www.imdb.com/chart/top`. Pipe that url (with quotation marks) to `read_html()`.
+
+```{r web-scaping-examples-6, exercise = TRUE}
+
+```
+
+```{r web-scaping-examples-6-hint-1, eval = FALSE}
+"https://www.imdb.com/chart/top" |> 
+  ...
+```
+
+### 
+
+Note that `read_html()` takes longer to run than the previous example because the underlying webpage is much more complex.
+
+
+### Exercise 7
+
+The key element is a table, which is often the case with web scraping exercises. Continue the pipe to `html_element("table")`
+
+
+```{r web-scaping-examples-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-examples-7-hint-1, eval = FALSE}
+... |> 
+  html_table("...")
+```
+
+### 
+
+The result is no longer an "html_document." Instead, it is an "html_node." 
+
+<!-- Drop knowledge! Use of the "table" tag (?) and then use of html_table(). Two uses of "table" connected or random? -->
+
+### Exercise 8
+
+Continue the pipe to `html_table()`.
+
+```{r web-scaping-examples-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-examples-8-hint-1, eval = FALSE}
+... |> 
+  html_table()
+```
+
+### 
+
+The result is a tibble with 250 rows and 5 columns. But, as you can see, the column names are a mess, as our the values in many of the cells. We need to clean it up.
+
+### Exercise 9
+
+Continue the pipe to a `select()` call which renames the second column to `rank_title_year ` and the third column to `rating`.
+
+```{r web-scaping-examples-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-examples-9-hint-1, eval = FALSE}
+... |> 
+  select(
+      rank_title_year = `Rank & Title`,
+      rating = `IMDb Rating`
+    )
+```
+
+### 
+
+`select()` does two things: it keeps only two columns, both of which it renames. But the `rank_title_year` is a mess because it really includes three different variables, all mashed together.
+
+### Exercise 10
+
+Continue the pipe with a call to `mutate()` which runs `str_squish()` on `rank_title_year`, assigning the result to `rank_title_year`. Modifying a variable "in place" like this is a common approach. We don't need to keep the original value around. 
+
+
+```{r web-scaping-examples-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-examples-10-hint-1, eval = FALSE}
+... |> 
+  mutate(
+    rank_title_year = str_squish(rank_title_year)
+  )
+```
+
+### 
+
+`[str_squish()](https://stringr.tidyverse.org/reference/str_trim.html)` removes whitespace at the start and end or a character variable, and replaces all internal whitespace with a single space.
+
+### Exercise 11
+
+Continue the pipe with a call to `mutate()`, creating a new variable called `rank` which is the result of running `parse_number()` on `rank_title_year`.
+
+```{r web-scaping-examples-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-examples-11-hint-1, eval = FALSE}
+... |> 
+  mutate(rank = parse_number(rank_title_year))
+```
+
+### 
+
+This approach depends on the fact that `[parse_number()](https://readr.tidyverse.org/reference/parse_number.html)` grabs the first number it can find in the string. It ignores characters and numbers which come after.
+
+
+### Exercise 12
+
+Continue the pipe to `mutate()`, creating a new variable `title` which is the result of running `str_extract()` on `rank_title_year` with the pattern argument set to `"(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))"`.
+
+```{r web-scaping-examples-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-examples-12-hint-1, eval = FALSE}
+... |> 
+  mutate(title = str_extract(rank_title_year, 
+                             pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))"))
+```
+
+### 
+
+We gave  [ChatGPT](https://chat.openai.com/) this prompt:
+
+> Using the stringr package in R, I want to run str_extract() on the string "1. The Shawshank Redemption (1994)" and extract just "The Shawshank Redemption". What pattern should I use?
+
+It gave back the regular expression above, explaining:
+
+> This will extract the substring between the digit and dot followed by a space, and the year in parentheses. The (?<=) and (?=) are positive lookbehind and lookahead assertions respectively, which match the pattern inside them but do not include it in the final output. The .* matches any characters in between.
+
+Use AI to solve any regular expression problem that takes longer than 30 seconds.
+
+### Exercise 13
+
+Complete the pipe with a `select()` statement which keeps `rank`, `title` and `rating` in that order.
+
+```{r web-scaping-examples-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-examples-13-hint-1, eval = FALSE}
+"https://www.imdb.com/chart/top" |> 
+  read_html() |> 
+  html_element("table") |> 
+  html_table() |>   
+  select(
+    rank_title_year = `Rank & Title`,
+    rating = `IMDb Rating`
+) |> 
+  mutate(
+    rank_title_year = str_squish(rank_title_year)
+) |> 
+  mutate(rank = parse_number(rank_title_year)) |>   
+  mutate(title = 
+           str_extract(rank_title_year, 
+                       pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))")) |> 
+  select(rank, title, rating)
+```
+
+### 
+
+You now understand web scraping. 
+
+
+## Summary
+### 
+
+This tutorial covered [Chapter 25: Web scraping](https://r4ds.hadley.nz/webscraping.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
+
+
+
+```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
+```
