@@ -1,7 +1,4 @@
-# Is there other stuff we should put in this file?
-
 library(testthat)
-library(tidyverse)
-library(learnr)
+library(r4ds.tutorials)
 
 test_check("r4ds.tutorials")
