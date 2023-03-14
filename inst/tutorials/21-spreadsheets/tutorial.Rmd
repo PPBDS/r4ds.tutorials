@@ -31,15 +31,16 @@ options(tutorial.exercise.timelimit = 60,
 ## Introduction
 ###
 
-This tutorial covers [Chapter 21: Spreadsheets](https://r4ds.hadley.nz/spreadsheets.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
+This tutorial covers [Chapter 21: Spreadsheets](https://r4ds.hadley.nz/spreadsheets.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to get data from Excel spreadsheets using  `[read_excel()](https://readxl.tidyverse.org/reference/read_excel.html)` from the [**readxl**](https://readxl.tidyverse.org/) package and Google sheets using `[read_sheet()](https://googlesheets4.tidyverse.org/reference/range_read.html)` from the [**googlesheets4**](https://googlesheets4.tidyverse.org/) package. 
 
-## Excel
+## Reading/Writing Excel
 ###
+
+[**readxl**](https://readxl.tidyverse.org/) and [**wrirexl**](https://docs.ropensci.org/writexl/) are the two key packages for working with Excel spreadsheets.
 
 ### Exercise 1
 
-**readxl** and **writexl** are the two key packages for working with Excel spreadsheets.
-
+Use the `library()` command to load the **readxl** package.
 
 
 ```{r excel-1, exercise = TRUE}
@@ -48,6 +49,216 @@ This tutorial covers [Chapter 21: Spreadsheets](https://r4ds.hadley.nz/spreadshe
 
 
 ```{r excel-1-hint, eval = FALSE}
+library(readxl)
+```
+
+###
+
+“[Data Organization in Spreadsheets](https://doi.org/10.1080/00031305.2017.1375989)” by Karl Broman and Kara Woo provides lots of great advice for organizing your data using spreadsheets.
+
+### Exercise 2
+
+Look up the help page for the package by issuing this command: "?`readxl-package`". Copy/paste the Description field from the help page.  
+
+```{r excel-spreadsheets-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+###
+
+Almost all packages have a help page which can be accessed via `packagename-package`. Note that you need to use backticks (\` \`) around this phrase after the `?` because otherwise the Console will try to interpret the dash as a minus sign, thereby sending you to the wrong page.
+
+### Exercise 3
+
+Run `read_excel()` with `"data/students.xlsx"` as the argument to `path`.
+
+
+```{r excel-spreadsheets-3, exercise = TRUE}
+
+```
+
+
+```{r excel-spreadsheets-3-hint, eval = FALSE}
+read_excel(path = "...")
+```
+
+###
+
+`read_excel()` functions similarly to `read_csv()` and the other data import functions you have seen before. The **readxl** package also includes `read_xls()` (for files in xls format) and `read_xlsx()` (for files in xlsx format). `read_excel()` can read files with both xls and xlsx format. It guesses the file type based on the input.
+
+### Exercise 4
+
+The column names are a bit of a mess. You don't ever want spaces in column names, and it is always a good idea to use the same naming style in terms of capitalization and punctuation.
+
+Run the above command again, but add `c("student_id", "full_name", "favourite_food", "meal_plan", "age")` as the argument to `col_names`.
+
+
+```{r excel-spreadsheets-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r excel-spreadsheets-4-hint, eval = FALSE}
+read_excel(
+  path = "data/students.xlsx",
+  col_names = ...
+  )
+```
+
+###
+
+This worked, but not completely. The variable names are correct, but what was previously the header row now shows up as the first row in the resulting tibble.
+
+### Exercise 5
+
+Run the above command again, but add the `skip` argument with a value of `1` because we want to skip the first row, which contains the column names, from the Excel file.
+
+```{r excel-spreadsheets-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r excel-spreadsheets-5-hint, eval = FALSE}
+read_excel(
+  path = "data/students.xlsx",
+  col_names = c("student_id", "full_name", "favourite_food", "meal_plan", "age"), 
+  skip = ...
+  )
+```
+
+###
+
+In the `favourite_food` column, one of the observations is "N/A", which stands for “not available” but it’s currently not recognized as an `NA` (note the contrast between this N/A and the age of the fourth student in the list). 
+
+### Exercise 6
+
+Rerun the command, adding the `na` argument with a value of `c("", "N/A")`. 
+
+
+```{r excel-spreadsheets-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r excel-spreadsheets-6-hint, eval = FALSE}
+read_excel(
+  path = "data/students.xlsx",
+  col_names = c("student_id", "full_name", "favourite_food", "meal_plan", "age"),
+  skip = 1, 
+  na = ...
+  )
+```
+
+###
+
+You can specify which character strings should be recognized as NAs with the na argument. By default, only "" (empty string, or, in the case of reading from a spreadsheet, an empty cell or a cell with the formula `=NA()`) is recognized as an `NA`.
+
+### Exercise 7
+
+Do you see anything else wrong with the data? Check the `age` column. It should be a numeric variable: either `<dbl>` or `<int>`. Instead, it is a character, which is caused by one of the values being "five". 
+
+To fix this, add the `col_types` argument with a value of `c("numeric", "text", "text", "text", "numeric")`.
+
+
+```{r excel-spreadsheets-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r excel-spreadsheets-7-hint, eval = FALSE}
+read_excel(
+  path = "data/students.xlsx",
+  col_names = c("student_id", "full_name", "favourite_food", "meal_plan", "age"),
+  skip = 1, 
+  na = c("", "N/A"), 
+  col_types = ...)
+```
+
+###
+
+Note that the acceptable values for `col_types` are "skip", "guess", "logical", "numeric", "date", "text" and "list".
+
+This code "worked" in that it ran but there are two problems: first, the warning message which informs us that one of the values in column five is not numeric and, second, the value "five" is transformed into `NA`.
+
+### Exercise 8
+
+Change the last value in the value we passed to `col_types` to "text".
+
+
+```{r excel-spreadsheets-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r excel-spreadsheets-8-hint, eval = FALSE}
+read_excel(
+  path = "data/students.xlsx",
+  col_names = c("student_id", "full_name", "favourite_food", "meal_plan", "age"),
+  skip = 1, 
+  na = c("", "N/A"), 
+  col_types = c("numeric", "text", "text", "text", "..."))
+```
+
+###
+
+This removes the warning message. Never ignore warning messages. They can signal danger. Understand them, and then fix them. In this case, we read everything in as character to the `age` column, a common trick for dealing with weird data. We could now use `mutate()` and other **dplyr** tricks to deal with the problem directly.
+
+
+### Exercise 9
+
+An important feature that distinguishes spreadsheets from flat files is the notion of multiple sheets, called worksheets. The `excel_sheets()` function reports all the sheets in a spreadsheet. (The term "workbooks" is often applied to speadsheet files with multiple worksheets.)
+
+Run `excel_sheets()` with the `path` argument set to `"data/penguins.xlsx"`.
+
+```{r reading-excel-worksh-1, exercise = TRUE}
+
+```
+
+```{r reading-excel-worksh-1-hint, eval = FALSE}
+excel_sheets(path = "...")
+```
+
+###
+
+Once we know the name of the sheet, we can use the `sheet` argument to `read_excel()`.
+
+### Exercise 10
+
+Run `read_excel()` on `"data/penguins.xlsx" with the `sheet` argument set to `"Torgersen Island"`.
+
+```{r readingwriting-excel-10, exercise = TRUE}
+
+```
+
+
+```{r readingwriting-excel-10-hint, eval = FALSE}
+read_excel(path = ..., sheet = ...)
+```
+
+###
+
+Note how so many variable types are `<chr>` even though the underlying values are clearly numeric. The cause is the "NA" values which we find in, for example, row 4. This causes `read_excel()` to "guess" that the columns are character instead of numeric.
+
+### Exercise 11
+
+
+```{r readingwriting-excel-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r readingwriting-excel-11-hint, eval = FALSE}
 
 ```
 
@@ -56,10 +267,32 @@ This tutorial covers [Chapter 21: Spreadsheets](https://r4ds.hadley.nz/spreadshe
 
 
 
+
+
+
+
+
+
+
+### Exercise 1
+
+
+
+
+
+
+
+
+## Google sheets
+###
+
+
 ## Summary
 ###
 
-This tutorial covered [Chapter 21: Spreadsheets](https://r4ds.hadley.nz/spreadsheets.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
+This tutorial covered [Chapter 21: Spreadsheets](https://r4ds.hadley.nz/spreadsheets.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You have learned how to get data from Excel spreadsheets using  `[read_excel()](https://readxl.tidyverse.org/reference/read_excel.html)` from the [**readxl**](https://readxl.tidyverse.org/) package and Google sheets using `[read_sheet()](https://googlesheets4.tidyverse.org/reference/range_read.html)` from the [**googlesheets4**](https://googlesheets4.tidyverse.org/) package. 
+
+Read “[Data Organization in Spreadsheets](https://doi.org/10.1080/00031305.2017.1375989)” by Karl Broman and Kara Woo for great advice about organizing your data using spreadsheets.
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
