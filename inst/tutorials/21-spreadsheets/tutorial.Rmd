@@ -1,13 +1,13 @@
 ---
-title: "Spreadsheets"
+title: Spreadsheets
 tutorial:
-  id: "spreadsheets"
-output: 
+  id: spreadsheets
+output:
   learnr::tutorial:
-    progressive: true
-    allow_skip: true
+    progressive: yes
+    allow_skip: yes
 runtime: shiny_prerendered
-description: "Tutorial for Chapter 21: Spreadsheets"
+description: 'Tutorial for Chapter 21: Spreadsheets'
 ---
 
 ```{r setup, include = FALSE}
@@ -18,6 +18,8 @@ library(writexl)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
+
+penguins_url <- "https://docs.google.com/spreadsheets/d/1aFu8lnD_g0yjF5O-K6SFgSEWiHPpgvFCF0NY9D6LXnY"
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -26,14 +28,13 @@ options(tutorial.exercise.timelimit = 60,
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-
 ## Introduction
-###
+### 
 
 This tutorial covers [Chapter 21: Spreadsheets](https://r4ds.hadley.nz/spreadsheets.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to get data from Excel spreadsheets using  `[read_excel()](https://readxl.tidyverse.org/reference/read_excel.html)` from the [**readxl**](https://readxl.tidyverse.org/) package and Google sheets using `[read_sheet()](https://googlesheets4.tidyverse.org/reference/range_read.html)` from the [**googlesheets4**](https://googlesheets4.tidyverse.org/) package. 
 
 ## Reading/Writing Excel
-###
+### 
 
 [**readxl**](https://readxl.tidyverse.org/) and [**wrirexl**](https://docs.ropensci.org/writexl/) are the two key packages for working with Excel spreadsheets.
 
@@ -42,16 +43,15 @@ This tutorial covers [Chapter 21: Spreadsheets](https://r4ds.hadley.nz/spreadshe
 Use the `library()` command to load the **readxl** package.
 
 
-```{r excel-1, exercise = TRUE}
+```{r readingwriting-excel-1, exercise = TRUE}
 
 ```
 
-
-```{r excel-1-hint, eval = FALSE}
+```{r readingwriting-excel-1-hint-1, eval = FALSE}
 library(readxl)
 ```
 
-###
+### 
 
 “[Data Organization in Spreadsheets](https://doi.org/10.1080/00031305.2017.1375989)” by Karl Broman and Kara Woo provides lots of great advice for organizing your data using spreadsheets.
 
@@ -59,7 +59,7 @@ library(readxl)
 
 Look up the help page for the package by issuing this command: "?`readxl-package`". Copy/paste the Description field from the help page.  
 
-```{r excel-spreadsheets-2}
+```{r readingwriting-excel-2}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -68,7 +68,7 @@ question_text(NULL,
 	rows = 3)
 ```
 
-###
+### 
 
 Almost all packages have a help page which can be accessed via `packagename-package`. Note that you need to use backticks (\` \`) around this phrase after the `?` because otherwise the Console will try to interpret the dash as a minus sign, thereby sending you to the wrong page.
 
@@ -77,16 +77,15 @@ Almost all packages have a help page which can be accessed via `packagename-pack
 Run `read_excel()` with `"data/students.xlsx"` as the argument to `path`.
 
 
-```{r excel-spreadsheets-3, exercise = TRUE}
+```{r readingwriting-excel-3, exercise = TRUE}
 
 ```
 
-
-```{r excel-spreadsheets-3-hint, eval = FALSE}
+```{r readingwriting-excel-3-hint-1, eval = FALSE}
 read_excel(path = "...")
 ```
 
-###
+### 
 
 `read_excel()` functions similarly to `read_csv()` and the other data import functions you have seen before. The **readxl** package also includes `read_xls()` (for files in xls format) and `read_xlsx()` (for files in xlsx format). `read_excel()` can read files with both xls and xlsx format. It guesses the file type based on the input.
 
@@ -97,20 +96,20 @@ The column names are a bit of a mess. You don't ever want spaces in column names
 Run the above command again, but add `c("student_id", "full_name", "favourite_food", "meal_plan", "age")` as the argument to `col_names`.
 
 
-```{r excel-spreadsheets-4, exercise = TRUE}
+```{r readingwriting-excel-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r excel-spreadsheets-4-hint, eval = FALSE}
+```{r readingwriting-excel-4-hint-1, eval = FALSE}
 read_excel(
   path = "data/students.xlsx",
   col_names = ...
   )
 ```
 
-###
+### 
 
 This worked, but not completely. The variable names are correct, but what was previously the header row now shows up as the first row in the resulting tibble.
 
@@ -118,13 +117,13 @@ This worked, but not completely. The variable names are correct, but what was pr
 
 Run the above command again, but add the `skip` argument with a value of `1` because we want to skip the first row, which contains the column names, from the Excel file.
 
-```{r excel-spreadsheets-5, exercise = TRUE}
+```{r readingwriting-excel-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r excel-spreadsheets-5-hint, eval = FALSE}
+```{r readingwriting-excel-5-hint-1, eval = FALSE}
 read_excel(
   path = "data/students.xlsx",
   col_names = c("student_id", "full_name", "favourite_food", "meal_plan", "age"), 
@@ -132,7 +131,7 @@ read_excel(
   )
 ```
 
-###
+### 
 
 In the `favourite_food` column, one of the observations is "N/A", which stands for “not available” but it’s currently not recognized as an `NA` (note the contrast between this N/A and the age of the fourth student in the list). 
 
@@ -141,13 +140,13 @@ In the `favourite_food` column, one of the observations is "N/A", which stands f
 Rerun the command, adding the `na` argument with a value of `c("", "N/A")`. 
 
 
-```{r excel-spreadsheets-6, exercise = TRUE}
+```{r readingwriting-excel-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r excel-spreadsheets-6-hint, eval = FALSE}
+```{r readingwriting-excel-6-hint-1, eval = FALSE}
 read_excel(
   path = "data/students.xlsx",
   col_names = c("student_id", "full_name", "favourite_food", "meal_plan", "age"),
@@ -156,7 +155,7 @@ read_excel(
   )
 ```
 
-###
+### 
 
 You can specify which character strings should be recognized as NAs with the na argument. By default, only "" (empty string, or, in the case of reading from a spreadsheet, an empty cell or a cell with the formula `=NA()`) is recognized as an `NA`.
 
@@ -167,13 +166,13 @@ Do you see anything else wrong with the data? Check the `age` column. It should 
 To fix this, add the `col_types` argument with a value of `c("numeric", "text", "text", "text", "numeric")`.
 
 
-```{r excel-spreadsheets-7, exercise = TRUE}
+```{r readingwriting-excel-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r excel-spreadsheets-7-hint, eval = FALSE}
+```{r readingwriting-excel-7-hint-1, eval = FALSE}
 read_excel(
   path = "data/students.xlsx",
   col_names = c("student_id", "full_name", "favourite_food", "meal_plan", "age"),
@@ -182,7 +181,7 @@ read_excel(
   col_types = ...)
 ```
 
-###
+### 
 
 Note that the acceptable values for `col_types` are "skip", "guess", "logical", "numeric", "date", "text" and "list".
 
@@ -193,13 +192,13 @@ This code "worked" in that it ran but there are two problems: first, the warning
 Change the last value in the value we passed to `col_types` to "text".
 
 
-```{r excel-spreadsheets-8, exercise = TRUE}
+```{r readingwriting-excel-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r excel-spreadsheets-8-hint, eval = FALSE}
+```{r readingwriting-excel-8-hint-1, eval = FALSE}
 read_excel(
   path = "data/students.xlsx",
   col_names = c("student_id", "full_name", "favourite_food", "meal_plan", "age"),
@@ -208,7 +207,7 @@ read_excel(
   col_types = c("numeric", "text", "text", "text", "..."))
 ```
 
-###
+### 
 
 This removes the warning message. Never ignore warning messages. They can signal danger. Understand them, and then fix them. In this case, we read everything in as character to the `age` column, a common trick for dealing with weird data. We could now use `mutate()` and other **dplyr** tricks to deal with the problem directly.
 
@@ -219,15 +218,15 @@ An important feature that distinguishes spreadsheets from flat files is the noti
 
 Run `excel_sheets()` with the `path` argument set to `"data/penguins.xlsx"`.
 
-```{r reading-excel-worksh-1, exercise = TRUE}
+```{r readingwriting-excel-9, exercise = TRUE}
 
 ```
 
-```{r reading-excel-worksh-1-hint, eval = FALSE}
+```{r readingwriting-excel-9-hint-1, eval = FALSE}
 excel_sheets(path = "...")
 ```
 
-###
+### 
 
 Once we know the name of the sheet, we can use the `sheet` argument to `read_excel()`.
 
@@ -239,12 +238,11 @@ Run `read_excel()` on `"data/penguins.xlsx" with the `sheet` argument set to `"T
 
 ```
 
-
-```{r readingwriting-excel-10-hint, eval = FALSE}
+```{r readingwriting-excel-10-hint-1, eval = FALSE}
 read_excel(path = ..., sheet = ...)
 ```
 
-###
+### 
 
 Note how so many variable types are `<chr>` even though the underlying values are clearly numeric. The cause is the "NA" values which we find in, for example, row 4. This causes `read_excel()` to "guess" that the columns are character instead of numeric.
 
@@ -258,41 +256,289 @@ The problem is that the default value of the `na` argument is `""`. Rerun the co
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r readingwriting-excel-11-hint, eval = FALSE}
+```{r readingwriting-excel-11-hint-1, eval = FALSE}
 read_excel(
   path = "data/penguins.xlsx", 
   sheet = "Torgersen Island", 
   na = "...")
 ```
 
-###
+### 
 
-Missing values are expressed in many different ways. Always look closely at your data.
-
-
+There is no way to know exactly what the data will look like until you load it and take a look at it. Well, there is one way, actually. You can open the file in Excel and take a peek. If you’re going to do so, we recommend making a copy of the Excel file to open and browse interactively while leaving the original data file untouched and reading into R from the untouched file. This will ensure you don’t accidentally overwrite anything in the spreadsheet while inspecting it. 
 
 
+### Exercise 12
+
+Many R packages come with data files for our use. The authors generally provide functions for accessing that data. One common approach returns the path to where that data is installed on your system.
+
+Run `readxl_example()` with `"deaths.xlsx"` as its first argument.
+
+```{r readingwriting-excel-12, exercise = TRUE}
+
+```
+
+```{r readingwriting-excel-12-hint-1, eval = FALSE}
+readxl_example("...")
+```
+
+### 
+
+Part of the path should include `readxl/extdata`. The `extdata` directory is the recommended location for such files.
+
+### Exercise 13
+
+Pipe the result of the previous command to `read_excel()`.
+
+```{r readingwriting-excel-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r readingwriting-excel-13-hint-1, eval = FALSE}
+readxl_example("deaths.xls") |> 
+  read_...
+```
+
+### 
+
+The top three rows and the bottom four rows are not part of the data frame. It’s possible to eliminate these extraneous rows using the `skip` and `n_max` arguments, but we recommend using cell ranges. 
+
+### Exercise 14
+
+In Excel, the top left cell is `A1`. As you move across columns to the right, the cell label moves down the alphabet, i.e. `B1`, `C1`, etc. And as you move down a column, the number in the cell label increases, i.e. `A2`, `A3`, etc.
+
+In the previous pipe, add the argument `range` (with a value of `"A5:F15"`) to the call to `read_excel()`.
+
+```{r readingwriting-excel-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r readingwriting-excel-14-hint-1, eval = FALSE}
+readxl_example("deaths.xls") |> 
+  read_excel(range = "")
+```
+
+### 
+
+The underlying data in Excel spreadsheets is more complex. A cell can be one of four things:
+
+* A boolean, like TRUE, FALSE, or NA.
+
+* A number, like “10” or “10.5”.
+
+* A datetime, which can also include time like “11/1/21” or “11/1/21 3:00 PM”.
+
+* A text string, like “ten”.
+
+When working with spreadsheet data, it’s important to keep in mind that the underlying data can be very different than what you see in the cell. 
 
 
+### Exercise 15
+
+<!-- DK: Ought to show this data first. Can't count on students to run the code and then add to it. -->
+
+To write a tibble to Excel we use `write_xlsx()` from the **writexl** package. Run the code below. Examine the resulting tibble. Then, add a pipe to `write_xlsx()` with the `path` argument set to `"data/bake-sale.xlsx"`.   
 
 
+```{r readingwriting-excel-15, exercise = TRUE}
+tibble(
+  item     = factor(c("brownie", "cupcake", "cookie")),
+  quantity = c(10, 5, 8)
+)
+```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
 
-### Exercise 1
+```{r readingwriting-excel-15-hint-1, eval = FALSE}
+tibble(
+  item     = factor(c("brownie", "cupcake", "cookie")),
+  quantity = c(10, 5, 8)
+) |> 
+  write_xlsx(path = "...")
+```
 
+### 
 
-
-
+If the code doesn't run, don't worry about it. If you open the file, you will see that column names are included and bolded. These can be turned off by setting the `col_names` and `format_headers` arguments to `FALSE`.
 
 
 
 
 ## Google sheets
+### 
+
+This section will also focus on spreadsheets, but this time you’ll be loading data from a Google Sheet using `[read_sheet()](https://googlesheets4.tidyverse.org/reference/range_read.html)` from the [**googlesheets4**](https://googlesheets4.tidyverse.org/) package. 
+
+### Exercise 1
+
+Use the `library()` command to load the **googlesheets4** package.
+
+
+```{r google-sheets-1, exercise = TRUE}
+
+```
+
+```{r google-sheets-1-hint-1, eval = FALSE}
+library(googlesheets4)
+```
+
+### 
+
+**googlesheets4** uses v4 of the [Google Sheets API v4](https://developers.google.com/sheets/api/) to provide an R interface to Google Sheets, hence the name.
+
+
+### Exercise 2
+
+Look up the help page for the package by issuing this command: `help(package = "googlesheets4")`. Click on the link to the `read_sheet()` function. Copy/paste the Description below.  
+
+```{r google-sheets-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+You can create a brand new sheet with `[gs4_create()](https://googlesheets4.tidyverse.org/reference/gs4_create.html)` or write to an existing sheet with `[sheet_write()](https://googlesheets4.tidyverse.org/articles/write-sheets.html)` and friends.
+
+### Exercise 3
+
+Working with Google sheets, both those you control and those controlled by others, is often tricky. Google wants to assure that you are authorized to do what you are trying to do. The most important trick to know is that running the function `gs4_deauth()` often just makes things work. Run that command now.
+
+```{r google-sheets-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r google-sheets-3-hint-1, eval = FALSE}
+gs4_deauth()
+```
+
+### 
+
+If you don’t need to access private Sheets, use `gs4_deauth()` to indicate there is no need for a token. This puts **googlesheets4** into a de-authorized mode.
+
+
+### Exercise 4
+
+<!-- DK: Would be cool to automatically load a screenshot of the the sheet. Students won't click the link. -->
+
+The url for the Google sheet which we will be working with is `"https://docs.google.com/spreadsheets/d/1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w"`. First, view the sheet by clicking [here](https://docs.google.com/spreadsheets/d/1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w/). Second, pipe this url to `read_sheet()`.
+
+```{r google-sheets-4, exercise = TRUE}
+
+```
+
+```{r google-sheets-4-hint-1, eval = FALSE}
+"https://docs.google.com/spreadsheets/d/1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w" |> 
+  read_sheet()
+```
+
+### 
+
+Data in the wild is always messy. Note the inconsistency of the variable names, the ignored "N/A" and that `AGE` is a list variable.
+
+### Exercise 5
+
+Starting with the previous code, add to `read_sheet()` the `col_names` argument with a value of `c("student_id", "full_name", "favourite_food", "meal_plan", "age")` and the `skip` argument with a value of `1`.
+
+```{r google-sheets-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r google-sheets-5-hint, eval = FALSE}
+"https://docs.google.com/spreadsheets/d/1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w" |> 
+  read_sheet(
+    col_names = "...",
+    skip = ...
+  )
+```
+
 ###
+
+Instead of modifying the column (aka variable) names by hand, we could use the `[clean_names()](https://sfirke.github.io/janitor/reference/clean_names.html)` function from the **[janitor](https://sfirke.github.io/janitor/)** package.
+
+### Exercise 6
+
+To solve the NA and list variable problem, we make two changes to the call to `read_sheet()`. Add the `na` argument with a value of `c("", "N/A")` and the `col_types` argument with a value of `"dcccc"`.
+
+
+```{r google-sheets-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r google-sheets-6-hint, eval = FALSE}
+"https://docs.google.com/spreadsheets/d/1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w" |> 
+  read_sheet(
+    col_names = c("student_id", "full_name", "favourite_food", "meal_plan", "age"),
+    skip = 1,
+    na = ...,
+    ... = "dcccc"
+  )
+```
+
+###
+
+Note that we defined column types a bit differently here, using short codes. For example, “dcccc” stands for “double, character, character, character, character”. The data is still not perfect since we need to deal with the "five" value in `age`. But we leave that as an exercise for the reader.
+
+### Exercise 7
+
+Google Sheets can have more than one sheet. We first define a url for the [penguins Google Sheet](https://docs.google.com/spreadsheets/d/1aFu8lnD_g0yjF5O-K6SFgSEWiHPpgvFCF0NY9D6LXnY). Run `sheet_names()` on `penguins_url`.
+
+```{r google-sheets-7, exercise = TRUE}
+penguins_url <- "https://docs.google.com/spreadsheets/d/1aFu8lnD_g0yjF5O-K6SFgSEWiHPpgvFCF0NY9D6LXnY"
+
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r google-sheets-7-hint, eval = FALSE}
+sheet_names(penguins_url)
+```
+
+###
+
+This Google sheet has the same structure as the Excel workbook we worked with earlier. Keep in mind that the nomenclature differs between Google and Excel, with the former being more confusing. The term "sheet" in Google can refer both to the overall workbook as well as to the individual pages within that workbook.
+
+
+
+### Exercise 8
+
+It’s also possible to read individual sheets from Google Sheets. We have defined `penguins_url` in the environment. You can now call `read_sheet()` with the first argument (which is named `ss`) being `penguins_url` and the second argument `sheet` having a value `"Torgersen Island"`.
+
+
+
+```{r google-sheets-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r google-sheets-8-hint, eval = FALSE}
+read_sheet(ss = penguins_url, sheet = "Torgersen Island")
+```
+
+###
+
+You can use `write_sheet()` to both create new sheets and to add new (work)sheets within a currently existing sheet. We won't practice that here because authentication issues are sometimes tricky.
+
 
 
 ## Summary
-###
+### 
 
 This tutorial covered [Chapter 21: Spreadsheets](https://r4ds.hadley.nz/spreadsheets.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You have learned how to get data from Excel spreadsheets using  `[read_excel()](https://readxl.tidyverse.org/reference/read_excel.html)` from the [**readxl**](https://readxl.tidyverse.org/) package and Google sheets using `[read_sheet()](https://googlesheets4.tidyverse.org/reference/range_read.html)` from the [**googlesheets4**](https://googlesheets4.tidyverse.org/) package. 
 
@@ -300,4 +546,3 @@ Read “[Data Organization in Spreadsheets](https://doi.org/10.1080/00031305.201
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
-
