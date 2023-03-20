@@ -58,7 +58,7 @@ What `glimpse()` does is
 
 ### Exercise 2
 
-To create our 
+To create our first ever plot, lets first set a pipe between the dataset and the function by using the `|>`. We use this right after typing down the name of the datset.
 ```{r creating-first-ggplo-2, exercise = TRUE}
 
 ```
@@ -66,14 +66,16 @@ To create our
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-2-hint, eval = FALSE}
-ggplot(data = penguins)
+penguins |>
+  ggplot()
 ```
+There is another way to create a plot without using `|>` which is to use the data arguemnt within the `ggplot()` like `ggplot(data = penguins)`.
 
 ###
 
 ### Exercise 3
 
-
+When we ran the code in the last exercise, we see the outline of the plot but no axis or data point. So lets tell `ggplot()` how the varibales from out dataset are map to aesthetics of our plot. So set `mapping` to  `aes` and within it set "x" to the flipper_length_mm, and y to body_mass_g. 
 ```{r creating-first-ggplo-3, exercise = TRUE}
 
 ```
@@ -81,8 +83,8 @@ ggplot(data = penguins)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-3-hint, eval = FALSE}
-...(
-  data = penguins,
+penguins |>
+  ggplot(
   mapping = aes(x = flipper_length_mm, y = ...)
 )
 ```
@@ -93,6 +95,7 @@ ggplot(data = penguins)
 ### Exercise 4
 
 
+After running the code in previous code, we see that the plot has more structure but the data point yhemselves are not yet on the plot. To represent the obeservarions from out data set on out plot, we need to use a geometric object  and for this we will use point object. To do, add a new layer using `+` after the ggplot function and add `geom_pont()` wich will add the points.
 ```{r creating-first-ggplo-4, exercise = TRUE}
 
 ```
@@ -100,18 +103,19 @@ ggplot(data = penguins)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-4-hint, eval = FALSE}
-ggplot(
-  data = penguins,
- ... = aes(x = ..., y = body_mass_g)
-) +
+penguins |>
+  ggplot(
+  mapping = aes(x = flipper_length_mm, y = ...)
+)+
   geom_point()
 ```
+`geom_point()` is not the only geometric objects, there are more than this single one and we will learn about them in other sections in this tutorial.
 
 ###
 
 ### Exercise 5
 
-
+Scatter plot are useful for displaying relationship between x and y but it is also helpful to ask yourself if there are other variable which might contribute to the relationship. For example, does the relationship between x and y differ for different species of penguins. To find the relationship, lets add more the aesthetic `color` within `aes()` to `species`.
 ```{r creating-first-ggplo-5, exercise = TRUE}
 
 ```
@@ -119,19 +123,21 @@ ggplot(
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-5-hint, eval = FALSE}
-ggplot(
-  data = penguins,
-  mapping = ...(x = flipper_length_mm, y = body_mass_g, ... = species)
-) +
+penguins |>
+  ggplot(
+  mapping = aes(x = flipper_length_mm, y = ..., ... = species)
+)+
   geom_point()
 ```
+When you ran it, you see that the data points differ by the color of the species which just makes the scatter plot more insightful. Color inst just the only aesthetics. There are more, to find out more go check out [aesthetic mappings](https://ggplot2.tidyverse.org/reference/aes.html)
+
 
 ###
 
 
 ### Exercise 6
 
-
+Now let's add one more layer: a smooth curve which will dispaly the reltionship between body mass and flipper length. To do so, lets add a new geometric object:`geom_smooth()` and within that we will specity it to be a best of fit line of a linear model.
 ```{r creating-first-ggplo-6, exercise = TRUE}
 
 ```
@@ -139,8 +145,8 @@ ggplot(
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-6-hint, eval = FALSE}
-ggplot(
-  ... = penguins,
+penguins |>
+  ggplot(
   mapping = aes(x = flipper_length_mm, y = body_mass_g, color = ...)
 ) +
   geom_point() +
@@ -159,8 +165,8 @@ ggplot(
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-7-hint, eval = FALSE}
-ggplot(
-  data = penguins,
+penguins |>
+  ggplot(
   mapping = ...(x = flipper_length_mm, y = body_mass_g)
 ) +
   geom_point(mapping = ...(color = species)) +
@@ -179,8 +185,8 @@ ggplot(
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-8-hint, eval = FALSE}
-ggplot(
-  data = ...,
+penguins |>
+  ggplot(
   mapping = aes(x = flipper_length_mm, y = body_mass_g)
 ) +
   geom_point(mapping = aes(color = ..., shape = ...)) +
