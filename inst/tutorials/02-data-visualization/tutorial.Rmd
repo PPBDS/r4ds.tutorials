@@ -13,6 +13,9 @@ description: "Tutorial for Chapter 2: Data Visualization"
 ```{r setup, include = FALSE}
 library(learnr)
 library(ggplot2)
+library(tidyverse)
+library(palmerpenguins)
+library(ggthemes)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
@@ -29,8 +32,178 @@ options(tutorial.exercise.timelimit = 60,
 
 This tutorial covers [Chapter 2: Data Visualization](https://r4ds.hadley.nz/data-visualize.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
 
-## First section (use sentence case)
+## Creating first ggplot
 ###
+
+<!-- AB: Need to chnage the code so eveyrhting has a pipe -->
+
+Our Ultimate Goal in this section is to create a plot displaying the relationship between flipper lengths and body masses of these penguins, taking into consideration the species of the penguin.
+
+### Exercise 1
+
+Before diving into making our first plot, let's have a quick look at the dataset which we would be using to make a plot. Use the `glimpse()` function and within it, type in the name of the data frame which is `penguins` and see what kind of variables there are.
+```{r creating-first-ggplo-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-first-ggplo-1-hint, eval = FALSE}
+glimpse(penguins)
+```
+What `glimpse()` does is 
+
+
+###
+
+### Exercise 2
+
+To create our first ever plot, lets first set a pipe between the dataset and the function by using the `|>`. We use this right after typing down the name of the datset.
+```{r creating-first-ggplo-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-first-ggplo-2-hint, eval = FALSE}
+penguins |>
+  ggplot()
+```
+There is another way to create a plot without using `|>` which is to use the data arguemnt within the `ggplot()` like `ggplot(data = penguins)`.
+
+###
+
+### Exercise 3
+
+When we ran the code in the last exercise, we see the outline of the plot but no axis or data point. So lets tell `ggplot()` how the varibales from out dataset are map to aesthetics of our plot. So set `mapping` to  `aes` and within it set "x" to the flipper_length_mm, and y to body_mass_g. 
+```{r creating-first-ggplo-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-first-ggplo-3-hint, eval = FALSE}
+penguins |>
+  ggplot(
+  mapping = aes(x = flipper_length_mm, y = ...)
+)
+```
+
+###
+
+
+### Exercise 4
+
+
+After running the code in previous code, we see that the plot has more structure but the data point yhemselves are not yet on the plot. To represent the obeservarions from out data set on out plot, we need to use a geometric object  and for this we will use point object. To do, add a new layer using `+` after the ggplot function and add `geom_pont()` wich will add the points.
+```{r creating-first-ggplo-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-first-ggplo-4-hint, eval = FALSE}
+penguins |>
+  ggplot(
+  mapping = aes(x = flipper_length_mm, y = ...)
+)+
+  geom_point()
+```
+`geom_point()` is not the only geometric objects, there are more than this single one and we will learn about them in other sections in this tutorial.
+
+###
+
+### Exercise 5
+
+Scatter plot are useful for displaying relationship between x and y but it is also helpful to ask yourself if there are other variable which might contribute to the relationship. For example, does the relationship between x and y differ for different species of penguins. To find the relationship, lets add more the aesthetic `color` within `aes()` to `species`.
+```{r creating-first-ggplo-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-first-ggplo-5-hint, eval = FALSE}
+penguins |>
+  ggplot(
+  mapping = aes(x = flipper_length_mm, y = ..., ... = species)
+)+
+  geom_point()
+```
+When you ran it, you see that the data points differ by the color of the species which just makes the scatter plot more insightful. Color inst just the only aesthetics. There are more, to find out more go check out [aesthetic mappings](https://ggplot2.tidyverse.org/reference/aes.html)
+
+
+###
+
+
+### Exercise 6
+
+Now let's add one more layer: a smooth curve which will dispaly the reltionship between body mass and flipper length. To do so, lets add a new geometric object:`geom_smooth()` and within that we will specity it to be a best of fit line of a linear model.
+```{r creating-first-ggplo-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-first-ggplo-6-hint, eval = FALSE}
+penguins |>
+  ggplot(
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, color = ...)
+) +
+  geom_point() +
+  geom_smooth(... = "lm")
+```
+
+###
+
+### Exercise 7
+
+
+```{r creating-first-ggplo-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-first-ggplo-7-hint, eval = FALSE}
+penguins |>
+  ggplot(
+  mapping = ...(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = ...(color = species)) +
+  ...(method = "lm")
+```
+
+###
+
+### Exercise 8
+
+
+```{r creating-first-ggplo-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-first-ggplo-8-hint, eval = FALSE}
+penguins |>
+  ggplot(
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = ..., shape = ...)) +
+  geom_smooth(method = "lm")
+```
+
+###
+
+## Exericse
+###
+
+
+
+
+
+
+
 
 ## Summary
 ###
