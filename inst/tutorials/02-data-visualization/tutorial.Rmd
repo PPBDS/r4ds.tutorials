@@ -38,6 +38,7 @@ This tutorial covers [Chapter 2: Data Visualization](https://r4ds.hadley.nz/data
 <!-- AB: Need to chnage the code so eveyrhting has a pipe -->
 
 Our Ultimate Goal in this section is to create a plot displaying the relationship between flipper lengths and body masses of these penguins, taking into consideration the species of the penguin.Before doing so, lets load the palmerpenguins package using `library()`.
+
 ### Exercise 1
 
 ```{r creating-first-ggplo-1, exercise = TRUE}
@@ -47,7 +48,6 @@ Our Ultimate Goal in this section is to create a plot displaying the relationshi
 ```{r creating-first-ggplo-1-hint-1, eval = FALSE}
 library(palmerpenguins)
 ```
-
 
 ### 
 
@@ -65,8 +65,8 @@ question_text(NULL,
 	rows = 3)
 ```
 
-
 ### 
+
 In this pacakge, we have the `penguins` dataset which contains data about different species(Adelie, Chinstrap, or Gentoo), flipper_length, and mass of a penguin.
 
 ### Exercise 3
@@ -129,9 +129,9 @@ penguins |>
   ggplot()
 ```
 
-There is another way to create a plot without using `|>` which is to use the data arguemnt within the `ggplot()` like `ggplot(data = penguins)`.
-
 ### 
+
+There is another way to create a plot without using `|>` which is to use the data arguemnt within the `ggplot()` like `ggplot(data = penguins)`.
 
 ### Exercise 6
 
@@ -155,6 +155,7 @@ penguins |>
 ```
 
 ### 
+
 Without mapping, ggplot() will still create a plot, but it may not be what we want. It will use default aesthetics for the plot, such as the x and y axes labels, colors, shapes, etc., which may not be the best choice for our data. We can customize these aesthetics later, but it requires more code.
 
 ### Exercise 7
@@ -174,9 +175,9 @@ penguins |>
   geom_point()
 ```
 
-`geom_point()` is not the only geometric objects, there are more than this single one and we will learn about them in other sections in this tutorial.
-
 ### 
+
+`geom_point()` is not the only geometric objects, there are more than this single one and we will learn about them in other sections in this tutorial.
 
 ### Exercise 8
 
@@ -195,10 +196,10 @@ penguins |>
   geom_point()
 ```
 
+### 
+
 When you ran it, you see that the data points differ by the color of the species which just makes the scatter plot more insightful. Color inst just the only aesthetics. There are more, to find out more go check out [aesthetic mappings](https://ggplot2.tidyverse.org/reference/aes.html)
 
-
-### 
 
 ### Exercise 9
 
@@ -220,8 +221,13 @@ penguins |>
 
 ### 
 
+If you don't specify the model for geom_smooth(), RStudio will automatically set the method to a linear model, adding on you will get a message saying that it was set to `lm`.
+
 ### Exercise 10
 
+We have added new lines to the plot, but it does not match the plot in beginning, which displayed only one line for the entire dataset instead of separate lines for each penguin species.
+
+In ggplot2, when aesthetic mappings are defined at the global level, they are passed down to all subsequent geom layers in the plot. However, each geom function in ggplot2 can also accept a mapping argument, allowing for local-level aesthetic mappings that are added to those inherited from the global level. To achieve our desired outcome of coloring the points based on the species without separating the lines for each species, we should specify color = species for geom_point() only.
 ```{r creating-first-ggplo-10, exercise = TRUE}
 
 ```
@@ -239,8 +245,11 @@ penguins |>
 
 ### 
 
+Great progress! The plot now resembles our ultimate goal, although it's not perfect yet. We still need to differentiate the species of penguins by using different shapes for each species, and also improve the labels.
+
 ### Exercise 11
 
+Representing information using only colors on a plot may not be a good idea as individuals perceive colors differently due to color blindness or other color vision differences. Therefore, it's advisable to map the `species` to the `shape` aesthetic in addition to `color` to ensure everyone can differentiate the species.
 ```{r creating-first-ggplo-11, exercise = TRUE}
 
 ```
@@ -258,8 +267,77 @@ penguins |>
 
 ### 
 
-## Exericse
-### 
+
+
+### Exercise 12
+Now that we have the data points, legend, and lines set, lets change the labels for the graph and make it more insightful and visually appealing. Copy the previous code and add a new layear using `+` and type `labs()`. Within labs, type `title` and set it equal to "Body mass and flipper length" in quotes.Let's also add the subtitle by typing a comma and then 'subtitle'. Set  `Subtitle` to "Dimensions for Adelie, Chinstrap, and Gentoo Penguins". Run the code and see what you get.
+
+```{r creating-first-ggplo-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-first-ggplo-12-hint, eval = FALSE}
+penguins |>
+  ggplot(
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = species, shape = species)) +
+  geom_smooth(method = "lm")+
+  labs( ... = "Body mass and flipper length"+
+          subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins")
+```
+
+###
+### Exercise 13
+
+We see that the title and subtitle have been added, now lets modify the x and y axises, type a comma and then type `x`. Then set `x` to "Flipper Length (mm)" in quotes. Type another comma and a `y`, then set it equal to "Body mass (g)" in quotes.
+```{r creating-first-ggplo-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-first-ggplo-13-hint, eval = FALSE}
+penguins |>
+  ggplot(
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = species, shape = species)) +
+  geom_smooth(method = "lm")+
+  labs( ... = "Body mass and flipper length"+
+          subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+        x = ..., y = ...)
+```
+
+###
+### Exercise 14
+
+You might see that it looks the same as the one in the beginning but we forgot one minor thing which is capitalizing the legend, we can do so by typing a comma and setting both `color` and `shape` equal to "Species" in quotes.
+```{r creating-first-ggplo-14, exercise = TRUE}
+penguins |>
+  ggplot(
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = species, shape = species)) +
+  geom_smooth(method = "lm")+
+  labs( ... = "Body mass and flipper length"+
+          subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+        x = ..., y = ...,
+         color = "Species", shape = "Species")
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-first-ggplo-14-hint, eval = FALSE}
+
+```
+
+###
+
+
+
 
 ## Summary
 ### 
