@@ -1,5 +1,6 @@
 ---
 title: Data transformation
+author: David Kane
 tutorial:
   id: data-transformation
 output:
@@ -663,24 +664,28 @@ flights |>
 ## The pipe
 ### 
 
-We’ve shown you simple examples of the pipe above, but its real power arises when you start to combine multiple verbs. For example, imagine that you wanted to find the fast flights to Houston’s IAH airport: you need to combine filter(), mutate(), select(), and arrange().
+We’ve shown you simple examples of the pipe above, but its real power arises when you start to combine multiple verbs. For example, imagine that you wanted to find the fast flights to Houston’s IAH airport: you need to combine `filter()`, `mutate()`, `select()`, and `arrange()`.
 
 ### Exercise 1
+
+Pipe `flights` to `filter()` with the argument set to `dest == "IAH"`. 
 
 ```{r the-pipe-1, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r the-pipe-1-hint-1, eval = FALSE}
 flights |> 
-  filter(dest == "IAH")
+  filter(dest == "...")
 ```
 
 ### 
 
+If you use `=` instead of `==`, R will give you a warning. One equal sign is for *assignment*. Two equal signs are for *comparisons*. Remeber that variable names, like `dest` are not quoted while the values of those variables, like `IAH` are quoted.
+
 ### Exercise 2
+
+Continue the pipe to `mutate()`, creating a new variable `speed` which equals `distance / airtime`.
 
 ```{r the-pipe-2, exercise = TRUE}
 
@@ -691,12 +696,17 @@ flights |>
 ```{r the-pipe-2-hint-1, eval = FALSE}
 flights |> 
   filter(dest == "IAH") |> 
-  mutate(speed = distance / air_time * 60)
+  mutate(... = ... / ...)
 ```
 
 ### 
 
+This slow build up of the analysis, line-by-line, examining the result each time is the standard rhythm of good data science. Note, however, that we can't easily see the new variable we created because it is, by default, on the end of the tibble.
+
+
 ### Exercise 3
+
+Add `.before = 1` to the call to `mutate()`.
 
 ```{r the-pipe-3, exercise = TRUE}
 
@@ -705,15 +715,17 @@ flights |>
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r the-pipe-3-hint-1, eval = FALSE}
-flights |> 
-  filter(dest == "IAH") |> 
-  mutate(speed = distance / air_time * 60) |> 
-  select(year:day, dep_time, carrier, flight, speed)
+...
+  mutate(speed = distance / air_time, ... = 1)
 ```
 
 ### 
 
+The hint we give will generally just show you the last line of code, not the entire pipe. We can now see `speed`, but the values, of around 6, are strange. Planes don't go 6 miles per hour! The problem, if course, is that the current units are miles per minutes, since `distance` is in miles and `air_time` is in minutes.
+
 ### Exercise 4
+
+Add `* 60` to the calculation of speed within the call to `mutate()` so that the result, `speed`, is in miles per hour.
 
 ```{r the-pipe-4, exercise = TRUE}
 
@@ -722,14 +734,52 @@ flights |>
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r the-pipe-4-hint-1, eval = FALSE}
-flights |> 
-  filter(dest == "IAH") |> 
-  mutate(speed = distance / air_time * 60) |> 
-  select(year:day, dep_time, carrier, flight, speed) |> 
+...
+  mutate(speed = distance / air_time * ..., .before = 1)
+```
+
+### 
+
+Of course, in steady cruise, planes go faster than 300 to 400 mile per hour, but they go more slowly during take-off and landing, and, more importantly, they don't travel in a straight line between airports. 
+
+### Exercise 5
+
+We don't want to deal with 20 variables. Pipe the current code to `select()` with the argument `year:day, dep_time, carrier, flight, speed`. 
+
+```{r the-pipe-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-pipe-5-hint-1, eval = FALSE}
+...
+  select(year:day, dep_time, carrier, flight, speed)
+```
+
+### 
+
+We are now looking at just the variables which matter (for this analysis). Other variables would matter in other contexts. In fact, when working with large data sets, `select()` is often one of the first commands in the pipe.
+
+### Exercise 6
+
+Pipe the result to `arrange()` with the argument set to `desc(speed)`.
+
+```{r the-pipe-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-pipe-6-hint-1, eval = FALSE}
+...
   arrange(desc(speed))
 ```
 
 ### 
+
+Look at the data. Can you think of a reason that so many of the fastest flights happened on August 27 and 28? Our *guess* is that the jet stream was much slower than normal on those days. But solving mysteries like this is precisely why we need to use data science tools like **dplyr**.
+
 
 <!-- DK: Put in another pipe or two? -->
 
@@ -740,7 +790,13 @@ flights |>
 
 So far you’ve learned about functions that work with rows and columns. **dplyr** gets even more powerful when you add in the ability to work with groups. In this section, we’ll focus on the most important function, `summarize()`, as well as the `slice_*()` family of functions.
 
+Does `reframe()` belong in this section.
+
 ### Exercise 1
+
+Imagine that we want to know what the average, or mean, departure delay is. We need to apply the function for calulating an average in R, `mean()`, to the variable for departure delay, which is `dep_delay`. The function `summarize()` applies a function like `mean()` to a variable like `dep_delay` within the **dplyr** framework.
+
+Pipe `flights` into `summarize()`, with `mean(dep_delay)` as the argument.
 
 ```{r groups-1, exercise = TRUE}
 
@@ -748,14 +804,19 @@ So far you’ve learned about functions that work with rows and columns. **dplyr
 
 ```{r groups-1-hint-1, eval = FALSE}
 flights |> 
-  summarize(
-    avg_delay = mean(dep_delay)
-  )
+  summarize(mean(dep_delay))
 ```
 
 ### 
 
+The result was a tibble with 1 row and 1 column. Like `filter()`, `arrange()`, `select()` and `mutate()`, `summarize()` takes a data frame (or tibble) as an input and produces a tibble as an output. 
+
 ### Exercise 2
+
+The prior result as `NA` because there are some missing values in the `dep_delay` variable. Almost all statistical functions in R produce an `NA` result by default if any of the input values are `NA`. We can ignore the `NA` values when using `mean()` by adding `na.rm = FALSE` to mean.
+
+
+Pipe `flights` into `summarize()`, with `mean(dep_delay)` as the argument.
 
 ```{r groups-2, exercise = TRUE}
 
@@ -765,9 +826,7 @@ flights |>
 
 ```{r groups-2-hint-1, eval = FALSE}
 flights |> 
-  summarize(
-    delay = mean(dep_delay, na.rm = TRUE)
-  )
+  summarize(mean(dep_delay, na.rm = TRUE))
 ```
 
 ### 
@@ -783,14 +842,11 @@ flights |>
 ```{r groups-3-hint-1, eval = FALSE}
 flights |> 
   summarize(
-    delay = mean(dep_delay, na.rm = TRUE),
-    .by = month
+    delay = mean(dep_delay, na.rm = TRUE)
   )
 ```
 
 ### 
-
-Note the weird sort order.
 
 ### Exercise 4
 
@@ -804,14 +860,13 @@ Note the weird sort order.
 flights |> 
   summarize(
     delay = mean(dep_delay, na.rm = TRUE),
-    n = n(),
     .by = month
   )
 ```
 
 ### 
 
-<!-- DK: Add a bunch more summarize examples, using other example functions from the ?summarize page? -->
+Note the weird sort order.
 
 ### Exercise 5
 
@@ -822,10 +877,17 @@ flights |>
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r groups-5-hint-1, eval = FALSE}
-
+flights |> 
+  summarize(
+    delay = mean(dep_delay, na.rm = TRUE),
+    n = n(),
+    .by = month
+  )
 ```
 
 ### 
+
+<!-- DK: Add a bunch more summarize examples, using other example functions from the ?summarize page? -->
 
 ### Exercise 6
 
@@ -850,6 +912,20 @@ flights |>
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r groups-7-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 8
+
+```{r groups-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r groups-8-hint-1, eval = FALSE}
 
 ```
 
