@@ -905,45 +905,132 @@ Note that the letter `n` does two completely different things in this code. Firs
 
 ### Exercise 6
 
+<!-- DK: Make better use of https://dplyr.tidyverse.org/reference/slice.html -->
+
+There are five handy functions, all part of the [`slice_*()`](https://dplyr.tidyverse.org/reference/slice.html) family, that allow you extract specific rows. Pipe `flights` to `slice_head(n = 3)`.
+
 ```{r groups-6, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r groups-6-hint-1, eval = FALSE}
-
+flights |> 
+  slice_head(n = ...)
 ```
 
 ### 
 
+This returns the first three rows in `flights`. The default value for the `n` argument is `1`.
+
 ### Exercise 7
+
+`slice_tail()` does the same for the end of the tibble which `slice_head()` does for the beginning. Pipe `flights` to `slice_tail()` but set `n` to equal `8`.
 
 ```{r groups-7, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r groups-7-hint-1, eval = FALSE}
-
+flights |> 
+  slice_tail(... = ...)
 ```
 
 ### 
 
+The terminology `head` and `tail` refer to UNIX command line utilities which perform the same function. 
+
 ### Exercise 8
+
+When examining a new tibble, we need to do more than just look at the top and bottom. We should look at some randomly selected rows as well. Pipe `flights` to `slice_random()`, setting `n` to equal `6`.
 
 ```{r groups-8, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r groups-8-hint-1, eval = FALSE}
-
+flights |> 
+  ...(n = 6)
 ```
 
 ### 
+
+Note how the flights come from a variety of months, unlike when we used `slice_head()` --- months all equal 1 --- and `slice_tail()` --- months all equal 9. (Note how the `flights` data is itself sorted in a weird way, with Decemmber flights sorted in between November (11) and February (2).)
+
+
+### Exercise 9
+
+`slice_max()` returns the row  with the `n` largest values of whatever variable you pass in as the value to the `order_by` argument. Pipe `flights` to `slice_max()`, setting `order_by` to `dep_delay` and `n` to equal `5`.
+
+```{r groups-9, exercise = TRUE}
+
+```
+
+
+```{r groups-9-hint, eval = FALSE}
+flights |> 
+  slice_max(... = dep_delay, n = ...)
+```
+
+###
+
+Since `dep_delay` is in minutes, the most delayed flights were up to 20 hours delayed. Looking at extreme values is almost important. For example, a single data error could have significantly affected the average calculations we did above.
+
+
+### Exercise 10
+
+`slice_min()` does the same as `slice_max()` but in reverse. Pipe `flights` to `slice_min()`, setting `order_by` to `dep_delay` and `n` to equal `5`.
+
+
+```{r groups-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r groups-10-hint, eval = FALSE}
+flights |> 
+  slice_...(... = dep_delay, n = ...)
+```
+
+###
+
+Are there really flights that take up 30 minutes early? Maybe? Again, data science is about looking at our data extremely closely. You can never look at your data too much. It is your job to determine if the data is correct, or at least not obviously incorrect.
+
+### Exercise 11
+
+Most of the `slice_*()` functions also take a `by` (or `.by`) argument. Pipe `flights` to `slice_min()`, setting `order_by` to `dep_delay`, `n` to equal `1` and `by` to `origin`. This will get the individual flight, from each origin airport, with the smallest delay.
+
+```{r groups-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r groups-11-hint, eval = FALSE}
+flights |> 
+  slice_min(order_by = dep_delay, n = 1, by = origin)
+```
+
+###
+
+Why does `slice_min()` take `by` but summarize take `.by`? It is a quirk of the evolution of these functions. Don't worry about it. If you use the wrong one, R will provide a gentle reminder.
+
+<!-- DK: I am not satisfied with this explanation! -->
+
+
+###
+
+Note that `.by` is a relatively new addition to **dplyr** functions. In the past, to calculate group statistics you needed to issue the `group_by()` command in the pipe before the call to `summarize()`. Example:
+
+```{r}
+flights |> 
+  group_by(month) |> 
+  summarize(delay = mean(dep_delay, na.rm = TRUE))
+```
+
+Using `.by` is a much better approach. Never use `group_by()` unless you have a really good reason to do so.
+
 
 <!-- DK: There is a case study in the chapter. Should we add it? Make it much more complex? -->
 
