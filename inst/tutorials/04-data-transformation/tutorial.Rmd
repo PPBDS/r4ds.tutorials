@@ -26,7 +26,9 @@ options(tutorial.exercise.timelimit = 60,
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- DK: There are plenty of exercises in this chapter. We could add them here or make another tutorial: `data-transformation-exercises`. -->
+<!-- There are plenty of exercises in this chapter. We could add them here or make another tutorial: `data-transformation-exercises`. -->
+
+<!-- This help page --- https://dplyr.tidyverse.org/reference/dplyr_tidy_select.html --- has lots of great stuff. <Should find a way to mention lots of items from this help page throughout this tutorial, maybe in the select() questions.  -->
 
 ## Introduction
 ### 
@@ -38,7 +40,7 @@ The goal of this chapter is to give you an overview of all the key tools for tra
 ## Rows
 ### 
 
-The most important verbs that operate on rows of a dataset are `filter()`, which changes which rows are present without changing their order, and `arrange()`, which changes the order of the rows without changing which are present. Both functions only affect the rows, and the columns are left unchanged.
+The most important verbs that operate on rows of a dataset are `filter()`, which changes which rows are present without changing their order, and `arrange()`, which changes the order of the rows without changing which are present. Both functions only affect the rows. The columns are left unchanged.
 
 
 ### Exercise 1
@@ -55,7 +57,7 @@ library(tidyverse)
 
 ### 
 
-Take careful note of the conflicts message that’s printed when you load the **tidyverse**. It tells you that **dplyr** overwrites some functions in base R. If you want to use the base version of these functions after loading **dplyr**, you’ll need to use their full names: `stats::filter()` and `stats::lag()`. So far we’ve mostly ignored which package a function comes from because most of the time it doesn’t matter. However, knowing the package can help you find help and find related functions, so when we need to be precise about which function a package comes from, we’ll use the same syntax as R: `packagename::functionname()`.
+Take careful note of the conflicts message that’s printed when you load the **tidyverse**. It tells you that **dplyr** versions of some functions now take precedence over functions with the same name in base R. If you want to use the base version of these functions after loading **dplyr**, you’ll need to use their full names: `stats::filter()` and `stats::lag()`. So far we’ve mostly ignored which package a function comes from because most of the time it doesn’t matter. However, knowing the package can help you find help and find related functions, so when we need to be precise about which function a package comes from, we’ll use the same syntax as R: `package.name::function_name()`.
 
 ### Exercise 2
 
@@ -384,7 +386,7 @@ In modern code, arguments to **dplyr** functions are proceeded with dots, `.`, i
 ## Columns
 ### 
 
-There are four important verbs that affect the columns without changing the rows: `mutate()` creates new columns that are derived from the existing columns, `select()` changes which columns are present; `rename()` changes the names of the columns; and `relocate()` changes the positions of the columns.
+There are four important verbs that affect the columns without changing the rows: `mutate()` creates new columns that are derived from the existing columns, `select()` changes which columns are present; `rename()` changes the names of the columns; and `relocate()` changes the positions of the columns. You will use `mutate()` and `select()` often.
 
 ### Exercise 1
 
@@ -424,7 +426,7 @@ flights |>
 
 ### 
 
-Having the variable creation start on a new line and having the closing paranthesis on its own line makes the code easier to read.
+Having the variable creation start on a new line and having the closing parenthesis on its own line makes the code easier to read.
 
 ### Exercise 3
 
@@ -473,8 +475,6 @@ flights |>
 ### 
 
 `.after`, like .`before` and many **tidyverse** functions, uses the [`<tidy-select>`](https://dplyr.tidyverse.org/reference/dplyr_tidy_select.html) argument modifier which enables multiple ways of selecting columns other than just providing a column name.
-
-<!-- DK: Should find a way to mention lots of items from this help page throught this tutorial, maybe back in the select() questions. -->
 
 
 ### Exercise 5
@@ -781,7 +781,7 @@ Pipe the result to `arrange()` with the argument set to `desc(speed)`.
 Look at the data. Can you think of a reason that so many of the fastest flights happened on August 27 and 28? Our *guess* is that the jet stream was much slower than normal on those days. But solving mysteries like this is precisely why we need to use data science tools like **dplyr**.
 
 
-<!-- DK: Put in another pipe or two? -->
+<!-- DK: Put in another pipe or two? Maybe show the final result at the beginning, and then show how we build to it at the end? -->
 
 
 
@@ -790,7 +790,7 @@ Look at the data. Can you think of a reason that so many of the fastest flights 
 
 So far you’ve learned about functions that work with rows and columns. **dplyr** gets even more powerful when you add in the ability to work with groups. In this section, we’ll focus on the most important function, `summarize()`, as well as the `slice_*()` family of functions.
 
-Does `reframe()` belong in this section.
+<!-- DK: Does `reframe()` belong in this section? Yes! -->
 
 ### Exercise 1
 
@@ -813,10 +813,9 @@ The result was a tibble with 1 row and 1 column. Like `filter()`, `arrange()`, `
 
 ### Exercise 2
 
-The prior result as `NA` because there are some missing values in the `dep_delay` variable. Almost all statistical functions in R produce an `NA` result by default if any of the input values are `NA`. We can ignore the `NA` values when using `mean()` by adding `na.rm = FALSE` to mean.
+The prior result was `NA` because there are some missing values in the `dep_delay` variable. Almost all statistical functions in R produce an `NA` result by default if any of the input values are `NA`. We can ignore the `NA` values when using `mean()` by adding `na.rm = FALSE` to `mean()`.
 
-
-Pipe `flights` into `summarize()`, with `mean(dep_delay)` as the argument.
+Pipe `flights` into `summarize()`, with `mean(dep_delay, na.rm = TRUE)` as the argument.
 
 ```{r groups-2, exercise = TRUE}
 
@@ -831,7 +830,14 @@ flights |>
 
 ### 
 
+Again, we have a tibble as the result. Tibbes in and tibbles out is a fundamental pattern in the *Tidyverse*. The value is `r mean(flights$dep_delay, na.rm = TRUE)`. Note, however, that the name of the variable, the one column name in our tibble, is `mean(dep_delay, na.rm = TRUE)`. (To refer to this variable name, since it includes spaces and other weird characters, we have to use backticks.) 
+
+The reason for this weirdness is that we did not provide a variable name into which `summarize()` could place the result, so it used the name of the command. 
+
+
 ### Exercise 3
+
+Update the code so that a new variable, `delay` is equal to the result of `mean(dep_delay, na.rm = TRUE)`. We are creating a new variable in the same way that `mutate()` does.
 
 ```{r groups-3, exercise = TRUE}
 
@@ -842,13 +848,17 @@ flights |>
 ```{r groups-3-hint-1, eval = FALSE}
 flights |> 
   summarize(
-    delay = mean(dep_delay, na.rm = TRUE)
+    ... = mean(dep_delay, na.rm = TRUE)
   )
 ```
 
 ### 
 
+The value is the same but, now, the variable in the resulting tibble has a reasonable name. Both `mutate()` and `summarize()` are all about creating new columns.
+
 ### Exercise 4
+
+Instead of an overall average flight delay, we want to calculate the average flight delay for each `month`. Fortunately, `summarize()`, like many **dplyr** functions, provides a `.by` argument to make such calculations easy. Use the code from above, but add `.by = month` to the call to `summarize()`. 
 
 ```{r groups-4, exercise = TRUE}
 
@@ -860,15 +870,17 @@ flights |>
 flights |> 
   summarize(
     delay = mean(dep_delay, na.rm = TRUE),
-    .by = month
+    .by = ...
   )
 ```
 
 ### 
 
-Note the weird sort order.
+Note the weird sort order. By default, `summarize()` uses the character sort order of the `.by` variable. 
 
 ### Exercise 5
+
+You can create any number of summaries in a single call to `summarize()`. One very useful summary is `n()`, which returns the number of rows in each group. Add `n = n()` to the call to `summarize()`, after the line which creates `delay`.
 
 ```{r groups-5, exercise = TRUE}
 
@@ -880,12 +892,14 @@ Note the weird sort order.
 flights |> 
   summarize(
     delay = mean(dep_delay, na.rm = TRUE),
-    n = n(),
+    ... = ...,
     .by = month
   )
 ```
 
 ### 
+
+Note that the letter `n` does two completely different things in this code. First, it is the name of a new variable which we have created. Second, it refers to a function, `n()`, which calculates the total number of rows in the tibble for each group.
 
 <!-- DK: Add a bunch more summarize examples, using other example functions from the ?summarize page? -->
 
@@ -931,13 +945,15 @@ flights |>
 
 ### 
 
+<!-- DK: There is a case study in the chapter. Should we add it? Make it much more complex? -->
+
 ## Summary
 ### 
 
 This tutorial covered [Chapter 4: Data transformation](https://r4ds.hadley.nz/data-transform.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You learned about the key functions from the [**dplyr**](https://dplyr.tidyverse.org/) package for working with data including `[filter()](https://dplyr.tidyverse.org/reference/filter.html)`,  `[arrange()](https://dplyr.tidyverse.org/reference/arrange.html)`, `[select()](https://dplyr.tidyverse.org/reference/select.html)`, `[mutate()](https://dplyr.tidyverse.org/reference/mutate.html)`, and `[summarize()](https://dplyr.tidyverse.org/reference/summarise.html)`.
 
 
-<!-- Something about janitor::clean_names()` perhaps? -->
+<!-- Something about janitor::clean_names()` perhaps? Maybe: https://cran.r-project.org/web/packages/janitor/vignettes/janitor.html-->
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
