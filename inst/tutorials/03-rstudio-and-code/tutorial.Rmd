@@ -15,10 +15,8 @@ description: "Introduction to R scripts and Quarto. Covers material in Chapter 3
 ```{r setup, include = FALSE}
 library(learnr)
 library(tutorial.helpers)
-library(primer.data)
 library(tidyverse)
 library(knitr)
-library(gistr)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local")
@@ -454,15 +452,15 @@ Recall that when we ran this earlier in the tutorial, it returned only the `anal
 Now that we're settled in and have started working with R scripts, let's get to plotting. We will be making the following plot, step by step.
 
 ```{r}
-hist_p <- ggplot(data = qscores, 
-                 mapping = aes(x = rating)) +
-  geom_histogram(bins = 5,
+hist_p <- ggplot(data = diamonds, 
+                 mapping = aes(x = carat)) +
+  geom_histogram(bins = 100,
                  color = "white") + 
-  labs(title = "Histogram of Student Ratings of Harvard Classes", 
-       subtitle = "Ratings of 1 and 2 are very rare", 
-       x = "Rating", 
+  labs(title = "Histogram of Carat (Weight) among 50,000 Diamonds", 
+       subtitle = "Carats just at or above meaningful numbers are very common", 
+       x = "Carat", 
        y = "Count", 
-       caption = "Source: Harvard Q-Guide (2018-2019)")
+       caption = "diamonds data set from ggplot2 package")
 
 hist_p
 ```
@@ -472,7 +470,6 @@ hist_p
 At the top of your R script file, type
 
 ```{r eval = FALSE, echo = TRUE}
-library(primer.data)
 library(tidyverse)
 ```
 
@@ -489,15 +486,15 @@ question_text(NULL,
 
 ### 
 
-This function returns a list of loaded packages. This should include strings such as `package:tidyverse` and `package:primer.data`.
+This function returns a list of loaded packages. This should include the string `package:tidyverse`.
 
 ### Exercise 9
 
-On the next line, start a `ggplot()`, setting `data` to `qscores` and mapping `x` to `rating` with the following code.
+On the next line, start a `ggplot()`, setting `data` to `diamonds` and mapping `x` to `caray` with the following code.
 
 ```{r eval = FALSE, echo = TRUE}
-ggplot(data = qscores,
-       mapping = aes(x = rating))
+ggplot(data = diamonds,
+       mapping = aes(x = carat))
 ```
 
 Run the entire file again. This should generate a blank plot in the "Plots" tab at the bottom right of your RStudio session.
@@ -521,10 +518,10 @@ question_text(NULL,
 
 ### Exercise 10
 
-Add a layer with `geom_histogram()`. Change the border color in our graph by setting `color` to `"white"` within `geom_histogram`, and change the number of columns in our plot by setting the `bins` argument to `5`.
+Add a layer with `geom_histogram()`. Change the border color in our graph by setting `color` to `"white"` within `geom_histogram`, and change the number of columns in our plot by setting the `bins` argument to `100`.
 
 ```{r eval = FALSE, echo = TRUE}
-geom_histogram(bins = 5,
+geom_histogram(bins = 100,
                color = "white")
 ```
 
@@ -606,18 +603,17 @@ Now using the `ggsave()` function we can create a png of our plot from our code.
 Your entire file should look like:
 
 ```{r eval = FALSE, echo = TRUE}
-library(primer.data)
 library(tidyverse)
 
-hist_p <- ggplot(data = qscores, 
-                 mapping = aes(x = rating)) +
-  geom_histogram(bins = 5,
+hist_p <- ggplot(data = diamonds, 
+                 mapping = aes(x = carat)) +
+  geom_histogram(bins = 100,
                  color = "white") + 
-  labs(title = "Histogram of Student Ratings of Harvard Classes", 
-       subtitle = "Ratings of 1 and 2 are very rare", 
-       x = "Rating", 
+  labs(title = "Histogram of Carat (Weight) among 50,000 Diamonds", 
+       subtitle = "Carats just at or above meaningful numbers are very common", 
+       x = "Carat", 
        y = "Count", 
-       caption = "Source: Harvard Q-Guide (2018-2019)")
+       caption = "diamonds data set from ggplot2 package")
 
 ggsave(plot = hist_p, file = "hist-harvard.png")
 ```
