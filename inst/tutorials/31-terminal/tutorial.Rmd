@@ -1,0 +1,1388 @@
+---
+title: Terminal
+author: David Kane
+tutorial:
+  id: terminal
+output:
+  learnr::tutorial:
+    progressive:  true
+    allow_skip::  true
+runtime: shiny_prerendered
+description: Terminal Tutorial
+---
+
+```{r setup, include = FALSE}
+library(learnr)
+library(tutorial.helpers)
+library(tidyverse)
+library(knitr)
+knitr::opts_chunk$set(echo = FALSE)
+options(tutorial.exercise.timelimit = 60, 
+        tutorial.storage = "local") 
+```
+
+<!-- No files/directories with the same name as commands! [done, with solution comment added about this concept.] --> 
+
+<!-- Make .jpg files .txt. [done.] -->
+
+<!-- Use car.txt and hat.txt and bet.txt [done.] -->
+
+<!-- Davids-MBP-10:wildcards davidkane$ ls a -->
+<!-- ls: a: No such file or directory -->
+<!-- Davids-MBP-10:wildcards davidkane$ ls a* -->
+<!-- apple.txt -->
+<!-- Davids-MBP-10:wildcards davidkane$ ls *a* -->
+<!-- apple.txt       banana.txt -->
+<!-- Davids-MBP-10:wildcards davidkane$  -->
+
+<!-- Then ls > files.txt -->
+
+<!-- Davids-MBP-10:wildcards davidkane$ ls $R_HOME > files.txt -->
+<!-- Davids-MBP-10:wildcards davidkane$ cat files.txt -->
+<!-- COPYING -->
+<!-- Info.plist -->
+<!-- R -->
+<!-- Rscript -->
+<!-- SVN-REVISION -->
+<!-- bin -->
+<!-- doc -->
+<!-- etc -->
+<!-- fontconfig -->
+<!-- include -->
+<!-- lib -->
+<!-- library -->
+<!-- man1 -->
+<!-- modules -->
+<!-- share -->
+<!-- tests -->
+<!-- Davids-MBP-10:wildcards davidkane$ grep i files.txt  -->
+<!-- Info.plist -->
+<!-- Rscript -->
+<!-- bin -->
+<!-- fontconfig -->
+<!-- include -->
+<!-- lib -->
+<!-- library -->
+<!-- Davids-MBP-10:wildcards davidkane$ grep R files.txt  -->
+<!-- R -->
+<!-- Rscript -->
+<!-- SVN-REVISION -->
+<!-- Davids-MBP-10:wildcards davidkane$ grep ^R files.txt  -->
+<!-- R -->
+<!-- Rscript -->
+<!-- Davids-MBP-10:wildcards davidkane$ grep t files.txt  -->
+<!-- Info.plist -->
+<!-- Rscript -->
+<!-- etc -->
+<!-- fontconfig -->
+<!-- tests -->
+<!-- Davids-MBP-10:wildcards davidkane$ grep t$ files.txt  -->
+<!-- Info.plist -->
+<!-- Rscript -->
+<!-- Davids-MBP-10:wildcards davidkane$  --> 
+
+
+
+
+```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
+```
+
+```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
+```
+
+## Introduction
+### 
+
+The Terminal tab is next to the Console tab within the Console pane in the lower left portion of RStudio. (Yes, it is a bit confusing that we call the entire structure the Console **pane** even though only one part of it is the Console **tab**.) We use the Console tab to talk to R. We use the Terminal tab to talk directly with the computer. Sadly, the Console and the Terminal speak different languages.
+
+This tutorial will introduce the structure and uses of the Terminal.
+
+
+### Exercise 1
+
+Hit return two times in the Terminal to see what happens. The terminal has a string of characters ending in a $ before your cursor, called the **prompt**. After a command has been executed, a prompt will be generated on a new line to let you know that Terminal is ready for a new command.  Copy and paste the three (blank) lines from the Terminal as your answer below. We do a lot of **c**opy/**p**asting of **c**ommands/**r**esponses, so we abbreviate those instructions as CP/CR.
+
+### 
+
+```{r introduction-1}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+The prompt acts as a quick way to tell you where in the computer you are. Terminal is sensitive to which folder location you are in just like R console.
+
+### Exercise 2
+
+Let's figure out which folder we are in. To see your current location within your computer, type the command `pwd` (**p**resent **w**orking **d**irectory) in the Terminal. Hitting return runs the command. Copy and paste all commands and results associated with this exercise below, as you will do for all the following exercises.  
+
+### 
+
+```{r introduction-2}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Notice how the last directory (folder) in the **path** is included in the prompt.
+
+Your pasted code should look something like:
+
+```{r}
+include_graphics("images/pwd.png")
+```
+
+### Exercise 3
+
+Let's see a **l**i**s**t of what is where we are, i.e. in our working directory. Run `ls`. CP/CR.
+
+### 
+
+```{r introduction-3}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Note how, if you do not give any more information, `ls` assumes that you want a list of what is in your current working directory. 
+
+### Exercise 4
+
+Let's create a file called `my.txt`. Run `touch my.txt`. Run `ls` to confirm that the new file exists inside the working directory. CP/CR.
+
+### 
+
+```{r introduction-4}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+`touch` creates an empty file. 
+
+### Exercise 5
+
+Let's **m**a**k**e a **dir**ectory called `my-class`. Run `mkdir my-class`. Run `ls` to confirm that the new directory exists inside the working directory. Copy and paste the work.
+
+### 
+
+ 
+```{r introduction-5}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+`mkdir` creates an empty directory. Recall that we --- and most other people --- use the terms "folder" and "directory" interchangeably.
+
+### Exercise 6
+
+Let's rename `my.txt` to `fake.txt`.  Run `mv my.txt fake.txt`. CP/CR. 
+
+### 
+
+```{r introduction-6}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+`mv` stands for **m**o**v**e. The first argument is the file we want to move, the second argument is the location (both the path, if applicable, and file name) we want to move it to. Here the places have the same folder location --- the current working directory, or `.` --- but different names. We will move things to different directories with `mv` later. 
+
+### Exercise 7
+
+Let's **r**e**m**ove the file `fake.txt`. Run `rm fake.txt`. 
+
+### 
+
+```{r introduction-7}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+**Be careful** with the `rm` command in Terminal. Unlike moving files to Trash on your laptop, it is **irreversible**. If you delete certain special files, it could cause damage the programs or your computer. 
+
+### Exercise 8
+
+Let's remove the directory `my-class`. Run `rm -r my-class`. 
+
+### 
+
+```{r introduction-8}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+`-r` is an **option** that allows us to delete a directory. We will learn more about options later. The `r` stands for "recursive" because, when you delete a directory, you are also (recursively) deleting everything within that directory.
+
+It is good to clean up. Don't leave junk files lying around. 
+
+## Paths
+### 
+
+You will practice using paths both inside and outside the working directory. You will learn a few short-cuts to make this easier. 
+
+### Exercise 1
+
+By default, the Terminal in RStudio starts with a working directory which is the same as the folder in which the current R project resides, i.e., the folder with the `.Rproj` file in it. Run `pwd` to return your current working directory. CP/CR.
+
+### 
+
+```{r paths-1}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+The Files pane (bottom right corner) in RStudio shows the contents of the default working directory, generally the project directory. Towards the top, you will see a series of directories, separated by `>`, on your computer beginning with the Home icon. This should match the path generated by `pwd`. 
+
+### Exercise 2
+
+Use `mkdir` to make a directory named `paths` inside your working directory. CP/CR.
+
+### 
+
+```{r paths-2}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+As above, if you do not give any more information, the new directory is created directly inside the working directory.
+
+### Exercise 3
+
+Let's **c**hange the working **d**irectory to `paths`. Run `cd paths`.  Run `pwd` to confirm that you have changed the working directory. CP/CR.
+
+### 
+
+```{r paths-3}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### Exercise 4
+
+Use `mkdir` to make a directory  called `lessons` inside `paths`. CP/CR.
+
+### 
+
+```{r paths-4}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Because we have changed working directories, the new directory is now created directly inside the new working directory. 
+
+### Exercise 5
+
+Let's make a directory within `lessons` called `fruits`. Run `mkdir lessons/fruits`. Run `ls lessons` to check to see if `fruits` exists inside. CP/CR.
+
+### 
+
+```{r paths-5}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+We could not, as before, simply name the folder we wanted to create because then it would be created directly inside our working directory. To refer to a location that is not directly inside the present working directory, we need to use a path, which describes the location directory by directory. The path above is called a **relative path** because it still assumes the working directory as its starting point. 
+
+### Exercise 6
+
+Let's change our working directory to `fruits`. Run `cd lessons/fruits`. As you are typing this command, type only the `f` in `fruits` and then press the tab key (twice may be necessary on some computers). Pressing tab autocompletes the name of a file or directory.
+
+### 
+
+```{r paths-6}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+<!-- huh? The path to refer to a file or directory does not change between commands.  -->
+
+### Exercise 7
+
+Use `touch` to make a text file inside `fruits`, named `pineapple.txt`. CP/CR.
+
+### 
+
+```{r paths-7}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+`pineapple.txt` is still a relative path, but since the location is directly inside the assumed starting point, i.e. the  working directory, the name of the file is all we need. If we had used `lessons/fruits/apple.txt`, as we would have if our working directory were `paths`, we would have gotten an error because those directories would not be recognized within an assumed starting point of `fruits`.
+
+### Exercise 8
+
+Use `touch` to make two more text files inside `fruits`, named `pear.txt` and `does-not-belong`. CP/CR. 
+
+### 
+
+```{r paths-8}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+It is not necessary for you to add the `.txt` suffix, but avoid assigning an incorrect suffix to a file. 
+
+### Exercise 9
+
+Let's change our working directory to `lessons`. Run `cd ..` to go to the folder immediately above the working directory. Use `pwd` to confirm that you are in the right directory. CP/CR.
+
+### 
+
+```{r paths-9}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+`..` is shorthand for the directory immediately above the  working directory. `.` is shorthand for the working directory. 
+
+### Exercise 10
+
+Use `mkdir` to make a directory within `lessons`, named `tbd`. CP/CR.
+
+### 
+
+```{r paths-10}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### Exercise 11
+
+It would be tedious to have to use `..` every time we wanted to refer to anywhere outside of our working directory. To refer to a specific folder outside of the working directory, we can instead use an **absolute path**. An absolute path, as opposed to the relative paths we have been using, describes a place on your computer without respect to a working directory. An absolute path begins with the root directory, which is represented by a lone `/`.  The command `pwd` returns an absolute path.
+
+### 
+
+<!-- DK: Seems a weird question. -->
+
+Let's go back to the default working directory. Go to Exercise 2 to find the absolute path of the default working directory. Run `cd` with this as an argument. For example: `cd /Users/user-name/Desktop/sample/default-working-directory`. CP/CR.
+
+### 
+
+```{r paths-11}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### Exercise 12
+
+<!-- DK: This could be broken up into several different questions, showing the different options which we currently only discuss. -->
+
+Let's move the file `does-not-belong` so that it is directly inside of the working directory. Run `mv paths/lessons/fruits/does-not-belong .`. Recall that the first argument is the place from where we want to move the file. The second argument is the place where we want to move the file to. This might be just a file name, if we are giving the file a new name in the current directory. Or it might be a path and file name combination. 
+
+Recall that `.` is shorthand for the present working directory. So this command just moves the file from where it is, to where we are now, without changing the files name. CP/CR.
+
+### 
+
+```{r paths-12}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+If we are moving a file or directory without changing the name, we do not need to add the name in the second argument because `mv` will retain the name by default. `mv paths/lessons/fruits/does-not-belong ./does-not-belong` is equivalent to the command you ran because `./` means the same thing as `.`, but it allows you to add a file name as well. It is also possible to change the name of a file as we move it.
+
+### Exercise 13
+
+Use `cd` to change the working directory to `paths`. Use `mv` and the `.` shorthand to move the directory `tbd` directly inside of `paths`. Remember that you will need a path to refer to the current location of `tbd`. CP/CR.
+
+### 
+
+```{r paths-13}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+There is no difference between moving a directory and moving a file with `mv`. 
+
+### Exercise 14
+
+<!-- DK: Could do more here. Perhaps discuss environment variables, including GITHUB_PAT and where it lives. -->
+
+Run `cd` alone. Now, use `pwd` to check where you are. This is called the **home directory**, within which all an user's directories and files are contained. Run `ls` to see what is inside your home directory. CP/CR.
+
+### 
+
+```{r paths-14}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### Exercise 15
+
+Use `cd` to change the the working directory back to your default working directory. You can again use the absolute path from the `pwd` in Exercise 1. CP/CR.
+
+### 
+
+```{r paths-15}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Since the default working directory is within the home directory, the full absolute path was not necessary. We could have omitted the user-name and everything before it. 
+
+### Exercise 16
+
+Run `ls ~`. The list should be identical to the list you generated above in the home directory. Because the home directory is used in the absolute path of so many files, its path (`/Users/your-user-name-here`) can be written with the shorthand `~`, which is a tilde, pronounced TIL-D. CP/CR.
+
+### 
+
+```{r paths-16}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+The shorthands we have learned so far, `.`, `..`, `~`, stand for the text of the paths for the corresponding directory. They are not specific to any function and can be used in any situation where the text of the relevant path could be used. 
+
+### Exercise 17
+
+<!-- DK: Awkward. Maybe mention tab completion. -->
+
+Let's change the working directory to a directory of your choice within the home directory using the shorthand `~`. Run, for example, `cd ~/Desktop`.
+
+### 
+
+```{r paths-17}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Here, unlike above, an absolute path was necessary because `Desktop`, for example, is not within our working directory.
+
+### Exercise 18
+
+<!-- DK: Make all questions easier by always giving, at least, all the parts of the right answer. Most time, we just give the full right answer. -->
+
+Use `cd` to change back to the default working directory using the shorthand for the home directory to write its absolute path. CP/CR.
+
+### 
+
+```{r paths-18}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Depending on whether the folder you chose contains the default working directory, an absolute path may or may not have been necessary.
+
+### Exercise 19
+
+Use `rm` to remove the file `does-not-belong` from the working directory. CP/CR.
+
+### 
+
+```{r paths-19}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+It is good to clean up. 
+
+### Exercise 20
+
+Use `rm -r` to remove the directory `paths` from the working directory. CP/CR.
+
+### 
+
+```{r paths-20}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+Good work.
+
+## Options
+### 
+
+You will learn more about what options are and use them for functions you already know. 
+
+### Exercise 1
+
+Use `pwd` to confirm that you are in your default working directory. Make a directory directly inside the working directory, named `options`.
+
+### 
+
+```{r options-1}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### Exercise 2
+
+Without changing directories, add a text file to the `options` directory, named `.my-hidden.txt` (make sure to include the `.` at the front). 
+
+### 
+
+```{r options-2}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Other than the `.`, avoid beginning file names with special characters or including spaces. These are more difficult to work with in Terminal. 
+
+### Exercise 3
+
+Run `ls` to check if the file is inside `options`. If you did the previous exercise correctly, you should **not** see the new file. This is because we prefixed the name with  `.`,  which hid the file from normal view.  Now run `ls -a options`. Using the **option** `-a`, you should be able to see **a**ll the files in `options`.
+
+### 
+
+```{r options-3}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Options are regularly preceded by a `-` and come before the argument. 
+
+Hidden files live all over your computer. You can turn on your ability to see hidden files in the R Studio files pane (bottom right corner) by clicking the "More" button towards the top. 
+
+### Exercise 4
+
+We have already gone over a few shorthands that stand for paths. The **environmental variable** `$R_HOME` represents the path to a folder of set-up files that R has installed on your computer. Type and enter `$R_HOME` alone to make sure we are telling you the truth. Then change your working directory to `$R_HOME`. 
+
+### 
+
+```{r options-4}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Environmental variables are always preceded by `$`. Like the shorthands, they represent the text of the path and are not specific to any one function. 
+
+### Exercise 5
+
+Run `ls $HOME`. This should generate a list of the items in your home directory. `$HOME` is an environmental variable that represents the home directory.
+
+### 
+
+```{r options-5}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+There are many different environmental variables for places throughout your computer. You can also make your own. 
+
+### Exercise 6
+
+Use `pwd` to confirm that you are still in `$R_HOME`. Use `ls` to see check what is inside `$R_HOME`. You should see several unfamiliar items. Because this directory is unfamiliar, we may want more information. Let's run `ls -l`, so that we can see more information in a **l**ong list. 
+
+### 
+
+```{r options-6}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+In a long list,  names are in the last column and file type is in the first: if the string in the first column begins with `d` it is a **d**irectory; if it begins with  `-` it is a file; if it begins with `l` it is a **l**ink to another file or directory on the computer .The middle columns give, from left to right, the number of files, author, permission, file size (in bytes), date last modified.
+
+### Exercise 7
+
+Without changing directories, use `ls -l` to check what is inside the `doc` directory. 
+
+### 
+
+```{r options-7}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+As you could guess from the name, the directory contains mostly files, including `AUTHORS`. 
+
+### Exercise 8
+
+Use `cd` to change your directory  to `options`. Use the absolute path from Exercise 1 if you need it.
+
+### 
+
+```{r options-8}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### Exercise 9
+
+Let's make a copy of `$R_HOME/doc/AUTHORS` in `options`. Use the command `cp`, whose syntax is identical to `mv`, and the `.` shorthand. 
+
+### 
+
+```{r options-9}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Like `mv`, `cp` can change a file name. Like `mv`, if the destination file name is omitted, `cp` will retain the same name by default. 
+
+### Exercise 10
+
+Try to use `cp` and `.` to copy the `doc` directory into `options`. You will get an error informing you that the thing you tried to copy was a directory. Run the same command using the option `-r`.
+
+### 
+
+```{r options-10}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+As we have seen for `rm`, `-r` allows us to use `cp` with directories. This is different from `mv`, which does not need `-r`. 
+
+### Exercise 11
+
+Let's view just the initial lines of the `AUTHORS`. Run `head AUTHORS`
+
+### 
+
+```{r options-11}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Now you know how R got its name. 
+
+### Exercise 12
+
+Let's view more than just the initial 10 lines. The option `-n` allows you to specify the number of initial lines you want to see. Run `head -n 18 AUTHORS`. 
+
+### 
+
+```{r options-12}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+The option `-n` takes an argument which allows head to display any number of initial lines. 
+
+### Exercise 13
+
+Use the command `tail` and the same `-n` option to view the last 15 lines of `AUTHORS`. 
+
+### 
+
+```{r options-13}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+If the argument of `-n`is greater than the number of lines in the file, `head` or `tail` will just print the whole file. 
+
+### Exercise 14
+
+Let's view the whole file at once. Run `cat` AUTHORS.
+
+### 
+
+```{r options-14}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+`cat` stands for con**cat**enate, which means "to chain together." While it is often used to a single text file, the command can take two arguments and print the files together. 
+
+### Exercise 15
+
+Run `cat -n AUTHORS`. Notice that `-n` has no argument. 
+
+### 
+
+```{r options-15}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+`cat -n` prints the text file with line numbers. Note that the names end at line 28. 
+
+### Exercise 16
+
+Let's make our own text file. Start by running `echo` which takes a quoted string, for example, "Your First and Last Name Here" as its argument. This "echoes" the argument by printing it in the next line of the terminal.
+
+### 
+
+```{r options-16}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Echo can also take a string that is not in quotes as its argument. 
+
+### Exercise 17
+
+We can change the place that we `echo` to, from the Terminal to a text file, using `>` to redirect the output Run `echo "Your First and Last Name Here" > test.txt`. Then use `ls` to see if the file `test.txt` exists within your working directory. Then use `cat` to read this file. After you have confirmed that the file contains your name, use `rm` to remove `test.txt`. 
+
+### 
+
+```{r options-17}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### Exercise 18
+
+`>` can be used to redirect the output of any command, not just `echo`. Let's try to make a new text file in `options` with just the first 28 lines of `AUTHORS` called `AUTHORS-fake`. Run `head -n 28 AUTHORS > AUTHORS-fake`. 
+
+### 
+
+```{r options-18}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### Exercise 19
+
+Using `>>`, whose syntax is the same as `>`, we can append output to an existing document. Use `echo` and `>>` to append your name to the list of `AUTHORS-fake`. 
+
+### 
+
+```{r options-19}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Like `>`, `>>` is not limited to echo, but can be used to append the output of any command. 
+
+### Exercise 20
+
+Use `tail` and `>>` to append the last 11 lines of `AUTHORS` to `AUTHORS-fake`. Refer to the syntax in Exercise 18 if needed.
+
+### 
+
+```{r options-20}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Your fake is not great because your name is likely not placed in correct alphabetical order. If you wish, practice these commands more by being more precise with the last numbers for your name. Or learn read on how to edit text files in the Terminal more sophisticatedly, with tools such as Nano. 
+
+### Exercise 21
+
+Use `cd` and `..` to change your directory to the default working directory. Use `rm -r` to remove the `options` directory. 
+
+### 
+
+```{r options-21}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Good work. 
+
+## Wildcards and grep
+### 
+
+You will learn how to search for files and search through individual files.
+
+### Exercise 1
+
+Use `pwd` to confirm that you are in your default working directory. Make a directory directly inside the working directory, named `wildcards`. CP/CR.
+
+### 
+
+```{r wildcards-and-grep-1}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### Exercise 2
+
+Change your working directory to `wildcards`. Make three text files in `wildcards`, named `hat.txt`, `cat.txt`, and `ate.txt`. CP/CR.
+
+### 
+
+```{r wildcards-and-grep-2}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+`touch` can take multiple arguments, making a file for each one. `touch hat.txt car.txt ate.txt` is equivalent to running `touch` three times. 
+
+### Exercise 3
+
+Terminal commands allow the use of **wildcards**. A wildcard `*` represents zero or more of any character, and it is used to work with similarly named files as a group. 
+
+### 
+
+Let's generate a list of all our files which contain the letter `a`. First simply try to run `ls a`. You will get an error message because there is no file named `a` in the working directory.
+
+### 
+
+```{r wildcards-and-grep-3}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Though we have been using `ls` to view the content of directories, `ls` can also take files as an argument and make a list of them. 
+
+### Exercise 4
+
+Let's try again. Run `ls a*`. Terminal will only return `ate.txt`. Because you  put `*` only after `a`, Terminal returned only  files that began with `a`. CP/CR.
+
+### 
+
+```{r wildcards-and-grep-4}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Though wildcards can be strings of any length, position matters.
+
+### Exercise 5
+
+Now run `ls *a*`. This should return `hat.txt`, `cat.txt`, and `ate.txt`. CP/CR.
+
+### 
+
+```{r wildcards-and-grep-5}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+Note that these **regular expressions** are case-sensitive. A regular expression is a "pattern" which you can use for many purposes, including as a search criteria. 
+
+### Exercise 6
+
+Now let's try to make a list of all the file whose names before the suffix end in `t`. Run `ls *t.*` This should return `hat.txt` and `cat.txt`. CP/CR.
+
+### 
+
+```{r wildcards-and-grep-6}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+Often you need to think critically about which regular expression works best for your purpose. 
+
+
+### Exercise 7
+
+Let's save the output of our list of all the filenames that contained `a` to a new file called `afiles.txt`. Keep pressing the `up` arrow key to navigate through your previous commands until you get to the command you used above: `ls *a*`. Then add ` > afiles.txt` and run the command. CP/CR.
+
+### 
+
+```{r wildcards-and-grep-7}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+You can use your `up` and `down` arrow keys to navigate command history. The `>` outs the result of the lefthand side command into the righthand side location.
+
+### Exercise 8
+
+Wildcards can be used with more than `ls`. Let's move `hat.txt` and `cat.txt` together into one directory. Make a new directory called `suess`. Run `mv *t.* suess`. CP/CR.
+
+### 
+
+```{r wildcards-and-grep-8}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### Exercise 9
+
+Use `cd` and `..` to return to the default working directory. Make a directory called `grepping`
+
+### 
+
+```{r wildcards-and-grep-9}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+We call this folder `grepping` rather than `grep` because it is bad to name files or directories the same thing as commands. 
+
+### Exercise 10
+
+Use `mv` and `.` to move `afiles.txt` to `grepping`. Remember that `afiles.txt` is in `wildcards`. 
+
+### 
+
+```{r wildcards-and-grep-10}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Have you been using Tab autocomplete to write your paths? If not, try it here. 
+
+### Exercise 11
+
+Let's search the text file for lines containing the letter "a". Run `grep a grepping/afiles.txt` This should return all three lines. 
+
+### 
+
+```{r wildcards-and-grep-11}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+`grep` is used to search for a string of characters within a text file. When it finds a match, it prints the line. The regular expression can be put in quotes but does not have to. 
+
+
+### Exercise 12
+
+Let's search through the text file for lines that begin with the letter "a". Run `grep ^a grepping/afiles.txt`. This should return the line with `ate.txt`. 
+
+### 
+
+```{r wildcards-and-grep-12}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+`^` is put at the beginning of a regular expression to indicate that the expression must occur at the beginning of the string. `$` is likewise put at the end of a regular expression to indicate that the expression must occur at the end of the string. 
+
+We will not attempt the third search we made of these files with the wildcards because it is difficult, though possible, to search for strings with special characters like `.` with `grep`. 
+
+
+### Exercise 13
+
+Use `ls` and the environmental variable `$R_HOME` to make a list of the contents of `$R_HOME` and use `>` to save this ouput to a new file named `rfiles.txt`. Use `cat` to print this file. 
+
+### 
+
+```{r wildcards-and-grep-13}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### Exercise 14
+
+Use `grep` to search `rfiles.txt` for lines that contain `R`. This should return two lines.
+
+### 
+
+```{r wildcards-and-grep-14}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+ 
+A mistyped grep command can cause terminal to get stuck and not generate a new prompt. If this happens, navigate to the top of the Terminal page and click the dropdown where Terminal says busy. Press Interrupt Terminal Command to generate a new prompt and start again. 
+
+### Exercise 15
+
+Use `grep` and `^` to search `rfiles.txt` for lines that begin with `R`. This should retrn two lines 
+
+### 
+
+```{r wildcards-and-grep-15}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+`^` and `$` are called metacharacters. 
+
+### Exercise 16
+
+Use `grep` and `$` to search `rfiles.txt` for lines that end with `c`. Remember that `$` comes at the end. This should return one line.
+
+### 
+
+```{r wildcards-and-grep-16}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Several metacharacters exist which can be used for more specific searches.
+
+### Exercise 17
+
+Use `grep` to search `rfiles.txt` for lines than contain the string `ib`. This should return two lines.
+
+### 
+
+```{r wildcards-and-grep-17}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+An even more powerful version of `grep` is known as `egrep` and is on the Terminal of most operating systems. 
+
+### Exercise 18
+
+Use `cd` change the working directory to your default working directory. Use the absolute path from Exercise 1 if needed. 
+
+```{r wildcards-and-grep-18}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+If you keep your R projects in the same place on your computer, only the last directory in the path for your default working directory will change between projects. 
+
+### Exercise 19
+
+Use `rm -r`to remove `wildcards` and `grepping` at the same time. Like touch, `rm` can take multiple arguments. 
+
+```{r wildcards-and-grep-19}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Good work. 
+
+```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
+```
