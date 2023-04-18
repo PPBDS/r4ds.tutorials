@@ -13,7 +13,11 @@ status](https://github.com/PPBDS/r4ds.tutorials/workflows/R-CMD-check/badge.svg)
 
 **r4ds.tutorials** provides tutorials for [*R for Data Science
 (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine
-Çetinkaya-Rundel, and Garrett Grolemund.
+Çetinkaya-Rundel, and Garrett Grolemund. These tutorials assume that you
+have some experience working with the tools provided by the
+**[tutorial.helpers](https://ppbds.github.io/tutorial.helpers/)**
+package. As long as you have completed the “Getting Started” tutorial
+from that package, you should be fine.
 
 ## Installation
 
@@ -24,8 +28,7 @@ You can install the development version from
 remotes::install_github("PPBDS/r4ds.tutorials")
 ```
 
-For suggested updates during installation, though you do not have to
-have the latest versions of packages, it is recommended you update them.
+If R offers you the option to update some packages, you should do so.
 For packages that need compilation, feel free to answer “no”.
 
 Then **restart your R session** or **restart RStudio**.
@@ -38,18 +41,17 @@ In order to access the tutorials, start by loading the package.
 library(r4ds.tutorials)
 ```
 
- 
-
 You can access the tutorials via the Tutorial tab in the top right
 (Environment) pane in RStudio.
 
-If any of the following is happening to you
+If either of the following is happening to you
+
 <ul>
 <li>
 Cannot find the Tutorial pane
 </li>
 <li>
-Cannot find a tutorial called “Getting Started”
+Cannot find any r4ds tutorials
 </li>
 </ul>
 
@@ -57,9 +59,10 @@ Then **remember to restart your R session** after installing the
 package.
 
 Because tutorials within the Tutorial pane are sorted in alphabetical
-order by the name of the package, the **r4ds.tutorials** will be at the
-bottom. If you don’t see any tutorials, try clicking the “Home” button –
-the little house symbol with the thin red roof in the upper right.
+order by the name of the package, the **r4ds.tutorials** will be toward
+the bottom. If you don’t see any tutorials, try clicking the “Home”
+button – the little house symbol with the thin red roof in the upper
+right.
 
 In order to expand the window, you can drag and enlarge the tutorial
 pane inside RStudio. In order to open a pop-up window, click the “Show
@@ -72,5 +75,5 @@ would like to stop the job from running, you can click the back arrow in
 the Jobs tab, and then press the red stop sign icon. Your work will be
 saved between RStudio sessions, meaning that you can complete a tutorial
 in multiple sittings. Once you have completed a tutorial, follow the
-instructions on the tutorial `Submit` page and (if you’re a student)
-submit the downloaded `rds` file as instructed.
+instructions on the tutorial `Submit` page and, if you’re a student,
+submit your answers as instructed.
