@@ -29,16 +29,17 @@ options(tutorial.exercise.timelimit = 60,
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 8: Data import](https://r4ds.hadley.nz/data-import.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to import data into your R project using `[read_csv()](https://readr.tidyverse.org/reference/read_delim.html)` and related functions from the [**readr**](https://readr.tidyverse.org/) package. You will also learn how to write out data to files with functions like `[write_csv()](https://readr.tidyverse.org/reference/write_delim.html)`.
+This tutorial covers [Chapter 8: Data import](https://r4ds.hadley.nz/data-import.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to import data into your R project using [`read_csv()`](https://readr.tidyverse.org/reference/read_delim.html) and related functions from the [**readr**](https://readr.tidyverse.org/) package. You will also learn how to write out data to files with functions like [`write_csv()`](https://readr.tidyverse.org/reference/write_delim.html).
 
 
 ## Warm Up
 ### 
 
-This initial section of the tutorial starts with a slow warm up about reading CSV and other simple text files. The following section starts the material in *R for Data Science (2e)*.
+This initial section of the tutorial starts with a slow warm up about reading CSV and other simple text files. The section after this one starts the material from *R for Data Science (2e)*.
 
 ### 
 
@@ -54,7 +55,7 @@ cat(readLines("data/test_1.csv"), sep = "\n")
 
 ### 
 
-Write code to read this file into R using read_csv(), and set the `file` argument to "data/test_1.csv".
+Write code to read this file into R using `read_csv()`, setting the `file` argument to "data/test_1.csv".
 
 ```{r warm-up-1, exercise = TRUE}
 
@@ -73,18 +74,22 @@ read_csv(file = "data/test_1.csv")
 
 The result when your code is run should look like this:
 
-```{r}
+```{r comment = ''}
 read_csv("data/test_1.csv")
 ```
 
 ### 
 
-The column specification message is a suggestion to specify the data types for each column of data. R "guesses" a data type until we use the `col_types` argument. 
+Working with R interactively is like having a conversation. You say something to R and then R says something back. In this case, you say, "Read this file." R responds with "This data has two rows and three columns." The size of a data set is where the conversation begins.
+
+###
+
+R then provides some information about the columns in the data set. The column specification message is a *suggestion* from R to you to specify the data types for each column of data. R "guesses" a data type until we use the `col_types` argument. 
 
 
 ### Exercise 2
 
-Make the warning message disappear by setting the `show_col_types` argument to `False`.
+Make the message disappear by setting the `show_col_types` argument to `FALSE`.
 
 ```{r warm-up-2, exercise = TRUE}
 
@@ -99,23 +104,22 @@ read_csv(file = "data/test_1.csv",
 
 ### 
 
-Your code should look like this after running it:
+Hitting Run Code should generate this output:
 
-```{r}
-read_csv("data/test_2.csv",
+```{r comment = ''}
+read_csv("data/test_1.csv",
          show_col_types = FALSE)
 ```
 
 ### 
 
-It is often better to use the `col_types` argument explicitly in order to ensure that the variable types are what you want them to be.
+It is always better to use the `col_types` argument explicitly in order to ensure that the variable types are what you want them to be. 
+
+R is trying to be helpful by nagging you with that message. It is saying "Don't you want to specify the column types for this data? That would be a good idea!"
 
 
 ### Exercise 3
 
-```{r warm-up-3-setup}
-cat(readLines("data/test_1.csv"), sep = "\n")
-```
 
 Consider the contents of the `test_2.csv` file. 
 
@@ -146,20 +150,16 @@ read_csv(file = "data/test_2.csv",
 
 The result when your code is run should look like this:
 
-```{r}
+```{r, comment = ''}
 read_csv("data/test_2.csv",
          skip = 2)
 ```
 
 ### 
 
-The argument `skip` is used to skip rows, but to skip columns, you can set `col_types` to `col_only` to only read the specified columns you want. 
+The argument `skip` is used to skip rows, but to skip columns, you can use the `col_only()` function as the argument to `col_types` in order to read in only the columns which you want. 
 
 ### Exercise 4
-
-```{r warm-up-4-setup}
-cat(readLines("data/test_3.csv"), sep = "\n")
-```
 
 Consider the contents of the `test_3.csv` file. 
 
@@ -188,10 +188,9 @@ read_csv(file = "data/test_3.csv",
 
 The result when your code is run should look like this:
 
-```{r}
+```{r comment = ''}
 read_csv("data/test_3.csv",
          col_names = FALSE)
-        
 ```
 
 ### 
@@ -200,9 +199,6 @@ The argument `col_names` can also be used to create custom column names.
 
 ### Exercise 5
 
-```{r warm-up-5-setup}
-cat(readLines("data/test_3.csv"), sep = "\n")
-```
 
 Consider, again, the contents of the `test_3.csv` file. 
 
@@ -230,7 +226,7 @@ Use the `col_names` argument and set it to c("a", "b", "c").
 
 The result when your code is run should look like this:
 
-```{r}
+```{r comment = ''}
 read_csv("data/test_3.csv",
          col_names = (c("a", "b", "c")))
 ```
@@ -241,10 +237,6 @@ read_csv("data/test_3.csv",
 
 
 ### Exercise 6
-
-```{r warm-up-6-setup}
-cat(readLines("data/test_3.csv"), sep = "\n")
-```
 
 Get rid of the column specification message by setting the `col_types` argument to `cols(a = col_double(), b = col_double(), c = col_double())`.
 
@@ -267,7 +259,7 @@ read_csv("data/test_3.csv",
 
 The result when your code is run should look like this:
 
-```{r}
+```{r comment = ''}
 read_csv("data/test_3.csv",
          col_names = (c("a", "b", "c")),
          col_types = cols(a = col_double(), 
@@ -281,10 +273,6 @@ There are many other arguments to `cols`. You can type `?cols` into your console
 
 
 ### Exercise 7
-
-```{r warm-up-7-setup}
-cat(readLines("data/test_5.csv"), sep = "\n")
-```
 
 Consider the contents of the `test_5.csv` file. Note the "." for the first value for `b`. In this file, a period indicates a missing value. **This is not always true.** Missing values can be indicated in many different ways. And, sometimes, a period is just a period.
 
@@ -313,7 +301,7 @@ read_csv(file = "data/test_5.csv",
 
 The result when your code is run should look like this:
 
-```{r}
+```{r comment = ''}
 read_csv("data/test_5.csv",
          na = ".")
 ```
@@ -324,10 +312,6 @@ Before removing `"."`, the `col_type` of Column b was character, but after it be
 
 
 ### Exercise 8
-
-```{r warm-up-8-setup}
-cat(readLines("data/test_6.csv"), sep = "\n")
-```
 
 Consider the contents of the `test_6.csv` file.
 
@@ -356,7 +340,7 @@ read_csv(file = "data/test_6.csv",
 
 The result when your code is run should look like this:
 
-```{r}
+```{r comment = ''}
 read_csv("data/test_6.csv",
          comment = "#")
 ```
@@ -366,10 +350,6 @@ read_csv("data/test_6.csv",
 It doesn't always have to be "#", it can be any character that designates a line as a comment!
 
 ### Exercise 9
-
-```{r warm-up-9-setup}
-cat(readLines("data/test_7.csv"), sep = "\n")
-```
 
 Consider the contents of the `test_7.csv` file.
 
@@ -395,7 +375,7 @@ to cols(grade = col_integer(),
 
 The result when your code is run should look like this:
 
-```{r}
+```{r comment = ''}
 read_csv("data/test_7.csv",
          col_types = cols(grade = col_integer(),
                           student = col_character()))
@@ -465,7 +445,7 @@ read_csv(file="data/test_bad_names.csv", name_repair="universal")
 
 The result when your code is run should look like this:
 
-```{r}
+```{r comment = ''}
 read_csv(file = "data/test_bad_names.csv", name_repair = "universal")
 ```
 
@@ -503,7 +483,7 @@ read_csv(file = "data/test_bad_names.csv") |>
 
 The result when your code is run should look like this:
 
-```{r}
+```{r comment = ''}
 read_csv(file = "data/test_bad_names.csv") |> 
   clean_names()
 ```
@@ -531,7 +511,7 @@ read_csv(file = "data/test_bad_names.csv",
 
 The result when your code is run should look like this:
 
-```{r}
+```{r comment = ''}
 read_csv(file = "data/test_bad_names.csv",
          name_repair = janitor::make_clean_names)
 ```
@@ -545,10 +525,6 @@ The **janitor** package has a function called `remove_empty()` to remove empty s
 ### Exercise 15
 
 CSV files are just one type of **text** file. A text file is any file which includes plain text. The contents of such files are easy to look at in any text editor, or in RStudio.
-
-```{r warm-up-15-setup}
-cat(readLines("data/delim_1.txt"), sep = "\n")
-```
 
 Consider the contents of the text file `delim_1.txt`:
 
@@ -573,7 +549,7 @@ Also use the `delim` argument and set it to "|".
 
 The result when your code is run should look like this:
 
-```{r}
+```{r comment = ''}
 read_delim("data/delim_1.txt", delim = "|")
 ```
 
@@ -582,10 +558,6 @@ read_delim("data/delim_1.txt", delim = "|")
 Note how the spaces and commas are included in the values for `town`. You can't use `read_csv()` here because not all the columns are denoted by commas.
 
 ### Exercise 16
-
-```{r warm-up-16-setup}
-cat(readLines("data/delim_2.txt"), sep = "\n")
-```
 
 Consider the contents of the text file `delim_2.txt`:
 
@@ -620,7 +592,7 @@ read_delim("data/delim_2.txt",
 
 The result when your code is run should look like this:
 
-```{r}
+```{r comment = ''}
 read_delim("data/delim_2.txt", 
            delim = "|",
            col_types = cols(date = col_date(format = ""),
@@ -633,11 +605,7 @@ read_delim("data/delim_2.txt",
 
 Consider this data:
 
-```{r}
-#| echo: false
-#| message: false
-#| comment: ""
-
+```{r message = FALSE, comment = ''}
 read_lines("data/students.csv") |> cat(sep = "\n")
 ```
 
