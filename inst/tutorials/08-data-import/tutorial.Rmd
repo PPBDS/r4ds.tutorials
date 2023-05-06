@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
-
+students <- read_csv("data/students.csv")
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -28,7 +28,6 @@ options(tutorial.exercise.timelimit = 60,
 
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
-
 
 ## Introduction
 ### 
@@ -38,6 +37,8 @@ This tutorial covers [Chapter 8: Data import](https://r4ds.hadley.nz/data-import
 
 ## Warm Up
 ### 
+
+This tutorial provides practical advice for handling features like column names, types, and missing data. You will then learn about reading data from multiple files at once and writing data from R to a file. Finally, you’ll learn how to handcraft data frames in R.
 
 This initial section of the tutorial starts with a slow warm up about reading CSV and other simple text files. The section after this one starts the material from *R for Data Science (2e)*.
 
@@ -82,7 +83,7 @@ read_csv("data/test_1.csv")
 
 Working with R interactively is like having a conversation. You say something to R and then R says something back. In this case, you say, "Read this file." R responds with "This data has two rows and three columns." The size of a data set is where the conversation begins.
 
-###
+### 
 
 R then provides some information about the columns in the data set. The column specification message is a *suggestion* from R to you to specify the data types for each column of data. R "guesses" a data type until we use the `col_types` argument. 
 
@@ -120,7 +121,6 @@ R is trying to be helpful by nagging you with that message. It is saying "Don't 
 
 ### Exercise 3
 
-
 Consider the contents of the `test_2.csv` file. 
 
 ```{r comment = ''}
@@ -150,7 +150,7 @@ read_csv(file = "data/test_2.csv",
 
 The result when your code is run should look like this:
 
-```{r, comment = ''}
+```{r comment = ''}
 read_csv("data/test_2.csv",
          skip = 2)
 ```
@@ -198,7 +198,6 @@ read_csv("data/test_3.csv",
 The argument `col_names` can also be used to create custom column names. 
 
 ### Exercise 5
-
 
 Consider, again, the contents of the `test_3.csv` file. 
 
@@ -603,11 +602,140 @@ read_delim("data/delim_2.txt",
 ## Reading data from a file
 ### 
 
+We now return to [Chapter 8: Data import](https://r4ds.hadley.nz/data-import.html) of [*R for Data Science (2e)*](https://r4ds.hadley.nz/)
+
+
+### Exercise 1
+
+[**readr**](https://readr.tidyverse.org/) is the key package for reading in data. Load **readr** by typing `library(readr)` at your Console. Then run `help(package = "readr")`. Copy/paste the first header below. (It should be a single line which references the version number.)
+
+```{r reading-data-from-a--1}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 1)
+```
+
+### 
+
+Because **readr** is one of the 8 packages in the *Tidyverse* we rarely load it directly. Instead, we run `library(tidyverse)` which loads all 8 packages.
+
+
+### Exercise 2
+
+Load **tidyverse** by typing `library(tidyverse)` at your Console. Then run `help(package = "tidyverse")`. Copy/paste the first header below. (It should be a single line which references the version number.)
+
+```{r reading-data-from-a--2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 1)
+```
+
+### 
+
+Note the distinction between *Tidyverse* (capitalized and in italics) and **tidyverse** (no capitalizatio and in bold). The latter refers to an actual R package, the one which we use almost every time we use R. The latter has a more [general meaning](https://www.tidyverse.org/):
+
+> The tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures.
+
+The "core" *Tidyverse* is the 8 packages loaded by `library(tidyverse)` but the broader *Tidyverse* universe includes [many more packages](https://www.tidyverse.org/packages/) which share the same general philosophy.
+
+### Exercise 3
+
 Consider this data:
 
 ```{r message = FALSE, comment = ''}
 read_lines("data/students.csv") |> cat(sep = "\n")
 ```
+
+### 
+
+Write code for reading this data into R. Use `read_csv()` and set the `file` argument to "data/students.csv".
+
+```{r reading-data-from-a--3, exercise = TRUE}
+
+```
+
+```{r reading-data-from-a--3-hint-1, eval = FALSE}
+read_csv(file = ...)
+```
+
+### 
+
+When you run read_csv(), it prints out a message telling you the number of rows and columns of data, the delimiter that was used, and the column specifications (names of columns organized by the type of data the column contains). It also prints out some information about retrieving the full column specification and how to quiet this message. 
+
+### Exercise 4
+
+Instead of just reading in the file and then just "dumping" out the results back to the screen, run the same code as above but assign the result to a new object, `students`.
+
+
+```{r reading-data-from-a--4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-data-from-a--4-hint-1, eval = FALSE}
+students <- read_csv(file = ...)
+```
+
+### 
+
+There are two primary modes of doing data analysis. In the first, we write a series of statements, connected with pipes, which "dump out" their results directly to the screen. This approach is useful for interactive analysis. In the second, which usually comes later, we need to assign the results of the commands to an object, like `students`, which we will work with later.
+
+### Exercise 5
+
+Print out the `students` object.
+
+```{r reading-data-from-a--5, exercise = TRUE}
+
+```
+
+```{r reading-data-from-a--5-hint-1, eval = FALSE}
+students
+```
+
+### 
+
+In the favourite.food column, there are a bunch of food items, and then the character string N/A, which should have been a real NA that R will recognize as “not available”. This is something we can address using the na argument. 
+
+### Exercise 6
+
+By default, `read_csv()` only recognizes empty strings ("") in this dataset as NAs. We want it to also recognize the character string "N/A". Run `read_csv()` on "data/students.csv", setting the `na` argument to 'c("N/A", "")'
+
+
+```{r reading-data-from-a--6, exercise = TRUE}
+
+```
+
+```{r reading-data-from-a--6-hint-1, eval = FALSE}
+students <- read_csv(file = ...,
+                     na = ...)
+```
+
+### 
+
+There are a bewildering set of characters that different people will use to indicate that data is missing. Look carefully at your data to find them all.
+
+### Exercise 7
+
+You might also notice that the Student ID and Full Name columns are surrounded by backticks. That’s because they contain spaces, breaking R’s usual rules for variable names; they’re *non-syntactic* names. To refer to these variables, you need to surround them with backticks, `` ` ``. 
+
+```{r reading-data-from-a--7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-data-from-a--7-hint-1, eval = FALSE}
+
+```
+
+### 
 
 ## Controlling column types
 ### 
@@ -778,8 +906,7 @@ Continue your pipe with `mutate()`. Within `mutate()` set `z` to `parse_integer(
 ```
 
 ## Reading data from multiple files
-###
-
+### 
 
 Data Scientists deal with a huge number of files loaded with data, so it is important to learn how to clean multiple files at once.
 
@@ -787,11 +914,11 @@ Data Scientists deal with a huge number of files loaded with data, so it is impo
 
 Run `list.files("data")` to check what files there are in the `data` folder.
 
-```{r parsing-multiple-fil-1, exercise = TRUE}
+```{r reading-data-from-mu-1, exercise = TRUE}
 
 ```
 
-```{r parsing-multiple-fil-1-hint-1, eval = FALSE}
+```{r reading-data-from-mu-1-hint-1, eval = FALSE}
 list.files("data")
 ```
 
@@ -803,13 +930,13 @@ The function `list.files()` accepts directories, not just names of folders.
 
 Set the argument `pattern` to `"similar"` to only look at the files with the names "similar" in them.
 
-```{r parsing-multiple-fil-2, exercise = TRUE}
+```{r reading-data-from-mu-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r parsing-multiple-fil-2-hint-1, eval = FALSE}
+```{r reading-data-from-mu-2-hint-1, eval = FALSE}
 list.files("data", pattern = "similar")
 ```
 
@@ -829,13 +956,13 @@ You can also set `pattern` to ".csv" or ".delim" for those types of files in a f
 
 To show the exact directory of where the files came from, set the argument `full.names` to `TRUE` in `list.files()`.
 
-```{r parsing-multiple-fil-3, exercise = TRUE}
+```{r reading-data-from-mu-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r parsing-multiple-fil-3-hint-1, eval = FALSE}
+```{r reading-data-from-mu-3-hint-1, eval = FALSE}
 list.files("data", pattern = "similar", full.names = TRUE)
 ```
 
@@ -861,13 +988,13 @@ cat(readLines("data/similar_3.csv"), sep = "\n")
 
 Now let's combine the files by piping the previous code with `read_csv()`!
 
-```{r parsing-multiple-fil-4, exercise = TRUE}
+```{r reading-data-from-mu-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r parsing-multiple-fil-4-hint-1, eval = FALSE}
+```{r reading-data-from-mu-4-hint-1, eval = FALSE}
 list.files("data", pattern = "similar", full.names = TRUE) |> 
   read_csv()
 ```
@@ -880,13 +1007,13 @@ Column `b`'s type is `chr` because the "." in `similar_1.csv` makes R think the 
 
 In `read_csv()`, set the argument `na` to `"."` to get rid of the character in column `b`.
 
-```{r parsing-multiple-fil-5, exercise = TRUE}
+```{r reading-data-from-mu-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r parsing-multiple-fil-5-hint-1, eval = FALSE}
+```{r reading-data-from-mu-5-hint-1, eval = FALSE}
 ... |> 
   read_csv(na = ".")
 ```
@@ -908,13 +1035,13 @@ Because the "." is gone, column `b`'s type is `dbl` now.
 
 Now let's get rid of the annoying "specify column types" message by using the `show_col_types` argument.
 
-```{r parsing-multiple-fil-6, exercise = TRUE}
+```{r reading-data-from-mu-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r parsing-multiple-fil-6-hint-1, eval = FALSE}
+```{r reading-data-from-mu-6-hint-1, eval = FALSE}
 ... |> read_csv(na = ".", show_col_types = FALSE)
 ```
 
