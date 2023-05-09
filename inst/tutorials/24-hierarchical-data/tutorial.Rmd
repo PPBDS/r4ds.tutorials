@@ -1,0 +1,164 @@
+---
+title: Hierarchical data
+author: David Kane
+tutorial:
+  id: hierarchical-data
+output:
+  learnr::tutorial:
+    progressive: yes
+    allow_skip: yes
+runtime: shiny_prerendered
+description: 'Tutorial for Chapter 24: Hierarchical data'
+---
+
+```{r setup, include = FALSE}
+library(learnr)
+library(tutorial.helpers)
+library(tidyverse)
+
+knitr::opts_chunk$set(echo = FALSE)
+options(tutorial.exercise.timelimit = 60, 
+        tutorial.storage = "local") 
+
+
+```
+
+```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
+```
+
+```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
+```
+
+## Introduction
+### 
+
+This tutorial covers [Chapter 24: Hierarchical data](https://r4ds.hadley.nz/rectangling.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to work with non-rectanglar data using packages like [**jsonlite**](https://cran.r-project.org/web/packages/jsonlite/vignettes/json-aaquickstart.html). 
+
+
+## JSON files 
+### 
+
+An increasingly common format for sharing data is JavaScript Object Notation or JSON. 
+
+JSON is a standard text-based format for representing structured data based on JavaScript object syntax.
+
+### Exercise 1
+
+Consider the contents of the file `test_1.json`:
+
+```{r}
+cat(readLines("data/test_1.json"), sep = "\n")
+```
+
+### 
+
+Write code for reading this JSON file into R as a tibble. Use the `fromJSON()` function from the [**jsonlite**](https://cran.r-project.org/web/packages/jsonlite/vignettes/json-aaquickstart.html) package.
+
+```{r json-files-1, exercise = TRUE}
+
+```
+
+```{r json-files-1-hint-1, eval = FALSE}
+fromJSON("data/test_1.json")
+```
+
+### 
+
+If there are "null" values in the file, you can specify how to encode those values with the `null` argument in `fromJSON`.
+
+
+### Exercise 2
+
+Consider the following tibble, which is saved in the environment as an object called `example_1`.
+
+```{r}
+tibble(name= c("Miguel", "Sofia", "Aya", "Cheng"), 
+                student_id = 1:4, exam_1 = c(85, 94, 87, 90), 
+                exam_2 = c(86, 93, 88, 91))
+```
+
+### 
+
+Write code to convert the following tibble into JSON format. Use the `toJSON()` function from the **jsonlite** package.
+
+```{r json-files-2, exercise = TRUE}
+
+```
+
+```{r json-files-2-hint-1, eval = FALSE}
+toJSON(example_1)
+```
+
+### 
+
+`toJSON()` actually has the same arguments as `fromJSON()`, meaning that you can use `null`, `na`, `pretty` and many more arguments to customize the results.
+
+### Exercise 3
+
+After converting from a tibble to the JSON format, it is hard to read the JSON format. To fix this, use the previous code and set the second argument `pretty` equal to `TRUE`.
+
+```{r json-files-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r json-files-3-hint-1, eval = FALSE}
+toJSON(example_1, pretty = ...)
+```
+
+### 
+
+The `pretty` argument comes from the [**prettify**](https://www.rdocumentation.org/packages/papeR/versions/1.0-5/topics/prettify) package, run `??prettify` to learn more about it.
+
+
+### Exercise 4
+
+Try reading from the `json` object which has already been loaded with JSON array data. Use `fromJSON()` to display the data in a tibble.
+
+```{r json-files-4, exercise = TRUE}
+
+```
+
+```{r json-files-4-hint-1, eval = FALSE}
+fromJSON(json)
+```
+
+### 
+
+As you can see, `fromJSON()` can display arrays as well, which can be useful for datasets that include matrices. You can do math operations with them as well! 
+
+### Exercise 5
+
+You can also write information like arrays or matrices to a JSON format using `toJSON()`. 
+
+Display a 3x3 array in JSON format by creating 3 arrays structured like `[1, 2, 3]`, containing them in a larger array, and then passing them into `toJSON()`.
+
+```{r json-files-5, exercise = TRUE}
+
+```
+
+```{r json-files-5-hint-1, eval = FALSE}
+json2 <- '[[..., ..., ...], [..., ..., ...], [..., ..., ...]]'
+
+```
+
+```{r json-files-5-hint-2, eval = FALSE}
+json2 <- '[[..., ..., ...], [..., ..., ...], [..., ..., ...]]'
+toJSON(json2)
+```
+
+### 
+
+Because JSON files can so easily store complex matrix data, they're often used in APIs and websites. This makes `fromJSON()` invaluable when you're pulling data off the Internet, as the data will often come in a JSON file. 
+
+Vice versa, `toJSON()` is useful for when you want to send data across the Internet due to its light weight (there's very little extra formatting included in the file and it's mostly data).
+
+
+## Summary
+### 
+
+This tutorial covered [Chapter 24: Hierarchical data](https://r4ds.hadley.nz/rectangling.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You learned how to work with non-rectanglar data using packages like [**jsonlite**](https://cran.r-project.org/web/packages/jsonlite/vignettes/json-aaquickstart.html).
+
+```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
+```
