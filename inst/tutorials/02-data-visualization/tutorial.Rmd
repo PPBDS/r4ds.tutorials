@@ -14,10 +14,9 @@ description: 'Tutorial for Chapter 2: Data Visualization'
 ```{r setup, include = FALSE}
 library(learnr)
 library(tutorial.helpers)
-library(ggplot2)
 library(tidyverse)
 library(palmerpenguins)
-library(ggthemes)
+# library(ggthemes)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
@@ -34,7 +33,7 @@ options(tutorial.exercise.timelimit = 60,
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 2: Data Visualization](https://r4ds.hadley.nz/data-visualize.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
+This tutorial covers [Chapter 2: Data Visualization](https://r4ds.hadley.nz/data-visualize.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
 
 ## Creating first ggplot
 ### 
@@ -378,7 +377,7 @@ penguins |>
   mapping = aes(x = flipper_length_mm, y = body_mass_g)
 ) +
   geom_point(mapping = aes(color = species, shape = species)) +
-  geom_smooth(method = "lm")+
+  geom_smooth(method = "lm") +
   labs( ... = "Body mass and flipper length",
         subtitle = "...")
 ```
@@ -401,7 +400,7 @@ penguins |>
   mapping = aes(x = flipper_length_mm, y = body_mass_g)
 ) +
   geom_point(mapping = aes(color = species, shape = species)) +
-  geom_smooth(method = "lm")+
+  geom_smooth(method = "lm") +
   labs( ... = "Body mass and flipper length"+
           subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
         x = ...)
@@ -420,15 +419,11 @@ Next to `x` axis label, type another comma and a `y`, then set it equal to `"Bod
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-20-hint-1, eval = FALSE}
-penguins |>
-  ggplot(
-  mapping = aes(x = flipper_length_mm, y = body_mass_g)
-) +
-  geom_point(mapping = aes(color = species, shape = species)) +
-  geom_smooth(method = "lm")+
-  labs( ... = "Body mass and flipper length"+
-          subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
-        x = ..., y = ...)
+... |> 
+  labs(... = "Body mass and flipper length",
+       subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+       x = ..., 
+       y = ...)
 ```
 
 ### 
@@ -547,16 +542,15 @@ Copy the previous code and run `+ geom_point()`
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geompoint-4-hint-1, eval = FALSE}
-penguins |>
-  ...(
-    mapping = aes(x = bill_length_mm, y = ...)
-    ) +
+... |> 
   geom_point()
 ```
 
-The warning message "Removed X rows containing missing values (geom_point())" is a common message in R when working with data visualization using ggplot2 package. It indicates that there were rows in the data that contained missing values (i.e., NA values) in the columns being used for plotting the points with `geom_point()`, and you will see it many times through this tutorial.
-
 ### 
+
+The warning message "Removed X rows containing missing values (geom_point())" is a common message in R when working with data visualization using ggplot2 package. It indicates that there were rows in the data that contained missing values (i.e., NA values) in the columns being used for plotting the points with `geom_point()`, and you will see it many times throughout this tutorial.
+
+
 
 ### Exercise 5
 
@@ -591,11 +585,7 @@ Copy the previous code, run `geom_smooth()` and within it, set `method` to `lm`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geompoint-6-hint-1, eval = FALSE}
-penguins |>
-  ggplot(
-  mapping = aes(x = bill_length_mm, y = bill_depth_mm, color = ...)
-) +
-  geom_point() +
+... |> 
   geom_smooth(... = "lm")
 ```
 
@@ -603,7 +593,7 @@ penguins |>
 
 ### Exercise 7
 
-Remove the `color` aesthetic within `ggplot()` and add it to `geom_point` by running `geom_point(mapping = aes(color = species))` to get three different lines for each species.
+Remove the `color` aesthetic within `ggplot()` and add it to `geom_point()` by running `geom_point(mapping = aes(color = species))` to get three different lines for each species.
 
 
 ```{r geompoint-7, exercise = TRUE}
@@ -646,7 +636,7 @@ penguins |>
 
 ### Exercise 9
 
-Now that we have the data points, lets add the title, subtitle, labels and etc. Copy the previous code,   add a new layer using `+` and run `labs()`. Within labs, set `title` equal to "Penguins Beak's Length and Depth" , `subtitle` to "Dimensions for Adelie, Chinstrap, and Gentoo Penguins" , `x` to  "Beak Length (mm)", `y` = "Beak Depth (mm)", `color` to "Species" and `shape` to "Species".
+Now that we have the data points, lets add the title, subtitle, labels and etc. Copy the previous code,   add a new layer using `+` and run `labs()`. Within labs, set `title` equal to "Penguins Beak's Length and Depth" , `subtitle` to "Dimensions for Adelie, Chinstrap, and Gentoo Penguins" , `x` to  "Beak Length (mm)", `y = "Beak Depth (mm)"`, `color` to "Species" and `shape` to "Species".
 
 ```{r geompoint-9, exercise = TRUE}
 
@@ -659,8 +649,12 @@ penguins |>
   ggplot(mapping = aes(x = ..., y = bill_depth_mm, color = ... , shape = species) )+
   geom_point() +
   geom_smooth(method = "lm")+
-  labs( title = "Penguins Beak's Length and Depth", subtitle = ...,
-        x = ... , ... = "Beak Depth (mm)",color = "Species", ... = "Species")
+  labs(title = "Penguins Beak's Length and Depth", 
+       subtitle = ...,
+       x = ... , 
+       ... = "Beak Depth (mm)",
+       color = "Species", 
+       ... = "Species")
 ```
 
 Reminder: This is what our graph should look like
@@ -697,6 +691,7 @@ To examine the distribution of a categorical variable, variables that represent 
 ### Exercise 1
 
 load the `palmerpenguins` library
+
 ```{r geombar-1, exercise = TRUE}
 
 ```
@@ -712,6 +707,7 @@ library(palmerpenguins)
 ### Exercise 2
 
 Run `penguins` and pipe it to a `ggplot()` call.
+
 ```{r geombar-2, exercise = TRUE}
 
 ```
@@ -730,6 +726,7 @@ penguins |>
 ### Exercise 3
 
 Within `ggplot()`, set `x` to `species` inside of `aes()`
+
 ```{r geombar-3, exercise = TRUE}
 
 ```
@@ -748,6 +745,7 @@ By default, `geom_bar()` counts the number of observations in each category: If 
 ### Exercise 4
 
 To make the bar graph, add `geom_bar()` call and run it.`
+
 ```{r geombar-4, exercise = TRUE}
 
 ```
@@ -765,6 +763,7 @@ penguins |>
 ### Exercise 5
 
 To make the graph be in order, set `x` to `fct_infreq(species)`.
+
 ```{r geombar-5, exercise = TRUE}
 
 ```
@@ -874,7 +873,8 @@ To visualize the distribution of a continuous variable, we will be using `geom_h
 
 ### Exercise 1
 
-load the `palmerpenguins` library
+Use the `library()` function to load the `palmerpenguins` package.
+
 ```{r geomhistogram-1, exercise = TRUE}
 
 ```
@@ -885,13 +885,16 @@ load the `palmerpenguins` library
 library(palmerpenguins)
 ```
 
+### 
+
 A continuous variable is a variable that can take on any value within a certain range or interval. It can be measured on a continuous scale, such as time, distance, weight, height, temperature, or any other quantity that can be measured on a numerical scale.
 
-### 
+
 
 ### Exercise 2
 
 Run `penguins` and pipe it to a `ggplot()` call.
+
 ```{r geomhistogram-2, exercise = TRUE}
 
 ```
@@ -903,9 +906,11 @@ penguins |>
   ggplot()
 ```
 
+###
+
 `geom_histogram()` creates a histogram: geom_histogram is used to create histograms, which are used to visualize the distribution of a single continuous variable. Histograms show the frequency of values within a certain range, which are typically represented by bins along the x-axis.
 
-### 
+
 
 ### Exercise 3
 
@@ -1011,6 +1016,7 @@ An alternate way to visualize the distributions of data on a continuous variable
 ### Exercise 1
 
 load the `palmerpenguins` library
+
 ```{r geomdensity-1, exercise = TRUE}
 
 ```
@@ -1028,6 +1034,7 @@ library(palmerpenguins)
 ### Exercise 2
 
 Run `penguins` and pipe it to a `ggplot()` call.
+
 ```{r geomdensity-2, exercise = TRUE}
 
 ```
@@ -1169,16 +1176,17 @@ Finally set an appropriate title, subtitle, axes labels, and caption for the gra
 Reminder: This is what your graph should look like.
 
 ```{r}
-library(ggplot2)
-library(palmerpenguins)
-density_p<-penguins |>
-  ggplot(aes(x = body_mass_g, color = species, fill = species))+
-  geom_density(alpha = .5)+
+density_p <- penguins |>
+  ggplot(aes(x = body_mass_g, 
+             color = species, 
+             fill = species)) +
+  geom_density(alpha = .5) +
   labs(title = "Distribution of Body Mass by Penguin Species",
        x = "Bill Length (mm)",
        y = "Density",
        fill = "Species",
        color = "Species")
+
 density_p
 ```
 
@@ -1230,7 +1238,7 @@ penguins |>
 
 ### Exercise 3
 
-In ggplot within `aes()`, set `x` to `species`.
+In `ggplot()` within `aes()`, set `x` to `species`.
 
 ```{r geomboxplot-3, exercise = TRUE}
 
@@ -1267,8 +1275,6 @@ penguins |>
 ### 
 
 Box plots are useful for comparing the distribution of a continuous variable across different categories or groups. They can help identify differences in the median, spread, and skewness of the data for each group.
-
-
 
 
 ### Exercise 5
