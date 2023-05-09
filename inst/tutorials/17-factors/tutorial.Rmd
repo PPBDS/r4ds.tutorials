@@ -1,0 +1,197 @@
+---
+title: Factors
+author: David Kane
+tutorial:
+  id: factors
+output:
+  learnr::tutorial:
+    progressive: yes
+    allow_skip: yes
+runtime: shiny_prerendered
+description: 'Tutorial for Chapter 18: Dates and times'
+---
+
+```{r setup, include = FALSE}
+library(learnr)
+library(tutorial.helpers)
+library(tidyverse)
+library(primer.data)
+knitr::opts_chunk$set(echo = FALSE)
+options(tutorial.exercise.timelimit = 60, 
+        tutorial.storage = "local") 
+
+
+```
+
+```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
+```
+
+```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
+```
+
+## Introduction
+### 
+
+This tutorial covers [Chapter 17: Factors](https://r4ds.hadley.nz/factors.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
+
+## Older material
+### 
+
+### Exercise 1
+
+Use `select()` to look at the `ideology` variable of the `cces` data set.
+
+```{r older-material-1, exercise = TRUE}
+
+```
+
+```{r older-material-1-hint-1, eval = FALSE}
+cces |> 
+  select(...)
+```
+
+### 
+
+Look underneath the column name. Notice that this is a factor (`<fctr>`) variable. 
+
+
+### Exercise 2
+
+Use `str()` with the argument `cces$ideology`. On the line below, use `levels()` with the same argument. 
+
+```{r older-material-2, exercise = TRUE}
+
+```
+
+```{r older-material-2-hint-1, eval = FALSE}
+str(...)
+levels(...)
+```
+
+### Exercise 3
+
+Let's now get a frequency table as a tibble. Use `fct_count()` with the argument `cces$ideology`.
+
+```{r older-material-3, exercise = TRUE}
+
+```
+
+```{r older-material-3-hint-1, eval = FALSE}
+fct_count(...)
+```
+
+### Exercise 4
+
+Now use `nlevels()` with the argument `cces$ideology` to find the number of existing levels.
+
+```{r older-material-4, exercise = TRUE}
+
+```
+
+```{r older-material-4-hint-1, eval = FALSE}
+nlevels(...)
+```
+
+### Exercise 5
+
+Now try ordering the levels of `cces$ideology` by frequency. Start a pipe with `cces$ideology` and use the function `fct_infreq()`. Then on the line below, use `levels()` to display the new order of the levels. 
+
+```{r older-material-5, exercise = TRUE}
+
+```
+
+```{r older-material-5-hint-1, eval = FALSE}
+cces$ideology |> 
+  fct_infreq() 
+
+levels(cces$ideology)
+```
+
+### 
+
+Compare this with the old order of the levels in Exercise 2 and the frequency table in Exercise 3.
+
+### Exercise 6
+
+Now `filter()` `cces` to only a few ideologies: `Conservative` , `Moderate`, `Liberal` and `Not Sure`. Save your work to an object named `cces_filt`.
+
+```{r older-material-6, exercise = TRUE}
+
+```
+
+```{r older-material-6-hint-1, eval = FALSE}
+Use %in%  and c() within filter(). Within c(), place the ideologies in quotes. 
+```
+
+```{r older-material-6-hint-2, eval = FALSE}
+cces_filt <- cces |>
+  filter(... %in% c(..., ..., ..., ...))
+```
+
+The ideologies are in quotes because they are not column names, but strings within the column. 
+
+### Exercise 7
+
+On a new line, use `nlevels()` with the argument `cces_filt$ideology`. The code which creates `cces_filt` has been included for you. Notice that you have  the same number of levels even though you have filtered to include fewer ideologies.
+
+```{r older-material-7, exercise = TRUE}
+cces_filt <- cces |>
+  filter(ideology %in% c("Conservative", "Moderate", " Liberal","Not Sure"))
+
+
+```
+
+```{r older-material-7-hint-1, eval = FALSE}
+cces_filt <- cces |>
+  filter(ideology %in% c("Conservative", "Moderate", " Liberal","Not Sure"))
+
+nlevels(...)
+```
+
+<!-- I had to pipe the code from the previous exercise in order to get the desired output. The code in the hint kept the output at 6 levels.
+What worked for me was cces_filt <- cces |> filter(ideology %in% c("Conservative" ...)) |> droplevels() -->
+
+### Exercise 8
+
+Let's drop all the unused levels from `cces_filt`. Continue the pipe started for you and add the `droplevels()` function. 
+
+
+```{r older-material-8, exercise = TRUE}
+cces_filt <- cces |>
+  filter(ideology %in% c("Conservative", "Moderate", " Liberal","Not Sure")) 
+
+```
+
+```{r older-material-8-hint-1, eval = FALSE}
+cces_filt <- cces |>
+  filter(ideology %in% c("Conservative", "Moderate", " Liberal","Not Sure")) |> 
+  droplevels()
+```
+
+### Exercise 9
+
+On a new line, use `nlevels()` with the argument `cces_filt$ideology` to see how many levels exist after you dropped levels. The code which creates `cces_filt` has been included for you. 
+
+```{r older-material-9, exercise = TRUE}
+cces_filt <- cces |>
+  filter(ideology %in% c("Conservative", "Moderate", " Liberal","Not Sure")) |> 
+  droplevels()
+  
+
+```
+
+```{r older-material-9-hint-1, eval = FALSE}
+cces_filt <- cces |>
+  filter(ideology %in% c("Conservative", "Moderate", " Liberal","Not Sure")) |> 
+  droplevels()
+
+nlevels(...)
+```
+
+## Summary
+### 
+
+This tutorial covered [Chapter 17: Factors](https://r4ds.hadley.nz/factors.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
+
+```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
+```
