@@ -17,6 +17,7 @@ library(tidyverse)
 library(tutorial.helpers)
 library(primer.data)
 library(ggdist)
+library(scales)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
@@ -212,9 +213,42 @@ All the possible variables are `country`, `year`, `cases`, and `population`. The
 
 ### Exercise 8
 
-Let's look at `table1`. Run the code in the box below to see it.
+Now let's look at `table3` Run the code in the box below to see it.
 
 ```{r tidy-data-8, exercise = TRUE}
+table3
+```
+
+###
+
+Now, this looks like a very nice dataset with 3 columns and 6 rows, but it breaks one of the rules. These are the rules for tidy data: 
+
+1. Each variable is a column; each column is a variable.
+2. Each observation is a row; each row is an observation.
+3. Each value is a cell; each cell is a single value.
+
+###
+
+Using the three rules, answer the question below.
+
+```{r tidy-data-8-1}
+question_text("Are all the cells a single value?",
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+###
+
+Your answer should be "No". Each of the cells in the `rate` column are not a single observation. They are `population` divided by `cases`, so in order for the data to be considered tidy, we would need to separate those columns.
+
+### Exercise 9
+
+Let's look at `table1`. Run the code in the box below to see it.
+
+```{r tidy-data-9, exercise = TRUE}
 table1
 ```
 
@@ -222,7 +256,7 @@ table1
 
 `table1` is a tibble with 4 columns and 6 rows. Let's see if the rules apply.
 
-### Exercise 9
+### Exercise 10
 
 As a refresher, these are the rules for tidy data: 
 
@@ -234,7 +268,7 @@ As a refresher, these are the rules for tidy data:
 
 Using the three rules, answer the questions below.
 
-```{r tidy-data-9-1}
+```{r tidy-data-10-1}
 question_text("Are all the possible variables columns?",
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -244,7 +278,7 @@ question_text("Are all the possible variables columns?",
 ```
 
 
-```{r tidy-data-9-2}
+```{r tidy-data-10-2}
 question_text("Are all the rows observations?",
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -256,6 +290,177 @@ question_text("Are all the rows observations?",
 ###
 
 Both of your answers should be "Yes" because this is a very good example of a tidy dataset. All the variables are columns. All the columns are variables. All the observations are rows, all the rows are observations, all the values are cells, and all the cells are single values.
+
+### Exercise 11
+
+Using the tidy data from `table1`, we are going to make this plot: 
+
+```{r}
+plot1 <- ggplot(data = table1, mapping = aes(x = year, y = cases)) +
+  geom_line(aes(group = country)) +
+  geom_point(aes(color = country, shape = country)) +
+  scale_x_continuous(breaks = c(1999, 2000)) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(title = "Tuberculosis cases in three countries",
+       subtitle = "Between 1999 and 2000",
+       x = "Year",
+       y = "Number of cases",
+       color = "Country",
+       shape = "Country")
+
+plot1
+```
+
+###
+
+Start making a plot with `ggplot`. Use `table1` as your data.
+
+```{r tidy-data-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r tidy-data-11-hint, eval = FALSE}
+ggplot(data = ...)
+```
+
+### Exercise 12
+
+Add an `aes` with `year` for your x and `cases` for your y.
+
+```{r tidy-data-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r tidy-data-12-hint, eval = FALSE}
+ggplot(... = ..., mapping = aes(x = ..., y = ...))
+```
+
+### Exercise 13
+
+Add `geom_line()` to your plot too.
+
+```{r tidy-data-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r tidy-data-13-hint, eval = FALSE}
+ggplot(...(...)) + 
+  geom_...()
+```
+
+### Exercise 14
+
+In `geom_line()`, we need to mess around with a couple things in order to get three separate lines instead of one big "N" on our plot. We need to add an `aes` inside of `geom_line(), with group equaling country (inside parenthesis).
+
+```{r tidy-data-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r tidy-data-14-hint, eval = FALSE}
+ggplot(...(...)) + 
+  geom_line(aes(group = country))
+```
+
+### Exercise 15
+
+Now, we need to add a second `geom`, `geom_point()`. Inside `geom_point()` we need another `aes`, this time with color and shape both equaling country. This will make three distinctive lines that you can clearly see which one is which 
+
+```{r tidy-data-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r tidy-data-15-hint, eval = FALSE}
+ggplot(...(...)) + 
+  geom_...(...) +
+  geom_point(aes(color = ..., shape = ...))
+```
+
+### Exercise 16
+
+Let's fix the x and y axes
+
+###
+
+For the x axis, we need make just two breaks, 1999 and 2000. To do this, we will need to add a layer (using `+`). The layer we are going to add is `scale_x_continuous`. We need to change what the breaks are, using `breaks = c(1999, 2000)`.
+
+```{r tidy-data-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r tidy-data-16-hint, eval = FALSE}
+ggplot(...(...)) + 
+  geom_...(...) +
+  geom_...(...) +
+  scale_x_continuous(breaks = c(..., ....))
+```
+
+### Exercise 17
+
+To add commas to the y axis, we will use `scale_y_continuous()` on another layer. Inside of the parenthesis, we will use `labels = scales::comma`. 
+
+```{r tidy-data-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r tidy-data-17-hint, eval = FALSE}
+ggplot(...(...)) + 
+  geom_...(...) +
+  geom_...(...) +
+  scale_...(...) +
+  scale_y_continuous(... = scales::comma)
+```
+
+### Exercise 18
+
+The last step is to add labels to our plot.
+
+###
+
+Reminder: This is what your plot should look like.
+
+```{r}
+plot1
+```
+
+###
+
+```{r tidy-data-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r tidy-data-18-hint, eval = FALSE}
+... +
+  labs(title = "...",
+       subtitle = "...",
+       x = "...",
+       y = "..."
+       color = "Country",
+       shape = "Country")
+```
+
+###
+
+To add labels to the key on the side, you will need to label both the shape and the color "Country" (as that is what the key is telling us)
+
+###
+
+Now that you understand what tidy data is, we need to learn how to make data tidy.
 
 ## Lengthening Data
 
