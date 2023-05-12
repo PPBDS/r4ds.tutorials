@@ -14,13 +14,23 @@ description: 'Tutorial for Chapter 2: Data Visualization'
 ```{r setup, include = FALSE}
 library(learnr)
 library(tutorial.helpers)
-library(ggplot2)
 library(tidyverse)
 library(palmerpenguins)
-library(ggthemes)
+library(primer.data)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
+
+globe_temps <- temperature |> 
+  filter(area == "globe") |> 
+  select(date, temperature)
+
+savings <- economics |> 
+  select(date, psavert)
+
+usbmi <- nhanes |> 
+  select(bmi) |>
+  drop_na()
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -34,7 +44,7 @@ options(tutorial.exercise.timelimit = 60,
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 2: Data Visualization](https://r4ds.hadley.nz/data-visualize.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
+This tutorial covers [Chapter 2: Data Visualization](https://r4ds.hadley.nz/data-visualize.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
 
 ## Creating first ggplot
 ### 
@@ -358,8 +368,17 @@ Copy the previous code, lets add the subtitle by running `subtitle = "Dimensions
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-18-hint-1, eval = FALSE}
+<<<<<<< HEAD
 ... |>
   +
+=======
+penguins |>
+  ggplot(
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = species, shape = species)) +
+  geom_smooth(method = "lm") +
+>>>>>>> a4ea927d5fb9f9cb354bb38b8611ed856336b2f7
   labs( ... = "Body mass and flipper length",
         subtitle = "...")
 ```
@@ -377,8 +396,17 @@ Lets modify the x and y axises, type a comma and then run `x` and set it to `"Fl
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-19-hint-1, eval = FALSE}
+<<<<<<< HEAD
 ... |>
   +
+=======
+penguins |>
+  ggplot(
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = species, shape = species)) +
+  geom_smooth(method = "lm") +
+>>>>>>> a4ea927d5fb9f9cb354bb38b8611ed856336b2f7
   labs( ... = "Body mass and flipper length"+
           subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
         x = ...)
@@ -397,11 +425,19 @@ Next to `x` axis label, type another comma and a `y`, then set it equal to `"Bod
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-20-hint-1, eval = FALSE}
+<<<<<<< HEAD
 ... |>
    +
   labs( ... = "Body mass and flipper length"+
           subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
         x = ..., y = ...)
+=======
+... |> 
+  labs(... = "Body mass and flipper length",
+       subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+       x = ..., 
+       y = ...)
+>>>>>>> a4ea927d5fb9f9cb354bb38b8611ed856336b2f7
 ```
 
 ### 
@@ -512,6 +548,7 @@ Copy the previous code and run `+ geom_point()`
 
 ```{r geompoint-4-hint-1, eval = FALSE}
 ... |> 
+<<<<<<< HEAD
   +
   geom_point()
 ```
@@ -519,7 +556,16 @@ Copy the previous code and run `+ geom_point()`
 The warning message "Removed X rows containing missing values (geom_point())" is a common message in R.  Like R, ggplot2 subscribes to the philosophy that missing values should never silently go missing. This type of warning is probably one of the most common types of warnings you will see when working with real data – missing values are a very common issue and you’ll learn more about them throughout the book
 
 
+=======
+  geom_point()
+```
+
+>>>>>>> a4ea927d5fb9f9cb354bb38b8611ed856336b2f7
 ### 
+
+The warning message "Removed X rows containing missing values (geom_point())" is a common message in R when working with data visualization using ggplot2 package. It indicates that there were rows in the data that contained missing values (i.e., NA values) in the columns being used for plotting the points with `geom_point()`, and you will see it many times throughout this tutorial.
+
+
 
 ### Exercise 5
 
@@ -553,8 +599,12 @@ Copy the previous code, add the `geom_smooth()` layer and within it, set `method
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geompoint-6-hint-1, eval = FALSE}
+<<<<<<< HEAD
 ... |>
   +
+=======
+... |> 
+>>>>>>> a4ea927d5fb9f9cb354bb38b8611ed856336b2f7
   geom_smooth(... = "lm")
 ```
 
@@ -564,7 +614,11 @@ In the ggplot2 package in R, the "geom_smooth()" function can be used to add a s
 
 ### Exercise 7
 
+<<<<<<< HEAD
 Remove the `color` aesthetic within `ggplot()` and add it to `geom_point` by running `geom_point(mapping = aes(color = species))` to get a single line for the plot instead of three.
+=======
+Remove the `color` aesthetic within `ggplot()` and add it to `geom_point()` by running `geom_point(mapping = aes(color = species))` to get three different lines for each species.
+>>>>>>> a4ea927d5fb9f9cb354bb38b8611ed856336b2f7
 
 
 ```{r geompoint-7, exercise = TRUE}
@@ -608,7 +662,7 @@ Note that the legend is automatically updated to reflect the different shapes of
 
 ### Exercise 9
 
-Now that we have the data points, lets add the title, subtitle, labels and etc. Copy the previous code,   add a new layer using `+` and run `labs()`. Within labs, set `title` equal to "Penguins Beak's Length and Depth" , `subtitle` to "Dimensions for Adelie, Chinstrap, and Gentoo Penguins" , `x` to  "Beak Length (mm)", `y` = "Beak Depth (mm)", `color` to "Species" and `shape` to "Species".
+Now that we have the data points, lets add the title, subtitle, labels and etc. Copy the previous code,   add a new layer using `+` and run `labs()`. Within labs, set `title` equal to "Penguins Beak's Length and Depth" , `subtitle` to "Dimensions for Adelie, Chinstrap, and Gentoo Penguins" , `x` to  "Beak Length (mm)", `y = "Beak Depth (mm)"`, `color` to "Species" and `shape` to "Species".
 
 ```{r geompoint-9, exercise = TRUE}
 
@@ -621,12 +675,21 @@ penguins |>
   ggplot(mapping = aes(x = ..., y = bill_depth_mm, color = ... , shape = species) )+
   geom_point() +
   geom_smooth(method = "lm")+
+<<<<<<< HEAD
   labs( title = "Penguins Beak's Length and Depth", 
         subtitle = ...,
         x = ... , 
         ... = "Beak Depth (mm)",
         color = "Species", 
         ... = "Species")
+=======
+  labs(title = "Penguins Beak's Length and Depth", 
+       subtitle = ...,
+       x = ... , 
+       ... = "Beak Depth (mm)",
+       color = "Species", 
+       ... = "Species")
+>>>>>>> a4ea927d5fb9f9cb354bb38b8611ed856336b2f7
 ```
 
 Reminder: This is what our graph should look like
@@ -670,6 +733,7 @@ geom_bar_p
 ### Exercise 1
 
 load the `palmerpenguins` library
+
 ```{r geombar-1, exercise = TRUE}
 
 ```
@@ -685,6 +749,7 @@ library(palmerpenguins)
 ### Exercise 2
 
 Run `penguins` and pipe it to a `ggplot()` call.
+
 ```{r geombar-2, exercise = TRUE}
 
 ```
@@ -703,6 +768,7 @@ penguins |>
 ### Exercise 3
 
 Within `ggplot()`, set `x` to `species` inside of `aes()`
+
 ```{r geombar-3, exercise = TRUE}
 
 ```
@@ -721,6 +787,7 @@ By default, `geom_bar()` counts the number of observations in each category: If 
 ### Exercise 4
 
 To make the bar graph, add `geom_bar()` call and run it.`
+
 ```{r geombar-4, exercise = TRUE}
 
 ```
@@ -738,6 +805,7 @@ penguins |>
 ### Exercise 5
 
 To make the graph be in order, set `x` to `fct_infreq(species)`.
+
 ```{r geombar-5, exercise = TRUE}
 
 ```
@@ -847,7 +915,8 @@ To visualize the distribution of a continuous variable, we will be using `geom_h
 
 ### Exercise 1
 
-load the `palmerpenguins` library
+Use the `library()` function to load the `palmerpenguins` package.
+
 ```{r geomhistogram-1, exercise = TRUE}
 
 ```
@@ -858,13 +927,16 @@ load the `palmerpenguins` library
 library(palmerpenguins)
 ```
 
+### 
+
 A continuous variable is a variable that can take on any value within a certain range or interval. It can be measured on a continuous scale, such as time, distance, weight, height, temperature, or any other quantity that can be measured on a numerical scale.
 
-### 
+
 
 ### Exercise 2
 
 Run `penguins` and pipe it to a `ggplot()` call.
+
 ```{r geomhistogram-2, exercise = TRUE}
 
 ```
@@ -876,9 +948,11 @@ penguins |>
   ggplot()
 ```
 
+### 
+
 `geom_histogram()` creates a histogram: geom_histogram is used to create histograms, which are used to visualize the distribution of a single continuous variable. Histograms show the frequency of values within a certain range, which are typically represented by bins along the x-axis.
 
-### 
+
 
 ### Exercise 3
 
@@ -984,6 +1058,7 @@ An alternate way to visualize the distributions of data on a continuous variable
 ### Exercise 1
 
 load the `palmerpenguins` library
+
 ```{r geomdensity-1, exercise = TRUE}
 
 ```
@@ -1001,6 +1076,7 @@ library(palmerpenguins)
 ### Exercise 2
 
 Run `penguins` and pipe it to a `ggplot()` call.
+
 ```{r geomdensity-2, exercise = TRUE}
 
 ```
@@ -1013,8 +1089,6 @@ penguins |>
 ```
 
 ### 
-
-
 
 ### Exercise 3
 
@@ -1142,16 +1216,17 @@ Finally set an appropriate title, subtitle, axes labels, and caption for the gra
 Reminder: This is what your graph should look like.
 
 ```{r}
-library(ggplot2)
-library(palmerpenguins)
-density_p<-penguins |>
-  ggplot(aes(x = body_mass_g, color = species, fill = species))+
-  geom_density(alpha = .5)+
+density_p <- penguins |>
+  ggplot(aes(x = body_mass_g, 
+             color = species, 
+             fill = species)) +
+  geom_density(alpha = .5) +
   labs(title = "Distribution of Body Mass by Penguin Species",
        x = "Bill Length (mm)",
        y = "Density",
        fill = "Species",
        color = "Species")
+
 density_p
 ```
 
@@ -1203,7 +1278,7 @@ penguins |>
 
 ### Exercise 3
 
-In ggplot within `aes()`, set `x` to `species`.
+In `ggplot()` within `aes()`, set `x` to `species`.
 
 ```{r geomboxplot-3, exercise = TRUE}
 
@@ -1240,8 +1315,6 @@ penguins |>
 ### 
 
 Box plots are useful for comparing the distribution of a continuous variable across different categories or groups. They can help identify differences in the median, spread, and skewness of the data for each group.
-
-
 
 
 ### Exercise 5
@@ -1300,6 +1373,867 @@ box_plot_p
 ```
 
 ### 
+
+<!-- DK: Continue book material here. Below are extra plots practice which comes from the Visualization: Basic Plots tutorial from all.primer.tutorials. -->
+
+<!-- Is this good material? Should we add it elsewhere in the tutorial? Maybe we have two geom_smooth examples, one from the book and then our new one right after it?  -->
+
+<!-- Everything below is sloppy and much of it lacks good knowledge drops. -->
+
+<!-- Make sure your section names are not duplicative! If they are, Format Tutorial Chunk Labels will (?) not work. -->
+
+## More practice
+### 
+
+You have now completed all the material in the chapter. But you can never get enough practice plotting. So, practice some more.
+
+## geom_smooth with savings
+### 
+
+We can add straight or smoothed lines which follow the path of our data using `geom_smooth()`.
+
+Let's create the following plot with the `savings` dataset.
+
+```{r make-smooth-p}
+smooth_p <- savings |>  
+  ggplot(aes(x = date, y = psavert)) +
+    geom_point() +
+    geom_smooth(method = 'loess', formula = 'y ~ x', se = FALSE) +
+  labs(title = "U.S. Personal Savings Rate",
+       subtitle = "Savings rate increased in the past decade",
+       x = "Year",
+       y = "Percent disposable personal income saved",
+       caption = "U.S. Bureau of Economic Analysis (2021)")
+smooth_p
+```
+
+### Exercise 1
+
+Let's first explore the `savings` dataset using `glimpse()`.
+
+```{r geomsmooth-with-savi-1, exercise = TRUE}
+
+```
+
+```{r geomsmooth-with-savi-1-hint-1, eval = FALSE}
+glimpse(...)
+```
+
+### 
+
+The personal savings rate, represented here under the variable `psavert`, is calculated as a percentage of disposable personal income (DPI).
+
+### Exercise 2
+
+Within `ggplot()` set `data` to `savings`
+
+```{r geomsmooth-with-savi-2, exercise = TRUE}
+
+```
+
+```{r geomsmooth-with-savi-2-hint-1, eval = FALSE}
+ggplot(data = ...)
+```
+
+### 
+
+`ggplot()` initializes a ggplot object. Your output should be an empty canvas.
+
+
+### Exercise 3
+
+Now, specify the **aes**thetic inside `ggplot()` for the x-axis to be the `date` and the y-axis to be `psavert`. 
+
+```{r geomsmooth-with-savi-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomsmooth-with-savi-3-hint-1, eval = FALSE}
+ggplot(data = savings,
+       aes(x = ..., y = ...))
+```
+
+### 
+
+Your output should still be empty, since we have not yet added a `geom_*` layer.
+
+### Exercise 4
+
+Add `geom_point()` to the layer.
+
+```{r geomsmooth-with-savi-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomsmooth-with-savi-4-hint-1, eval = FALSE}
+ggplot(data = savings,
+       aes(x = date, y = psavert)) +
+  geom_point()
+```
+
+### 
+
+When points on the graphs start becoming too dense, two ways to combat this is to adjust the `alpha` value or making the `shape` a smaller value.
+
+### Exercise 5
+
+The plot so far looks neat, but a trend line would be helpful in identifying trends across many years. Add the layer `geom_smooth()`.
+
+```{r geomsmooth-with-savi-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomsmooth-with-savi-5-hint-1, eval = FALSE}
+ggplot(data = savings,
+       aes(x = date, y = psavert)) +
+  geom_point() +
+  geom_smooth()
+```
+
+### 
+
+Nice! The blue line represents our regression line, and the shaded area around it is the standard error, or what is essentially the margin of error.
+
+### Exercise 6
+
+Notice the warning message R gives us? Let's try setting the `method` to `"loess"` inside `geom_smooth()`.
+
+```{r geomsmooth-with-savi-6, exercise = TRUE, warning = FALSE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomsmooth-with-savi-6-hint-1, eval = FALSE}
+Remember to put "loess" in quotes within geom_smooth()
+```
+
+```{r geomsmooth-with-savi-6-hint-2, eval = FALSE}
+... +
+  geom_smooth(method = "...")
+```
+
+### 
+
+If you do not specify a method, R will give you a warning that it has made some assumptions in the function. `"loess"` is short for **LO**cal regr**ESS**ion, giving us the curved line.
+
+### Exercise 7
+
+Great! But, we still get a message! Set the `formula` argument within `geom_smooth()` to `y ~ x`.
+
+```{r geomsmooth-with-savi-7, exercise = TRUE}
+
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomsmooth-with-savi-7-hint-1, eval = FALSE}
+ggplot(data = savings, 
+       mapping = aes(x = date, 
+                     y = psavert)) +
+  geom_point()  +
+    geom_smooth(method = "loess", formula = y ~ x)
+```
+
+### 
+
+If you do not specify `formula`, R will also give you a warning that you have not done so. By default, the formula to use in smoothing function is set to `y ~ x`.
+
+### Exercise 8
+
+Also set `se` to `FALSE` to get rid of the grey area surrounding the trend line.
+
+```{r geomsmooth-with-savi-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomsmooth-with-savi-8-hint-1, eval = FALSE}
+ggplot(data = savings, 
+       mapping = aes(x = date, 
+                     y = psavert)) +
+  geom_point()  +
+    geom_smooth(method = "loess", formula = y ~ x, se = FALSE)
+```
+
+### 
+
+Setting the `se` parameter determines whether or not to display the confidence interval around smooth. By default it's set to `TRUE`.
+
+### Exercise 9
+
+Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption for the graph.
+
+```{r geomsmooth-with-savi-9, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomsmooth-with-savi-9-hint-1, eval = FALSE}
+... +
+  labs(title = "...",
+       subtitle = "..."
+       x = "...",
+       y = "...",
+       caption = "...")
+```
+
+Reminder: Your graph should look like this.
+
+```{r show-smooth-p}
+smooth_p
+```
+
+### 
+
+Good work! The parameters used here may not always be the best choice. Check out this function's (documentation page)[https://ggplot2.tidyverse.org/reference/geom_smooth.html] to learn more about the other arguments for `method` and `formula`.
+
+## geom_line wiith temperature
+### 
+
+A line graph is a plot that visualizes the relationship between two numerical variables when there is a sequential nature to the variable on the x-axis, also called the independent variable.
+
+Let's create the following line graph via the `globe_temps` dataset,
+
+```{r make-line-p}
+globe_temps_p <- globe_temps |> 
+  ggplot(aes(x = date, y = temperature)) +
+    geom_line() +
+    geom_smooth(method = "loess", formula = y ~ x, se = FALSE) +
+    labs(title = "Global Monthly Temperature (°C) Deviations",
+         subtitle = "Temperature deviations trend upward",
+         x = "Year",
+         y = "Global Average Deviation (°C)")
+
+globe_temps_p
+```
+
+### 
+
+This dataset used satellite-measured data to calculate global monthly temperature changes. The values show monthly temperature deviations in °C relative to their respective 1991-2021 average temperature.
+
+### Exercise 1
+
+Let's first explore the `globe_temps` dataset. Use the `summary()` function.
+
+```{r geomline-wiith-tempe-1, exercise = TRUE}
+
+```
+
+```{r geomline-wiith-tempe-1-hint-1, eval = FALSE}
+summary(...)
+```
+
+### 
+
+`summary()` is a function that returns various statistical measurements for each variable.
+
+The ISO 8601 standard is the convention for date-time formatting. Dates are represented in the format YYYY-MM-DD, as seen in the `date` observations in the `globe_temps` dataset.
+
+### Exercise 2
+
+Within `ggplot()` set `data` to `globe_temps`.
+
+```{r geomline-wiith-tempe-2, exercise = TRUE}
+
+```
+
+```{r geomline-wiith-tempe-2-hint-1, eval = FALSE}
+ggplot(data = ...)
+```
+
+### 
+
+Setting the `data` argument binds the `ggplot` object to the specified dataset.
+
+### Exercise 3
+
+Within `ggplot()`, now set the argument `mapping` to equal `aes()`. Within `aes()`, map `date` to the x-axis and `temperature` to the y-axis.
+
+```{r geomline-wiith-tempe-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomline-wiith-tempe-3-hint-1, eval = FALSE}
+ggplot(data = `globe_temps`, 
+       aes(x = ..., y = ...))
+```
+
+### 
+
+Because time is an inherently sequential value, it will often be the independent variable in line graphs.
+
+### Exercise 4
+
+Now add a call to the `geom_line()` function.
+
+```{r geomline-wiith-tempe-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomline-wiith-tempe-4-hint-1, eval = FALSE}
+ggplot(data = `globe_temps`, 
+       aes(x = date, y = temperature)) + 
+  ...
+```
+
+### 
+
+Congratulations on your first line plot! This graph could stand on its own, but a trend line could be helpful to us here.
+
+### Exercise 5
+
+Now add a call to the `geom_smooth()` function. 
+
+```{r geomline-wiith-tempe-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomline-wiith-tempe-5-hint-1, eval = FALSE}
+ggplot(data = `globe_temps`, 
+       aes(x = date, y = temperature)) + 
+  geom_line() +
+  ...
+```
+
+### 
+
+Like in the previous section, notice the warning message in the R Console window because we didn't specify certain parameters.
+
+### Exercise 6
+
+Set the `method` parameter to `"loess"`, `formula` to `y ~ x`, and `se` to `FALSE`.
+
+```{r geomline-wiith-tempe-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomline-wiith-tempe-6-hint-1, eval = FALSE}
+ggplot(data = `globe_temps`, 
+       aes(x = date, y = temperature)) + 
+  geom_line() +
+  geom_smooth(method = "loess", 
+              formula = y ~ x, 
+              se = FALSE)
+```
+
+### 
+
+For relatively smaller datasets, `method` by default, is set to `"loess"`. For datasets larger than 1,000 observations, `method` is set to another technique, `"gam"`. 
+
+### Exercise 7
+
+Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption for the graph.
+
+```{r geomline-wiith-tempe-7, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomline-wiith-tempe-7-hint-1, eval = FALSE}
+... +
+  labs(title = "...",
+       subtitle = "..."
+       x = "...",
+       y = "...",
+       caption = "...")
+```
+
+Reminder: This is what our graph should look like.
+
+```{r show-line-p}
+globe_temps_p
+```
+
+### 
+
+Nice job! This is the most fundamental line graph, `geom_line()` has many additional arguments (e.g. `linetype` or `color`). Connected observations can also be visualized using `geom_step()`, `geom_path()`, `geom_line()`, `geom_ribbon`.
+
+## geom_histogram with BMI
+### 
+
+A histogram is a plot that visualizes the distribution of a numerical variable with bars.
+
+### 
+
+Let's create the following histogram via the `usbmi` dataset.
+
+```{r make-hist-p}
+hist_p <- ggplot(data = usbmi, aes(x = bmi)) +
+    geom_histogram(binwidth = 1,
+                   color = "white") +
+    labs(title = "BMI of Americans",
+         subtitle = "Significant number of Americans are overweight or obese",
+         x = "Body Mass Index",
+         y = "Count")
+hist_p
+```
+
+### Exercise 1
+
+As always, let's first explore the data. Run `summary(usbmi)`.
+
+```{r geomhistogram-with-b-1, exercise = TRUE}
+
+```
+
+### 
+
+If the mean, median and the mode of a set of numbers are equal, it means, the distribution is symmetric. Otherwise, it is characterized as asymmetric.
+
+<!-- VD: This should be elaborated upon a bit -->
+
+### Exercise 2
+
+Within `ggplot()`, set `data` to `usbmi`.
+
+```{r geomhistogram-with-b-2, exercise = TRUE}
+
+```
+
+```{r geomhistogram-with-b-2-hint-1, eval = FALSE}
+ggplot(data = ...)
+```
+
+### 
+
+The `data` argument for `ggplot()` requires the object to be of type `data.fram`. If not, as with `usbmi`, the dataset will be converted to one by `fortify()`.
+
+### Exercise 3
+
+Now, map `bmi` to the x-axis since we want to see the distribution of BMI scores.
+
+```{r geomhistogram-with-b-3, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomhistogram-with-b-3-hint-1, eval = FALSE}
+ggplot(data = ..., 
+       mapping = aes(x = ...))
+```
+
+### Exercise 4
+
+Let's now add the layer `geom_histogram()`.
+
+```{r geomhistogram-with-b-4, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomhistogram-with-b-4-hint-1, eval = FALSE}
+Remember when you add a layer you use +. 
+```
+
+```{r geomhistogram-with-b-4-hint-2, eval = FALSE}
+ggplot(data = ..., 
+       mapping = aes(x = ...)) +
+  geom_histogram()
+```
+
+### 
+
+`geom_histogram()` has a default y-axis which is the **count** for the number of observations that fall into a particular bin of the x-axis variable.
+
+### Exercise 5
+
+Specify the width of bins to be 1 using the `binwidth` argument in `geom_histogram()`.
+
+```{r geomhistogram-with-b-5, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomhistogram-with-b-5-hint-1, eval = FALSE}
+ggplot(data = usbmi, 
+       mapping = aes(x = bmi)) +
+  geom_histogram(binwidth = ...)
+```
+
+### 
+
+Another way to set the number of bins is to specify the `bins` argument to this desired numerical value.
+
+### Exercise 6
+
+Add white vertical borders demarcating the bins by setting the argument `color` to `"white"` within `geom_histogram()`.
+
+```{r geomhistogram-with-b-6, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomhistogram-with-b-6-hint-1, eval = FALSE}
+ggplot(data = usbmi, 
+       mapping = aes(x = bmi)) +
+  geom_histogram(binwidth = 1,
+                 color = ...)
+```
+
+### 
+
+For plots that are not points or lines, the argument `color` only changes the outline. 
+
+### Exercise 7
+
+Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption for the graph.
+
+```{r geomhistogram-with-b-7, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomhistogram-with-b-7-hint-1, eval = FALSE}
+... +
+  labs(title = "...",
+       subtitle = "..."
+       x = "...",
+       y = "...",
+       caption = "...")
+```
+
+Reminder: This is what our graph should look like.
+
+```{r show-hist-p}
+hist_p
+```
+
+### 
+
+Histograms display the counts with bars. To display counts with lines, you would use `geom_freqpoly()`. 
+
+## geom_density with CCES
+### 
+
+`geom_density()` is used to make a density plot, a smoothed version of a histogram. 
+
+### 
+
+Let's create the following density plot using the `cces` dataset.
+
+```{r make-dens-p}
+dens_p <- ggplot(data = cces, 
+                 mapping = aes(x = age, 
+                               color = ideology, 
+                               fill = ideology)) +
+  geom_density(alpha = .1) +
+  labs(title = " Distribution of Age by Ideology", 
+       subtitle = "Most young people are not sure of their ideology",
+       x = "Age", 
+       y = "Density",
+       caption = "Kuriwaki (2020)")
+
+dens_p
+```
+
+### Exercise 1
+
+Let's first explore the data. Run `str(cces)`. Given the plot above, can you find the two variables that would help us to identifying the age and ideology of a respondent?
+
+```{r geomdensity-with-cce-1, exercise = TRUE}
+
+```
+
+### Exercise 2
+
+Use the `cces` data set in the `primer.data` package. Within `ggplot()`, set `data` to `cces`.
+
+```{r geomdensity-with-cce-2, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomdensity-with-cce-2-hint-1, eval = FALSE}
+ggplot(data = ...)
+```
+
+### 
+
+ggplot() initializes a ggplot object. Your output should be an empty canvas.
+
+### Exercise 3
+
+Let's now map the variable `age` to the `x` argument inside `aes()`.
+
+```{r geomdensity-with-cce-3, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomdensity-with-cce-3-hint-1, eval = FALSE}
+ggplot(data = cces, 
+       mapping = aes(x = ...))
+```
+
+### Exercise 4
+
+Let's now add the layer `geom_density()`
+
+```{r geomdensity-with-cce-4, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomdensity-with-cce-4-hint-1, eval = FALSE}
+ggplot(data = cces, 
+       mapping = aes(x = ...)) +
+  geom_density()
+```
+
+### 
+
+This plot displays a density distribution for all ideologies by age. We will split this distribution by ideology next.
+
+### Exercise 5
+
+Now within `aes`, set `color` and `fill` equal to the variable `ideology`.
+
+```{r geomdensity-with-cce-5, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomdensity-with-cce-5-hint-1, eval = FALSE}
+ggplot(data = cces, 
+       mapping = aes(x = ..., 
+                     color = ..., 
+                     fill = ...)) + 
+  geom_density()
+```
+
+### 
+
+We are getting closer! Right now, the distributions of one ideology are covering others because their `fill` is 100% opaque.
+
+### Exercise 6
+
+Now set the `alpha` argument in `geom_density()` to 0.1.
+
+```{r geomdensity-with-cce-6, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomdensity-with-cce-6-hint-1, eval = FALSE}
+... + 
+  geom_density(alpha = 0.1)
+```
+
+### Exercise 7
+
+Finally set an appropriate title, subtitle, axes labels, and caption for the graph.
+
+```{r geomdensity-with-cce-7, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geomdensity-with-cce-7-hint-1, eval = FALSE}
+... +
+  labs(title = "...",
+       subtitle = "..."
+       x = "...",
+       y = "...",
+       caption = "...")
+```
+
+Reminder: Your graph should look something like this.
+
+```{r show-dens-p}
+dens_p
+```
+
+### 
+
+Good work! Similar plots that you could look into include `geom_freqpoly()` and `geom_violin()`.
+
+## geom_bar with immigration attitudes
+### 
+
+A barplot is a plot that visualizes the distribution of a categorical variable.
+
+### 
+
+Let's create the following barplot using the `trains` dataset.
+
+```{r make-bar-p}
+bar_p <- ggplot(data = trains, 
+       mapping = aes(x = treatment, 
+                     fill = party)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Democrats and Republicans in Treated and Control Groups",
+       subtitle = "Few Republicans in both treated and control groups", 
+       x = "Treatment", 
+       y = "Count",
+       caption = "Enos(2014)")
+
+bar_p
+```
+
+### Exercise 1
+
+Let's first explore the data. Run `str(trains)`. 
+
+```{r geombar-with-immigra-1, exercise = TRUE}
+
+```
+
+### Exercise 2
+
+Use the `trains` data set in the `primer.data` package. Within `ggplot()`, set `data` to `trains`.
+
+```{r geombar-with-immigra-2, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geombar-with-immigra-2-hint-1, eval = FALSE}
+ggplot(data = ...)
+```
+
+### 
+
+ggplot() initializes a ggplot object. Your output should be an empty canvas.
+
+### Exercise 3
+
+Let's now map the variable `treatment` to the `x`argument inside `aes()`.
+
+```{r geombar-with-immigra-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">
+
+```{r geombar-with-immigra-3-hint-1, eval = FALSE}
+ggplot(data = trains, 
+       mapping = aes(x = ...))
+```
+
+### Exercise 4
+
+Let's now add the layer `geom_bar()`
+
+```{r geombar-with-immigra-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">
+
+```{r geombar-with-immigra-4-hint-1, eval = FALSE}
+ggplot(data = trains, 
+       mapping = aes(x = ...)) +
+  geom_bar()
+```
+
+### 
+
+This plot breaks down the count of the study by treatment group, does not split these groups by party. We will do this next.
+
+### Exercise 5
+
+Let's now also map the variable `party` to the `fill` argument.
+
+```{r geombar-with-immigra-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">
+
+```{r geombar-with-immigra-5-hint-1, eval = FALSE}
+ggplot(data = trains, 
+       mapping = aes(x = treatment, 
+                     fill = ...)) +
+  geom_bar()
+```
+
+### 
+
+We use the `fill` argument instead of the `color` argument because we want to color the interior of the shape but not its borders.
+
+Now, we can see the composition of each treatment group by party. Notice that the party bars are stacked.
+
+### Exercise 6
+
+Let's make our graph a side-by-side barplot. Set `position` to `"dodge"` in `geom_bar()`.
+
+```{r geombar-with-immigra-6, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geombar-with-immigra-6-hint-1, eval = FALSE}
+ggplot(data = trains, 
+       mapping = aes(x = treatment, 
+                     fill = party)) +
+  geom_bar(position = ...)
+```
+
+### 
+
+By default `position` is set to `"stack"`. `"dodge"` puts different colors side by side.
+
+### Exercise 7
+
+Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption for the graph.
+
+```{r geombar-with-immigra-7, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r geombar-with-immigra-7-hint-1, eval = FALSE}
+... +
+  labs(title = "...",
+       subtitle = "..."
+       x = "...",
+       y = "...",
+       caption = "...")
+```
+
+Reminder: This is what our graph should look like.
+
+```{r show-bar-p}
+bar_p
+```
+
+### 
+
+Good work! You created your first graph using `geom_bar()`. `geom_col()` is a similar function where instead, the dataset specifies the height of each bar.
+
 
 ## Summary
 ### 

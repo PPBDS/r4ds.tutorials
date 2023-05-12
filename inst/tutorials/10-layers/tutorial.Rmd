@@ -1,0 +1,1565 @@
+---
+title: Layers
+author: David Kane
+tutorial:
+  id: layers
+output:
+  learnr::tutorial:
+    progressive: yes
+    allow_skip: yes
+runtime: shiny_prerendered
+description: 'Tutorial for Chapter 10: Layers'
+---
+
+```{r setup, include = FALSE}
+library(learnr)
+library(tutorial.helpers)
+library(tidyverse)
+library(primer.data)
+library(ggthemes)
+library(plotly)
+knitr::opts_chunk$set(echo = FALSE)
+options(tutorial.exercise.timelimit = 60, 
+        tutorial.storage = "local") 
+
+polling_data <- read_csv("data/vis4_polling_data.csv",
+              col_types = cols(createddate = col_date(),
+                               approval_type = col_character(),
+                               rate = col_double()))
+```
+
+```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
+```
+
+```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
+```
+
+## Introduction
+### 
+
+This tutorial covers [Chapter 10: Layers](https://r4ds.hadley.nz/layers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to use [**ggplot2**](https://ggplot2.tidyverse.org/) and related packages to create persuasive graphics. 
+
+<!-- BOOK MATERIAL GOES HERE. -->
+
+
+<!-- This was a bit too long. Also, much if it is sloppy! Need to revisit. -->
+
+
+<!-- Take ownership. This is all your tutorial! Replace all the boring/stupid/useless plots. Maybe work with fewer datasets? -->
+
+<!-- Change elements of theme.. -->
+
+<!-- Each section should begin with two questions looking at the data, even if they are the same questions each time. print, glimpse, ? if it is in primer.data, even something ike trains$age can be informative. -->
+
+
+<!-- Make the plots cooler! Add links to  https://ggplot2-book.org/. And https://socviz.co/. Or maybe put these in case studies. Love this one: https://socviz.co/groupfacettx.html#histograms. -->
+
+<!--  Delete entire sections of you don't like them! Put in more ### as continue buttons. Drop some knowledge at the end of each exercise.  Always start by looking at the data with just print the data name (trains) or glimpse() or summary() or skim(). Always use select() for each question to keep just the variables you need. Nothing wrong with an arbitrary filter() in the pipe. Nothing wrong with using a simple mutate() to create a new variable, like change height to inches.  
+-->
+
+## `geom_point()` with size
+### 
+
+When you are working with data sets that have over a thousand data points, you will have overplotting. In this section, you will learn to minimize the overplotting by changing the size of each point.
+
+### 
+
+Let's make this scatterplot using `geom_point()`.
+
+```{r geompoint-with-size-0}
+point_p2 <- ggplot(data = diamonds,
+                 mapping = aes(x = price,
+                              y = carat,
+                              color = clarity)) +
+  geom_point(size = .25, alpha = .5) +
+  scale_x_log10() +
+  theme_few() +
+  labs(title = "Diamond Carat and Price",
+       subtitle = "3+ carat diamonds are rare and of low quality",
+       x = "Price",
+       y =  "Carat",
+       color = "Clarity",
+       caption = "Source: R datasets")
+
+point_p2
+```
+
+### Exercise 1
+
+Type `?diamonds` to look at the help page for the `diamonds` tibble. If you cannot run it in your code chunk below, run it in your console. Remember to load `library(tidyverse)` beforehand.
+
+```{r geompoint-with-size-1, exercise = TRUE}
+
+```
+
+```{r geompoint-with-size-1-hint-1, eval = FALSE}
+?diamonds
+```
+
+### Exercise 2
+
+Explore the `diamonds` dataset. Since we are looking at the "carats" and "clarity" categories, copy and paste the definitions for "carats" and "clarity" below.
+
+```{r geompoint-with-size-2}
+  question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### Exercise 3
+
+Start a new pipe with `diamonds`. Select the columns `carat`, `price`, and `clarity`.
+
+```{r geompoint-with-size-3, exercise = TRUE}
+
+```
+
+```{r geompoint-with-size-3-hint-1, eval = FALSE}
+diamonds |>
+  select(carat, price, clarity)
+```
+
+### Exercise 4
+
+Continue your pipe and add `ggplot()`. Map `price` to the x-axis, `carat` to the y-axis, and `clarity` to `color`.
+
+```{r geompoint-with-size-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-size-4-hint-1, eval = FALSE}
+geom_point() is a layer so use + to add it
+```
+
+```{r geompoint-with-size-4-hint-2, eval = FALSE}
+... |>
+  ggplot(mapping = aes(x = ...,
+                       y = ...,
+                       color = ...)) +
+  geom_point()
+```
+
+### 
+
+We use color when we are dealing with points or lines. We use fill when we are dealing with other objects.
+
+### Exercise 5
+
+Let's minimize the overplotting. First, within `geom_point()` set `alpha` to 0.5.
+
+```{r geompoint-with-size-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-size-5-hint-1, eval = FALSE}
+... +
+  geom_point(alpha = ...)
+```
+
+Alpha controls the transparency of the dots.
+
+### Exercise 6
+
+Now, within `geom_point()` set `size` to .25.
+
+```{r geompoint-with-size-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-size-6-hint-1, eval = FALSE}
+... +
+  geom_point(alpha = 0.5,
+             size = ...)
+```
+
+### 
+
+Size controls the diameter of the points. The default diameter size is 1.
+
+### Exercise 7
+
+Use the layer `scale_x_log10()` function to make the scale of the plot logarithmic.
+
+```{r geompoint-with-size-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-size-7-hint-1, eval = FALSE}
+Remembder you are adding a layers here so use +
+```
+
+```{r geompoint-with-size-7-hint-2, eval = FALSE}
+... +
+  scale_x_log10()
+```
+
+### 
+
+Remember: a logarithmic scale means that each increment increases by a factor of the base of the logarithm. In our case, that's base 10.
+
+### Exercise 8
+
+Good! Now to change the theme of the plot, add another layer. This layer should be `theme_few()`.
+
+```{r geompoint-with-size-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-size-8-hint-1, eval = FALSE}
+
+```
+
+### 
+
+This theme is in `ggthemes`. Remember, there are some themes that are built into the `tidyverse` package, and some that are not. If you want to use themes that aren't in `tidyverse`, you must load `library(ggthemes)`.
+
+### Exercise 9
+
+To finish your plot, use `labs()` to give the graph a title, subtitle, axis labels, legend label, and caption of your choosing. To set the legend label, use the argument `color`.
+
+Reminder: This is what your plot should look like.
+
+```{r}
+point_p2
+```
+
+```{r geompoint-with-size-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-size-9-hint-1, eval = FALSE}
+... +
+  labs(...,
+       color = "Clarity",
+       ...)
+```
+
+### 
+
+Now we know how to minimize the overplotting, which will come in handy in future graphs. Remember that another way to minimize the overplotting is through `geom_jitter()`.
+
+## `geom_point()` with `geom_smooth()`
+### 
+
+In this exercise, we will map Joe Biden's approval rating until June 30th, the first ~6 months of his term. We will explore different types of `geom_smooth()` in this section.
+
+
+<!-- ```{r} -->
+<!-- polling_data <- read_csv("data/vis4_polling_data.csv", -->
+<!--               col_types = cols(createddate = col_date(), -->
+<!--                                approval_type = col_character(), -->
+<!--                                rate = col_double())) -->
+<!-- ``` -->
+
+### 
+
+We will be attempting to recreate this plot below.
+
+```{r}
+biden_p <- ggplot(data = polling_data, 
+       mapping = aes(x = createddate,
+                     y = rate,
+                     color = approval_type)) +
+  geom_point(alpha = 0.5) + 
+  geom_smooth(method = "gam",
+              formula = y ~ s(x, bs = "cs"),
+              se = TRUE) +
+  theme_fivethirtyeight() +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  labs(title = "Biden's Approval Rating From Jan 22 to Jun 30",
+       subtitle = "While Biden's approval rating has stayed relatively static, his disapproval rating \nhas been rising.",
+       color = "",
+       caption = "Source: Five Thirty Eight Data")
+
+biden_p
+```
+
+### Exercise 1
+
+We will first explore the file that contains this data. Run `polling_data` in the console below.
+
+```{r geompoint-with-geoms-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-geoms-1-hint-1, eval = FALSE}
+polling_data
+```
+
+### 
+
+This data was taken from the fivethirtyeight website. You will learn how to modify data into CSVs and use them in R in a later tutorial.
+
+### Exercise 2
+
+Write down the name of the three column headers.
+
+```{r geompoint-with-geoms-2}
+question_text(NULL,
+	message = "createddate, rate, approval_type",
+	answer(NULL,
+	correct = TRUE),
+	allow_retry = FALSE,
+	incorrect = NULL,
+	rows = 6)
+```
+
+### 
+
+`createddate` stands for the day the poll was finished. `rate` is the % of approval or disapproval, and `approval_type` indicates whether or not the rate is approval or disapproval.
+
+### Exercise 3
+
+We will get started building the plot. Start the function `ggplot()`, and set the argument `data` to `polling_data`.
+
+```{r geompoint-with-geoms-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-geoms-3-hint-1, eval = FALSE}
+ggplot(data = polling_data)
+```
+
+### 
+
+Remember: you should not see a plot here as you have not mapped anything, nor do you have a geom layer.
+
+### Exercise 4
+
+Now, map `createddate` to the x-axis, and map `rate` to the y-axis.
+
+```{r geompoint-with-geoms-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-geoms-4-hint-1, eval = FALSE}
+ggplot(data = polling_data,
+       mapping = aes(x = createddate,
+                     y = rate))
+```
+
+### 
+
+`createddate` is a date column, and `rate` is a double column.
+
+### Exercise 5
+
+We want to be able to see both Joe Biden's approval and disapproval rate. Therefore, we'll change the colour of the dots depending on whether the dot represents an approval/disapproval rating. Set `color` to `approval_type`.
+
+```{r geompoint-with-geoms-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-geoms-5-hint-1, eval = FALSE}
+ggplot(data = polling_data,
+       mapping = aes(x = createddate,
+                     y = rate,
+                     color = approval_type))
+```
+
+### 
+
+Good! Now we're ready to start building the plot.
+
+### Exercise 6
+
+Next, we will add the points to the graph. Add the layer `geom_point()`.
+
+```{r geompoint-with-geoms-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-geoms-6-hint-1, eval = FALSE}
+ggplot(data = polling_data,
+       mapping = aes(x = createddate,
+                     y = rate,
+                     color = approval_type)) +
+  geom_point()
+```
+
+### 
+
+Currently, we have a bit of overplotting. We will rectify this in the next code chunk.
+
+### Exercise 7
+
+Set the argument `alpha` to 0.5.
+
+```{r geompoint-with-geoms-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-geoms-7-hint-1, eval = FALSE}
+ggplot(data = ...,
+       mapping = aes(x = ...,
+                     y = ...,
+                     color = ...)) +
+  geom_point(alpha = ...)
+```
+
+### 
+
+Good! Now you should be able to see more distinct points.
+
+### Exercise 8
+
+We want to see the trend line for Biden's approval/disapproval ratings throughout his term. Add the layer of `geom_smooth().`
+
+```{r geompoint-with-geoms-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-geoms-8-hint-1, eval = FALSE}
+... + 
+  geom_smooth()
+```
+
+### 
+
+If you just add this layer, you will get a few warning messages. We will fix this in the following exercises.
+
+### Exercise 9
+
+Within geom_smooth(), set the method argument to "gam". We use "gam" since there is a large quantity of data points.
+
+```{r geompoint-with-geoms-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-geoms-9-hint-1, eval = FALSE}
+... + 
+  geom_smooth(method = "gam")
+```
+
+### 
+
+"gam" stands for **generalized additive model**. It is a modified form of a linear model. If you are curious to learn more, [GAMs in R](https://noamross.github.io/gams-in-r-course/chapter1) is a good resource.
+
+<!-- YW: Link still work(6/11/2022) -->
+### Exercise 10
+
+Next, within geom_smooth still, set the argument formula to `y ~ s(x, bs = "cs")`.
+
+```{r geompoint-with-geoms-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-geoms-10-hint-1, eval = FALSE}
+... + 
+  geom_smooth(method = "gam",
+              formula = y ~ s(x, bs = "cs"))
+```
+
+### 
+
+Just like y ~ x indicates a relationship between x and y, `y ~ s(x, bs = "cs")` indicates a "generalized additive model" relationship.
+
+### Exercise 11
+
+Finally, set `se = TRUE`.
+
+```{r geompoint-with-geoms-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-geoms-11-hint-1, eval = FALSE}
+... + 
+  geom_smooth(method = "gam",
+              formula = y ~ s(x, bs = "cs"),
+              se = TRUE)
+```
+
+### 
+
+Remember, this creates a margin of error.
+
+### Exercise 12
+
+Since the data comes from the FiveThirtyEight website, we will use the fivethirtyeight theme! Add `theme_fivethirtyeight()` to your plot.
+
+```{r geompoint-with-geoms-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-geoms-12-hint-1, eval = FALSE}
+... + 
+  geom_smooth(method = ...,
+              formula = ...,
+              se = ...) +
+  theme_fivethirtyeight()
+```
+
+### 
+
+Note: the FiveThirtyEight theme actually comes from the `ggthemes()` package, not the FiveThirtyEight package.
+
+### Exercise 13
+
+Next, we want to change the labels on the graph so they are in percentage format. Use scale_y_continuous to do so. Set the `labels` argument to `scales::percent_format(accuracy = 1)`.
+
+```{r geompoint-with-geoms-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-geoms-13-hint-1, eval = FALSE}
+...+
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1))
+```
+
+### 
+
+We use scale_y_continuous when we want to modify the y-axis for continuous data. [This documentation here](https://ggplot2.tidyverse.org/reference/scale_continuous.html) will tell you more, and all the possible arguments you can use with scale_y_continuous.
+
+### Exercise 14
+
+Finally, use `labs()` to add an appropriate heading, subtitle, caption, etc. 
+
+Reminder - your graph should look like this:
+
+```{r}
+biden_p
+```
+
+```{r geompoint-with-geoms-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-with-geoms-14-hint-1, eval = FALSE}
+... +
+  labs(title = ...,
+       subtitle = ...,
+       color = ...,
+       caption = ...)
+```
+
+### 
+
+Good! Now you have a plot of Biden's approval rating for the first six months of his term.
+
+## `geom_histogram()` 
+### 
+
+<!-- NL: This example should also include how to make and label breaks so that they correspond to histogram bins. Finding out the default histogram bin size is not simple (`ggplot_build`). Better might be to introduce the `center` and/or `boundary` arguments together with `binwidth`.  -->
+
+Let's create the following histogram.
+
+```{r}
+hist_p <- mpg |> 
+  mutate(year = as.character(year)) |> 
+  ggplot(aes(cty, fill = year)) +
+  geom_histogram(bins = 6,
+                 color = "black") +
+  labs(title = "Histogram of City Fuel Efficiency in 1999 and 2008 Models", 
+       subtitle = "1999 had more models of high city fuel efficiency", 
+       x = "City MPG", 
+       y = "Count",
+       fill = "Year",
+       caption = "Source: EPA") 
+
+hist_p
+```
+
+### Exercise 1
+
+Run `?mpg` in the code chunk below. 
+
+```{r geomhistogram-1, exercise = TRUE}
+
+```
+
+This dataset is about fuel economy of cars from the Environmental Protection Agency. 
+
+### Exercise 2
+
+Run `glimpse()` on the mpg data set. Take a look at the different variables available.
+
+```{r geomhistogram-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomhistogram-2-hint-1, eval = FALSE}
+glimpse(mpg)
+```
+
+### 
+
+The variables that we care about are `year` and `cty`. Year indicates the year of manufacture, and cty indicates the city miles per gallon.
+
+### Exercise 3
+
+Use the `$` to extract the column `year` as a vector.
+
+```{r geomhistogram-3, exercise = TRUE}
+
+```
+
+### 
+
+Notice that there are only two different years, 1999 and 2008.
+
+### Exercise 4
+
+Start a new pipe with `mpg`. Use `mutate()` and the function `as.character()` to change the `year` column from a numeric variable to a character variable.
+
+```{r geomhistogram-4, exercise = TRUE}
+
+```
+
+```{r geomhistogram-4-hint-1, eval = FALSE}
+...  |> 
+  mutate(year = as.character(year))
+```
+
+### 
+
+We make this change so that we can use year as a fill color when we plot. 
+
+### Exercise 5
+
+Select the columns `year` and `cty`.
+
+```{r geomhistogram-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomhistogram-5-hint-1, eval = FALSE}
+...  |> 
+  select(..., ...)
+```
+
+### Exercise 6
+
+Continue your pipe and add `ggplot()`. Map `cty` to the x-axis and `year`  to `fill`.
+
+```{r geomhistogram-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+
+```{r geomhistogram-6-hint-1, eval = FALSE}
+... |> 
+  ggplot(mapping = aes(x = ..., fill = ...))
+```
+
+Again, you should not see anything. The `geom` layer is what displays objects on the plot.
+
+### Exercise 7
+
+Now, we will add a geom layer. Add the layer `geom_histogram()`. 
+
+```{r geomhistogram-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomhistogram-7-hint-1, eval = FALSE}
+geom_histogram() is a layer so use + to add it
+```
+
+```{r geomhistogram-7-hint-2, eval = FALSE}
+...|> 
+  ...+
+  geom_histogram()
+```
+
+### 
+
+You may notice that there are too many "bins" for our liking. We'll change this now.
+
+### Exercise 8
+
+Within `geom_histogram()` set the number of `bins` to 6.
+
+```{r geomhistogram-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomhistogram-8-hint-1, eval = FALSE}
+... +
+  geom_histogram(bins = ...)
+```
+
+You can change the width of each bin with the `binwidth` argument. We won't be doing that now, but you can do that in future plots.
+
+### Exercise 9
+
+Within `geom_histogram()` set  `color` to `"black"`. 
+
+```{r geomhistogram-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomhistogram-9-hint-1, eval = FALSE}
+... +
+  geom_histogram(bins = 6, 
+                 color = "black")
+```
+
+Remember, `color` only changes the outline of the bars. If you want to change the fill, use `fill`. 
+
+### Exercise 10
+
+To finish your plot, use `labs()` to give the graph a title, subtitle, axis labels, legend labels, and caption of your choosing. To change the legend labels use the argument `fill`. 
+
+```{r geomhistogram-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomhistogram-10-hint-1, eval = FALSE}
+... +
+  labs(..., 
+       fill = "Year",
+       ...)
+```
+
+Reminder: This is what your graph should look like. 
+
+```{r show-hist-p}
+hist_p
+```
+
+### 
+
+In the previous graph we used `color` to change the legend labels, while here we used `fill`. The argument within labels matches the argument you use within `ggplot()`. `color` is used for objects like lines and points. `fill` is used for larger shapes. 
+
+Are you satisfied with the way we have made the bin sizes? Do the axes labels make this easy to understand? We will do better later. 
+
+
+## `geom_col()`
+### 
+
+Let's make the same plot, using a related function, `geom_col()`. Unlike `geom_bar()`, you have to specify the value for the y-axis when using this function. 
+
+```{r make-col-p}
+col_p <- trains  |> 
+  summarize(total = n(),
+            .by = c(race, line, treatment)) |> 
+  ggplot(aes(x = race, y = total, fill = line)) +
+    geom_col() +
+    facet_wrap(~ treatment) +
+    theme_classic() +
+    labs(title = "Starting Attitudes Toward Immigration Issue",
+         subtitle = "Higher proportion of minorities among treated participants",
+         x = "Race",
+         y = "Number of Participants",
+         fill = "Line",
+         caption = "Source: Enos (2014)")
+col_p
+```
+
+### Exercise 1
+
+Start a pipe with `trains`. Select the columns `race`, `treatment` and `line`. 
+
+```{r geomcol-1, exercise = TRUE}
+
+```
+
+```{r geomcol-1-hint-1, eval = FALSE}
+trains |> 
+  select(..., ..., ...)
+```
+
+### Exercise 2
+
+Copy/paste the previous code. Use `summarize()` to create a new table with the column `total` which is equal to the function `n()`. 
+
+```{r geomcol-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomcol-2-hint-1, eval = FALSE}
+... |> 
+  summarize(total = ...)
+```
+
+```{r geomcol-2-hint-2, eval = FALSE}
+... |> 
+  summarize(total = n())
+```
+
+### Exercise 3
+
+Add a `.by` argument to `summarize()` with the value set to `race`, `treatment`, and `line`. You need to place these three values with a vector using `c()`. 
+
+```{r geomcol-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomcol-3-hint-1, eval = FALSE}
+... |> 
+  summarize(total = n(),
+            .by = c(..., ..., ...))  
+```
+
+ 
+### 
+
+Note that there are no Blacks or Hispanics from the Franklin Line in the Control Group. 
+
+
+### Exercise 4
+
+Continue your pipe with `ggplot()`. Map the variable `race` to the x-axis. Map total to the `y` axis. Add the layer `geom_col()`.
+
+```{r geomcol-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomcol-4-hint-1, eval = FALSE}
+ggplot(aes(x = ..., 
+           y = ...) +
+  geom_col()
+```
+
+### 
+
+`geom_col()` will automatically take the three to four values for each `race` in the `total` column and stack them to form one bar. This behavior is from the fact that the `position` argument for `geom_col()` is set by default to "stack". 
+
+### Exercise 5
+
+Now, map `line` to `fill`.
+
+```{r geomcol-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomcol-5-hint-1, eval = FALSE}
+ggplot(data = ... , 
+          aes(x = race, 
+              fill = ...) +
+  geom_col()
+```
+
+### Exercise 6
+
+Add the layer `facet_wrap` and facet by the variable `treatment`. 
+
+```{r geomcol-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomcol-6-hint-1, eval = FALSE}
+... + 
+  facet_wrap(~ ...)
+```
+
+### Exercise 7
+
+Let's add a theme to our graph. Add the layer `theme_classic()` to your code. 
+
+```{r geomcol-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomcol-7-hint-1, eval = FALSE}
+... + 
+  theme_classic()
+```
+
+### Exercise 8
+
+To finish your plot, use `labs()` to give the graph a title, subtitle, axes labels, legend labels,  and caption of your choosing.
+
+Reminder: This is what your plot should look like.
+
+```{r}
+col_p
+```
+
+```{r geomcol-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomcol-8-hint-1, eval = FALSE}
+... +
+  labs(..., 
+       fill = "...",
+       ...)
+```
+
+## `geom_smooth()`
+### 
+
+Let's create this graph using `geom_smooth()`.
+
+```{r}
+smooth_p <- ggplot(data = trains, 
+       mapping = aes(x = att_start, 
+                     y = att_end, 
+                     color = treatment)) +
+  geom_smooth(method = "lm", 
+              se = FALSE,
+              formula = y ~ x) + 
+  theme_fivethirtyeight() +
+  labs(title = "Starting and Ending Immigration Attitudes",
+       subtitle = "The causal effect of treatment is similar regardless of starting attitude",
+       x = "Starting Attitudes",
+       y = "Ending Attitudes",
+       color = "Treatment",
+       caption = "Source: Enos (2014)")
+
+smooth_p
+```
+
+### Exercise 1
+
+Skim the `trains` data set. 
+
+```{r geomsmooth-1, exercise = TRUE}
+
+```
+
+### 
+
+Notice that there are no missing values for `att_start` and `att_end`. This means we do not need to use `drop_na`.  
+
+### Exercise 2
+
+Select the columns `att_end`, `att_start`, and `treatment`. 
+
+```{r geomsmooth-2, exercise = TRUE}
+
+```
+
+```{r geomsmooth-2-hint-1, eval = FALSE}
+... |> 
+  select(..., ..., ...)
+```
+
+### Exercise 3
+
+Add `ggplot()` and map `att_start` to the x axis and `att_end` to the y axis. Add the layer `geom_smooth()`.
+
+```{r geomsmooth-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomsmooth-3-hint-1, eval = FALSE}
+ggplot(data = ..., 
+       mapping = aes(x =..., 
+                     y = ...))+
+  geom_smooth()
+```
+
+### 
+
+Normally you will see `geom_smooth()` used with `geom_point()` so you can see the points and the trend line going through them. However, here we just have the trendlines shown.
+
+### Exercise 4
+
+Within `geom_smooth()`, set `method` to`"lm"`, `se` to `FALSE`, and `formula` to `y ~ x`. 
+
+```{r geomsmooth-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+### Exercise 5
+
+Now set `color` to `treatment`.
+
+```{r geomsmooth-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomsmooth-5-hint-1, eval = FALSE}
+Recall color is an aesthetic, so it goes within aes() argument of ggplot().
+```
+
+### Exercise 6
+
+Let's add a theme to our graph. Add the layer `theme_fivethirtyeight()` to your code. 
+
+```{r geomsmooth-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomsmooth-6-hint-1, eval = FALSE}
+...+ 
+ theme_fivethirtyeight()
+```
+
+### Exercise 7
+
+Finally, use `labs()` to give the graph a title, subtitle, axis labels, legend labels, and caption of your choosing.
+
+```{r geomsmooth-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomsmooth-7-hint-1, eval = FALSE}
+... +
+  labs(..., 
+       color = "...",
+       ...)
+```
+
+Reminder: This is what your plot should look like.
+
+```{r make-smooth-p}
+smooth_p
+```
+
+### 
+
+Note that this theme does not have axes labels. Do you think the labels are worth it?
+
+
+## `geom_density()`
+### 
+
+Let's create the following density plot.
+
+```{r}
+dens_p <- trains |> 
+  filter(age >= 40) |> 
+  ggplot(aes(age, fill = party)) +
+  geom_density(alpha = 0.5) + 
+  xlim(40, 75) +
+  labs (title = "Age of Democrats and Republicans in Trains Experiment",
+        subtitle = "More seniors are democrats in the experiment",
+        x = "Age",
+        y = "Density",
+        fill = "Party",
+        caption = " Source: Enos (2014)")
+
+dens_p
+```
+
+### Exercise 1
+
+Type `trains` to view the data set. 
+
+```{r geomdensity-1, exercise = TRUE}
+
+```
+
+### Exercise 2
+
+Use the `$` operator to extract the `age` column as a vector. 
+
+```{r geomdensity-2, exercise = TRUE}
+
+```
+
+### 
+
+The numbers in square brackets help you keep track of what row the number belongs to.
+
+### Exercise 3
+
+Start a new pipe with `trains`. Filter for rows in which `age` is greater than or equal to 40.
+
+```{r geomdensity-3, exercise = TRUE}
+
+```
+
+```{r geomdensity-3-hint-1, eval = FALSE}
+trains |> 
+  filter(age >= ...)
+```
+
+### Exercise 4
+
+ 
+Select the columns `age` and `party`.
+
+```{r geomdensity-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomdensity-4-hint-1, eval = FALSE}
+trains |> 
+  filter(...) |> 
+  select(..., ...)
+```
+
+### Exercise 5
+
+Use `ggplot()` to map `age` to the x-axis. Also add the layer `geom_density()`.
+
+```{r geomdensity-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomdensity-5-hint-1, eval = FALSE}
+ggplot(mapping = aes(x =..., 
+                     y = ...))+
+  geom_density()
+```
+
+### Exercise 6
+
+Set `fill` to `party`. 
+
+```{r geomdensity-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomdensity-6-hint-1, eval = FALSE}
+Recall fill goes inside the aes() argument of ggplot()
+```
+
+Right now, the two plots overlap each other. We will change the transparency so we can see both parties clearly.
+
+### Exercise 7
+
+Within `geom_density()` set the `alpha` argument to .5. 
+
+```{r geomdensity-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomdensity-7-hint-1, eval = FALSE}
+... +
+  geom_density(alpha = 0.5)
+```
+
+### Exercise 8
+
+Let's also add an `xlim()` function, to set the range of x values on our plot from 40 to 75. This way, we can see the full distributions.
+
+```{r geomdensity-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomdensity-8-hint-1, eval = FALSE}
+Make sure you put a comma between 40 and 75 within the xlim() function.
+```
+
+```{r geomdensity-8-hint-2, eval = FALSE}
+... +
+  xlim(40, 75)
+```
+
+### Exercise 9
+
+To finish your plot, use `labs()` to give the graph a title, subtitle, axis labels, and caption of your choosing.
+
+```{r geomdensity-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomdensity-9-hint-1, eval = FALSE}
+... +
+  labs(..., 
+       fill = "...",
+       ...)
+```
+
+Reminder: This is what our plot should look like.
+
+```{r}
+dens_p
+```
+
+## `plotly`
+### 
+
+`plotly` allows us to make interactive graphs. It's  especially useful with `geom_point()`. Hover over the points to see more information about them.
+
+```{r make-plotly}
+nominate_plot <- nominate |> 
+  filter(congress == 116) |> 
+  ggplot(aes(nominate_dim1, nominate_dim2, color = party,
+             text = paste("Name:", name, "\n",
+                                    "State:", state, "\n",
+                                     "Chamber:", chamber))) +
+  geom_point(size = 0.8) +
+  labs(title = "Economic and Social Ideology of 116th U.S. Congress", 
+       x = "Economic Ideology", 
+       y = "Social Ideology", 
+       color = "Party",
+       caption = "Voteview")
+
+nom_p <- ggplotly(nominate_plot, tooltip = "text")
+
+nom_p
+```
+
+### Exercise 1
+
+Run `?nominate` to open the help page for the nominate data set. 
+
+```{r plotly-1, exercise = TRUE}
+
+```
+
+### Exercise 2
+
+Start a new pipe with `nominate`. Arrange the tibble by `congress` in descending order to find the number of the most recent congress in the data set. 
+
+```{r plotly-2, exercise = TRUE}
+
+```
+
+```{r plotly-2-hint-1, eval = FALSE}
+... |> 
+  arrange(desc(...))
+```
+
+### 
+
+The most recent congress is the 116th. 
+
+### Exercise 3
+
+Start a new pipe with `nominate`. Filter to keep rows in which the value of `congress` is 116. 
+
+```{r plotly-3, exercise = TRUE}
+
+```
+
+```{r plotly-3-hint-1, eval = FALSE}
+... |> 
+  filter(congress == ...)
+```
+
+The variable `congress` indicates the number of Congress, i.e. the 116th Congress being Congress from 2019-2021, the 115th Congress from 2017-2019, etc. 
+### Exercise 4
+
+Drop any rows with `N/A` values in the `nominate_dim1` and `nominate_dim2` columns with `drop_na()`. 
+
+```{r plotly-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plotly-4-hint-1, eval = FALSE}
+... |> 
+  drop_na(..., ...)
+```
+
+### Exercise 5
+
+Select the columns `nominate_dim1`, `nominate_dim2`, `party`, `name`, `state`, and `chamber`. 
+
+```{r plotly-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plotly-5-hint-1, eval = FALSE}
+... |> 
+  select(..., ..., ..., ..., ..., ...)
+```
+
+### Exercise 6
+
+Use `ggplot()` and `aes()` to map `nominate_dim1` to `x` and `nominate_dim2` to `y`. 
+
+```{r plotly-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plotly-6-hint-1, eval = FALSE}
+... |> 
+  ggplot(mapping = aes(x = ...,
+                       y = ...))
+```
+
+### Exercise 7
+
+Add the layer `geom_point().`
+
+```{r plotly-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plotly-7-hint-1, eval = FALSE}
+... |> 
+  ggplot(mapping = aes(x = ...,
+                       y = ...)) +
+    geom_point()
+```
+
+### 
+
+Currently, we can't tell the difference between parties. We will fix this by changing the colours to represent each party.
+
+### Exercise 8
+
+Map `party` to `color` within aes(). Within `geom_point()` set the argument `size` to 0.8.
+
+```{r plotly-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plotly-8-hint-1, eval = FALSE}
+... |> 
+  ggplot(mapping = aes(x = ..., 
+                       y = ..., 
+                       color = ...))
+```
+
+### Exercise 9
+
+Within geom_point(), set the argument `size` to 0.8. 
+
+```{r plotly-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plotly-9-hint-1, eval = FALSE}
+... |> 
+  ggplot(mapping = aes(x = ..., 
+                       y = ..., 
+                       color = ...)) +
+  geom_point()
+```
+
+### 
+
+### Exercise 10
+
+Within `aes()` in `ggplot()`, add the argument `text` and set this equal to the function `paste`. This will return an error because we have not assigned anything to `text` yet.  We will do this in the following exercises. 
+
+```{r plotly-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plotly-10-hint-1, eval = FALSE}
+... |> 
+  ggplot(mapping = aes(x = ..., 
+                       y = ..., 
+                       color = ..., 
+                       text = paste()))+ 
+  geom_point(...)
+```
+
+The `paste` function allows quoted strings and variables to be combined into one string. We will use this function to create our `plotly` labels. Note, you should get an error during this.
+
+### Exercise 11
+
+Let's make the first line that will appear on our plotly label. Within `paste()`, first enter the string `"Name:"`. Separate this string by a comma a then write `name` without quotes, this is the column whose info we want to appear in this position on our label. Separate this by a comma, and then write `"\n"`. This is the symbol for a new line and it will not be printed. Keep this all on one line for the easiest formatting. Refer to the hint if needed.
+
+```{r plotly-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plotly-11-hint-1, eval = FALSE}
+... |> 
+  ggplot(mapping = aes(x = ..., 
+                       y = ..., 
+                       color = ..., 
+                       text = paste("Name:", name, "\n",
+                                    ))) + 
+  geom_point(...)
+```
+
+### Exercise 12
+
+Let's make an equivalent label for a congressman's state. Place a comma after the `"\n"` from the previous exercise. On a new line within paste, enter the string `"State:"`. Separate this string by a comma and then write `state` without quotes. Separate this by a comma and then include the new line symbol, `"\n"`. 
+
+```{r plotly-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plotly-12-hint-1, eval = FALSE}
+... |> 
+  ggplot(mapping = aes(x = ..., 
+                       y = ..., 
+                       color = ..., 
+                       text = paste("Name:", name, "\n",
+                                    "State:", state, "\n",
+                                    ))) +
+  geom_point(...)
+```
+
+### Exercise 13
+
+Let's make an equivalent label for a congressman's chamber. Place a comma after the `"\n"` from the previous exercise. On a new line within paste, enter the string `"Chamber:"`. Separate this string by a comma and then write `chamber` without quotes. Since this is our final line, do not include another new line symbol, simply add the closing the parentheses (if it is not there already). 
+
+```{r plotly-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plotly-13-hint-1, eval = FALSE}
+... |> 
+  ggplot(mapping = aes(x = ..., 
+                       y = ..., 
+                       color = ..., 
+                       text = paste("Name:", name, "\n",
+                                    "State:", state, "\n",
+                                    "Chamber:", chamber))) +
+  geom_point(...)
+```
+
+### Exercise 14
+
+Use `labs()` to add a title, axes labels, legend labels, and a caption to your plot. `ggplotly()` does not support subtitles. 
+
+```{r plotly-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plotly-14-hint-1, eval = FALSE}
++ labs(title = "...",
+       subtitle = "...",
+       x = "...",
+       y = "...",
+       color = "...",
+       caption = "...")
+```
+
+### Exercise 15
+
+To make a graph with `plotly`, you need to save your `ggplot()` to an object in R, which you will use in the function `ggplotly`. Copy/paste your full pipe from the previous exercise and assignment. At the beginning of the pipe use the `<-` to assign this to an object named `nominate_plot`.
+
+```{r plotly-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plotly-15-hint-1, eval = FALSE}
+nominate_plot <- nominate |> 
+  filter(congress == 116) 
+  ...
+```
+
+### Exercise 16
+
+Copy/paste the code from above. On a new line not connected to the pipe above, type the function `ggplotly()`. The first argument should be the name of the ggplot object, `nominate_plot`. Make the second argument `tooltip = "text"`. This tells `ggplotly()` to make the label based on what we have in the `text` argument in `ggplot()`.
+
+```{r plotly-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plotly-16-hint-1, eval = FALSE}
+nominate_plot <- nominate |> 
+  filter(congress == 116) |> 
+  ... 
+
+ggplotly(nominate_plot, tooltip = "text")
+
+```
+
+Reminder: This is what your graph should look like. Test to make sure you can interact with your graph. 
+
+```{r}
+nom_p
+```
+
+
+
+## Summary
+### 
+
+This tutorial covered [Chapter 10: Layers](https://r4ds.hadley.nz/layers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You learned how to use [**ggplot2**](https://ggplot2.tidyverse.org/) and related packages to create persuasive graphics.
+
+
+```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
+```
