@@ -21,6 +21,15 @@ library(scales)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
+
+# Needed for lengthening data plot
+
+billboard_longer <- billboard |>
+  pivot_longer(cols = starts_with("wk"),
+               names_to = "week",
+               values_to = "rank",
+               values_drop_na = TRUE) |>
+  mutate(week = parse_number(week))
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -132,39 +141,51 @@ Restart your R session again with `Cmd-Shift-0`.
 
 ###
 
-Run the code provided in the boxes below.
+Run the code provided in the box below.
 
 ```{r tidy-data-5-1, exercise = TRUE}
 table1
-```
-
-```{r tidy-data-5-2, exercise = TRUE}
 table2
-```
-
-```{r tidy-data-5-3, exercise = TRUE}
 table3
 ```
 
 ###
 
-These show Tuberculosis cases in three countries: China, Brazil, and Afghanistan.
+These tables show Tuberculosis cases in three countries: China, Brazil, and Afghanistan.
 
 ###
 
-They all show the same data (country, year, population, cases), but one of them is going to be way easier to work with.
+They all show the same data (country, year, population, cases), but one of them is going to be way easier to work with. Let's see if we can identify the tidy table.
 
 ### Exercise 6
 
-Let's  take a look at `table2` first. Run the code in the box below to see it.
+Let's  take a look at `table2` first. Type and run `table2` in the box below to see it.
 
 ```{r tidy-data-6, exercise = TRUE}
+
+```
+
+```{r tidy-data-6-hint, eval = FALSE}
 table2
 ```
 
 ###
 
-`table2` is a tibble with 4 columns and 12 rows. Let's see if the rules apply
+`table2` is a tibble with 4 columns and 12 rows. Let's see if the rules apply.### Exercise 7
+
+
+```{r tidy-data-7}
+question_text(NULL,
+	message = "Place correct answer here.",
+	answer(NULL, correct = TRUE),
+	allow_retry = FALSE,
+	incorrect = NULL,
+	rows = 6)
+```
+
+###
+
+
 
 ### Exercise 7
 
@@ -182,28 +203,21 @@ In the column `type`, it switches in between `cases` and `population`. In the co
 
 Using the three rules, answer the questions below.
 
-```{r tidy-data-7-1}
+### Exercise 8
+
+
+```{r tidy-data-8}
 question_text("Are all the possible variables columns?",
+	message = "No",
 	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-
-```{r tidy-data-7-2}
-question_text("Are all the rows observations?",
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
+	allow_retry = FALSE,
 	incorrect = NULL,
 	rows = 3)
 ```
 
 ###
 
-Your answers should be "No" for both questions. 
+<!-- knowledge -->
 
 ###
 
@@ -211,9 +225,13 @@ All the possible variables are `country`, `year`, `cases`, and `population`. The
 
 ### Exercise 8
 
-Now let's look at `table3` Run the code in the box below to see it.
+Now let's look at `table3`. Type and run `table3` in the box below to see it.
 
 ```{r tidy-data-8, exercise = TRUE}
+
+```
+
+```{r tidy-data-8-hint, eval = FALSE}
 table3
 ```
 
@@ -229,24 +247,28 @@ Now, this looks like a very nice dataset with 3 columns and 6 rows, but it break
 
 Using the three rules, answer the question below.
 
-```{r tidy-data-8-1}
+```{r tidy-data-8}
 question_text("Are all the cells a single value?",
+	message = "No",
 	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
+	allow_retry = FALSE,
 	incorrect = NULL,
 	rows = 3)
 ```
 
 ###
 
-Your answer should be "No". Each of the cells in the `rate` column are not a single observation. They are `population` divided by `cases`, so in order for the data to be considered tidy, we would need to separate those columns.
+Each of the cells in the `rate` column are not a single observation. They are `population` divided by `cases`, so in order for the data to be considered tidy, we would need to separate those columns.
 
 ### Exercise 9
 
-Let's look at `table1`. Run the code in the box below to see it.
+Let's look at `table1`. Type and run `table1` in the box below to see it.
 
 ```{r tidy-data-9, exercise = TRUE}
+
+```
+
+```{r tidy-data-8-hint, eval = FALSE}
 table1
 ```
 
@@ -266,28 +288,18 @@ As a refresher, these are the rules for tidy data:
 
 Using the three rules, answer the questions below.
 
-```{r tidy-data-10-1}
-question_text("Are all the possible variables columns?",
+```{r tidy-data-10}
+question_text("Are all the rules true in this data?",
+	message = "Yes",
 	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-
-```{r tidy-data-10-2}
-question_text("Are all the rows observations?",
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
+	allow_retry = FALSE,
 	incorrect = NULL,
 	rows = 3)
 ```
 
 ###
 
-Both of your answers should be "Yes" because this is a very good example of a tidy dataset. All the variables are columns. All the columns are variables. All the observations are rows, all the rows are observations, all the values are cells, and all the cells are single values.
+This is a very good example of a tidy dataset. All the variables are columns. All the columns are variables. All the observations are rows, all the rows are observations, all the values are cells, and all the cells are single values.
 
 ### Exercise 11
 
@@ -458,10 +470,204 @@ To add labels to the key on the side, you will need to label both the shape and 
 
 ###
 
-Now that you understand what tidy data is, we need to learn how to make data tidy.
+Now that you understand what tidy data is and how to identify it using the three rules, we need to learn how to make data tidy.
 
 ## Lengthening Data
 ### 
+
+The rules of tidy data might seem so obvious that you wonder if you’ll ever encounter data that isn’t tidy. Unfortunately, almost all real data is untidy, and you will need to clean it.
+
+### Exercise 1
+
+Restart your R session with `Cmd-Shift-0`. The tutorial will keep your place.
+
+###
+
+For this section, we will need to see the `billboard` dataset. Type and run `billboard` in the box below
+
+```{r lengthening-data-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r lengthening-data-1-hint, eval = FALSE}
+billboard
+```
+
+###
+
+The `billboard` dataset consists of song rankings from the Billboard top 100 songs in the year 2000. 
+
+### Exercise 2
+
+This data is going to be extremely difficult to work with. It has *79* rows!
+
+###
+
+
+Start a pipe with `billboard`.
+
+```{r lengthening-data-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r lengthening-data-2-hint, eval = FALSE}
+...|>
+```
+
+###
+
+How exactly can we tidy a dataset that is this wide? First, we need to figure out where the problem is coming from. The majority of the width is from the 76 columns that tell us the rank of the song on a given week in the year 2000.
+
+### Exercise 3
+
+Add `pivot_longer()` to the pipe.
+
+```{r lengthening-data-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r lengthening-data-3-hint, eval = FALSE}
+billboard |>
+  pivot_...()
+```
+
+###
+
+We can use `pivot_longer()`, and condense the other 76 columns into just two columns: `week` and `rank`.
+
+### Exercise 4
+
+Inside `pivot_longer()`, we need to grab all the columns that start with `wk`, because that is something that all 76 have in common. We can do this by using `cols = starts_with("wk")`.
+
+```{r lengthening-data-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r lengthening-data-4-hint, eval = FALSE}
+billboard|>
+  pivot_longer(cols = starts_with("..."))
+```
+
+###
+
+`cols` specifies which columns need to be pivoted, i.e. which columns aren’t variables. This argument uses the same syntax as `select()` so here we could use `!c(artist, track, date.entered)` or `starts_with("wk")`
+
+### Exercise 5
+
+Now, we need to specify what `pivot_longer()` needs to do with all these columns.
+
+###
+
+We need to turn these 76 columns and all these observations into two columns: `rank` and `week`. We can do this by adding `names_to = "week"`, and `values_to = "rank` to `pivot_longer()`. (Make sure you have commas separating each line!) 
+
+```{r lengthening-data-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r lengthening-data-5-hint, eval = FALSE}
+billboard|>
+  pivot_longer(cols = starts_with("wk"),
+             names_to = "...",
+             values_to = "...")
+```
+
+###
+
+`names_to` names the variable stored in the column names, we named that variable week, and `values_to` names the variable stored in the cell values, we named that variable rank.
+
+###
+
+### Exercise 6
+
+Now we need to get rid of all the NA's in the dataset. We can do this by using `values_drop_na = TRUE` inside `pivot_longer()`
+
+```{r lengthening-data-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r lengthening-data-6-hint, eval = FALSE}
+pivot_longer(...,
+             ...,
+             ...,
+             values_drop_na = ...)
+```
+
+###
+
+These NAs don’t really represent unknown observations; they were forced to exist by the structure of the dataset2, so we can ask `pivot_longer()` to get rid of them by setting `values_drop_na = TRUE`.
+
+### Exercise 7
+
+Although this data is considered tidy, we can still clean it up to make it more understandable. We can get rid of all the extra `wk`'s in the `week` column to make everything look nicer.
+
+###
+
+We do this by continuing our pipe with `mutate()`.
+
+```{r lengthening-data-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r lengthening-data-7-hint, eval = FALSE}
+(...)|>
+  mutate()
+```
+
+###
+
+With `mutate()` we can convert character strings to numbers. This way of using `mutate()` doesn't create a new column, but changes it.
+
+### Exercise 8
+
+Inside of `mutate()`, we can set `week` equal to `parse_number(week)`. This will get rid of all the `wk`'s, replacing them with numbers.
+
+```{r lengthening-data-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r lengthening-data-8-hint, eval = FALSE}
+|>
+  mutate(... = parse_number(...))
+```
+
+###
+
+`parse_number()` is a handy function that will extract the first number from a string, ignoring all other text.
+
+### Exercise 9
+
+Assign this mutated dataset to `billboard_longer`, using `<-`
+
+```{r lengthening-data-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r lengthening-data-9-hint, eval = FALSE}
+billboard_longer <- billboard |>
+  pivot_longer(...)
+```
+
+###
+
+This will make it easier to make this dataset into a plot, that way we don't have to pipe the entire process for the improved dataset into `ggplot()`.
 
 ## Widening Data
 ### 
