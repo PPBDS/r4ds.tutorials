@@ -426,7 +426,7 @@ Next to `x` axis label, type another comma and a `y`, then set it equal to `"Bod
 
 ```
 
-###
+### 
 
 Finally, it's worth noting that the labs() function is just one way to modify plot labels in ggplot. Other functions, such as xlab(), ylab(), and ggtitle(), can be used to modify specific plot labels without affecting others. It's important to choose the appropriate function for your needs depending on the level of customization you require.
 
@@ -688,8 +688,6 @@ Our ultimate goal in this chapter is to recreate the following visualization dis
 geom_bar_p
 ```
 
-
-
 ### Exercise 1
 
 load the `palmerpenguins` library
@@ -724,9 +722,9 @@ penguins |>
   ggplot()
 ```
 
-`geom_bar()` is used to represent categorical data: Bar charts are commonly used to represent categorical data. The x-axis represents the categories and the height of the bars represents the frequency or count of the observations in each category.
-
 ### 
+
+`geom_bar()` is used to represent categorical data: Bar charts are commonly used to represent categorical data. The x-axis represents the categories and the height of the bars represents the frequency or count of the observations in each category.
 
 ### Exercise 3
 
@@ -743,9 +741,10 @@ penguins |>
   ...(aes(x = species))
 ```
 
+### 
+
 By default, `geom_bar()` counts the number of observations in each category: If you use `geom_bar()` without specifying any other arguments, it will count the number of observations in each category and create a bar chart showing the frequency of each category.
 
-### 
 
 ### Exercise 4
 
@@ -763,7 +762,7 @@ penguins |>
   geom_...()
 ```
 
-###
+### 
 
 You can use the stat="identity" argument to plot the values of a numerical variable directly, rather than counting occurrences. In this case, the y aesthetic should be mapped to the numerical variable. Finally, it's worth noting that geom_col() is a shortcut for geom_bar(stat="identity"), which can be useful for creating simple bar charts without having to specify the stat argument.
 
@@ -784,9 +783,9 @@ penguins |>
   geom_...()
 ```
 
-What `fct_infreq()` does that it changes the order of levels with each level. If you want to know more visit [https://forcats.tidyverse.org/reference/fct_inorder.html] here!
-
 ### 
+
+What `fct_infreq()` does that it changes the order of levels with each level. If you want to know more visit [https://forcats.tidyverse.org/reference/fct_inorder.html] here!
 
 ### Exercise 6
 
@@ -804,9 +803,9 @@ penguins |>
   geom_...()
 ```
 
-You can customize the order of the bars: By default, geom_bar orders the bars in ascending order based on the category. However, you can customize the order of the bars using the reorder function.
-
 ### 
+
+You can customize the order of the bars: By default, geom_bar orders the bars in ascending order based on the category. However, you can customize the order of the bars using the reorder function.
 
 ### Exercise 7
 
@@ -824,9 +823,9 @@ penguins |>
   geom_...(postion = "fill")
 ```
 
-`geom_bar()` can be used with faceted data: `geom_bar()` can create faceted bar charts, where the bars are split into multiple panels based on a third variable. To do this, you can use the facet_wrap or facet_grid function. 
-
 ### 
+
+`geom_bar()` can be used with faceted data: `geom_bar()` can create faceted bar charts, where the bars are split into multiple panels based on a third variable. To do this, you can use the facet_wrap or facet_grid function. 
 
 ### Exercise 8
 
@@ -956,9 +955,9 @@ penguins |>
   geom_...()
 ```
 
-You can adjust the position of the bars: By default, `geom_histogram()` positions the bars to touch each other. However, you can adjust the position of the bars using the position parameter.
-
 ### 
+
+You can adjust the position of the bars: By default, `geom_histogram()` positions the bars to touch each other. However, you can adjust the position of the bars using the position parameter.
 
 ### Exercise 5
 
@@ -976,9 +975,11 @@ penguins |>
   geom_...(binwidth = ...)
 ```
 
+### 
+
 The binwidth parameter controls the width of the bins: The binwidth parameter controls the width of the bins used in the histogram. By default, geom_histogram uses a binwidth of 30. Compared to the previews histogram, the 20 bin width is too narrow, resulting in too many bars, making it difficult ot determine the shape of the distribution. 
 
-### 
+
 
 ### Exercise 6
 
@@ -996,9 +997,9 @@ penguins |>
   geom_...(binwidth = ...)
 ```
 
-Looking at this histogram, we can see that it is much better because we can actually define the shape and see the distribution.
-
 ### 
+
+Looking at this histogram, we can see that it is much better because we can actually define the shape and see the distribution.
 
 ### Exercise 7
 
@@ -1039,9 +1040,9 @@ load the `palmerpenguins` library
 library(palmerpenguins)
 ```
 
-`geom_density()` is a function in the ggplot2 package in R used for creating density plots.
-
 ### 
+
+`geom_density()` is a function in the ggplot2 package in R used for creating density plots.
 
 ### Exercise 2
 
@@ -1164,11 +1165,10 @@ penguins |>
 ```
 
 ### 
+
 Note the terminology we have used here:
 We map variables to aesthetics if we want the visual attribute represented by that aesthetic to vary based on the values of that variable.
 Otherwise, we set the value of an aesthetic.
-
-
 
 ### Exercise 8
 
@@ -1353,7 +1353,197 @@ box_plot_p <- ggplot(penguins, aes(x = species, y = body_mass_g)) +
 box_plot_p
 ```
 
+## Facet Wrap
+### 
 
+As we saw in `geom_point()` plot, we can incorporate more variables into a plot by mapping them to additional aesthetics. However adding too many aesthetic mappings to a plot makes it cluttered and difficult to make sense of. Another way, which is particularly useful for categorical variables, is to split your plot into facets, subplots that each display one subset of the data.
+
+Our ultimate goal in this section is to create a subplot displaying the relationship between flipper lengths and body masses of  penguins, taking into consideration the species of the penguin.
+
+Below is what the final rplot will look like:
+
+```{r}
+facet_p <- penguins|>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species, shape = species)) +
+  labs(x = "Flipper Length(mm)",
+       y = "Body Mass(g)")+
+  facet_wrap(~island)
+
+facet_p
+```
+
+### Exercise 1
+
+Before doing so, lets load the **palmerpenguins** package using `library()`.
+
+```{r facet-wrap-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r facet-wrap-1-hint-1, eval = FALSE}
+library(palmerpenguins)
+```
+
+### 
+
+facet_wrap() can be especially useful for exploring complex data sets that have multiple variables or groups, and for comparing patterns and trends across different subsets of the data.
+
+### Exercise 2
+
+Run `penguins` and pipe it `ggplot()` with the pipe operator `|>`.
+
+```{r facet-wrap-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r facet-wrap-2-hint-1, eval = FALSE}
+... |>
+  ggplot()
+```
+
+### 
+
+You can use the scales argument to control the scale of the y-axis in each panel of the grid. For example, you can use scales = "free_y" to allow each panel to have its own y-axis scale.
+
+### Exercise 3
+
+Let's specify the `x`, so within `ggplot()`, run `aes(x = flipper_length_mm)`.
+
+```{r facet-wrap-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r facet-wrap-3-hint-1, eval = FALSE}
+...|>
+  ggplot(...(x = ...))
+```
+
+### 
+
+facet_wrap() can be combined with other ggplot2 functions like geom_point(), geom_line(), geom_bar(), and geom_histogram() to create a wide range of visualizations that explore different aspects of the data.
+
+### Exercise 4
+
+Let's specify the `y`, so within `ggplot()`, run `aes(y = body_mass_g)`.
+
+```{r facet-wrap-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r facet-wrap-4-hint-1, eval = FALSE}
+...|>
+  ggplot(aes(y = ...))
+```
+
+### 
+
+when using facet_wrap() it's important to consider the purpose of the visualization and the audience that will be viewing it. Choosing the right combination of input variables and customizing the appearance of the panels can help to convey the message more effectively and make the visualization more engaging for the viewer.
+
+### Exercise 5
+
+Add the "geom_point()" using `+`.
+
+```{r facet-wrap-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r facet-wrap-5-hint-1, eval = FALSE}
+... |>
+  +
+  geom_point()
+```
+
+### 
+
+### Exercise 6
+
+Within "geom_point()", add another aesthetic layer and run `color = species`.
+
+```{r facet-wrap-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r facet-wrap-6-hint-1, eval = FALSE}
+... |>
+  +
+  geom_point(aes(color= species))
+```
+
+### 
+
+### Exercise 7
+
+Within "geom_point()", run `shape = species` in "aes()".
+
+```{r facet-wrap-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r facet-wrap-7-hint-1, eval = FALSE}
+... |>
+  + 
+  geom_point(...(x = ..., y = ...))
+```
+
+### 
+
+### Exercise 8
+
+To facet your plot by a single variable, run `facet_wrap()`. The first argument of facet_wrap() is `island`, which you create with ~ followed by a variable name. The variable that you pass to facet_wrap() should be categorical.
+
+
+```{r facet-wrap-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r facet-wrap-8-hint-1, eval = FALSE}
+
+```
+
+### 
+
+ncol and nrow: These arguments can be used to control the layout of the facet panels. ncol sets the number of columns in the grid of panels, and nrow sets the number of rows. By default, facet_wrap() tries to create a square grid of panels that fits all the subplots.
+
+### Exercise 9
+
+Finally set an appropriate title, subtitle, axes labels, and caption for the graph.
+
+```{r facet-wrap-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r facet-wrap-9-hint-1, eval = FALSE}
+
+```
+
+### 
+
+labeller: This argument can be used to customize the labels for the facet panels. By default, facet_wrap() uses the names of the categorical variables to label each panel. However, it is possible to create custom labels using functions like label_parsed() or label_bquote().
+
+Reminder: This is what your graph should look like.
+
+```{r}
+facet_p
+```
 
 <!-- DK: Continue book material here. Below are extra plots practice which comes from the Visualization: Basic Plots tutorial from all.primer.tutorials. -->
 
