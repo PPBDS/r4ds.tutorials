@@ -18,6 +18,7 @@ library(tidyverse)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
+x <- c()
 
 
 ```
@@ -31,36 +32,51 @@ options(tutorial.exercise.timelimit = 60,
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 14: Numbers](https://r4ds.hadley.nz/numbers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to import data into your R project using [`read_csv()`](https://readr.tidyverse.org/reference/read_delim.html) and related functions from the [**readr**](https://readr.tidyverse.org/) package. You will also learn how to write out data to files with functions like [`write_csv()`](https://readr.tidyverse.org/reference/write_delim.html).
+This tutorial covers [Chapter 14: Numbers](https://r4ds.hadley.nz/numbers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. Numeric vectors are the backbone of data science, and you’ve already used them a bunch of times earlier in the book. Now it’s time to systematically survey what you can do with them in R, ensuring that you’re well situated to tackle any future problem involving numeric vectors. We’ll start by giving you a couple of tools to make numbers if you have strings, and then going into a little more detail of count(). Then we’ll dive into various numeric transformations that pair well with mutate(), including more general transformations that can be applied to other types of vectors, but are often used with numeric vectors. We’ll finish off by covering the summary functions that pair well with summarize() and show you how they can also be used with mutate().
 
-## Older material
+
+## Numbers
 ### 
 
 ### Exercise 1
 
 People write numbers differently in different parts of the world. For example, some countries use `.` in between the integer and fractional parts of a real number, while others use `,`.
 
-### 
-
-To begin, use the function  `parse_double()` with the argument "1.23".
+To begin, let's first simulate a situation where you have a `int` as a `str` type. So lets define `x` using `<-`to three values in quotes: 1.2, 5.6, 1e3; Assign all three values using vector function `c()`.
 
 ```{r older-material-1, exercise = TRUE}
 
 ```
 
 ```{r older-material-1-hint-1, eval = FALSE}
-parse_double("1.23")
+x <- c(...,...,...)
 ```
 
 ### 
+
+In most cases, you’ll get numbers already recorded in one of R’s numeric types: integer or double. In some cases, however, you’ll encounter them as strings, possibly because you’ve created them by pivoting from column headers or because something has gone wrong in your data import process.
+
+### Exercise 2
+
+"readr" provides two useful functions for parsing strings into numbers: `parse_double()` and `parse_number()`. Use `parse_double()` when you have numbers that have been written as strings with `x` as arguement.
+
+```{r numbers-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numbers-2-hint, eval = FALSE}
+parse_double(...)
+```
+
+###
 
 There are other `parse_*` functions such as `parse_logical()`, `parse_integer()`, and `parse_character()`.
 
 ### Exercise 2
 
 What if the file you worked with used a comma to denote a decimal mark? Many functions in the [**readr**](https://readr.tidyverse.org) package provide a “locale” argument. You provide an object that specifies parsing options that differ from place to place. You can override the default value of `.` by creating a new locale and setting the `decimal_mark` argument.
-
-### 
 
 Use `parse_double()` with the argument "1,23". The second argument should set `locale` to `locale(decimal_mark = ",")`.
 
@@ -71,6 +87,8 @@ Use `parse_double()` with the argument "1,23". The second argument should set `l
 ```{r older-material-2-hint-1, eval = FALSE}
 parse_double("1,23", locale = locale(..))
 ```
+
+### 
 
 Note that `locale` is both an argument for `parse_*` functions and the name of a function itself, on which create a local object. See `?readr::locale` for [details](https://readr.tidyverse.org/articles/locales.html).
 
@@ -110,7 +128,9 @@ Use `parse_number()` with the argument "The cost of the package is $40.75"
 parse_number("The cost of ...." )
 ```
 
-<!-- DK: So many knowledge drop possibilities! -->
+###
+
+
 
 
 ## Summary
