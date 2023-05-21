@@ -15,9 +15,16 @@ description: 'Tutorial for Chapter 15: Strings'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
+library(babynames)
+library(gghighlight)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
+
+set.seed(9)
+police <- read_csv("data/philly-clean.csv",
+                   col_types = cols()) |>
+  slice_sample(n = 4000)
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -30,6 +37,548 @@ options(tutorial.exercise.timelimit = 60,
 ### 
 
 This tutorial covers [Chapter 15: Strings](https://r4ds.hadley.nz/strings.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
+
+
+<!-- DK: Book material goes here. Then, edit the below to account for the fact that students already know a lot about strings. -->
+
+
+## Last letter of boy names
+
+<!-- DK: Some code here seems too hard. Or maybe it just needs a clearer explanation. -->
+
+The **[babynames](http://hadley.github.io/babynames/)** package contains data about baby names through the years. 
+
+### 
+
+Using this data, let's create the folllowing graph.
+
+```{r baby-lastnames}
+boys_p <- babynames |>
+  filter(sex == 'M') |>
+  
+  # prop is supposed to be proportion of a specific name in all male baby names
+  # in that year. But I am not sure it is! For example, if you sum up prop for
+  # all M in a given year, it never adds to 1. It always adds to a number less
+  # than 1, but greater than 0.9. My *guess* would be that this is due to
+  # babynames dropping names which have very small numbers of babies with that
+  # name. If true, then prop is likely correct.
+  
+  select(name, year, prop) |>
+  
+  # Add last letter of baby names. 
+  
+  mutate(last_letter = stringr::str_sub(name, -1, -1)) |>
+  
+  # frequency is the poroportion of a certain last letter in all male baby names in that year. 
+  
+  summarize(frequency = sum(prop), 
+            .by = c(year, last_letter)) |>
+  ggplot(aes(x = year, y = frequency, colour = last_letter)) +
+    geom_line() + 
+  
+    # only color last letters that appears more than 15 % of all boy names in any year. 
+    
+    gghighlight(max(frequency) > 0.15,
+                label_key = last_letter) + 
+    scale_x_continuous(guide = guide_axis(angle = 70),
+                       breaks = c(1880, 1900, 1925, 1950,
+                                  1975, 2000, 2017)) +
+    scale_y_continuous(labels = scales::percent_format()) +
+    theme_minimal() + 
+    labs(x = NULL,
+         y = NULL,
+         subtitle = "Names ending with 'N' increased rapidly after 1950",
+         title = "Last Letter of Boy Baby Names",
+         caption = "Source: http://hadley.github.io/babynames")
+
+boys_p
+```
+
+### Exercise 1
+
+`glimpse()` the `babynames` data set. Pay close attention to the data type of each variable.
+
+```{r last-letter-of-boy-n-1, exercise = TRUE}
+
+```
+
+### 
+
+We could have also used `head()` function to check the first few rows of the tibble.
+
+### Exercise 2
+
+<!-- DK: Seems bad. We never do this! -->
+
+To check for `NA` values, use `any()` function with argument `is.na()`, argument of which should be the dataset. 
+
+```{r last-letter-of-boy-n-2, exercise = TRUE}
+
+```
+
+```{r last-letter-of-boy-n-2-hint-1, eval = FALSE}
+any(is.na(...))
+```
+
+### 
+
+This function returned `FALSE`, which indicates that there are no NA values. 
+
+### Exercise 3
+
+Because we are trying to analyse only boy names by last letter, start a pipe with     `babynames`,`filter()` the data set to only get the data of boy names. 
+
+```{r last-letter-of-boy-n-3, exercise = TRUE}
+
+```
+
+```{r last-letter-of-boy-n-3-hint-1, eval = FALSE}
+babynames |>
+  filter(... == 'M')
+
+```
+
+```{r last-letter-of-boy-n-3-hint-2, eval = FALSE}
+babynames |>
+  filter(sex == 'M')
+
+```
+
+### Exercise 4
+
+Select the `name`, `year`, and `prop` columns. 
+
+```{r last-letter-of-boy-n-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r last-letter-of-boy-n-4-hint-1, eval = FALSE}
+...  |>
+  select(..., ..., ...)
+```
+
+### 
+
+When selecting columns, we can also combine multiple select helpers. For example,
+when selecting `name` and `year` columns, we can use the following code: 
+`select(starts_with("na") | ends_with("ar"))`.
+
+### Exercise 5
+
+We want the last letters of boy names. Therefore, create a new variable names `last_letters` that should be equal to last letter of each boy name. To get the last letter of each boy name, we will make use of `str_sub()` function of **[stringr](https://stringr.tidyverse.org/)** package. 
+
+### 
+
+Use the `mutate()` function to add a new column: `last_letter`. Its value is the `str_sub()` function with `name`, `-1` and `-1` as its first three arguments.
+
+```{r last-letter-of-boy-n-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r last-letter-of-boy-n-5-hint-1, eval = FALSE}
+... |>
+  mutate(last_letter = stringr::str_sub(..., ..., -1))
+```
+
+```{r last-letter-of-boy-n-5-hint-2, eval = FALSE}
+babynames |>
+  filter(sex == 'M')|>
+  select(name, year, prop)|>
+  mutate(last_letter = stringr::str_sub(name, -1, -1))
+```
+
+### 
+
+`str_sub` takes three arguments: character vector to work on, starting character, and ending character. Because we wanted to extract last letter, or -1 element, of each name, we set the starting and ending characters as -1.
+
+
+### Exercise 6
+
+Use `summarize()` to create the variable `frequency` that is equal to `sum()` of proportions of each group. 
+
+Moreover, to avoid warning and since we are done with groups, pass in the `.groups` argument and set it equal to `drop`. 
+
+```{r last-letter-of-boy-n-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r last-letter-of-boy-n-6-hint-1, eval = FALSE}
+... |> 
+   summarize(frequency = sum(prop), .groups = "drop") 
+```
+
+### Exercise 7
+
+Now, create a ggplot object, and within `ggplot(aes())`, set x-axis values to `year`, y-axis values to `frequency`, and colour to `last_letter.` 
+
+
+```{r last-letter-of-boy-n-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r last-letter-of-boy-n-7-hint-1, eval = FALSE}
+...|>
+  ggplot(aes(x = ..., y = ..., colour = ...)) 
+```
+
+### Exercise 8
+
+Add `geom_line()` to the ggplot object from previous exercise.
+
+
+```{r last-letter-of-boy-n-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r last-letter-of-boy-n-8-hint-1, eval = FALSE}
+...  +
+  geom_line()
+```
+
+### 
+
+Alternatively, we could have used other chart types such as scatter chart. However, for our goal, line plot is a great option. 
+
+### Exercise 9
+
+Because we want to analyse last letters that are prevalent, we want to color only last letters that have been above a certainn threshold.
+
+### 
+
+We use 15% as the threshold. Therefore, we only want to color last letters that for certain time have been the last letter of more than 15% of all baby boys that were born during that time. 
+
+### 
+
+We will utilize `gghighlight` library for this purpose. Add `gghighlight()` to the ggplot object. Within this function, set `max()` `frequency` to be greater than `0.15`, and to avoid any warnings, set `label_key` equal to `last_letter`.
+
+```{r last-letter-of-boy-n-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r last-letter-of-boy-n-9-hint-1, eval = FALSE}
+...+ 
+  gghighlight(max(...) > ...,
+                label_key = ...) 
+```
+
+### 
+
+We don't think current x-axis ticks are informative enough. Therefore, we should set custom x-axis ticks.
+
+### Exercise 10
+
+Add `scale_x_continuous`, and within this function, set `breaks` argument equal to numerical vector of years. You can choose any years within the data set. We preferred 1880, 1900, 1925, 1950, 1975, 2000, and 2017. 
+
+```{r last-letter-of-boy-n-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r last-letter-of-boy-n-10-hint-1, eval = FALSE}
+... +
+  scale_x_continuous(breaks = c(1880, 1900, ..., ...,
+                                ..., 2000, 2017)) 
+```
+
+### 
+
+A rule of thumb, however, is to include ending and beginning years so that whoever sees your plot could understand the range of years that data is collected.
+
+### Exercise 11
+
+Moreover, we want to visualize y-axis as percentage instead of proportion. Therefore, add `scale_y_continuous`, and within this function, set `labels` argument equal to `scales::percent_format()`.
+
+```{r last-letter-of-boy-n-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r last-letter-of-boy-n-11-hint-1, eval = FALSE}
+... +
+  scale_y_continuous(... = scales::...()) 
+```
+
+```{r last-letter-of-boy-n-11-hint-2, eval = FALSE}
+... +
+  scale_y_continuous(labels = scales::percent_format()) 
+```
+
+### 
+
+`scale` library provides many functions to assist the scaling of axes. For example, `scale_y_binned()` can be used to discretize continuous position data.
+
+### Exercise 12
+
+Add `theme_minimal()`. 
+
+```{r last-letter-of-boy-n-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r last-letter-of-boy-n-12-hint-1, eval = FALSE}
+... +
+  theme_minimal()
+```
+
+### 
+
+We also could have used themes such as `theme_gray()`, `theme_void()`, and`theme_bw()`.
+
+### Exercise 13
+
+Finally, add `caption`, `title`, `subtitle`, and `axis` labels of your choice. Add `labs()` function to the plot. 
+
+Reminder: This is what your plot should look like
+
+```{r last-letter-of-boy-n-13}
+boys_p
+```
+
+```{r baby-lastnames-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r last-letter-of-boy-n-13-hint-1, eval = FALSE}
+... +
+  labs(...)
+```
+
+
+
+
+## Mutating Strings 
+### 
+
+A string is one or more characters that are enclosed inside a pair of matching 'single' or "double quotes." We will now use various functions to manipulate strings.
+
+### Exercise 1
+
+Let's start with a small subset of data about police complaints in Philadelphia. Run `police` in the code chunk below to view this data.
+
+```{r mutating-strings-1, exercise = TRUE}
+police
+```
+
+### 
+
+As wide as this data is, we will not be using most of the columns.
+
+
+### Exercise 2
+
+Start a new pipe with our data by typing `police` followed by the `|>` operator. On a new line,`select()` the `summary` column,`po_race`, `district_occurrence`, and `investigative_findings`. We will first focus on the `summary` column, but will use the other columns later in this section. 
+
+```{r mutating-strings-2, exercise = TRUE}
+
+```
+
+```{r mutating-strings-2-hint-1, eval = FALSE}
+police |> 
+  select(...)
+```
+
+### 
+
+Use the buttons in the bottom right corner to navigate through all the rows.
+
+### Exercise 3
+
+Use `mutate()` and `str_detect()` to create a new column called `race`. Each observation will either be `TRUE` or `FALSE` depending on whether or not the adjacent `summary` observation contains the string `"rac"`.
+
+```{r mutating-strings-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+
+```{r mutating-strings-3-hint-1, eval = FALSE}
+The first argument in string detect is the column in 
+which you want to detect a string, the second argument 
+is the quoted string you want to detect.
+```
+
+```{r mutating-strings-3-hint-2, eval = FALSE}
+... |> 
+  mutate(race = str_detect(..., "..."))
+```
+
+### 
+
+You may need to use the arrow key in the top right corner of the table to view the `race` column.
+
+### 
+
+This new column in `police` tells us if a complaint involved someone's race. We had to specifically look for the string `"rac"` to account for words like "race" and "racial".
+
+### Exercise 4
+
+Filter your pipe so that you keep rows only where the column `race` has value `TRUE`. 
+
+```{r mutating-strings-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r mutating-strings-4-hint-1, eval = FALSE}
+Use the function filter() with the == evaluator
+```
+
+```{r mutating-strings-4-hint-2, eval = FALSE}
+... |> 
+  filter(race == ...) 
+```
+
+### 
+
+There should be 180 rows in which the `race` column has value `TRUE`.
+
+### Exercise 5
+
+In your pipe, use `mutate()` and `str_detect()` to create a new column called `physical` with value `TRUE` when the column `summary` contains the string `"physical"` and `FALSE` if it does not. Then filter so that you keep rows only when the column `physical` has value `TRUE`. 
+
+```{r mutating-strings-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r mutating-strings-5-hint-1, eval = FALSE}
+... |> 
+  mutate(... = str_detect(..., "...")) |> 
+  filter(... == ...)
+```
+
+```{r mutating-strings-5-hint-2, eval = FALSE}
+police |> 
+  select(summary, po_race, district_occurrence, investigative_findings) |>
+  mutate(race = str_detect(summary, "rac")) |>
+  mutate(physical = str_detect(..., "...")) |>
+  filter(race == TRUE & physical == ...)
+```
+
+### 
+
+This gives us a table with all of the complaints that involved someone's race and some kind of physical altercation. There should be 43 rows in which both the race and the physical columns have value `TRUE`. 
+
+### Exercise 6
+
+Copy-paste your pipe from the previous exercise and use `mutate()` and `str_sub()` to change the column `po_race` so that it only contains the first two letters of each row. The second argument should be the character position from where you want to start, and the third argument should be the character position where you want to end.
+
+```{r mutating-strings-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r mutating-strings-6-hint-1, eval = FALSE}
+... 
+  mutate(po_race = str_sub(..., ..., ...))
+```
+
+```{r mutating-strings-6-hint-2, eval = FALSE}
+... |> 
+  mutate(po_race = str_sub(po_race, 1, ...))
+```
+
+### 
+
+The "sub" in `str_sub()` stands for `substrings`. This function extracts "substrings" (parts of a string) based on the `start` and `end` arguments.
+
+### Exercise 7
+
+Copy-paste your pipe from the previous exercise and use `mutate()` and `str_c()` to add the string `"PA-"` in front of every string in the column `district_occurrence`. `str_c` **c**ombines two strings and its syntax is similar to `c()`. The first argument is what you want to appear first in the combined string, `"PA-"`. The second argument should be the name of the column, `district_occurrence`. 
+
+```{r mutating-strings-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r mutating-strings-7-hint-1, eval = FALSE}
+... |> 
+  mutate(... = str_c("PA-", ...))
+```
+
+```{r mutating-strings-7-hint-2, eval = FALSE}
+... |> 
+  mutate(... = str_c("PA-", district_occurrence))
+```
+
+### 
+
+A useful context for this operation might be if we were going to add analogous data from another state into this tibble, which might have overlapping district numbers. 
+
+### 
+
+Note that R assigned this column to a character variable. If this were a numeric variable, the command would still work. R would coerce the edited column from a numeric variable to a character variable. 
+
+
+### Exercise 8
+
+Copy-paste your pipe from the previous exercise. Use `mutate()` and `str_replace()` to replace the pattern `"Sustained "` with `"S"` in the column `investigative_findings`.  Note that we have included a space after the word "Sustained". Set the second argument to the pattern in the current vector which you want to change. Set the third argument to the replacement which you want to replace the pattern with. 
+
+```{r mutating-strings-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r mutating-strings-8-hint-1, eval = FALSE}
+x |> 
+  select(po_race, district_occurrence, investigative_findings, summary) |> 
+  mutate(race = str_detect(summary, "rac")) |> 
+  filter(race == TRUE) |> 
+  mutate(physical = str_detect(summary, "physical")) |> 
+  filter(physical  == TRUE) |> 
+  mutate(po_race = str_sub(po_race, 1, 2)) |> 
+  mutate(... = str_c("PA-", district_occurrence)) |> 
+  mutate(investigative_findings = str_replace(investigative_findings, "... ", "..."))
+```
+
+### Exercise 9
+
+Copy-paste your pipe from the previous exercise. Use `mutate()` and `str_replace()` to replace the pattern `"Finding"` with `"F"` in the column `investigative_findings`. 
+
+```{r mutating-strings-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r mutating-strings-9-hint-1, eval = FALSE}
+x |> 
+  select(po_race, district_occurrence, investigative_findings, summary) |> 
+  mutate(race = str_detect(summary, "rac")) |> 
+  filter(race == TRUE) |> 
+  mutate(physical = str_detect(summary, "physical")) |> 
+  filter(physical  == TRUE) |> 
+  mutate(po_race = str_sub(po_race, 1, 2)) |> 
+  mutate(... = str_c("PA-", district_occurrence)) |> 
+  mutate(investigative_findings = str_replace(investigative_findings, "Sustained ", "S")) |> 
+  mutate(... = str_replace(..., "...", "..."))
+
+```
+
 
 
 
