@@ -49,27 +49,9 @@ This tutorial covers [Chapter 2: Data Visualization](https://r4ds.hadley.nz/data
 ## Creating first ggplot
 ### 
 
-Our ultimate goal in this section is to create a plot displaying the relationship between flipper lengths and body masses of these penguins, taking into consideration the species of the penguin.
-
-Below is what the end product will look like:
-
-```{r}
-intro_p <-penguins |>
-  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g)) +
-  geom_point(mapping = aes(color = species, shape = species)) +
-  geom_smooth(method = "lm")+
-  labs( title = "Body mass and flipper length",
-        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
-        x = "Flipper length (mm)", 
-        y = "Body mass (g)",
-        color = "Species", 
-        shape = "Species")
-intro_p
-```
+Our ultimate goal in this section is to create a plot displaying the relationship between flipper lengths and body masses of these penguins, taking into consideration the species of the penguin.Before doing so, lets load the **palmerpenguins** package using `library()`.
 
 ### Exercise 1
-
-lets load the **palmerpenguins** package using `library()`.
 
 ```{r creating-first-ggplo-1, exercise = TRUE}
 
@@ -198,7 +180,7 @@ The difference between the previous code was it that we are using the pipe opera
 
 ### Exercise 9
 
-Type `penguins` with the pipe operator `|>` and plug it into `ggplot()` like this
+Run `penguins` with the pipe operator `|>` and plug it into `ggplot()` like this
 `penguins |> ggplot()`
 ```{r creating-first-ggplo-9, exercise = TRUE}
 
@@ -228,7 +210,7 @@ Copy the previous code and within `ggplot()`, run `mapping = aes(x = flipper_len
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-10-hint-1, eval = FALSE}
-... |>
+penguins |>
   ggplot(... = aes(x = ...))
 ```
 
@@ -246,7 +228,7 @@ Copy the previous code, within the `aes()` set `y` equal to `body_mass_g` and ru
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-11-hint-1, eval = FALSE}
-...|>
+penguins |>
   ggplot(mapping = aes(x = ..., y = ...))
 ```
 
@@ -256,7 +238,7 @@ To display the data points we need to add a geometric object(geom). We can defin
 
 ### Exercise 12
 
-The function `geom_point()` adds a layer of points to your plot, which creates a scatterplot so copy the previous code and add `+ geom_point()`
+The function `geom_point()` adds a layer of points to your plot, which creates a scatterplot so copy the previous code and run `+ geom_point()`
 
 ```{r creating-first-ggplo-12, exercise = TRUE}
 
@@ -265,9 +247,9 @@ The function `geom_point()` adds a layer of points to your plot, which creates a
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-12-hint-1, eval = FALSE}
-...|>
-  +
-  geom_point()
+penguins |>
+  ...(mapping = aes(x = flipper_length_mm, y = ...)) +
+      geom_point()
 ```
 
 ### 
@@ -276,7 +258,7 @@ The function `geom_point()` adds a layer of points to your plot, which creates a
 
 ### Exercise 13
 
-In `ggplot()`, run `color = species` within `aes()`.
+Within `aes()`, run `color = species`.
 ```{r creating-first-ggplo-13, exercise = TRUE}
 
 ```
@@ -284,9 +266,9 @@ In `ggplot()`, run `color = species` within `aes()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-13-hint-1, eval = FALSE}
-... |>
-  ggplot(... = aes(x = flipper_length_mm, y = ..., ... = species))+
-  
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, y = ..., ... = species))+
+  geom_point()
 ```
 
 ### 
@@ -298,7 +280,7 @@ When you ran it, you see that the data points differ by the color of the species
 
 ### Exercise 14
 
-Add `geom_smooth()` layer using `+`, and set `method` to `lm` within the functions arguement. 
+Copy the previous code, run `geom_smooth()` and within it, set `method` to `lm`. 
 ```{r creating-first-ggplo-14, exercise = TRUE}
 
 ```
@@ -306,8 +288,9 @@ Add `geom_smooth()` layer using `+`, and set `method` to `lm` within the functio
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-14-hint-1, eval = FALSE}
-... |>
-  +
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, color = ...)) +
+  geom_point() +
   geom_smooth(... = "lm")
 ```
 
@@ -318,7 +301,7 @@ Add `geom_smooth()` layer using `+`, and set `method` to `lm` within the functio
 
 ### Exercise 15
 
-We have added new lines to the plot, but it does not match the plot in beginning, which displayed only one line for the entire data set instead of separate lines for each penguin species. To do so, delete the `color` aesthetic within `ggplot()` and add it to `geom_point` by running `geom_point(mapping = aes(color = species))`.
+We have added new lines to the plot, but it does not match the plot in beginning, which displayed only one line for the entire dataset instead of separate lines for each penguin species. Remove the `color` aesthetic within `ggplot()` and add it to `geom_point` by running `geom_point(mapping = aes(color = species))`
 
 
 ```{r creating-first-ggplo-15, exercise = TRUE}
@@ -328,9 +311,10 @@ We have added new lines to the plot, but it does not match the plot in beginning
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-15-hint-1, eval = FALSE}
-... |>
-  +
-  geom_point(mapping = ...(color = species))
+penguins |>
+  ggplot(mapping = ...(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point(mapping = ...(color = species)) +
+  ...(method = "lm")
 ```
 
 ### 
@@ -350,7 +334,7 @@ Not all individuals perceive colors differently due to color blindness or other 
 ```{r creating-first-ggplo-16-hint-1, eval = FALSE}
 ... |>
   +
-  geom_point(mapping = ...(color = species, ... = species))
+  geom_point(mapping = aes(color = ..., shape = ...)) 
 ```
 
 In addition to the built-in shapes, ggplot also allows for custom shapes to be created and used in plots. This can be useful for creating unique visualizations or for incorporating custom symbols or logos into a plot.
@@ -359,7 +343,7 @@ In addition to the built-in shapes, ggplot also allows for custom shapes to be c
 
 ### Exercise 17
 
-Now that we have the data points, lets add the title, substitle, labels and etc. Copy the previous code, add a new layer using `+` and run `labs()`. Within labs, set `title` equal to "Body mass and flipper length" in quotes.
+Now that we have the data points, lets add the title, substitle, labels and etc. Copy the previous code,   add a new layer using `+` and run `labs()`. Within labs, set `title` equal to "Body mass and flipper length" in quotes.
 
 ```{r creating-first-ggplo-17, exercise = TRUE}
 
@@ -375,7 +359,7 @@ Now that we have the data points, lets add the title, substitle, labels and etc.
 
 ### 
 
-The `labs()` function takes in several arguments to modify the plot labels, including x, y, title, subtitle, caption, and tag. The x and y arguments are used to modify the axis labels, while the title, subtitle, and caption arguments are used to modify the plot title, subtitle, and caption, respectively. The tag argument is used to add a label to the plot that can be used for reference in later code.
+The labs() function takes in several arguments to modify the plot labels, including x, y, title, subtitle, caption, and tag. The x and y arguments are used to modify the axis labels, while the title, subtitle, and caption arguments are used to modify the plot title, subtitle, and caption, respectively. The tag argument is used to add a label to the plot that can be used for reference in later code.
 
 
 ### Exercise 18
@@ -442,7 +426,7 @@ Next to `x` axis label, type another comma and a `y`, then set it equal to `"Bod
 
 ```
 
-### 
+###
 
 Finally, it's worth noting that the labs() function is just one way to modify plot labels in ggplot. Other functions, such as xlab(), ylab(), and ggtitle(), can be used to modify specific plot labels without affecting others. It's important to choose the appropriate function for your needs depending on the level of customization you require.
 
@@ -450,7 +434,6 @@ Finally, it's worth noting that the labs() function is just one way to modify pl
 ### Exercise 21
 
 You might see that it looks the same as the one in the beginning but we forgot one minor thing which is capitalizing the legend, we can do so by typing a comma and setting both `color` and `shape` equal to "Species" in quotes.
-
 ```{r creating-first-ggplo-21, exercise = TRUE}
 
 ```
@@ -458,30 +441,218 @@ You might see that it looks the same as the one in the beginning but we forgot o
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-21-hint-1, eval = FALSE}
-... |>
-  +
+penguins |>
+  ggplot(
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = species, shape = species)) +
+  geom_smooth(method = "lm")+
   labs( ... = "Body mass and flipper length"+
-        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
-        x = ..., 
-        y = ...,
-        color = "Species", 
-        shape = "Species")
-```
-
-Reminder: This is what our graph should look like
-
-```{r}
-intro_p
+          subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+        x = ..., y = ...,
+         color = "Species", shape = "Species")
 ```
 
 ### 
 
-## Geom point
+## geom_point
 ### 
 
 To practice the new skills we learned from the plot we made in the previous exercises, we will make another plot which displays the relationship between `bill_depth_mm` and `bill_lenght_mm`.
 
 Below is what the end product will look like
+
+```{r}
+
+
+exercise_scatterplot_p
+```
+
+### Exercise 1
+
+Run `penguins` with the pipe operator `|>` and plug it into `ggplot()`.
+
+```{r geompoint-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-1-hint-1, eval = FALSE}
+penguins |>
+  ggplot()
+```
+
+With ggplot2, you begin a plot with the function ggplot(), defining a plot object that you then add layers to. 
+
+### 
+
+### Exercise 2
+
+Within `ggplot()`, run `mapping = aes()` and in `aes()`set `x` to `bill_length_mm`.
+
+```{r geompoint-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-2-hint-1, eval = FALSE}
+penguins |>
+  ggplot(... = aes(x = ...))
+```
+
+The x and y arguments of aes() specify which variables to map to the x and y axes.
+
+### 
+
+### Exercise 3
+
+Copy the previous code, within the `aes()`, set `y` to `bill_depth_mm` and run it.
+
+```{r geompoint-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-3-hint-1, eval = FALSE}
+penguins |>
+  ggplot(mapping = aes(x = ..., y = ...))
+```
+
+"bill depth" refers to the measurement of the maximum vertical depth of a bird's beak or bill, usually taken at a specific point along the bill. This measurement can provide important information about a bird's feeding behavior, ecology, and evolutionary adaptations.
+
+### 
+
+### Exercise 4
+
+Copy the previous code and run `+ geom_point()`
+
+```{r geompoint-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-4-hint-1, eval = FALSE}
+... |> 
+<<<<<<< HEAD
+  +
+  geom_point()
+```
+
+The warning message "Removed X rows containing missing values (geom_point())" is a common message in R.  Like R, ggplot2 subscribes to the philosophy that missing values should never silently go missing. This type of warning is probably one of the most common types of warnings you will see when working with real data – missing values are a very common issue and you’ll learn more about them throughout the book
+
+
+### Exercise 5
+
+Within `aes()`, run `color = species`.
+
+```{r geompoint-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-5-hint-1, eval = FALSE}
+... |>
+  ggplot(mapping = aes(x = bill_length_mm, 
+                       y = ..., 
+                       ... = species))
+```
+
+When aesthetic mappings are defined in ggplot(), at the global level, they’re passed down to each of the subsequent geom layers of the plot. However, each geom function in ggplot2 can also take a mapping argument, which allows for aesthetic mappings at the local level that are added to those inherited from the global level.
+
+### 
+
+### Exercise 6
+
+Copy the previous code, add the `geom_smooth()` layer and within it, set `method` to `lm`. 
+
+```{r geompoint-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-6-hint-1, eval = FALSE}
+
+... |>
+  +
+  geom_smooth(... = "lm")
+```
+
+In the ggplot2 package in R, the "geom_smooth()" function can be used to add a smoothed curve to a scatter plot to help visualize trends in the data. If no arguments are specified when using geom_smooth(), the function will use the default settings to determine the smoothing method and other parameters of the curve.
+
+### 
+
+### Exercise 7
+
+Remove the `color` aesthetic within `ggplot()` and add it to `geom_point()` by running `geom_point(mapping = aes(color = species))` to get three different lines for each species.
+
+```{r geompoint-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-7-hint-1, eval = FALSE}
+...|> 
+  +
+  geom_point(mapping = ...(color = species))
+```
+
+When aesthetic mappings are defined in ggplot(), at the global level, they’re passed down to each of the subsequent geom layers of the plot. However, each geom function in ggplot2 can also take a mapping argument, which allows for aesthetic mappings at the local level that are added to those inherited from the global level.So that's why we species `color = species` for "geom_point()".
+
+### 
+
+### Exercise 8
+
+In addition to color, we can also map species to the shape aesthetic. Map the `species` variable to the `shape` aesthetic in addition to `color` within `geom_point()` by running `shape = color`.
+`
+```{r geompoint-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-8-hint-1, eval = FALSE}
+penguins |>
+  ggplot(
+  mapping = aes(x = bill_length_mm, y = bill_depth_mm)
+) +
+  geom_point(mapping = aes(color = ..., shape = ...)) +
+  geom_smooth(method = "lm")
+```
+
+Note that the legend is automatically updated to reflect the different shapes of the points as well.
+
+### 
+
+### Exercise 9
+
+Now that we have the data points, lets add the title, subtitle, labels and etc. Copy the previous code,   add a new layer using `+` and run `labs()`. Within labs, set `title` equal to "Penguins Beak's Length and Depth" , `subtitle` to "Dimensions for Adelie, Chinstrap, and Gentoo Penguins" , `x` to  "Beak Length (mm)", `y = "Beak Depth (mm)"`, `color` to "Species" and `shape` to "Species".
+
+```{r geompoint-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geompoint-9-hint-1, eval = FALSE}
+... |>
+  +
+  labs(title = "Penguins Beak's Length and Depth", 
+       subtitle = ...,
+       x = ... , 
+       ... = "Beak Depth (mm)",
+       color = "Species", 
+       ... = "Species")
+
+```
+
+Reminder: This is what our graph should look like
 
 ```{r}
 #| message: false
@@ -500,230 +671,189 @@ exercise_scatterplot_p <- penguins |>
         y = "Beak Depth (mm)",
         color = "Species", 
         shape = "Species")
-
-exercise_scatterplot_p
-```
-
-### Exercise 1
-
-Before we create our plot, we need to get our data, so load the `palmerpenguins` library using `library()`.
-
-```{r geom-point-1, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-point-1-hint-1, eval = FALSE}
-library(palmerpenguins)
-```
-
-### 
-
-Did you know that the `library()` function in R was originally called `require()` in early versions of the language? The `require()` function worked similarly to `library()`, but it would only load a package if it was available on the system, without downloading and installing it if it wasn't already installed.
-
-### Exercise 2
-
-Run `penguins` with the pipe operator `|>` and plug it into `ggplot()`.
-
-```{r geom-point-2, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-point-2-hint-1, eval = FALSE}
-... |>
-  ggplot()
-```
-
-### 
-
-With ggplot2, you begin a plot with the function ggplot(), defining a plot object that you then add layers to it. 
-
-### Exercise 3
-
-Within `ggplot()`, run `mapping = aes()` and in `aes()`set `x` to `bill_length_mm`.
-
-```{r geom-point-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-point-3-hint-1, eval = FALSE}
-... |>
-  ggplot(... = aes(x = ...))
-```
-
-### 
-
-The x and y arguments of `aes()` specify which variables to map to the x and y axes.
-
-### Exercise 4
-
-Within `aes()`, set `y` to `bill_depth_mm` and run it.
-
-```{r geom-point-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-point-4-hint-1, eval = FALSE}
-... |>
-  ggplot(mapping = aes(x = ..., y = ...))
-```
-
-###
-
-"bill depth" refers to the measurement of the maximum vertical depth of a bird's beak or bill, usually taken at a specific point along the bill. This measurement can provide important information about a bird's feeding behavior, ecology, and evolutionary adaptations.
-
-
-### Exercise 5
-
-To add the data points, add the `geom_point()` layer using `+`.
-
-```{r geom-point-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-point-5-hint-1, eval = FALSE}
-... |> 
-  +
-  geom_point()
-```
-
-### 
-
-The warning message "Removed X rows containing missing values (geom_point())" is a common message in R.  Like R, ggplot2 subscribes to the philosophy that missing values should never silently go missing. This type of warning is probably one of the most common types of warnings you will see when working with real data – missing values are a very common issue and you’ll learn more about them throughout the book
-
-
-### Exercise 6
-
-In `ggplot()`, within `aes()`, run `color = species`.
-
-```{r geom-point-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-point-6-hint-1, eval = FALSE}
-... |>
-  ggplot(mapping = aes(x = bill_length_mm, 
-                       y = ..., 
-                       ... = species))
-```
-
-### 
-
-When aesthetic mappings are defined in ggplot(), at the global level, they’re passed down to each of the subsequent geom layers of the plot. However, each geom function in ggplot2 can also take a mapping argument, which allows for aesthetic mappings at the local level that are added to those inherited from the global level.
-
-### Exercise 7
-
-Add the `geom_smooth()` layer and within it, set `method` to `lm`. 
-
-```{r geom-point-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-point-7-hint-1, eval = FALSE}
-
-... |>
-  +
-  geom_smooth(... = "lm")
-```
-
-### 
-
-In the ggplot2 package in R, the "geom_smooth()" function can be used to add a smoothed curve to a scatter plot to help visualize trends in the data. If no arguments are specified when using geom_smooth(), the function will use the default settings to determine the smoothing method and other parameters of the curve.
-
-### Exercise 8
-
-Remove the `color` aesthetic within `ggplot()` and add it to `geom_point()` by running `geom_point(mapping = aes(color = species))` to get three different lines for each species.
-
-```{r geom-point-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-point-8-hint-1, eval = FALSE}
-...|> 
-  +
-  geom_point(mapping = ...(color = species))
-```
-
-### 
-
-When aesthetic mappings are defined in ggplot(), at the global level, they’re passed down to each of the subsequent geom layers of the plot. However, each geom function in "ggplot2" can also take a mapping argument, which allows for aesthetic mappings at the local level that are added to those inherited from the global level.So that's why we species `color = species` for `geom_point()`.
-
-### Exercise 9
-
-In addition to color, we can also map species to the shape aesthetic. Map the `species` variable to the `shape` aesthetic in addition to `color` within `geom_point()` by running `shape = color`.
-`
-```{r geom-point-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-point-9-hint-1, eval = FALSE}
-penguins |>
-  ggplot(
-  mapping = aes(x = bill_length_mm, y = bill_depth_mm)
-) +
-  geom_point(mapping = aes(color = ..., shape = ...)) +
-  geom_smooth(method = "lm")
-```
-
-### 
-
-Note that the legend is automatically updated to reflect the different shapes of the points as well.
-There are also other wasy to edit the legend. Some are the following: `scale_*_discrete()` functions: These functions allow you to modify the appearance of the legend for discrete variables (i.e., factors). For example, `scale_color_discrete()` can be used to change the colors of the legend, while `scale_shape_discrete()` can be used to change the shapes of the legend symbols.
-
-### Exercise 10
-
-Now that we have the data points, lets add the title, subtitle, labels and etc. Copy the previous code, add a new layer using `+` and run `labs()`. Within labs, set `title` equal to "Penguins Beak's Length and Depth" , `subtitle` to "Dimensions for Adelie, Chinstrap, and Gentoo Penguins" , `x` to  "Beak Length (mm)", `y = "Beak Depth (mm)"`, `color` to "Species" and `shape` to "Species".
-
-```{r geom-point-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-point-10-hint-1, eval = FALSE}
-... |>
-  +
-  labs(title = "Penguins Beak's Length and Depth", 
-       subtitle = ...,
-       x = ... , 
-       ... = "Beak Depth (mm)",
-       color = "Species", 
-       ... = "Species")
-
-```
-
-Reminder: This is what your graph should look like
-
-```{r}
 exercise_scatterplot_p
 
 ```
 
 ### 
 
-## Geom Bar
+## geom_bar
 ### 
 
 To examine the distribution of a categorical variable, variables that represent categories or groups of items, we can use the bar chart to do so.
 
 Our ultimate goal in this chapter is to recreate the following visualization displaying the relationship between the islands and the species populpation.
+
+```{r}
+geom_bar_p
+```
+
+
+
+### Exercise 1
+
+load the `palmerpenguins` library
+
+```{r geombar-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geombar-1-hint-1, eval = FALSE}
+library(palmerpenguins)
+```
+
+### 
+
+The palmerpenguins dataset was created by Allison Horst, a marine biologist turned data scientist, who wanted to create a modern and updated version of the classic iris dataset often used in data science and statistics courses.
+
+
+### Exercise 2
+
+Run `penguins` and pipe it to a `ggplot()` call.
+
+```{r geombar-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geombar-2-hint-1, eval = FALSE}
+penguins |>
+  ggplot()
+```
+
+### 
+
+`geom_bar()` is used to represent categorical data: Bar charts are commonly used to represent categorical data. The x-axis represents the categories and the height of the bars represents the frequency or count of the observations in each category.
+
+### Exercise 3
+
+Within `ggplot()`, set `x` to `species` inside of `aes()`
+
+```{r geombar-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geombar-3-hint-1, eval = FALSE}
+penguins |>
+  ...(aes(x = species))
+```
+
+### 
+
+
+By default, `geom_bar()` counts the number of observations in each category: If you use `geom_bar()` without specifying any other arguments, it will count the number of observations in each category and create a bar chart showing the frequency of each category.
+
+
+### Exercise 4
+
+To make the bar graph, add `geom_bar()` call and run it.`
+
+```{r geombar-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geombar-4-hint-1, eval = FALSE}
+penguins |>
+  ...(aes(x = species))+
+  geom_...()
+```
+
+###
+
+You can use the stat="identity" argument to plot the values of a numerical variable directly, rather than counting occurrences. In this case, the y aesthetic should be mapped to the numerical variable. Finally, it's worth noting that geom_col() is a shortcut for geom_bar(stat="identity"), which can be useful for creating simple bar charts without having to specify the stat argument.
+
+
+### Exercise 5
+
+To make the graph be in order, set `x` to `fct_infreq(species)`.
+
+```{r geombar-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geombar-5-hint-1, eval = FALSE}
+penguins |>
+  ...(aes(x = ...(species)))+
+  geom_...()
+```
+
+### 
+
+What `fct_infreq()` does that it changes the order of levels with each level. If you want to know more visit [https://forcats.tidyverse.org/reference/fct_inorder.html] here!
+
+### Exercise 6
+
+Lets integrate another categorical variable, so set `fill` to `species` within `aes()`.
+
+```{r geombar-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geombar-6-hint-1, eval = FALSE}
+penguins |>
+  ...(aes(x = ...(species, fill = species)))+
+  geom_...()
+```
+
+### 
+
+You can customize the order of the bars: By default, geom_bar orders the bars in ascending order based on the category. However, you can customize the order of the bars using the reorder function.
+
+### Exercise 7
+
+Let's find the percentages of each penguins species on each island, so run `position = "fill"` within `geom_bar()`.
+
+```{r geombar-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geombar-7-hint-1, eval = FALSE}
+penguins |>
+  ...(aes(x = ...(species, fill = species)))+
+  geom_...(postion = "fill")
+```
+
+### 
+
+`geom_bar()` can be used with faceted data: `geom_bar()` can create faceted bar charts, where the bars are split into multiple panels based on a third variable. To do this, you can use the facet_wrap or facet_grid function. 
+
+### Exercise 8
+
+Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption for the graph.
+
+```{r geombar-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geombar-8-hint-1, eval = FALSE}
+penguins |>
+  ggplot(aes(x = island, fill = species)) +
+    geom_bar(position = "fill")+
+    labs(title = "",
+         subtitle = "",
+         x = "",
+         y = "",
+         caption = "",
+         fill = "
+         ")
+```
+
+Reminder : This is what our graph should look like.
 
 ```{r}
 #| message: false
@@ -744,168 +874,24 @@ geom_bar_p <- penguins |>
 geom_bar_p
 ```
 
-### Exercise 1
-
-Lets load the **palmerpenguins** package using `library()`.
-
-```{r geom-bar-1, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-bar-1-hint-1, eval = FALSE}
-library(palmerpenguins)
-```
-
 ### 
 
-The palmerpenguins dataset was created by Allison Horst, a marine biologist turned data scientist, who wanted to create a modern and updated version of the classic iris dataset often used in data science and statistics courses.
-
-
-### Exercise 2
-
-Run `penguins` and pipe it to a `ggplot()` call.
-
-```{r geom-bar-2, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-bar-2-hint-1, eval = FALSE}
-penguins |>
-  ggplot()
-```
-
-### 
-
-`geom_bar()` is used to represent categorical data: Bar charts are commonly used to represent categorical data. The x-axis represents the categories and the height of the bars represents the frequency or count of the observations in each category.
-
-### Exercise 3
-
-Within `ggplot()`, set `x` to `species` inside of `aes()`
-
-```{r geom-bar-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-bar-3-hint-1, eval = FALSE}
-... |>
-  ...(aes(x = species))
-```
-
-### 
-
-By default, `geom_bar()` counts the number of observations in each category: If you use `geom_bar()` without specifying any other arguments, it will count the number of observations in each category and create a bar chart showing the frequency of each category.
-
-
-### Exercise 4
-
-To make the bar graph, add `geom_bar()` using `+` and run it.`
-
-```{r geom-bar-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-bar-4-hint-1, eval = FALSE}
-... |>
-  +
-  geom_...()
-```
-
-### 
-
-You can use the `stat="identity"` argument to plot the values of a numerical variable directly, rather than counting occurrences. In this case, the y aesthetic should be mapped to the numerical variable. Finally, it's worth noting that geom_col() is a shortcut for `geom_bar(stat="identity")`, which can be useful for creating simple bar charts without having to specify the stat argument.
-
-### Exercise 5
-
-Lets integrate another categorical variable, so set `fill` to `species` within `aes()` in `ggplot()`.
-
-```{r geom-bar-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-bar-5-hint-1, eval = FALSE}
-... |>
-  ...(aes(x = ..., fill = species))
-```
-
-### 
-
-You can customize the order of the bars: By default, geom_bar orders the bars in ascending order based on the category. However, you can customize the order of the bars using the reorder function.
-
-### Exercise 6
-
-Let's find the percentages of each penguins species on each island, so run `position = "fill"` within `geom_bar()`.
-
-```{r geom-bar-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-bar-6-hint-1, eval = FALSE}
-... |>
-  +
-  geom_...(postion = "fill")
-```
-
-### 
-
-`geom_bar()` can be used with faceted data: `geom_bar()` can create faceted bar charts, where the bars are split into multiple panels based on a third variable. To do this, you can use the facet_wrap or facet_grid function. 
-
-### Exercise 7
-
-Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption for the graph.
-
-```{r geom-bar-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geom-bar-7-hint-1, eval = FALSE}
-penguins |>
-  +
-  labs(title = "",
-       subtitle = "",
-       x = "",
-       y = "",
-       caption = "",
-       fill = "")
-```
-
-Reminder : This is what our graph should look like.
-
-```{r}
-geom_bar_p
-```
-
-### 
-
-## Geom Histogram
+## geom_histogram
 ### 
 
 To visualize the distribution of a continuous variable, we will be using `geom_histogram()` and it is very useful when you want to understand the deviation of data.
 
 ### Exercise 1
 
-Lets load the **palmerpenguins** package using `library()`.
+Use the `library()` function to load the `palmerpenguins` package.
 
-```{r geom-histogram-1, exercise = TRUE}
+```{r geomhistogram-1, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-histogram-1-hint-1, eval = FALSE}
+```{r geomhistogram-1-hint-1, eval = FALSE}
 library(palmerpenguins)
 ```
 
@@ -913,17 +899,19 @@ library(palmerpenguins)
 
 A continuous variable is a variable that can take on any value within a certain range or interval. It can be measured on a continuous scale, such as time, distance, weight, height, temperature, or any other quantity that can be measured on a numerical scale.
 
+
+
 ### Exercise 2
 
 Run `penguins` and pipe it to a `ggplot()` call.
 
-```{r geom-histogram-2, exercise = TRUE}
+```{r geomhistogram-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-histogram-2-hint-1, eval = FALSE}
+```{r geomhistogram-2-hint-1, eval = FALSE}
 penguins |> 
   ggplot()
 ```
@@ -938,36 +926,35 @@ penguins |>
 
 Within, set `x` to `body_mass_g`.
 
-```{r geom-histogram-3, exercise = TRUE}
+```{r geomhistogram-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-histogram-3-hint-1, eval = FALSE}
-...|> 
+```{r geomhistogram-3-hint-1, eval = FALSE}
+penguins |> 
   ggplot(x = body_mass_g)
 
 ```
 
-### 
-
 You can add a density curve to the histogram: You can add a density curve to the histogram to show the underlying distribution of the data. To do this, you can use the stat_density function.The `..density..` aesthetic is used to scale the histogram bars to be a density instead of a count, and the `alpha` parameter is used to make the bars semi-transparent so that the density curve is visible.
 
+### 
 
 ### Exercise 4
 
-Add the `geom_histogram()` layer using `+` to make the plot.
+Add the `geom_histogram()` layer to make the plot.
 
-```{r geom-histogram-4, exercise = TRUE}
+```{r geomhistogram-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-histogram-4-hint-1, eval = FALSE}
-... |> 
-  +
+```{r geomhistogram-4-hint-1, eval = FALSE}
+penguins |> 
+  ggplot(x = body_mass_g)+
   geom_...()
 ```
 
@@ -979,21 +966,21 @@ You can adjust the position of the bars: By default, `geom_histogram()` position
 
 Within `geom_histogram()`, set `binwidth` to 20.
 
-```{r geom-histogram-5, exercise = TRUE}
+```{r geomhistogram-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-histogram-5-hint-1, eval = FALSE}
-... |>
-  +
+```{r geomhistogram-5-hint-1, eval = FALSE}
+penguins |> 
+  ggplot(x = body_mass_g)+
   geom_...(binwidth = ...)
 ```
 
 ### 
 
-The `binwidth` parameter controls the width of the bins: The `binwidth` parameter controls the width of the bins used in the histogram. By default, `geom_histogram()` uses a `binwidth` of 30. Compared to the previews histogram, the 20 bin width is too narrow, resulting in too many bars, making it difficult to determine the shape of the distribution. 
+The binwidth parameter controls the width of the bins: The binwidth parameter controls the width of the bins used in the histogram. By default, geom_histogram uses a binwidth of 30. Compared to the previews histogram, the 20 bin width is too narrow, resulting in too many bars, making it difficult ot determine the shape of the distribution. 
 
 
 
@@ -1001,13 +988,13 @@ The `binwidth` parameter controls the width of the bins: The `binwidth` paramete
 
 Now, set `binwidth` to 200 and see the difference.
 
-```{r geom-histogram-6, exercise = TRUE}
+```{r geomhistogram-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-histogram-6-hint-1, eval = FALSE}
+```{r geomhistogram-6-hint-1, eval = FALSE}
 penguins |> 
   ggplot(x = body_mass_g)+
   geom_...(binwidth = ...)
@@ -1021,15 +1008,14 @@ Looking at this histogram, we can see that it is much better because we can actu
 
 Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption for the graph.
 
-```{r geom-histogram-7, exercise = TRUE}
+```{r geomhistogram-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-histogram-7-hint-1, eval = FALSE}
-... |>
-  +
+```{r geomhistogram-7-hint-1, eval = FALSE}
+... |>+
   labs(title = "",
        subtitle = "",
        x = "",
@@ -1038,46 +1024,26 @@ Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption
 
 ### 
 
-## Geom Density
+## geom_density
 ### 
 
 An alternate way to visualize the distributions of data on a continuous variable is to use `geom_density()` which is smoothed-out-version of a histogram.
 
-Our ultimate goal in this section is to create a plot displaying the distribution of body masses of these penguins, taking into consideration the species of the penguin.
-
-Below is what the end product will look like:
-
-```{r}
-density_p <- penguins |>
-  ggplot(aes(x = body_mass_g, 
-             color = species, 
-             fill = species)) +
-  geom_density(alpha = .5) +
-  labs(title = "Distribution of Body Mass by Penguin Species",
-       x = "Bill Length (mm)",
-       y = "Density",
-       fill = "Species",
-       color = "Species")
-density_p
-
-```
-
-
 ### Exercise 1
 
-Lets load the **palmerpenguins** package using `library()`.
+load the `palmerpenguins` library
 
-```{r geom-density-1, exercise = TRUE}
+```{r geomdensity-1, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-density-1-hint-1, eval = FALSE}
+```{r geomdensity-1-hint-1, eval = FALSE}
 library(palmerpenguins)
 ```
 
-### 
+###
 
 `geom_density()` is a function in the ggplot2 package in R used for creating density plots.
 
@@ -1085,13 +1051,13 @@ library(palmerpenguins)
 
 Run `penguins` and pipe it to a `ggplot()` call.
 
-```{r geom-density-2, exercise = TRUE}
+```{r geomdensity-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-density-2-hint-1, eval = FALSE}
+```{r geomdensity-2-hint-1, eval = FALSE}
 penguins |>
   ggplot()
 ```
@@ -1104,15 +1070,15 @@ A density plot is a smoothed-out version of a histogram and a practical alternat
 
 In ggplot, set `x` to `body_mass_g` within `aes()`
 
-```{r geom-density-3, exercise = TRUE}
+```{r geomdensity-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-density-3-hint-1, eval = FALSE}
-...|>
-  ggplot(...(x = body_mass_g))
+```{r geomdensity-3-hint-1, eval = FALSE}
+penguins|>
+  ggplot(aes(x = body_mass_g))
 ```
 
 ### 
@@ -1123,15 +1089,15 @@ A density plot is a graphical representation of the distribution of a continuous
 
 Now add the `geom_density()` call.
 
-```{r geom-density-4, exercise = TRUE}
+```{r geomdensity-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-density-4-hint-1, eval = FALSE}
-... |>
-  +
+```{r geomdensity-4-hint-1, eval = FALSE}
+penguins |>
+  ggplot(aes(x = ...))+
   geom_density()
 ```
 
@@ -1145,34 +1111,39 @@ The `geom_density()` function takes in a data frame, and then maps the x-axis to
 
 The previous graph shows the distribution for all the species combined, so now lets show distribution for the three species. Within `aes()`, set `color` to `species`.
 
-```{r geom-density-5, exercise = TRUE}
+```{r geomdensity-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-density-5-hint-1, eval = FALSE}
-... |>
-  ggplot(aes(x = ..., color = ...))
+```{r geomdensity-5-hint-1, eval = FALSE}
+penguins |>
+  ggplot(aes(x = ..., color = ...))+
+  geom_density()
 ```
 
 ### 
 
-The `geom_density()` function can be customized using various arguments, such as adjust to control the smoothness of the curve, and bw to set the bandwidth of the kernel density estimate used to generate the curve.
+The geom_density() function can be customized using various arguments, such as adjust to control the smoothness of the curve, and bw to set the bandwidth of the kernel density estimate used to generate the curve.
+
+
+
 
 ### Exercise 6
 
-Run `fill = species` within `aes()` in `ggplot()`.
+Run `fill = species` within `aes()`.
 
-```{r geom-density-6, exercise = TRUE}
+```{r geomdensity-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-density-6-hint-1, eval = FALSE}
-... |>
-  ggplot(aes(x = ..., color = ..., fill = ...))
+```{r geomdensity-6-hint-1, eval = FALSE}
+penguins |>
+  ggplot(aes(x = ..., color = ..., fill = ...))+
+  geom_density()
 ```
 
 ### 
@@ -1184,13 +1155,13 @@ Density plots are useful for visualizing the distribution of a continuous variab
 
 To make the graph transparent, run `alpha = 0.5` within `geom_density()` call.
 
-```{r geom-density-7, exercise = TRUE}
+```{r geomdensity-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-density-7-hint-1, eval = FALSE}
+```{r geomdensity-7-hint-1, eval = FALSE}
 penguins |>
   ggplot(aes(x = ..., color = ..., fill = ...))+
   geom_density(alpha = ...)
@@ -1206,20 +1177,14 @@ Otherwise, we set the value of an aesthetic.
 
 Finally set an appropriate title, subtitle, axes labels, and caption for the graph.
 
-```{r geom-density-8, exercise = TRUE}
+```{r geomdensity-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-density-8-hint-1, eval = FALSE}
-... |>
-  +
-  labs(title = "Distribution of Body Mass by Penguin Species",
-       ... = "Bill Length (mm)",
-       y = ...,
-       fill = "Species",
-       ... = "Species")
+```{r geomdensity-8-hint-1, eval = FALSE}
+
 ```
 
 ### 
@@ -1227,11 +1192,21 @@ Finally set an appropriate title, subtitle, axes labels, and caption for the gra
 Reminder: This is what your graph should look like.
 
 ```{r}
+density_p <- penguins |>
+  ggplot(aes(x = body_mass_g, 
+             color = species, 
+             fill = species)) +
+  geom_density(alpha = .5) +
+  labs(title = "Distribution of Body Mass by Penguin Species",
+       x = "Bill Length (mm)",
+       y = "Density",
+       fill = "Species",
+       color = "Species")
+
 density_p
 ```
 
-
-## Geom Boxplot
+## geom_boxplot
 ### 
 
 To visualize the relationship between a numerical and a categorical variable we can use `geom_boxplot()`. A box plot is a type of visual shorthand for measures of position (percentiles) that describe a distribution.
@@ -1246,15 +1221,14 @@ Box plots are a type of data visualization that summarize the distribution of a 
 
 ### Exercise 1
 
-Lets load the **palmerpenguins** package using `library()`.
-
-```{r geom-boxplot-1, exercise = TRUE}
+load the `palmerpenguins` library
+```{r geomboxplot-1, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-boxplot-1-hint-1, eval = FALSE}
+```{r geomboxplot-1-hint-1, eval = FALSE}
 library(palmerpenguins)
 ```
 
@@ -1265,54 +1239,55 @@ Box plots, also known as box-and-whisker plots, are a type of data visualization
 ### Exercise 2
 
 Run `penguins` and pipe it to a `ggplot()` call.
-```{r geom-boxplot-2, exercise = TRUE}
+```{r geomboxplot-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-boxplot-2-hint-1, eval = FALSE}
-... |>
+```{r geomboxplot-2-hint-1, eval = FALSE}
+penguins |>
   ggplot()
 ```
 
 ### 
 
-The `geom_boxplot()` function can be customized using various arguments, such as alpha to adjust the transparency of the box, and notch to create a notch in the box to indicate the confidence interval of the median.
+Visual points that display observations that fall more than 1.5 times the IQR from either edge of the box. These outlying points are unusual so are plotted individually.
 
 ### Exercise 3
 
 In `ggplot()` within `aes()`, set `x` to `species`.
 
-```{r geom-boxplot-3, exercise = TRUE}
+```{r geomboxplot-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-boxplot-3-hint-1, eval = FALSE}
-... |>
+```{r geomboxplot-3-hint-1, eval = FALSE}
+penguins |>
   ggplot(aes(x = species))
 ```
 
 ### 
 
-A box that indicates the range of the middle half of the data, a distance known as the interquartile range (IQR), stretching from the 25th percentile of the distribution to the 75th percentile. In the middle of the box is a line that displays the median, i.e. 50th percentile, of the distribution. These three lines give you a sense of the spread of the distribution and whether or not the distribution is symmetric about the median or skewed to one side.
+The `geom_boxplot()` function can be customized using various arguments, such as  alpha to adjust the transparency of the box, and notch to create a notch in the box to indicate the confidence interval of the median.
+
 
 
 ### Exercise 4
 
-In `ggplot()`,set `y` to `body_mass_g`.
+Set `y` to `body_mass_g`.
 
-```{r geom-boxplot-4, exercise = TRUE}
+```{r geomboxplot-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-boxplot-4-hint-1, eval = FALSE}
-... |>
-  ggplot(...(x = ..., y = body_mass_g))
+```{r geomboxplot-4-hint-1, eval = FALSE}
+penguins |>
+  ggplot(aes(x = species, y = body_mass_g))
 ```
 
 ### 
@@ -1322,17 +1297,17 @@ Box plots are useful for comparing the distribution of a continuous variable acr
 
 ### Exercise 5
 
-Add `geom_boxplot()` layer using `+` to demonstrate the distribution of body mass for different species.
+Add `geom_boxplot()` to demonstrate the distribution of body mass for different species.
 
-```{r geom-boxplot-5, exercise = TRUE}
+```{r geomboxplot-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-boxplot-5-hint-1, eval = FALSE}
-... |>
-  +
+```{r geomboxplot-5-hint-1, eval = FALSE}
+penguins |>
+  ggplot(aes(x = species, y = body_mass_g))+
   geom_boxplot()
 ```
 
@@ -1345,232 +1320,46 @@ By default, `geom_boxplot()` does not display the underlying data points that fa
 
 Finally set an appropriate title, subtitle, axes labels, and caption for the graph.
 
-```{r geom-boxplot-6, exercise = TRUE}
+```{r geomboxplot-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-boxplot-6-hint-1, eval = FALSE}
-... |>
-  +
-  labs(title = "...",
-       subtitle = "...",
-       x = "Species",
-       y = "Body Mass(g)")
+```{r geomboxplot-6-hint-1, eval = FALSE}
+ggplot(penguins, aes(x = species, y = body_mass_g)) +
+                  geom_boxplot()+
+                  labs(title = "...",
+                       subtitle = "...",
+                       x = "Species",
+                       y = "Body Mass(g)"
+                       )
 
 ```
 
 ### 
 
+A box that indicates the range of the middle half of the data, a distance known as the interquartile range (IQR), stretching from the 25th percentile of the distribution to the 75th percentile. In the middle of the box is a line that displays the median, i.e. 50th percentile, of the distribution. These three lines give you a sense of the spread of the distribution and whether or not the distribution is symmetric about the median or skewed to one side.
+
+
+
 Reminder: This is what your graph should look like.
 
 ```{r}
-box_plot_p <- penguins |>
-  ggplot( aes(x = species, y = body_mass_g)) +
-  geom_boxplot()+
-  labs(title = "Body Mass Distribution of Palmer Penguins by Species: A Boxplot Analysis",
-       subtitle = "Comparing the Median and Variability of Body Mass for Adelie, Chinstrap, and Gentoo Penguins",
-       x = "Species",
-       y = "Body Mass(g)")
+box_plot_p <- ggplot(penguins, aes(x = species, y = body_mass_g)) +
+                  geom_boxplot()+
+                  labs(title = "Body Mass Distribution of Palmer Penguins by Species: A Boxplot Analysis",
+                       subtitle = "Comparing the Median and Variability of Body Mass for Adelie, Chinstrap, and Gentoo Penguins",
+                       x = "Species",
+                       y = "Body Mass(g)",
+                       )
 box_plot_p
 ```
 
 ## Facet Wrap
-### 
+###
 
-As we saw in `geom_point()` plot, we can incorporate more variables into a plot by mapping them to additional aesthetics. However adding too many aesthetic mappings to a plot makes it cluttered and difficult to make sense of. Another way, which is particularly useful for categorical variables, is to split your plot into facets, subplots that each display one subset of the data.
 
-Our ultimate goal in this section is to create a subplot displaying the relationship between flipper lengths and body masses of  penguins, taking into consideration the species of the penguin.
-
-Below is what the final plot will look like:
-
-```{r}
-facet_p <- penguins|>
-  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
-  geom_point(aes(color = species, shape = species)) +
-  labs(x = "Flipper Length(mm)",
-       y = "Body Mass(g)")+
-  facet_wrap(~island)
-
-facet_p
-```
-
-### Exercise 1
-
-Lets load the **palmerpenguins** package using `library()`.
-
-```{r facet-wrap-1, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facet-wrap-1-hint-1, eval = FALSE}
-library(palmerpenguins)
-```
-
-### 
-
-`facet_wrap()` can be especially useful for exploring complex data sets that have multiple variables or groups, and for comparing patterns and trends across different subsets of the data.
-
-### Exercise 2
-
-Run `penguins` and pipe it `ggplot()` with the pipe operator `|>`.
-
-```{r facet-wrap-2, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facet-wrap-2-hint-1, eval = FALSE}
-... |>
-  ggplot()
-```
-
-### 
-
-You can use the scales argument to control the scale of the y-axis in each panel of the grid. For example, you can use `scales = free_y` to allow each panel to have its own y-axis scale.
-
-### Exercise 3
-
-Let's specify the `x`, so within `ggplot()`, run `aes(x = flipper_length_mm)`.
-
-```{r facet-wrap-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facet-wrap-3-hint-1, eval = FALSE}
-...|>
-  ggplot(...(x = ...))
-```
-
-### 
-
-`facet_wrap()` can be combined with other ggplot2 functions like geom_point(), geom_line(), geom_bar(), and geom_histogram() to create a wide range of visualizations that explore different aspects of the data.
-
-### Exercise 4
-
-Let's specify the `y`, so within `ggplot()`, run `aes(y = body_mass_g)`.
-
-```{r facet-wrap-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facet-wrap-4-hint-1, eval = FALSE}
-...|>
-  ggplot(aes(y = ...))
-```
-
-### 
-
-when using `facet_wrap()` it's important to consider the purpose of the visualization and the audience that will be viewing it. Choosing the right combination of input variables and customizing the appearance of the panels can help to convey the message more effectively and make the visualization more engaging for the viewer.
-
-### Exercise 5
-
-Add the `geom_point()` using `+`.
-
-```{r facet-wrap-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facet-wrap-5-hint-1, eval = FALSE}
-... |>
-  +
-  geom_point()
-```
-
-### 
-
-### Exercise 6
-
-Within `geom_point()`, add another aesthetic layer and run `color = species`.
-
-```{r facet-wrap-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facet-wrap-6-hint-1, eval = FALSE}
-... |>
-  +
-  geom_point(aes(color= species))
-```
-
-### 
-
-### Exercise 7
-
-Within `geom_point()`, run `shape = species` in `aes()`.
-
-```{r facet-wrap-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facet-wrap-7-hint-1, eval = FALSE}
-... |>
-  + 
-  geom_point(...(x = ..., y = ...))
-```
-
-### 
-
-### Exercise 8
-
-To facet your plot by a single variable, run `facet_wrap()`. The first argument of facet_wrap() is `island`, which you create with `~` followed by a variable name. The variable that you pass to `facet_wrap()` should be categorical.
-
-
-```{r facet-wrap-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facet-wrap-8-hint-1, eval = FALSE}
-...|>
-  +
-  facet_wrap(...)
-```
-
-### 
-
-ncol and nrow: These arguments can be used to control the layout of the facet panels. ncol sets the number of columns in the grid of panels, and nrow sets the number of rows. By default, `facet_wrap()` tries to create a square grid of panels that fits all the subplots.
-
-### Exercise 9
-
-Finally set an appropriate title, subtitle, axes labels, and caption for the graph.
-
-```{r facet-wrap-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facet-wrap-9-hint-1, eval = FALSE}
-...|> +
-  labs(x = "Flipper Length(mm)",
-       y = "Body Mass(g)")
-```
-
-### 
-`
-labeller: This argument can be used to customize the labels for the facet panels. By default, `facet_wrap()` uses the names of the categorical variables to label each panel. However, it is possible to create custom labels using functions like `label_parsed()` or `label_bquote()`.
-
-Reminder: This is what your graph should look like.
-
-```{r}
-facet_p
-```
 
 <!-- DK: Continue book material here. Below are extra plots practice which comes from the Visualization: Basic Plots tutorial from all.primer.tutorials. -->
 
@@ -1585,7 +1374,7 @@ facet_p
 
 You have now completed all the material in the chapter. But you can never get enough practice plotting. So, practice some more.
 
-## Geom smooth with savings
+## geom_smooth with savings
 ### 
 
 We can add straight or smoothed lines which follow the path of our data using `geom_smooth()`.
@@ -1607,7 +1396,7 @@ smooth_p
 
 ### Exercise 1
 
-Let's first explore the `savings` data set using `glimpse()`.
+Let's first explore the `savings` dataset using `glimpse()`.
 
 ```{r geomsmooth-with-savi-1, exercise = TRUE}
 
@@ -1623,15 +1412,14 @@ The personal savings rate, represented here under the variable `psavert`, is cal
 
 ### Exercise 2
 
-Type `savings` and pipe it to a `ggplot()` call.
+Within `ggplot()` set `data` to `savings`
 
 ```{r geomsmooth-with-savi-2, exercise = TRUE}
 
 ```
 
 ```{r geomsmooth-with-savi-2-hint-1, eval = FALSE}
-savings |>
-  ggplot()
+ggplot(data = ...)
 ```
 
 ### 
@@ -1650,8 +1438,8 @@ Now, specify the **aes**thetic inside `ggplot()` for the x-axis to be the `date`
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geomsmooth-with-savi-3-hint-1, eval = FALSE}
-... |>
-  ggplot(aes(x = ..., y...))
+ggplot(data = savings,
+       aes(x = ..., y = ...))
 ```
 
 ### 
@@ -1669,8 +1457,8 @@ Add `geom_point()` to the layer.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geomsmooth-with-savi-4-hint-1, eval = FALSE}
-... |>
-  +
+ggplot(data = savings,
+       aes(x = date, y = psavert)) +
   geom_point()
 ```
 
@@ -1689,8 +1477,9 @@ The plot so far looks neat, but a trend line would be helpful in identifying tre
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geomsmooth-with-savi-5-hint-1, eval = FALSE}
-... |>
-  +
+ggplot(data = savings,
+       aes(x = date, y = psavert)) +
+  geom_point() +
   geom_smooth()
 ```
 
@@ -1713,8 +1502,7 @@ Remember to put "loess" in quotes within geom_smooth()
 ```
 
 ```{r geomsmooth-with-savi-6-hint-2, eval = FALSE}
-...|>
-  +
+... +
   geom_smooth(method = "...")
 ```
 
@@ -1734,9 +1522,11 @@ Great! But, we still get a message! Set the `formula` argument within `geom_smoo
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geomsmooth-with-savi-7-hint-1, eval = FALSE}
-... |>
-  +
-  geom_smooth(method = "loess", formula = ...)
+ggplot(data = savings, 
+       mapping = aes(x = date, 
+                     y = psavert)) +
+  geom_point()  +
+    geom_smooth(method = "loess", formula = y ~ x)
 ```
 
 ### 
@@ -1754,9 +1544,11 @@ Also set `se` to `FALSE` to get rid of the grey area surrounding the trend line.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geomsmooth-with-savi-8-hint-1, eval = FALSE}
-... |>
-  +
-  geom_smooth(method = "loess", formula = y ~ x, se = FALSE)
+ggplot(data = savings, 
+       mapping = aes(x = date, 
+                     y = psavert)) +
+  geom_point()  +
+    geom_smooth(method = "loess", formula = y ~ x, se = FALSE)
 ```
 
 ### 
@@ -1774,8 +1566,7 @@ Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geomsmooth-with-savi-9-hint-1, eval = FALSE}
-... |>
-  +
+... +
   labs(title = "...",
        subtitle = "..."
        x = "...",
@@ -1793,7 +1584,7 @@ smooth_p
 
 Good work! The parameters used here may not always be the best choice. Check out this function's (documentation page)[https://ggplot2.tidyverse.org/reference/geom_smooth.html] to learn more about the other arguments for `method` and `formula`.
 
-## Geom line wiith temperature
+## geom_line wiith temperature
 ### 
 
 A line graph is a plot that visualizes the relationship between two numerical variables when there is a sequential nature to the variable on the x-axis, also called the independent variable.
@@ -1837,20 +1628,19 @@ The ISO 8601 standard is the convention for date-time formatting. Dates are repr
 
 ### Exercise 2
 
-Type `globe_temps` and pipe it to a `ggplot()` call.
+Within `ggplot()` set `data` to `globe_temps`.
 
 ```{r geomline-wiith-tempe-2, exercise = TRUE}
 
 ```
 
 ```{r geomline-wiith-tempe-2-hint-1, eval = FALSE}
-globe_temps |>
-  ggplot()
+ggplot(data = ...)
 ```
 
 ### 
 
-Setting a pipe from `data` to `ggplot` binds the object to the specified data set.
+Setting the `data` argument binds the `ggplot` object to the specified dataset.
 
 ### Exercise 3
 
@@ -1863,8 +1653,8 @@ Within `ggplot()`, now set the argument `mapping` to equal `aes()`. Within `aes(
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geomline-wiith-tempe-3-hint-1, eval = FALSE}
-... |>
-  ggplot(mapping =aes(x = ..., y = ...))
+ggplot(data = `globe_temps`, 
+       aes(x = ..., y = ...))
 ```
 
 ### 
@@ -1882,9 +1672,8 @@ Now add a call to the `geom_line()` function.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geomline-wiith-tempe-4-hint-1, eval = FALSE}
-... |>
-  +
-  geom_line()
+ggplot(data = `globe_temps`, 
+       aes(x = date, y = temperature)) + 
   ...
 ```
 
@@ -1903,9 +1692,9 @@ Now add a call to the `geom_smooth()` function.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geomline-wiith-tempe-5-hint-1, eval = FALSE}
-... |>
-  +
-  geom_smooth()
+ggplot(data = `globe_temps`, 
+       aes(x = date, y = temperature)) + 
+  geom_line() +
   ...
 ```
 
@@ -1924,11 +1713,12 @@ Set the `method` parameter to `"loess"`, `formula` to `y ~ x`, and `se` to `FALS
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geomline-wiith-tempe-6-hint-1, eval = FALSE}
-... |>
-  +
+ggplot(data = `globe_temps`, 
+       aes(x = date, y = temperature)) + 
+  geom_line() +
   geom_smooth(method = "loess", 
-              ... = y ~ x, 
-              se = ...)
+              formula = y ~ x, 
+              se = FALSE)
 ```
 
 ### 
@@ -1946,8 +1736,7 @@ Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geomline-wiith-tempe-7-hint-1, eval = FALSE}
-... |>
-  +
+... +
   labs(title = "...",
        subtitle = "..."
        x = "...",
@@ -1965,7 +1754,7 @@ globe_temps_p
 
 Nice job! This is the most fundamental line graph, `geom_line()` has many additional arguments (e.g. `linetype` or `color`). Connected observations can also be visualized using `geom_step()`, `geom_path()`, `geom_line()`, `geom_ribbon`.
 
-## Geom histogram with BMI
+## geom_histogram with BMI
 ### 
 
 A histogram is a plot that visualizes the distribution of a numerical variable with bars.
@@ -2001,20 +1790,19 @@ If the mean, median and the mode of a set of numbers are equal, it means, the di
 
 ### Exercise 2
 
-Type `usbmi` and pipe it to a `ggplot()` call..
+Within `ggplot()`, set `data` to `usbmi`.
 
 ```{r geomhistogram-with-b-2, exercise = TRUE}
 
 ```
 
 ```{r geomhistogram-with-b-2-hint-1, eval = FALSE}
-usbmi |>
-  ggplot()
+ggplot(data = ...)
 ```
 
 ### 
 
-
+The `data` argument for `ggplot()` requires the object to be of type `data.fram`. If not, as with `usbmi`, the dataset will be converted to one by `fortify()`.
 
 ### Exercise 3
 
@@ -2027,8 +1815,8 @@ Now, map `bmi` to the x-axis since we want to see the distribution of BMI scores
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geomhistogram-with-b-3-hint-1, eval = FALSE}
-... |>
-  ggplot(mapping = aes(x = ...))
+ggplot(data = ..., 
+       mapping = aes(x = ...))
 ```
 
 ### Exercise 4
@@ -2046,8 +1834,8 @@ Remember when you add a layer you use +.
 ```
 
 ```{r geomhistogram-with-b-4-hint-2, eval = FALSE}
-... |>
-  +
+ggplot(data = ..., 
+       mapping = aes(x = ...)) +
   geom_histogram()
 ```
 
@@ -2066,8 +1854,8 @@ Specify the width of bins to be 1 using the `binwidth` argument in `geom_histogr
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geomhistogram-with-b-5-hint-1, eval = FALSE}
-... |>
-  +
+ggplot(data = usbmi, 
+       mapping = aes(x = bmi)) +
   geom_histogram(binwidth = ...)
 ```
 
@@ -2086,8 +1874,8 @@ Add white vertical borders demarcating the bins by setting the argument `color` 
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geomhistogram-with-b-6-hint-1, eval = FALSE}
-... |> 
-  +
+ggplot(data = usbmi, 
+       mapping = aes(x = bmi)) +
   geom_histogram(binwidth = 1,
                  color = ...)
 ```
@@ -2107,8 +1895,7 @@ Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geomhistogram-with-b-7-hint-1, eval = FALSE}
-... |>
-  +
+... +
   labs(title = "...",
        subtitle = "..."
        x = "...",
@@ -2126,7 +1913,7 @@ hist_p
 
 Histograms display the counts with bars. To display counts with lines, you would use `geom_freqpoly()`. 
 
-## Geom density with CCES
+## geom_density with CCES
 ### 
 
 `geom_density()` is used to make a density plot, a smoothed version of a histogram. 
@@ -2160,7 +1947,7 @@ Let's first explore the data. Run `str(cces)`. Given the plot above, can you fin
 
 ### Exercise 2
 
-Use the `cces` data set in the `primer.data` package and pipe it to a `ggplot()` call.
+Use the `cces` data set in the `primer.data` package. Within `ggplot()`, set `data` to `cces`.
 
 ```{r geomdensity-with-cce-2, exercise = TRUE}
 
@@ -2169,8 +1956,7 @@ Use the `cces` data set in the `primer.data` package and pipe it to a `ggplot()`
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geomdensity-with-cce-2-hint-1, eval = FALSE}
-cces |>
-  ggplot()
+ggplot(data = ...)
 ```
 
 ### 
@@ -2188,9 +1974,8 @@ Let's now map the variable `age` to the `x` argument inside `aes()`.
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geomdensity-with-cce-3-hint-1, eval = FALSE}
-... |>
-  +
-  ggplot(mapping = aes(x = ...))
+ggplot(data = cces, 
+       mapping = aes(x = ...))
 ```
 
 ### Exercise 4
@@ -2204,8 +1989,8 @@ Let's now add the layer `geom_density()`
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geomdensity-with-cce-4-hint-1, eval = FALSE}
-... |>
-  +
+ggplot(data = cces, 
+       mapping = aes(x = ...)) +
   geom_density()
 ```
 
@@ -2224,11 +2009,11 @@ Now within `aes`, set `color` and `fill` equal to the variable `ideology`.
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geomdensity-with-cce-5-hint-1, eval = FALSE}
-... |>
-  +
-  ggplot(mapping = aes(x = ..., 
+ggplot(data = cces, 
+       mapping = aes(x = ..., 
                      color = ..., 
-                     fill = ...)) 
+                     fill = ...)) + 
+  geom_density()
 ```
 
 ### 
@@ -2246,8 +2031,7 @@ Now set the `alpha` argument in `geom_density()` to 0.1.
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geomdensity-with-cce-6-hint-1, eval = FALSE}
-... |>
-  + 
+... + 
   geom_density(alpha = 0.1)
 ```
 
@@ -2262,8 +2046,7 @@ Finally set an appropriate title, subtitle, axes labels, and caption for the gra
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geomdensity-with-cce-7-hint-1, eval = FALSE}
-... |>
-  +
+... +
   labs(title = "...",
        subtitle = "..."
        x = "...",
@@ -2281,17 +2064,17 @@ dens_p
 
 Good work! Similar plots that you could look into include `geom_freqpoly()` and `geom_violin()`.
 
-## Geom bar with immigration attitudes
+## geom_bar with immigration attitudes
 ### 
 
-A bar plot is a plot that visualizes the distribution of a categorical variable.
+A barplot is a plot that visualizes the distribution of a categorical variable.
 
 ### 
 
-Let's create the following bar plot using the `trains` data set.
+Let's create the following barplot using the `trains` dataset.
 
 ```{r make-bar-p}
-bar1_p <- ggplot(data = trains, 
+bar_p <- ggplot(data = trains, 
        mapping = aes(x = treatment, 
                      fill = party)) +
   geom_bar(position = "dodge") +
@@ -2301,7 +2084,7 @@ bar1_p <- ggplot(data = trains,
        y = "Count",
        caption = "Enos(2014)")
 
-bar1_p
+bar_p
 ```
 
 ### Exercise 1
@@ -2314,7 +2097,7 @@ Let's first explore the data. Run `str(trains)`.
 
 ### Exercise 2
 
-Use the `trains` data set in the `primer.data` package and pipe it to a `ggplot()` call.
+Use the `trains` data set in the `primer.data` package. Within `ggplot()`, set `data` to `trains`.
 
 ```{r geombar-with-immigra-2, exercise = TRUE}
 
@@ -2323,8 +2106,7 @@ Use the `trains` data set in the `primer.data` package and pipe it to a `ggplot(
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geombar-with-immigra-2-hint-1, eval = FALSE}
-trains |>
-  ggplot()
+ggplot(data = ...)
 ```
 
 ### 
@@ -2342,8 +2124,8 @@ Let's now map the variable `treatment` to the `x`argument inside `aes()`.
 <button onclick = "transfer_code(this)">
 
 ```{r geombar-with-immigra-3-hint-1, eval = FALSE}
-... |>
-  ggplot(mapping = aes(x = ...))
+ggplot(data = trains, 
+       mapping = aes(x = ...))
 ```
 
 ### Exercise 4
@@ -2357,8 +2139,8 @@ Let's now add the layer `geom_bar()`
 <button onclick = "transfer_code(this)">
 
 ```{r geombar-with-immigra-4-hint-1, eval = FALSE}
-... |>
-  +
+ggplot(data = trains, 
+       mapping = aes(x = ...)) +
   geom_bar()
 ```
 
@@ -2377,9 +2159,10 @@ Let's now also map the variable `party` to the `fill` argument.
 <button onclick = "transfer_code(this)">
 
 ```{r geombar-with-immigra-5-hint-1, eval = FALSE}
-... |>
-  +
-  ggplot(mapping = aes(x = ..., fill = ...)) 
+ggplot(data = trains, 
+       mapping = aes(x = treatment, 
+                     fill = ...)) +
+  geom_bar()
 ```
 
 ### 
@@ -2399,8 +2182,9 @@ Let's make our graph a side-by-side barplot. Set `position` to `"dodge"` in `geo
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geombar-with-immigra-6-hint-1, eval = FALSE}
-... |>
-  +
+ggplot(data = trains, 
+       mapping = aes(x = treatment, 
+                     fill = party)) +
   geom_bar(position = ...)
 ```
 
@@ -2419,8 +2203,7 @@ Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geombar-with-immigra-7-hint-1, eval = FALSE}
-... |>
-  +
+... +
   labs(title = "...",
        subtitle = "..."
        x = "...",
@@ -2431,7 +2214,7 @@ Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption
 Reminder: This is what our graph should look like.
 
 ```{r show-bar-p}
-bar1_p
+bar_p
 ```
 
 ### 
