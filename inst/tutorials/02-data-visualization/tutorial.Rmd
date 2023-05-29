@@ -31,6 +31,11 @@ savings <- economics |>
 usbmi <- nhanes |> 
   select(bmi) |>
   drop_na()
+
+plot_geom <- penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point()
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -1579,10 +1584,113 @@ facet_p
 
 <!-- Make sure your section names are not duplicative! If they are, Format Tutorial Chunk Labels will (?) not work. -->
 
+## Saving Plots
+###
+
+Once you’ve made a plot, you might want to get it out of R by saving it as an image that you can use elsewhere. That’s the job of `ggsave()`, which will save the plot most recently created to disk.
+
+### Exercise 1
+
+Before we save a plot we need to make on so start a pipe with `penguins` datset to `ggplot()` function.
+
+```{r saving-plots-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-plots-1-hint, eval = FALSE}
+penguins |>
+  ggplot()
+```
+
+###
+
+`ggsave()` is a function in R's "ggplot2" package that allows you to save your "ggplot2" plots to a file in various formats. It provides a convenient way to export your visualizations for sharing or further analysis.
+
+### Exercise 2
+
+Add `aes()` within `ggplot()` and specify `x` to `flipper_lenght_mm` and `y` to `body_mass_g`.
+
+```{r saving-plots-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-plots-2-hint, eval = FALSE}
+... |>
+  ggplot(aes(x=..., y=...))
+```
+
+###
+
+In R, the `<-` operator (also known as the leftward assignment operator) is used to assign values to variables. It assigns the value on the right-hand side to the variable on the left-hand side.
+
+### Exercise 3
+
+To finish the plot, add `geom_point` function with `+`.
+
+```{r saving-plots-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-plots-3-hint, eval = FALSE}
+... |>
+  +
+  geom_point()
+```
+
+###
+
+Assigning a plot to a variable provides flexibility and reusability in your code. It allows you to easily refer to the plot for further modifications or reuse it in different contexts without recreating the entire plot.
+
+### Exercise 4
+
+Here comes the last part, define the whole plot to a variable `plot_geom` using `<-`.
+
+```{r saving-plots-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-plots-4-hint, eval = FALSE}
+plot_geom <- ... |>
+                  ggplot()+
+                  geom_point()
+```
+
+###
+
+When you save plots using `ggsave()`, it will save your plot to your working directory.
+
+
+### Exercise 5
+
+Here is the part where we save the plot, so type `ggsave()` and within it set `filename` to "penguin_plot.png" and then set plot to `plot_geom`which was our plot that we made previously.
+
+```{r saving-plots-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-plots-5-hint, eval = FALSE}
+ggsave(filename = ..., plot = ...)
+```
+
+###
+
+If you don’t specify the width and height they will be taken from the dimensions of the current plotting device. 
+
 ## More practice
 ### 
 
-You have now completed all the material in the chapter. But you can never get enough practice plotting. So, practice some more.
+
+Congratulations! You have successfully completed all the material in the chapter. However, when it comes to plotting, practice makes perfect. So, keep improving your skills by engaging in more plotting exercises. The more you practice, the more confident and proficient you will become. The more you immerse yourself in the world of data visualization, the more you will refine your skills and develop an intuitive sense for creating impactful and informative plots.
 
 ## Geom smooth with savings
 ### 
@@ -1635,9 +1743,7 @@ savings |>
 
 ### 
 
-`ggplot()` initializes a ggplot object. Your output should be an empty canvas.
-
-
+By combining the "date" and "psavert" variables, you can analyze and visualize the personal saving rate over time. This allows you to observe trends, patterns, and changes in the saving behavior of individuals in the United States.
 
 ### Exercise 3
 
@@ -1656,7 +1762,7 @@ Now, specify the **aes**thetic inside `ggplot()` for the x-axis to be the `date`
 
 ### 
 
-Your output should still be empty, since we have not yet added a `geom_*` layer.
+Analyzing the relationship between the "date" and "psavert" variables can provide valuable information for researchers, economists, policymakers, and individuals interested in understanding and monitoring saving behaviors and economic indicators over time.
 
 ### Exercise 4
 
@@ -1890,7 +1996,7 @@ Now add a call to the `geom_line()` function.
 
 ### 
 
-Congratulations on your first line plot! This graph could stand on its own, but a trend line could be helpful to us here.
+As we examine the data, we notice the presence of numerous spikes in the graph. While the graph is informative on its own, incorporating a trend line can offer additional insights into the underlying pattern.
 
 ### Exercise 5
 
@@ -1995,7 +2101,7 @@ As always, let's first explore the data. Run `summary(usbmi)`.
 
 ### 
 
-If the mean, median and the mode of a set of numbers are equal, it means, the distribution is symmetric. Otherwise, it is characterized as asymmetric.
+If the mean(the average), median(the middle number) and the mode(most number of appearences) of a set of numbers are equal, it means, the distribution is symmetric. Otherwise, it is characterized as asymmetric.
 
 <!-- VD: This should be elaborated upon a bit -->
 
@@ -2014,6 +2120,9 @@ usbmi |>
 
 ### 
 
+BMI stands for Body Mass Index. It is a commonly used measurement that helps assess a person's weight status in relation to their height. BMI is calculated by dividing a person's weight in kilograms by the square of their height in meters.
+
+
 ### Exercise 3
 
 Now, map `bmi` to the x-axis since we want to see the distribution of BMI scores.
@@ -2028,6 +2137,13 @@ Now, map `bmi` to the x-axis since we want to see the distribution of BMI scores
 ... |>
   ggplot(mapping = aes(x = ...))
 ```
+
+###
+
+BMI below 18.5: Underweight
+BMI between 18.5 and 24.9: Normal weight
+BMI between 25 and 29.9: Overweight
+BMI of 30 or above: Obesity
 
 ### Exercise 4
 
@@ -2156,6 +2272,11 @@ Let's first explore the data. Run `str(cces)`. Given the plot above, can you fin
 
 ```
 
+###
+
+Out of the 18 variables, `age` and `ideology` variable are the ones we need.
+
+
 ### Exercise 2
 
 Use the `cces` data set in the `primer.data` package and pipe it to a `ggplot()` call.
@@ -2190,6 +2311,10 @@ Let's now map the variable `age` to the `x` argument inside `aes()`.
   +
   ggplot(mapping = aes(x = ...))
 ```
+
+###
+
+
 
 ### Exercise 4
 
@@ -2248,6 +2373,8 @@ Now set the `alpha` argument in `geom_density()` to 0.1.
   + 
   geom_density(alpha = 0.1)
 ```
+
+###
 
 ### Exercise 7
 
@@ -2310,6 +2437,10 @@ Let's first explore the data. Run `str(trains)`.
 
 ```
 
+###
+
+The `str()` function and the `glimpse()` function are both commonly used in R for examining the structure of a dataset. `str()` provides a concise summary of an object's structure, while `glimpse()` offers a more detailed and readable overview, particularly for data frames.
+
 ### Exercise 2
 
 Use the `trains` data set in the `primer.data` package and pipe it to a `ggplot()` call.
@@ -2343,6 +2474,8 @@ Let's now map the variable `treatment` to the `x`argument inside `aes()`.
 ... |>
   ggplot(mapping = aes(x = ...))
 ```
+
+###
 
 ### Exercise 4
 
