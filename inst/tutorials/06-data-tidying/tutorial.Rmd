@@ -213,14 +213,12 @@ question_text("Are all the possible variables columns?",
 	rows = 3)
 ```
 
-
 ### 
 
 All the possible variables are `country`, `year`, `cases`, and `population`. The `type` column has two of the variables that are not observations, breaking the first two rules. The `count` column has observations that switch between cases and population, because there is no `cases` or `population` column.
 
 
 ### Exercise 10
-
 
 Now let's look at `table3`. Type and run `table3` in the box below to see it.
 
@@ -801,7 +799,7 @@ Now, we need to add labels. Reminder: This is what your plot should look like
 plot2
 ```
 
-###
+### 
 
 ```{r lengthening-data-15, exercise = TRUE}
 
@@ -823,6 +821,210 @@ Now you know how to pivot really wide datasets, and when to pivot. Now, we need 
 ### 
 
 ## Widening Data
+### 
+
+`pivot_wider()` makes datasets wider by increasing columns and reducing rows and helps when one observation is spread across multiple rows. This seems to arise less commonly in the wild, but it does seem to crop up a lot when dealing with governmental data, such as the Census.
+
+### 
+
+For this section, we'll be using the dataset `cms_patient_experience`, a dataset from the Centers of Medicare and Medicaid services that collects data about patient experiences. Please restart your R session before proceeding using `Cmd-Shift-0`.
+
+### Exercise 1
+
+Load in the `tidyverse` in the box below.
+
+```{r widening-data-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r widening-data-1-hint-1, eval = FALSE}
+library(...)
+```
+
+### 
+
+We are going to be focusing on the package `tidyr`, on the fourth line of the section in the loading message titled: "Attaching core tidyverse packages".
+
+### Exercise 2
+
+In the Console, look up the help page for `tidyr` using `?` before the package name. Copy and paste the help page to before the section titled "Author(s)" into the box below.
+
+```{r widening-data-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Putting a question mark before a package name is a shortcut to looking up the help page. You could always go to the help pane in the bottom left corner, and search for `tidyr`, but it is a much faster way. Putting two question marks before a function will pull up the help page for functions or datasets in a package.
+
+### Exercise 3
+
+Look up the help page for `cms_patient_experience` using two question marks in front of it. Copy and paste the the page down to the section titled "Format".
+
+```{r widening-data-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+This gives you all the information for this data. What package it comes from, where the data is sourced from, and how to see and use the data.
+
+###
+
+This data comes from the package `tidyr`, so we won't need any other libraries other than the `tidyverse`.
+
+### Exercise 4
+
+Let's take a look at our data.
+
+###
+
+Run `cms_patient_experience` in the box below. 
+
+```{r widening-data-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r widening-data-4-hint, eval = FALSE}
+cms_patient_experience
+```
+
+###
+
+`cms_patient_expercience` is a tibble with 5 columns and 500 observations.
+
+### Exercise 5
+
+We will want to see 12 rows so we can see how this data is not tidy. You can do that with the function `print()`. Inside `print()` we need to specify `x` and `n`. `x` will be the data, and `n` will be the number of rows we see. Run `print()` with `x` and `n` specified in the box below
+
+
+```{r widening-data-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r widening-data-5-hint, eval = FALSE}
+print(x = cms_patient_experience, n = 12)
+```
+
+###
+
+This data is not tidy! In the column `measure_cd`, we have 5 repeating rows that would work much better as separate columns.
+
+### Exercise 6
+
+Now, `pivot_wider()` essentially all the same functions as `pivot_longer()`. Remember how we used `names_to` and `values_to` to make more columns from all the extra rows? Well, for `pivot_wider()`, we just have to do the opposite. We will use `names_to` and `values_to` to add more columns to this dataset.
+
+###
+
+Start a pipe with `cms_patient_experience`.
+
+```{r widening-data-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r widening-data-6-hint, eval = FALSE}
+cms_patient_experience |>
+```
+
+###
+
+### Exercise 7
+
+Add `pivot_wider()` to the pipe.
+
+```{r widening-data-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r widening-data-7-hint, eval = FALSE}
+cms_patient_experience |>
+  pivot_wider()
+```
+
+###
+
+### Exercise 8
+
+Inside `pivot_wider()`, we are going to take the names from the column `measure_cd`. We do this by using `names_from = measure_cd`. Add that inside `pivot_wider()`.
+
+```{r widening-data-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r widening-data-8-hint, eval = FALSE}
+pivot_wider(... = measure_cd)
+```
+
+###
+
+### Exercise 9
+
+Now, we need values for our new columns to have in them. We are going to take the values from the column `prf_rate` using `values_from = prf_rate`. Add that under `names_from`. (make sure you have a comma!)
+
+```{r widening-data-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r widening-data-9-hint, eval = FALSE}
+...(...,
+      values_from = ...)
+```
+
+###
+
+### Exercise 10
+
+This data looks a little bit tidier, but there are still repeated rows in `org_nm`. We need to tell `pivot_wider` to uniquely identify the rows in every column (getting rid of duplicates). The columns we need to target are `org_pac_id` and `org_nm`. We can tell `pivot_wider()` to target these rows by adding `id_cols = starts_with("org")` to `pivot_wider()`.
+
+```{r widening-data-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r widening-data-10-hint, eval = FALSE}
+pivot_wider(id_cols = starts_with("org"), 
+            names_from = ... ,
+            values_from = ...)
+```
+
+###
+
+This will get rid of any duplicate rows in the columns that start with "org'.
+
+
+
+
+
+
+
+
+
+
 ### 
 
 ## Michigan voter experiment
