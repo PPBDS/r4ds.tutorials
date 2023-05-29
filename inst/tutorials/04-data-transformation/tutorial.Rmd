@@ -387,7 +387,6 @@ In modern code, arguments to **dplyr** functions are proceeded with dots, `.`, i
 
 
 ## Columns
-
 ### 
 
 There are four important verbs that affect the columns without changing the rows: `mutate()` creates new columns that are derived from the existing columns, `select()` changes which columns are present; `rename()` changes the names of the columns; and `relocate()` changes the positions of the columns. You will use `mutate()` and `select()` often.
@@ -954,7 +953,6 @@ When examining a new tibble, we need to do more than just look at the top and bo
 
 ```
 
-
 ```{r groups-8-hint-1, eval = FALSE}
 flights |> 
   ...(n = 6)
@@ -973,13 +971,12 @@ Note how the flights come from a variety of months, unlike when we used `slice_h
 
 ```
 
-
-```{r groups-9-hint, eval = FALSE}
+```{r groups-9-hint-1, eval = FALSE}
 flights |> 
   slice_max(... = dep_delay, n = ...)
 ```
 
-###
+### 
 
 Since `dep_delay` is in minutes, the most delayed flights were up to 20 hours delayed. Looking at extreme values is almost important. For example, a single data error could have significantly affected the average calculations we did above.
 
@@ -995,12 +992,12 @@ Since `dep_delay` is in minutes, the most delayed flights were up to 20 hours de
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r groups-10-hint, eval = FALSE}
+```{r groups-10-hint-1, eval = FALSE}
 flights |> 
   slice_...(... = dep_delay, n = ...)
 ```
 
-###
+### 
 
 Are there really flights that take up 30 minutes early? Maybe? Again, data science is about looking at our data extremely closely. You can never look at your data too much. It is your job to determine if the data is correct, or at least not obviously incorrect.
 
@@ -1014,19 +1011,19 @@ Most of the `slice_*()` functions also take a `by` (or `.by`) argument. Pipe `fl
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r groups-11-hint, eval = FALSE}
+```{r groups-11-hint-1, eval = FALSE}
 flights |> 
   slice_min(order_by = dep_delay, n = 1, by = origin)
 ```
 
-###
+### 
 
 Why does `slice_min()` take `by` but summarize take `.by`? It is a quirk of the evolution of these functions. Don't worry about it. If you use the wrong one, R will provide a gentle reminder.
 
 <!-- DK: I am not satisfied with this explanation! -->
 
 
-###
+### 
 
 Note that `.by` is a relatively new addition to **dplyr** functions. In the past, to calculate group statistics you needed to issue the `group_by()` command in the pipe before the call to `summarize()`. Example:
 
@@ -1040,6 +1037,416 @@ Using `.by` is a much better approach. Never use `group_by()` unless you have a 
 
 
 <!-- DK: There is a case study in the chapter. Should we add it? Make it much more complex? -->
+
+## Statistical functions
+### 
+
+<!-- DK: Take from old visualization tidyverse. Keep? Delete? There are a bunch more opportunities to drop some knowledge below. Section is not bad, but would benefit from a clean up.  -->
+
+Let's spend some more time practicing the `summary()` function from the **dplyr** package. You will also learn how to handle missing values in a data set. 
+
+
+### Exercise 1
+
+Run `trains` to view the tibble. 
+
+```{r statistical-function-1, exercise = TRUE}
+
+```
+
+### 
+
+Notice the box in the upper left-hand corner where the dimensions are displayed. 
+
+### Exercise 2
+
+Recall that we use the `$` operator to extract a column as a vector. Extract the column `age` from `trains`. 
+
+```{r statistical-function-2, exercise = TRUE}
+
+```
+
+```{r statistical-function-2-hint-1, eval = FALSE}
+trains$age
+```
+
+ 
+### Exercise 3
+
+Use the `mean()` function to find the mean of the `age` column in `trains`. 
+
+
+```{r statistical-function-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-3-hint-1, eval = FALSE}
+mean(trains$age)
+```
+
+### Exercise 4
+
+Find the `median()` of the `age` column in `trains`.
+
+
+```{r statistical-function-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-4-hint-1, eval = FALSE}
+median(...)
+```
+
+### 
+
+We can not pipe summary functions together because they do not accept tibbles as an argument. A function like `mean()` accepts a vector, like `trains$age`. 
+
+### Exercise 5
+
+Use the `min()` function to find the minimum of the column `age`.
+
+
+```{r statistical-function-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-5-hint-1, eval = FALSE}
+min(...)
+```
+
+### Exercise 6
+
+Find the `max()` of the column `age` in trains. 
+
+
+```{r statistical-function-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-6-hint-1, eval = FALSE}
+max(...)
+```
+
+### Exercise 7
+
+Now, try to find the `mean()` of the `pulse` column in the  `nhanes` data set. The result will be `N/A`, because these data have missing values. 
+
+
+```{r statistical-function-7, exercise = TRUE}
+
+```
+
+```{r statistical-function-7-hint-1, eval = FALSE}
+mean(nhanes$pulse)
+```
+
+### Exercise 8
+
+Try again to find the `mean()` of the `pulse` column. To remove missing values add the argument `na.rm` and set it equal to `TRUE`. 
+
+
+```{r statistical-function-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-8-hint-1, eval = FALSE}
+mean(..., na.rm = TRUE)
+```
+
+### 
+
+`na.rm` stands for N/A **r**e**m**ove.
+
+### Exercise 9
+
+Let's try to use multiple summary functions at once. Use `c()` to make a vector that finds the `mean()` and `median()` of `pulse`.
+
+
+```{r statistical-function-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-9-hint-1, eval = FALSE}
+Remember to set na.rm = TRUE in both functions. 
+```
+
+```{r statistical-function-9-hint-2, eval = FALSE}
+c(median(..., na.rm = TRUE), 
+  mean(..., na.rm = TRUE))
+```
+
+### Exercise 10
+
+The function `quantile()` allows us to calculate percentiles of data. Let's calculate the 1st, 50th and 99th percentiles of the `pulse` column. The first argument is the vector of data for which we want to calculate, the second argument `probs` is set equal to a vector of the percentiles we want in decimal form.
+
+
+```{r statistical-function-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-10-hint-1, eval = FALSE}
+Remember to include the argument, na.rm = TRUE
+```
+
+```{r statistical-function-10-hint-2, eval = FALSE}
+quantile(nhanes$pulse,
+         probs = c(.01, .5, .99), 
+         na.rm = TRUE)
+```
+
+### Exercise 11
+
+The functions `mad()` and `sd()` calculate the median absolute deviation and the standard deviation, both of which are measures of how spread out a function is from a central point, the median and mean, respectively. In many data sets, these values are similar. Click to continue to the exercise. 
+
+### 
+
+Make a vector that finds both the `mad()` and `sd()` of the `pulse` column. 
+
+
+```{r statistical-function-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-11-hint-1, eval = FALSE}
+Remember to include the third argument, na.rm = TRUE in both functions. 
+```
+
+```{r statistical-function-11-hint-2, eval = FALSE}
+c(mad(..., na.rm = ...), 
+  sd(..., na.rm = ...))
+```
+
+Good work. 
+
+
+
+
+
+### Exercise 12
+
+
+Start a pipe with `trains`. Use `mutate()` to create a new column called `att_change` whose values is the difference between `att_end` and `att_start`. 
+
+```{r statistical-function-12, exercise = TRUE}
+
+```
+
+```{r statistical-function-12-hint-1, eval = FALSE}
+trains |> 
+  mutate(... = att_end - att_start)
+```
+
+### Exercise 13
+
+Copy/paste your code. The function `summarize()` is similar to `mutate()` but creates its new column in a summary table. Within the function `summarize()`, create a column named `mean_change` and set it to the `mean()` of `att_change`. 
+
+
+```{r statistical-function-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-13-hint-1, eval = FALSE}
+trains |> 
+  mutate(att_change = att_end - att_start) |> 
+  summarize(mean_change = mean(...))
+```
+
+### Exercise 14
+
+Copy/paste your code before the summarize function, i.e. the code in Exercise 1. `summarize()` can create a tibble with more than one new column.  Within the function `summarize()`, create a column named `mean_change` and set it to the `mean()` of `att_change` and create a column named `max_change` and set it to the `max()` of `att_change`. 
+
+
+```{r statistical-function-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-14-hint-1, eval = FALSE}
+... |> 
+  summarize(mean_change = mean(...), 
+            max_change = max(...))
+```
+
+### 
+
+`summarize()` must be piped directly after a tibble that has the data you want to summarize. Piping one `summarize()` function after another does not create a bigger `summarize()` table, but gives an error.
+
+### Exercise 15
+
+Copy/paste your code before the `summarize()` function. You can make summarize columns without assigning them names. Run the `summarize()` function with only the arguments, `mean(att_change)` and `max(att_change)`. 
+
+
+```{r statistical-function-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-15-hint-1, eval = FALSE}
+... |> 
+  summarize(mean(...), 
+            max(...))
+```
+
+### 
+
+If no names are given, `summarize()` will simply use the arguments as names. 
+
+### Exercise 16
+
+`summarize()` is not limited to just summary functions. Start a new pipe with `trains`. Use `summarize()` to create tibble with two new columns: the first, `avg_hisp_perc_scaled` which is equal to the `mean()` value of `hisp_perc` times 100; the second, `median_hisp_perc_scaled` which is equal to the `median()` value of `hisp_perc` times 100. The results will be N/A because `hisp_perc` has missing values. 
+
+
+```{r statistical-function-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-16-hint-1, eval = FALSE}
+... |> 
+  summarize(avg_hisp_perc_scaled = mean(hisp_perc) * ...,
+            median_hisp_perc_scaled = median(hisp_perc) * ...)
+```
+
+### Exercise 17
+
+Copy/paste the code above. Add `na.rm` in both the `median()` and `mean()` functions
+
+
+```{r statistical-function-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-17-hint-1, eval = FALSE}
+... |> 
+  summarize(avg_hisp_perc_scaled = mean(hisp_perc, na.rm = TRUE) * ...,
+            median_hisp_perc_scaled = median(hisp_perc, na.rm = TRUE) * ...) 
+```
+
+### Exercise 18
+
+Start a new pipe with `trains`. Use `summarize()` to make a tibble with a new column called `ideology_quantiles` which contains the 1st, 50th, and 99th percentiles of `ideology_start`. 
+
+
+```{r statistical-function-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-18-hint-1, eval = FALSE}
+Remember to write probabilities in decimal form. 
+```
+
+```{r statistical-function-18-hint-2, eval = FALSE}
+... |> 
+  summarize(ideology_quantiles = quantile(ideology_start, 
+                                          probs = c(..., ..., ...)))
+```
+
+### 
+
+The summarize table should have three rows, the first corresponding to the first one of our percentiles, and so on. 
+
+### Exercise 19
+
+Though we know what percentiles we have calculated, this information is not in the tibble. Start a new pipe with `trains`. Use `summarize()` to make a tibble with two new columns: the first, `ideology_quantiles` which contains the 1st, 50th, and 99th percentiles of `ideology_start`; the second `percentiles` which is equal to the vector `c("1st", "50th", "99th")`.
+
+
+```{r statistical-function-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-19-hint-1, eval = FALSE}
+... |> 
+  summarize(ideology_quantiles = quantile(ideology_start, 
+                                          probs = c(..., ..., ...)),
+            percentiles = c("...", "...", "..."))
+```
+
+### 
+
+`summarize()`, like `mutate()`, can also create a new column which has nothing to do with the data, as we have done here with the `percentiles` column. 
+
+### 
+
+Good work. 
+
+
+
+<!-- DK: This section should be expanded. -->
+
+
+### Exercise 20
+
+More commonly, we use `summarize()` to produce summary statistics not for the whole data, but for groups of data. 
+
+Copy/paste your code. Use `summarize()` to make a tibble with two new columns: the first, `avg_att_start` which contains the `mean()` of `att_start`; the second, `avg_att_end` which contains the `mean()` of `att_end`. 
+
+
+```{r statistical-function-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-20-hint-1, eval = FALSE}
+... |>
+  summarize(... = mean(att_start), 
+            ... = mean(...))
+```
+
+### 
+
+These are averages for the whole tibble. But what if want averages for each gender separately? For that, we use the `.by` argument to `summarize()`.
+
+### Exercise 21
+
+Copy/paste your code. Add a `.by` argument with the value set to `gender`. 
+
+
+```{r statistical-function-21, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy to use previous code</button>
+
+```{r statistical-function-21-hint-1, eval = FALSE}
+... |>
+  summarize(avg_att_start = mean(att_start), 
+            avg_att_end = mean(att_end),
+            .by = ...)
+```
+
+### 
+
+In older R code, you may see the use of `group_by()` to accomplish this task. However, in new code, you should not use `group_by()` unless you have a very good reason to do so. 
+
+
 
 ## Summary
 ### 
