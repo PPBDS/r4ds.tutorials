@@ -1,0 +1,549 @@
+---
+title: Hojas de Cálculo
+author: David Kane
+tutorial:
+  id: spreadsheets
+output:
+  learnr::tutorial:
+    language: es
+    progressive: yes
+    allow_skip: yes
+runtime: shiny_prerendered
+description: 'Tutorial para el Capítulo 21: Hojas de Cálculo'
+---
+
+```{r setup, include = FALSE}
+library(learnr)
+library(tutorial.helpers)
+library(tidyverse)
+library(readxl)
+library(writexl)
+library(datos)
+knitr::opts_chunk$set(echo = FALSE)
+options(tutorial.exercise.timelimit = 60, 
+        tutorial.storage = "local") 
+
+penguins_url <- "https://docs.google.com/spreadsheets/d/1aFu8lnD_g0yjF5O-K6SFgSEWiHPpgvFCF0NY9D6LXnY"
+```
+
+```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
+```
+
+```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
+```
+## Introducción
+###
+
+Este tutorial cubre el [Capítulo 21: Hojas de cálculo](https://r4ds.hadley.nz/spreadsheets.html) de [*R for Data Science (2e)*](https://r4ds.hadley.nz/) de Hadley Wickham, Mine Çetinkaya-Rundel y Garrett Grolemund. Aprenderás cómo obtener datos de hojas de cálculo de Excel usando [`read_excel()`](https://readxl.tidyverse.org/reference/read_excel.html) del paquete [**readxl**](https://readxl .tidyverse.org/) y hojas de Google usando [`read_sheet()`](https://googlesheets4.tidyverse.org/reference/range_read.html) del paquete [**googlesheets4**](https://googlesheets4 .tidyverse.org/).
+
+## Lectura/Escritura Excel
+###
+
+[**readxl**](https://readxl.tidyverse.org/) y [**writexl**](https://docs.ropensci.org/writexl/) son los dos paquetes clave para trabajar con hojas de cálculo de Excel.
+
+### Ejercicio 1
+
+Utiliza el comando `library()` para cargar el paquete **readxl**.
+
+```{r readingwriting-excel-1, exercise = TRUE}
+
+```
+
+```{r readingwriting-excel-1-hint-1, eval = FALSE}
+library(readxl)
+```
+
+### 
+
+“[Data Organization in Spreadsheets](https://doi.org/10.1080/00031305.2017.1375989)” de Karl Broman y Kara Woo brinda muchos consejos excelentes para organizar tus datos usando hojas de cálculo.
+
+### Ejercicio 2
+
+Busca la página de ayuda del paquete a través de escribir este comando en la consola de R: "?\``readxl-package`\`". Copia y pega el campo Descripción de la página de ayuda.
+
+```{r readingwriting-excel-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edita la Respuesta",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Casi todos los paquetes tienen una página de ayuda a la que se puede acceder a través de `nombredepaquete-paquete`. Ten en cuenta que debes usar acentos abiertos (\` \`) alrededor de esta frase después de `?` porque, de lo contrario, la consola intentará interpretar el guión como un signo menos y, por lo tanto, te enviará a la página incorrecta.
+
+### Ejercicio 3
+
+Ejecuta `read_excel()` con `"data/estudiantes.xlsx"` como el argumento para el parámetro `path` (ruta).
+
+```{r readingwriting-excel-3, exercise = TRUE}
+
+```
+
+```{r readingwriting-excel-3-hint-1, eval = FALSE}
+read_excel(path = "...")
+```
+
+### 
+
+`read_excel()` funciona de manera similar a `read_csv()` y las otras funciones de importación de datos que has visto antes. El paquete **readxl** también incluye `read_xls()` (para archivos en formato xls) y `read_xlsx()` (para archivos en formato xlsx). `read_excel()` puede leer archivos con formato xls y xlsx; adivina el tipo de archivo en función de la entrada.
+
+### Ejercicio 4
+
+Los nombres de las columnas son un poco confusos. Nunca quieres espacios en los nombres de las columnas, y siempre es una buena idea usar el mismo estilo de nomenclatura en lo que hace referencia a mayúsculas y puntuación.
+
+Vuelve a ejecutar el comando anterior, pero agrega `c("id_estudiante", "nombre_completo", "comida_favorita", "plan_comida", "edad")` como argumento para `col_names`.
+
+```{r readingwriting-excel-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r readingwriting-excel-4-hint-1, eval = FALSE}
+read_excel(
+  path = "data/estudiantes.xlsx",
+  col_names = ...
+  )
+```
+
+### 
+
+Esto funcionó, pero no completamente. Los nombres de las variables son correctos, pero lo que antes era la fila del encabezado ahora aparece como la primera fila en el _tibble_ resultante.
+
+### Ejercicio 5
+
+Ejecuta el comando anterior nuevamente, pero agrega el argumento `skip` (omitir) con un valor de `1` porque queremos omitir la primera fila, que contiene los nombres de las columnas, del archivo de Excel.
+
+```{r readingwriting-excel-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r readingwriting-excel-5-hint-1, eval = FALSE}
+read_excel(
+  path = "data/estudiantes.xlsx",
+  col_names = c("id_estudiante", "nombre_completo", "comida_favorita", "plan_comida", "edad"), 
+  skip = ...
+  )
+```
+
+### 
+
+En la columna `comida_favorita`, una de las observaciones es "N/A", que significa "no disponible" (del inglés, _Non Available_), pero actualmente no se reconoce como `NA` (ten en cuenta el contraste entre este N/A y la edad del cuarto estudiante en la lista).
+
+### Ejercicio 6
+
+Vuelve a ejecutar el comando, agregando el argumento `na` con un valor de `c("", "N/A")`.
+
+```{r readingwriting-excel-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r readingwriting-excel-6-hint-1, eval = FALSE}
+read_excel(
+  path = "data/estudiantes.xlsx",
+  col_names = c("id_estudiante", "nombre_completo", "comida_favorita", "plan_comida", "edad"),
+  skip = 1, 
+  na = ...
+  )
+```
+
+### 
+
+Puedes especificar qué cadenas de caracteres deben reconocerse como NA con el argumento na. De forma predeterminada, solo "" (cadena vacía o, en el caso de leer desde una hoja de cálculo, una celda vacía o una celda con la fórmula `=NA()`) se reconoce como `NA`.
+
+### Ejercicio 7
+
+¿Ves algo más mal con los datos? Revisa la columna `edad`. Debe ser una variable numérica: ya sea `<dbl>` o `<int>`. En cambio, es un carácter, que es causado por uno de los valores que es "cinco".
+
+Para solucionar esto, agrega el argumento `col_types` con un valor de `c("numeric", "text", "text", "text", "numeric")`.
+
+
+```{r readingwriting-excel-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r readingwriting-excel-7-hint-1, eval = FALSE}
+read_excel(
+  path = "data/estudiantes.xlsx",
+  col_names = c("id_estudiante", "nombre_completo", "comida_favorita", "plan_comida", "edad"),
+  skip = 1, 
+  na = c("", "N/A"), 
+  col_types = ...)
+```
+
+### 
+
+Ten en cuenta que los valores aceptables para `col_types` son "skip" (omitir), "guess" (adivinar), "logical" (lógicos), "numeric" (numéricos), "date" (fechas), "text" (texto) y "list" (lista).
+
+Este código "funcionó" porque se ejecutó pero hay dos problemas: primero, el mensaje de advertencia que nos informa que uno de los valores en la columna cinco no es numérico y, segundo, el valor "cinco" se transforma en `NA`.
+
+### Ejercicio 8
+
+Cambia el último valor en el valor que pasamos a `col_types` a "text".
+
+
+```{r readingwriting-excel-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r readingwriting-excel-8-hint-1, eval = FALSE}
+read_excel(
+  path = "data/estudiantes.xlsx",
+  col_names = c("id_estudiante", "nombre_completo", "comida_favorita", "plan_comida", "edad"),
+  skip = 1, 
+  na = c("", "N/A"), 
+  col_types = c("numeric", "text", "text", "text", "..."))
+```
+
+### 
+
+Esto elimina el mensaje de advertencia. Nunca ignores los mensajes de advertencia. Pueden señalar un cierto peligro. Entiéndelos y luego arréglalos. En este caso, leemos todo como carácter en la columna `edad`, un truco común para tratar con datos raros. Ahora podríamos usar `mutate()` y otros trucos de **dplyr** para tratar el problema directamente.
+
+
+### Ejercicio 9
+
+Una característica importante que distingue a las hojas de cálculo de los archivos planos es la noción de hojas múltiples, llamadas hojas de trabajo. La función `excel_sheets()` reporta todas las hojas en una hoja de cálculo. (El término "libros de trabajo" a menudo se aplica a archivos de hojas de cálculo con varias hojas de trabajo).
+
+Ejecuta `excel_sheets()` con el argumento `path` establecido en `"data/pinguinos.xlsx"`.
+
+
+```{r readingwriting-excel-9, exercise = TRUE}
+
+```
+
+```{r readingwriting-excel-9-hint-1, eval = FALSE}
+excel_sheets(path = "...")
+```
+
+### 
+
+Una vez que conocemos el nombre de la hoja, podemos usar el argumento `sheet` para `read_excel()`.
+
+### Ejercicio 10
+
+Ejecuta `read_excel()` en `"data/pinguinos.xlsx"` con el argumento `sheet` establecido a `"Isla Torgersen"`.
+
+
+```{r readingwriting-excel-10, exercise = TRUE}
+
+```
+
+```{r readingwriting-excel-10-hint-1, eval = FALSE}
+read_excel(path = ..., sheet = ...)
+```
+
+### 
+
+Ten en cuenta cuántos tipos de variables son `<chr>` aunque los valores subyacentes son claramente numéricos. La causa son los valores "NA" que encontramos, por ejemplo, en la fila 4. Esto hace que `read_excel()` "suponga" que las columnas son de carácter en lugar de numéricas.
+
+### Ejercicio 11
+
+El problema es que el valor predeterminado del argumento `na` es `""`. Vuelve a ejecutar el código pero con `na` establecido a `"NA"`.
+
+```{r readingwriting-excel-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r readingwriting-excel-11-hint-1, eval = FALSE}
+read_excel(
+  path = "data/pinguinos.xlsx", 
+  sheet = "Isla Torgersen", 
+  na = "...")
+```
+
+### 
+
+No hay forma de saber exactamente cómo se verán los datos hasta que los cargues y los mires. Bueno, hay una manera, en realidad. Puedes abrir el archivo en Excel o LibreOffice y echar un vistazo. Si vas a hacerlo, te recomendamos que hagas una copia del archivo de Excel para abrirlo y navegar de forma interactiva mientras dejas intacto el archivo de datos original y lees en R desde el archivo intacto. Esto asegurará que no sobrescribas accidentalmente nada en la hoja de cálculo mientras la inspeccionas.
+
+
+### Ejercicio 12
+
+Muchos paquetes de R vienen con archivos de datos para nuestro uso. Los autores generalmente proporcionan funciones para acceder a esos datos. Una aproximación común devuelve la ruta donde están instalados esos datos en tu sistema.
+
+Ejecuta `readxl_example()` con `"deaths.xlsx"` como primer argumento.
+
+```{r readingwriting-excel-12, exercise = TRUE}
+
+```
+
+```{r readingwriting-excel-12-hint-1, eval = FALSE}
+readxl_example("...")
+```
+
+### 
+
+Parte de la ruta debe incluir `readxl/extdata`. El directorio `extdata` es la ubicación recomendada para dichos archivos.
+
+### Ejercicio 13
+
+Canaliza el resultado del comando anterior a `read_excel()`.
+
+```{r readingwriting-excel-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r readingwriting-excel-13-hint-1, eval = FALSE}
+readxl_example("deaths.xls") |> 
+  read_...
+```
+
+### 
+
+Las tres filas superiores y las cuatro filas inferiores no forman parte del _data frame_. Es posible eliminar estas filas superfluas usando los argumentos `skip` y `n_max`, pero recomendamos usar rangos de celdas.
+
+### Ejercicio 14
+
+En Excel, la celda superior izquierda es `A1`. A medida que se mueve por las columnas hacia la derecha, la etiqueta de la celda se mueve hacia abajo en el alfabeto, es decir, `B1`, `C1`, etc. Y a medida que se mueve hacia abajo en una columna, el número en la etiqueta de la celda aumenta, es decir, `A2`, `A3`, etc
+
+En la canalización anterior, agrega el argumento `range` (con un valor de `"A5:F15"`) en la llamada a `read_excel()`.
+
+```{r readingwriting-excel-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r readingwriting-excel-14-hint-1, eval = FALSE}
+readxl_example("deaths.xls") |> 
+  read_excel(range = "")
+```
+
+### 
+
+Los datos subyacentes en las hojas de cálculo de Excel son más complejos. Una celda puede ser una de cuatro cosas:
+
+* Un valor booleano, como TRUE (VERDADERO), FALSE (FALSO) o NA.
+
+* Un número, como "10" o "10,5".
+
+* Una fecha y hora, que también puede incluir una hora como "13/1/21" o "13/1/21 3:00 PM".
+
+* Una cadena de texto, como "diez".
+
+Al trabajar con datos de hojas de cálculo, es importante tener en cuenta que los datos subyacentes pueden ser muy diferentes de lo que ves en la celda.
+
+
+### Ejercicio 15
+
+<!-- DK: Debería mostrar estos datos primero. No se puede contar con los estudiantes para ejecutar el código y luego agregarlo. -->
+
+Para escribir un _tibble_ en Excel usamos `write_xlsx()` del paquete **writexl**. Ejecuta el código de más abajo. Examina el _tibble_ resultante. Luego, agrega una canalización a `write_xlsx()` con el argumento `path` establecido en `"data/venta-horneado.xlsx"`.
+
+
+```{r readingwriting-excel-15, exercise = TRUE}
+tibble(
+  item     = factor(c("pastel", "magdalena", "galleta")),
+  quantity = c(10, 5, 8)
+)
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r readingwriting-excel-15-hint-1, eval = FALSE}
+tibble(
+  item     = factor(c("pastel", "magdalena", "galleta")),
+  quantity = c(10, 5, 8)
+) |> 
+  write_xlsx(path = "...")
+```
+
+### 
+
+Si el código no se ejecuta, no te preocupes. Si abres el archivo, verás que los nombres de las columnas están incluidos y en negrita. Estos se pueden desactivar poniendo los argumentos `col_names` y `format_headers` a `FALSE`.
+
+
+
+
+## Hojas de Google (Google sheets)
+### 
+
+Esta sección también se centrará en las hojas de cálculo, pero esta vez cargarás datos de una hoja de cálculo de Google usando [`read_sheet()`](https://googlesheets4.tidyverse.org/reference/range_read.html) desde el paquete [**googlesheets4**](https://googlesheets4.tidyverse.org/).
+
+### Ejercicio 1
+
+Utiliza el comando `library()` para cargar el paquete **googlesheets4**.
+
+
+```{r google-sheets-1, exercise = TRUE}
+
+```
+
+```{r google-sheets-1-hint-1, eval = FALSE}
+library(googlesheets4)
+```
+
+### 
+
+**googlesheets4** usa la versión 4 de [Google Sheets API v4](https://developers.google.com/sheets/api/) para proporcionar una interfaz R para Google Sheets, de ahí el nombre.
+
+
+### Ejercicio 2
+
+Busca la página de ayuda del paquete enviando este comando en la consola de R: `help(package = "googlesheets4")`. Haz clic en el enlace a la función `read_sheet()`. Copia/pega la descripción a continuación.
+
+```{r google-sheets-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edita la Respuesta",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Puedes crear una hoja nueva con [`gs4_create()`](https://googlesheets4.tidyverse.org/reference/gs4_create.html) o escribir en una hoja existente con [`sheet_write()`](https:// googlesheets4.tidyverse.org/articles/write-sheets.html) y amigos.
+
+### Ejercicio 3
+
+Suele ser complicado trabajar con las hojas de Google, tanto las que controlas tu como las que controlan otras personas. Google quiere asegurarse de que estás autorizada para hacer lo que estás tratando de hacer. El truco más importante que debes saber es que ejecutar la función `gs4_deauth()` justamente hace a menudo que las cosas funcionen. Ejecuta ese comando ahora.
+
+```{r google-sheets-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r google-sheets-3-hint-1, eval = FALSE}
+gs4_deauth()
+```
+
+### 
+
+Si no necesitas acceder a Hojas de cálculo privadas, usa `gs4_deauth()` para indicar que no se necesita un token. Esto pone a **googlesheets4** en un modo desautorizado.
+
+
+### Ejercicio 4
+
+<!-- DK: Sería genial cargar automáticamente una captura de pantalla de la hoja. Los estudiantes no harán clic en el enlace. -->
+
+La URL de la hoja de Google con la que trabajaremos es `"https://docs.google.com/spreadsheets/d/1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w"`. Primero, mira la hoja haciendo clic [aquí](https://docs.google.com/spreadsheets/d/1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w/). En segundo lugar, canaliza esta URL a `read_sheet()`.
+
+```{r google-sheets-4, exercise = TRUE}
+
+```
+
+```{r google-sheets-4-hint-1, eval = FALSE}
+"https://docs.google.com/spreadsheets/d/1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w" |> 
+  read_sheet()
+```
+
+### 
+
+Los datos en crudo siempre son un poco caóticos. Fíjate en la inconsistencia de los nombres de las variables, el "N/A" ignorado y que `AGE` es una variable de lista.
+
+### Ejercicio 5
+
+Comenzando con el código anterior, agrega a `read_sheet()` el argumento `col_names` con un valor de `c("id_estudiante", "nombre_completo", "comida_favorita", "plan_comida", "edad")` y el argumento `skip ` con un valor de `1`.
+
+```{r google-sheets-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r google-sheets-5-hint, eval = FALSE}
+"https://docs.google.com/spreadsheets/d/1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w" |> 
+  read_sheet(
+    col_names = "...",
+    skip = ...
+  )
+```
+
+###
+
+En lugar de modificar los nombres de las columnas (también conocidas como variables) a mano, podríamos usar la función [`clean_names()`](https://sfirke.github.io/janitor/reference/clean_names.html) del paquete **[janitor](https://sfirke.github.io/janitor/)**.
+
+### Ejercicio 6
+
+Para resolver el problema de NA y la lista de variables, hacemos dos cambios en la llamada a `read_sheet()`. Agrega el argumento `na` con un valor de `c("", "N/A")` y el argumento `col_types` con un valor de `"dcccc"`.
+
+
+```{r google-sheets-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r google-sheets-6-hint, eval = FALSE}
+"https://docs.google.com/spreadsheets/d/1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w" |> 
+  read_sheet(
+    col_names = c("id_estudiante", "nombre_completo", "comida_favorita", "plan_comida", "edad"),
+    skip = 1,
+    na = ...,
+    ... = "dcccc"
+  )
+```
+
+###
+
+Ten en cuenta que aquí definimos los tipos de columna de manera un poco diferente, usando códigos cortos. Por ejemplo, "dcccc" significa "doble, carácter, carácter, carácter, carácter". Los datos aún no son perfectos, ya que necesitamos tratar con el valor "cinco" en `edad`. Pero eso lo dejamos como ejercicio para el lector.
+
+### Ejercicio 7
+
+Google Sheets puede tener más de una hoja. Primero definimos una URL para la [hoja de Google de pingüinos](https://docs.google.com/spreadsheets/d/1aFu8lnD_g0yjF5O-K6SFgSEWiHPpgvFCF0NY9D6LXnY). Ejecuta `sheet_names()` en `penguins_url`.
+
+```{r google-sheets-7, exercise = TRUE}
+penguins_url <- "https://docs.google.com/spreadsheets/d/1aFu8lnD_g0yjF5O-K6SFgSEWiHPpgvFCF0NY9D6LXnY"
+
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r google-sheets-7-hint, eval = FALSE}
+sheet_names(penguins_url)
+```
+
+###
+
+Esta hoja de Google tiene la misma estructura que el libro de Excel con el que trabajamos anteriormente. Ten en cuenta que la nomenclatura difiere entre Google y Excel, siendo el primero más confuso. El término "hoja" en Google puede referirse tanto al libro de trabajo general como a las páginas individuales dentro de ese libro de trabajo.
+
+
+
+### Ejercicio 8
+
+También es posible leer hojas individuales de Google Sheets. Hemos definido `penguins_url` en el entorno. Ahora puede llamar a `read_sheet()` con el primer argumento (que se llama `ss`) siendo `penguins_url` y el segundo argumento `sheet` con el valor `"Torgersen Island"`.
+
+
+
+```{r google-sheets-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r google-sheets-8-hint, eval = FALSE}
+read_sheet(ss = penguins_url, sheet = "Torgersen Island")
+```
+
+###
+
+Puedes usar `write_sheet()` tanto para crear nuevas hojas como para agregar nuevas hojas (de trabajo) dentro de una hoja actualmente ya existente. No practicaremos eso aquí porque los problemas de autenticación a veces son complicados.
+
+
+
+## Resumen
+###
+
+Este tutorial cubrió el [Capítulo 21: Hojas de cálculo](https://r4ds.hadley.nz/spreadsheets.html) de [*R for Data Science (2e)*](https://r4ds.hadley.nz/) de Hadley Wickham, Mine Çetinkaya-Rundel y Garrett Grolemund. Has aprendido a obtener datos de hojas de cálculo de Excel usando [`read_excel()`](https://readxl.tidyverse.org/reference/read_excel.html) del paquete [**readxl**](https://readxl .tidyverse.org/) y hojas de Google usando [`read_sheet()`](https://googlesheets4.tidyverse.org/reference/range_read.html) del paquete [**googlesheets4**](https://googlesheets4 .tidyverse.org/).
+
+Puedes leer “[Data Organization in Spreadsheets](https://doi.org/10.1080/00031305.2017.1375989)” de Karl Broman y Kara Woo para obtener excelentes consejos sobre cómo organizar tus datos usando hojas de cálculo.
+
+```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
+```
