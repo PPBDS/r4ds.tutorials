@@ -911,7 +911,7 @@ cms_patient_experience
 
 ###
 
-`cms_patient_expercience` is a tibble with 5 columns and 500 observations.
+`cms_patient_expercience` is a tibble with 5 columns and 500 observations. 
 
 ### Exercise 5
 
@@ -950,8 +950,6 @@ Start a pipe with `cms_patient_experience`.
 cms_patient_experience |>
 ```
 
-###
-
 ### Exercise 7
 
 Add `pivot_wider()` to the pipe.
@@ -967,8 +965,6 @@ cms_patient_experience |>
   pivot_wider()
 ```
 
-###
-
 ### Exercise 8
 
 Inside `pivot_wider()`, we are going to take the names from the column `measure_cd`. We do this by using `names_from = measure_cd`. Add that inside `pivot_wider()`.
@@ -982,8 +978,6 @@ Inside `pivot_wider()`, we are going to take the names from the column `measure_
 ```{r widening-data-8-hint, eval = FALSE}
 pivot_wider(... = measure_cd)
 ```
-
-###
 
 ### Exercise 9
 
@@ -1039,16 +1033,150 @@ cms_pivoted <- cms_patient_experience |>
 
 ###
 
+When you save your modified data, it makes it easier to plot, that way you don't have to make a huge pipe, and can just start plotting with your saved object at the top.
+
+### Exercise 12
+
+We will be making this plot:
+
+```{r echol = FALSE}
+cms_plot <- cms_pivoted |>
+  ggplot(aes(y = CAHPS_GRP_1, x = org_nm, color = org_nm)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 0.5, vjust = 0.5))+
+  labs(title = "Patient Satisfaction",
+       subtitle = "Group 1 of Survey",
+       x = "Hospitals",
+       y = "Rating",
+       color = "Hospitals",
+       caption = "Data: Centers for Medicare & Medicaid Services")
+```
+
+```{r}
+cms_plot
+```
+
+###
+
+Start a pipe with `cms_pivoted`.
+
+```{r widening-data-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r widening-data-12-hint, eval = FALSE}
+cms_pivoted |> 
+```
+
+### Exercise 13
+
+Before we can start plotting, we need to filter to cut down on the row count. There is no way we can fit 95 different hospital names on one axis. We are going to filter for the id's that start with "0".
+
+###
+
+We do this by continuing our pipe with `filter()`. We need to filter for strings that start with "0". We can do that by putting `str_starts(org_pac_id, "0")` inside of the parenthesis.
+
+###
+
+Add that to your pipe.
+
+```{r widening-data-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r widening-data-13-hint, eval = FALSE}
+filter(str_...(org_pac_id, "..."))
+```
+
+### Exercise 14
+
+Now, we can start plotting. Add `ggplot` to your pipe.
+
+```{r widening-data-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r widening-data-14-hint, eval = FALSE}
+
+```
+
+### Exercise 15
+
+Inside `ggplot`, we need `x` and `color` to be equal to `org_nm`, and y to be equal to `CAHPS_GRP_1`.
+
+```{r widening-data-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r widening-data-15-hint, eval = FALSE}
+...|> 
+ggplot(aes(x = ... y = ... color = ...))
+```
+
+### Exercise 16
+
+Add `geom_point()` to your plot.
+
+```{r widening-data-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r widening-data-16-hint, eval = FALSE}
+ggplot(...) +
+  geom_...()
+```
+
+### Exercise 17
+
+We need to fix the x axis labels. All the Hospital names are overlapping. We can rotate them with `theme()`. Inside of `theme`, we need to put `axis.text.x = element_text(angle = 30, hjust = 0.5, vjust = 0.5)`. 
+
+```{r widening-data-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r widening-data-17-hint, eval = FALSE}
+geom_point()+
+  theme(axis.text.x = element_text(angle = 30, hjust = 0.5, vjust = 0.5))
+```
+
+### Exercise 18
+
+Now all we need to do is add labels. This is what your plot should look like:
+
+```{r}
+cms_plot
+```
 
 
+```{r widening-data-18, exercise = TRUE}
 
+```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
 
+```{r widening-data-18-hint, eval = FALSE}
 
+```
 
+###
 
+Remember to name `x` and `color` the same thing, so we can avoid having multiple labels for the same thing
 
+###
 
+Now, we are going to explore a larger dataset, and use both `pivot_longer()`, and `pivot_wider()` multiple times
 
 ### 
 
