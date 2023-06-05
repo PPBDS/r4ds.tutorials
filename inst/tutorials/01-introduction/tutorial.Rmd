@@ -41,11 +41,15 @@ usbmi <- nhanes |>
 
 <!-- This tutorial currently does not follow Chapter 1 at all. Instead, it just uses the material from the old Visualization Overview tutorial. Let's fix this. -->
 
-<!-- 1. No need to use the primer.data package -->
+<!-- Would be good to add more hints. -->
+
+<!-- 1. Get rid of the primer.data package. -->
 
 <!-- 2. No real need to create a bunch of specific tibbles in the set up code chunk. -->
 
 <!-- 3. Make the sections match the sections in the chapter, even if we include a lot of extra material in addition to the code in the book. -->
+
+<!-- Get rid of ggthemes. It no longer maintained. Just use the built in options. -->
 
 
 ## Introduction
@@ -208,7 +212,7 @@ glimpse(trains)
 
 `glimpse()` displays columns running down the page and the data running across across. Note how the "type" of each variable is listed next to the variable name. For example, `gender` is listed as `<chr>`, meaning that it is a character variable.
 
-`view()` is another useful function, but, because it is interactive, we can't use it with a tutorial. 
+`view()` is another useful function, but, because it is interactive, we can't use it within a tutorial. 
 
 ### Exercise 10
 
@@ -224,7 +228,7 @@ summary(...)
 
 ### 
 
-For each variable, the `summary()` function produces highlights about that variable.
+For each variable, the `summary()` function produces summary statistics about that variable.
 
 ### Exercise 11
 
@@ -287,13 +291,15 @@ Within `ggplot()`, set `data` to `mpg`.
 ggplot(data = ...)
 ```
 
-<!-- VD: Maybe mention default arguments here or somewhere else in the tutorial -->
+<!-- Maybe mention default arguments here or somewhere else in the tutorial -->
 
 ### 
 
 `ggplot()` initializes a ggplot object. Your output should be an empty canvas.
 
 ### Exercise 3
+
+<!-- DK: This step goes to fast. Don't forget, this is the first plot that students have ever made. Go slower! -->
 
 Now, map `displ` to the x-axis and `hwy` to the y-axis.
 
@@ -312,7 +318,7 @@ ggplot(data = ...,
 
 ### 
 
-Anything included in `aes()` brings some information from the data in our tibble onto the graph. Elsewhere in ggplot and its layers, we change the appearance of the graph without using information from our data.
+Anything included in `aes()` brings some information from the data in our tibble onto the graph. Elsewhere in `ggplot()` and its layers, we change the appearance of the graph without using information from our data.
 
 ### Exercise 4
 
@@ -338,7 +344,7 @@ ggplot(data = ...,
 
 ### 
 
-`geom_*` functions (such as `geom_point()`) add ggplot objects as an additional layer to the base ggplot. This allows us to visualize the data.
+`geom_*` functions (such as `geom_point()`) add ggplot objects aadditional layers to the base ggplot. This allows us to create a graphic piece-by-piece.
 
 ### Exercise 5
 
@@ -989,7 +995,7 @@ Now, you should be able to see the points on the graph. However, there may still
 
 ### Exercise 10
 
-Now set the argument `alpha` to .5 within `geom_point()`.
+Now set the argument `alpha` to `.5` within `geom_point()`.
 
 ```{r advanced-plots-i-10, exercise = TRUE}
 
@@ -998,15 +1004,15 @@ Now set the argument `alpha` to .5 within `geom_point()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r advanced-plots-i-10-hint-1, eval = FALSE}
-...  |>  
-  ggplot(mapping = aes(x = ..., 
-                       y = ... )) +
+...  + 
   geom_point(alpha = ...)
 ```
 
-Changing the alpha helps minimize overplotting. The other way to do this is with the layer `geom_jitter()`. 
+Changing the alpha helps minimize overplotting. The other way to do this is to replace `geom_point()` with `geom_jitter()`. 
 
 ### Exercise 11
+
+<!-- DK: Again, this is going too fast. -->
 
 Use `geom_smooth` to add a trendline. 
 
@@ -1017,9 +1023,8 @@ Use `geom_smooth` to add a trendline.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r advanced-plots-i-11-hint-1, eval = FALSE}
-...  |>  
-  ggplot(mapping = aes(x = ..., y = ... )) +
-  geom_point(alpha = ...) +
+...  +
+  geom_point(alpha = 0.5) +
   geom_smooth()
 ```
 
@@ -1030,6 +1035,7 @@ Note how this gives us a warning message. We will rectify this in the following 
 ### Exercise 12
 
 Set the argument `method` to `"loess"`.
+
 ```{r advanced-plots-i-12, exercise = TRUE}
 
 ```
@@ -1037,9 +1043,7 @@ Set the argument `method` to `"loess"`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r advanced-plots-i-12-hint-1, eval = FALSE}
-...  |>  
-  ggplot(mapping = aes(x = ..., y = ... )) +
-  geom_point(alpha = ...) +
+...  +
   geom_smooth(method = ...)
 ```
 
@@ -1049,7 +1053,8 @@ Set the argument `method` to `"loess"`.
 
 ### Exercise 13
 
-Set the argument `formula` to `y~x`.
+Set the argument `formula` to `y ~ x`.
+
 ```{r advanced-plots-i-13, exercise = TRUE}
 
 ```
@@ -1057,21 +1062,18 @@ Set the argument `formula` to `y~x`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r advanced-plots-i-13-hint-1, eval = FALSE}
-...  |>  
-  ggplot(mapping = aes(x = ..., y = ... )) +
-  geom_point(alpha = ...) +
+...   +
   geom_smooth(method = ...,
               formula = y ~ x)
 ```
 
 ### 
 
-Using formula y ~ x lets R know there is a relationship between y and x values on your graph.
-
+R has already guessed that you want to relate the variable `weight` on the y-axis to the variable `height` on the x-axis. But R does not like to guess. It wants you to specify clearly that this is what you want.  By using formula `y ~ x` as the argument to `formula`, you make it clear that this is the relationship you seek to smooth with `geom_smooth()`.
 
 ### Exercise 14
 
-Set the argument `se` to `TRUE`.
+Within `geom_smooth()`, set the argument `se` to `TRUE`.
 
 ```{r advanced-plots-i-14, exercise = TRUE}
 
@@ -1080,9 +1082,7 @@ Set the argument `se` to `TRUE`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r advanced-plots-i-14-hint-1, eval = FALSE}
-...  |>  
-  ggplot(mapping = aes(x = ..., y = ... )) +
-  geom_point(alpha = ...) +
+...  +
   geom_smooth(method = ...,
               formula = y ~ x,
               se = TRUE)
@@ -1090,7 +1090,7 @@ Set the argument `se` to `TRUE`.
 
 ### 
 
-The shading created by `se` is a measurement of error. Observe how it increases at outlying heights for which we have few data points. 
+The shading created by `se` is a measurement of error. Observe how it increases at outlying values for `height`, for which we have few data points. 
 
 ### Exercise 15
 
@@ -1108,12 +1108,10 @@ You are adding a layer here so use +
 
 ```{r advanced-plots-i-15-hint-2, eval = FALSE}
 ...  +
-  ggplot(mapping = aes(x = ..., y = ... )) +
-  geom_point(alpha = ...) +
   facet_wrap(~ gender)
 ```
 
-Since we only have 2 graphs, we don't need to specify the number of rows. If you wanted both these graphs on separate rows, you could use the argument `nrows` and set it to 2. 
+Since we only have two graphs, we don't need to specify the number of rows. If you wanted both these graphs on separate rows, you could use the argument `nrows` and set it to `2`. 
 
 ### Exercise 16
 
@@ -1131,15 +1129,13 @@ You are adding a layer here so use +
 
 ```{r advanced-plots-i-16-hint-2, eval = FALSE}
 ...  +
-  ggplot(mapping = aes(x = ..., y = ... )) +
-  geom_point(alpha = ...) +
   facet_wrap(~ gender) +
   theme_bw()
 ```
 
 ### 
 
-While we use theme_bw() in this graph, there are many more options available! You can explore the themes available [here](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/).
+While we use `theme_bw()` in this graph, there are many more options available! You can explore the themes available [here](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/).
 
 ### Exercise 17
 
@@ -1200,7 +1196,7 @@ bar_p
 
 ### Exercise 2
 
-Start a pipe with the trains dataset. Select the columns `treatment`, `race`, and `line`. 
+Start a pipe with the `trains` tibble. Select the columns `treatment`, `race`, and `line`. 
 
 ```{r advanced-plots-ii-2, exercise = TRUE}
 
@@ -1215,7 +1211,7 @@ Notice that there are 4 unique options for the `race` variable.
 
 ### Exercise 3
 
-Continue your pipe with `ggplot()`. Map the variable `race` to the x-axis.
+Continue your pipe with `ggplot()`. Map the variable `race` to the x-axis within the `aes()` call.
 
 ```{r advanced-plots-ii-3, exercise = TRUE}
 
@@ -1228,7 +1224,7 @@ trains |>
   ggplot(aes(x = ...))
 ```
 
-Remember, since we're using `geom_bar`, we don't need to map something to the `y` axis. R will count the values for us.
+Remember, since we're using `geom_bar()`, we don't need to map something to the `y` axis. R will count the values for us.
 
 ### Exercise 4
 
@@ -1241,13 +1237,14 @@ Before we add a geom layer, map `line` to `fill`. This will allow us to see the 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r advanced-plots-ii-4-hint-1, eval = FALSE}
+... |> 
 ggplot(aes(x = race, 
-              fill = ...)
+           fill = ...))
 ```
 
 ### Exercise 5
 
-Next, we will add the geom_bar layer. Add the layer `geom_bar`. 
+Add the layer `geom_bar`. 
 
 ```{r advanced-plots-ii-5, exercise = TRUE}
 
@@ -1277,6 +1274,7 @@ We want to change the y-axis into a percentage, since the numbers don't really t
 ```
 
 ### 
+
 
 `after_stat` is a function used to manipulate variables like `count` which have been calculated by `ggplot()` to plot the graph. 
 
