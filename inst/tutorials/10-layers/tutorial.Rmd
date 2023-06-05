@@ -148,11 +148,11 @@ geom_point() is a layer so use + to add it
 
 ### 
 
-We use color when we are dealing with points or lines. We use fill when we are dealing with other objects.
+`ggplot()` contains two specific uses: color and shape. We often use color when we are dealing with a vast amount of data. When compared to color, shape can only use up to 6 discrete values, meaning that we cannot utilize shape to its fullest with more data. We use fill when we are dealing with other objects.
 
 ### Exercise 5
 
-Let's minimize the overplotting. First, within `geom_point()` set `alpha` to 0.5.
+There are several ways to minimize overplotting. One such way is through the use of `alpha`. First, within `geom_point()` set `alpha` to 0.5.
 
 ```{r geompoint-with-size-5, exercise = TRUE}
 
@@ -165,7 +165,9 @@ Let's minimize the overplotting. First, within `geom_point()` set `alpha` to 0.5
   geom_point(alpha = ...)
 ```
 
-Alpha controls the transparency of the dots.
+###
+
+With the use of alpha we can control the transparency of the dots.
 
 ### Exercise 6
 
@@ -208,7 +210,7 @@ Remembder you are adding a layers here so use +
 
 ### 
 
-Remember: a logarithmic scale means that each increment increases by a factor of the base of the logarithm. In our case, that's base 10.
+Remember: a logarithmic scale means that each increment increases by a factor of the base of the logarithm. In our case, that's base 10. We want to implement the use of a logarithmic scale here because we want to be able to visualize all of our data without having any of it too close to each other.
 
 ### Exercise 8
 
@@ -227,6 +229,10 @@ Good! Now to change the theme of the plot, add another layer. This layer should 
 ### 
 
 This theme is in `ggthemes`. Remember, there are some themes that are built into the `tidyverse` package, and some that are not. If you want to use themes that aren't in `tidyverse`, you must load `library(ggthemes)`.
+
+###
+
+Besides the themes that we have used, [**ggplot2**](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html) contains all aesthetic specifications that are possible for the data. In addition, [**ggplot2: elegant graphics**](https://ggplot2-book.org/) provides all possible aesthetics that any user will use.
 
 ### Exercise 9
 
@@ -253,7 +259,7 @@ point_p2
 
 ### 
 
-Now we know how to minimize the overplotting, which will come in handy in future graphs. Remember that another way to minimize the overplotting is through `geom_jitter()`.
+Now we know how to minimize the over plotting, it will come in handy in future graphs. Remember that another way to minimize the over plotting is through `geom_jitter()`.
 
 ## `geom_point()` with `geom_smooth()`
 ### 
@@ -286,7 +292,7 @@ biden_p
 
 ### Exercise 1
 
-We will first explore the file that contains this data. Run `polling_data` in the console below.
+We will first explore the file that contains this data. Run `glimpse()` on `polling_data` in the console below.
 
 ```{r geompoint-with-geoms-1, exercise = TRUE}
 
@@ -295,7 +301,7 @@ We will first explore the file that contains this data. Run `polling_data` in th
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geompoint-with-geoms-1-hint-1, eval = FALSE}
-polling_data
+glimpse(polling_data)
 ```
 
 ### 
@@ -631,6 +637,10 @@ Use the `$` to extract the column `year` as a vector.
 
 ```
 
+```{r geomhistogram-3-hint-1, eval = FALSE}
+mpg$year
+```
+
 ### 
 
 Notice that there are only two different years, 1999 and 2008.
@@ -683,6 +693,8 @@ Continue your pipe and add `ggplot()`. Map `cty` to the x-axis and `year`  to `f
   ggplot(mapping = aes(x = ..., fill = ...))
 ```
 
+###
+
 Again, you should not see anything. The `geom` layer is what displays objects on the plot.
 
 ### Exercise 7
@@ -701,7 +713,7 @@ geom_histogram() is a layer so use + to add it
 
 ```{r geomhistogram-7-hint-2, eval = FALSE}
 ...|> 
-  ...+
+  ... +
   geom_histogram()
 ```
 
@@ -772,6 +784,12 @@ hist_p
 In the previous graph we used `color` to change the legend labels, while here we used `fill`. The argument within labels matches the argument you use within `ggplot()`. `color` is used for objects like lines and points. `fill` is used for larger shapes. 
 
 Are you satisfied with the way we have made the bin sizes? Do the axes labels make this easy to understand? We will do better later. 
+
+[**Histograms**](https://socviz.co/groupfacettx.html#histograms) contain many more vast resources with items that contain comparing distributions in a new way.
+
+###
+
+ggplot2 provides a vast amount of opportunities, however, there are a countless number of plots that can be made through different geoms and extensions. Check out [**possible options**](https://exts.ggplot2.tidyverse.org/gallery/) for any future implementations or future possibilties for you to conduct. 
 
 
 ## `geom_col()`
@@ -903,9 +921,8 @@ Add the layer `facet_wrap` and facet by the variable `treatment`.
   facet_wrap(~ ...)
 ```
 
-### Exercise 7
-
-Let's add a theme to our graph. Add the layer `theme_classic()` to your code. 
+### Exercise 7    
+We won't be implementing this within our plot grid, however, another way to view our data is through `facet_grid` through `treatment ~ race`. This will open up a grid which will display each of the variables in their own respective grid. (Make sure to get rid of the facet_wrap from the previous exercise when trying this exercise out, and implement face_wrap after this exercise again)
 
 ```{r geomcol-7, exercise = TRUE}
 
@@ -915,10 +932,25 @@ Let's add a theme to our graph. Add the layer `theme_classic()` to your code.
 
 ```{r geomcol-7-hint-1, eval = FALSE}
 ... + 
-  theme_classic()
+  facet_grid(treatment ~ race)
 ```
 
 ### Exercise 8
+
+Let's add a theme to our graph. Add the layer `theme_classic()` to your code. 
+
+```{r geomcol-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geomcol-8-hint-1, eval = FALSE}
+... + 
+  theme_classic()
+```
+
+### Exercise 9
 
 To finish your plot, use `labs()` to give the graph a title, subtitle, axes labels, legend labels,  and caption of your choosing.
 
@@ -928,41 +960,39 @@ Reminder: This is what your plot should look like.
 col_p
 ```
 
-```{r geomcol-8, exercise = TRUE}
+```{r geomcol-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geomcol-8-hint-1, eval = FALSE}
+```{r geomcol-9-hint-1, eval = FALSE}
 ... +
   labs(..., 
        fill = "...",
        ...)
 ```
 
-## `geom_smooth()`
+## `geom_bar()`
 ### 
 
-Let's create this graph using `geom_smooth()`.
+Let's create this graph using `geom_bar()`.
 
 ```{r}
-smooth_p <- ggplot(data = trains, 
-       mapping = aes(x = att_start, 
-                     y = att_end, 
-                     color = treatment)) +
-  geom_smooth(method = "lm", 
-              se = FALSE,
-              formula = y ~ x) + 
-  theme_fivethirtyeight() +
-  labs(title = "Starting and Ending Immigration Attitudes",
-       subtitle = "The causal effect of treatment is similar regardless of starting attitude",
-       x = "Starting Attitudes",
-       y = "Ending Attitudes",
-       color = "Treatment",
-       caption = "Source: Enos (2014)")
+bar_p <- ggplot(data = trains, 
+                   mapping = aes(x = station, 
+                                 fill = race)) + 
+  geom_bar(alpha = 1/5, 
+           position = "dodge") + 
+  theme(axis.text.x = element_text(angle=45, 
+                                   hjust=1)) + 
+  labs(title = "Race found at each station",
+       subtitle = "The most popular station with the most common race found within each station",
+       x = "Station",
+       y = "Count",
+       fill = "Race")
 
-smooth_p
+bar_p
 ```
 
 ### Exercise 1
@@ -979,20 +1009,27 @@ Notice that there are no missing values for `att_start` and `att_end`. This mean
 
 ### Exercise 2
 
-Select the columns `att_end`, `att_start`, and `treatment`. 
+Add `ggplot()` and map `station` to the x axis of the `trains` data and set `fill` to `race`. Add the layer `geom_bar()`.
 
 ```{r geomsmooth-2, exercise = TRUE}
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r geomsmooth-2-hint-1, eval = FALSE}
-... |> 
-  select(..., ..., ...)
+ggplot(data = ..., 
+       mapping = aes(x =..., fill =...))+
+  geom_bar()
 ```
+
+### 
+
+Here we have used `station` data on the x axis and the count on the y axis is automatically implemented. Within a bar graph, we only input the x variable due to the y variable automatically being created usually as count. Through this we can see count within each `station` in the `trains` data.
 
 ### Exercise 3
 
-Add `ggplot()` and map `att_start` to the x axis and `att_end` to the y axis. Add the layer `geom_smooth()`.
+Within `geom_bar()`, set `alpha` to 1/5, `position` to `"dodge"`.
 
 ```{r geomsmooth-3, exercise = TRUE}
 
@@ -1001,19 +1038,12 @@ Add `ggplot()` and map `att_start` to the x axis and `att_end` to the y axis. Ad
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geomsmooth-3-hint-1, eval = FALSE}
-ggplot(data = ..., 
-       mapping = aes(x =..., 
-                     y = ...))+
-  geom_smooth()
+... + geom_bar(alpha = 1/5, position = "dodge")
 ```
-
-### 
-
-Normally you will see `geom_smooth()` used with `geom_point()` so you can see the points and the trend line going through them. However, here we just have the trendlines shown.
 
 ### Exercise 4
 
-Within `geom_smooth()`, set `method` to`"lm"`, `se` to `FALSE`, and `formula` to `y ~ x`. 
+Now we are going to use theme to adjust the labels for station. As you can see they are all bunched up together and we can fix this through an adjustment of how they are positioned. Set `axis.text.x` to `element_text`. Within `element_text` set `angle` to 45 and `hjust` to 1.
 
 ```{r geomsmooth-4, exercise = TRUE}
 
@@ -1021,9 +1051,14 @@ Within `geom_smooth()`, set `method` to`"lm"`, `se` to `FALSE`, and `formula` to
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
+```{r geomsmooth-4-hint-1, eval = FALSE}
+... + theme(axis.text.x = element_text(angle=45, 
+                                   hjust=1))
+```
+
 ### Exercise 5
 
-Now set `color` to `treatment`.
+Finally, use `labs()` to give the graph a title, subtitle, axis labels, legend labels, and caption of your choosing.
 
 ```{r geomsmooth-5, exercise = TRUE}
 
@@ -1032,51 +1067,21 @@ Now set `color` to `treatment`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geomsmooth-5-hint-1, eval = FALSE}
-Recall color is an aesthetic, so it goes within aes() argument of ggplot().
-```
-
-### Exercise 6
-
-Let's add a theme to our graph. Add the layer `theme_fivethirtyeight()` to your code. 
-
-```{r geomsmooth-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geomsmooth-6-hint-1, eval = FALSE}
-...+ 
- theme_fivethirtyeight()
-```
-
-### Exercise 7
-
-Finally, use `labs()` to give the graph a title, subtitle, axis labels, legend labels, and caption of your choosing.
-
-```{r geomsmooth-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geomsmooth-7-hint-1, eval = FALSE}
 ... +
   labs(..., 
-       color = "...",
+       fill = "...",
        ...)
 ```
 
 Reminder: This is what your plot should look like.
 
-```{r make-smooth-p}
-smooth_p
+```{r make-bar-p}
+bar_p
 ```
 
-### 
+###
 
-Note that this theme does not have axes labels. Do you think the labels are worth it?
-
+For more information on other stat_summary plots besides bar graphs check out: [**Layers_Stat_Summary**](https://r4ds.hadley.nz/layers.html#statistical-transformations)
 
 ## `geom_density()`
 ### 
@@ -1548,7 +1553,8 @@ Reminder: This is what your graph should look like. Test to make sure you can in
 nom_p
 ```
 
-
+###
+Plotly allows for users to interact with graphs and enter a vast new world which can provide users the opportunity to display their data in an whole new way. Along with plotly, users are able to implement their data through the form of maps and coordinate systems through `coord_quickmap`. Along with plotting maps users can use `coord_polar` to develop a connection between a bar chart and Coxcomb chart. Further information is provided in the [**Coordinate Systems Section**](https://r4ds.hadley.nz/layers.html#coordinate-systems)
 
 ## Summary
 ### 
