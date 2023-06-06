@@ -27,6 +27,8 @@ set.seed(9)
 police <- read_csv("data/philly-clean.csv",
                    col_types = cols()) |>
   slice_sample(n = 4000)
+
+df <- tibble(name = c("Flora", "David", "Terra", NA))
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -175,24 +177,22 @@ Let's do the same thing on single quote, so create a new variable `y` and set it
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r creating-a-string-8-hint, eval = FALSE}
+```{r creating-a-string-8-hint-1, eval = FALSE}
 y <- ...
 str_view(...)
 ```
 
-###
+### 
 
-
-
-### Exercise 8
+### Exercise 9
 
 The way that I demonstrated previously to include quotes in string is not the only way. To include a literal single or double quote in a string , you can use `\` to “escape” it like `"\""` which will return `'"'`. Make a string with a single quote or literal single as they call it and assign it to `single_quote`.
 
-```{r creating-a-string-8, exercise = TRUE}
+```{r creating-a-string-9, exercise = TRUE}
 
 ```
 
-```{r creating-a-string-8-hint-1, eval = FALSE}
+```{r creating-a-string-9-hint-1, eval = FALSE}
 single_quote <- '\''
 ```
 
@@ -200,25 +200,9 @@ single_quote <- '\''
 
 If you wanted to include a literal backslash in your string, you'll need to escape it with "\\".
 
-### Exercise 9
-
-Let's assign
-
-```{r creating-a-string-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r creating-a-string-9-hint-1, eval = FALSE}
-
-```
-
-### 
-
 ### Exercise 10
 
-The printed representation of a string is not the same as the string itself because the printed representation shows the escapes. To see the raw contents of the string, we use `str_view()`
+Let's assign
 
 ```{r creating-a-string-10, exercise = TRUE}
 
@@ -227,6 +211,22 @@ The printed representation of a string is not the same as the string itself beca
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-a-string-10-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 11
+
+The printed representation of a string is not the same as the string itself because the printed representation shows the escapes. To see the raw contents of the string, we use `str_view()`
+
+```{r creating-a-string-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-a-string-11-hint-1, eval = FALSE}
 
 ```
 
@@ -253,7 +253,13 @@ str_c(...,...)
 
 ### 
 
+`str_c()` is a function in the `stringr` package in R that combines multiple character vectors into a single character vector. It is similar to the `paste()` function, but it uses `tidyverse` recycling and NA rules.
+
+
+
 ### Exercise 2
+
+Copy previous code and change the argument to `str_c("Hello", c("Precptor","Anish"))` and run it.
 
 ```{r creating-many-string-2, exercise = TRUE}
 
@@ -262,12 +268,90 @@ str_c(...,...)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-2-hint-1, eval = FALSE}
-
+str_c("Hello", c("Precptor","Anish"))
 ```
 
 ### 
 
  
+Based from the result we can see that `str_c()` is vectorized, which means it can take multiple arguments and combine them element-wise. 
+ 
+### Exercise 3
+
+To show how we can use `str_c()` on a dataset, lets create a tibble. Create a variable named `df` and set it to `tibble(name = c("Flora","Preceptor","Terra",NA))` which create a data set with the string characters.
+
+```{r creating-many-string-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-many-string-3-hint-1, eval = FALSE}
+... <- ...
+```
+
+### 
+
+You might be wondering what tibble is, A tibble is a new form of a data frame in R that is part of the tidyverse library, and Tibbles print the data in a more efficient format than a data frame, showing the values of the columns, their datatype, and the size of the dataset.
+
+### Exercise 4
+
+Run `df` to see the data frame.
+
+```{r creating-many-string-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-many-string-4-hint-1, eval = FALSE}
+...
+```
+
+### 
+
+the tibble has one column named "name." The first three rows contain the names "Flora," "David," and "Terra," respectively. However, the fourth row has an NA value, which typically represents missing or unknown data. 
+
+<!-- AB: should i use this, There are so many functions you could use for a tibble like `select()` which drops columns from a tibble, `filter()` whch drops rows based on certain conditions and more. -->
+
+
+### Exercise 5
+
+Let's modify the tibble by first piping the tibble `df` to the `mutate()` function, then in `mutate()`, we will create new column `greeting` and set it equal to `str_c("Hi ", name, "!")`.
+
+```{r creating-many-string-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-many-string-5-hint-1, eval = FALSE}
+... |>
+  mutate(... = ...("...",name,"..."))
+```
+
+### 
+
+If you want missing values to display in another way, use [`coalesce()`](https://dplyr.tidyverse.org/reference/coalesce.html) to replace them.
+
+### Exercise 6
+
+Run `df` to see the modified data frame.
+
+```{r creating-many-string-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-many-string-6-hint-1, eval = FALSE}
+
+```
+
+### 
+
+After modifying the tibble, we still have a  column called `name`. We used the `mutate()` function from the ["dplyr"](https://dplyr.tidyverse.org/) package to create a new column called `greeting`. The `str_c()` function is used to concatenate the string "Hi " with the values in the `name` column. 
+
 ## Extracting data from strings
 ### 
 
