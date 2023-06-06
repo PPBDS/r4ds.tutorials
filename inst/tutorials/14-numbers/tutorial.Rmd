@@ -1,6 +1,6 @@
 ---
 title: Numbers
-author: David Kane
+author: Srihith Garlapati
 tutorial:
   id: numbers
 output:
@@ -15,6 +15,8 @@ description: 'Tutorial for Chapter 14: Numbers'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
+library(primer.data)
+library(readr)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
@@ -31,91 +33,124 @@ options(tutorial.exercise.timelimit = 60,
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 14: Numbers](https://r4ds.hadley.nz/numbers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to import data into your R project using [`read_csv()`](https://readr.tidyverse.org/reference/read_delim.html) and related functions from the [**readr**](https://readr.tidyverse.org/) package. You will also learn how to write out data to files with functions like [`write_csv()`](https://readr.tidyverse.org/reference/write_delim.html).
+This tutorial covers [Chapter 14: Numbers](https://r4ds.hadley.nz/numbers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to parse numbers, utilize numeric transformations on variables within datasets, and learn new ways to numerically summarize data. 
 
-
-<!-- INSERT BOOK MATERIAL HERE. -->
-
-
-## Older material
+## Making Numbers
 ### 
+
+Our ultimate goal in this section is to make use of the functions `parse_double()` and `parse_number()` to get specific values of a variable from a certain dataset.
 
 ### Exercise 1
+This chapter mostly uses functions from base R, which are available without loading any packages. But we still need the tidyverse because we’ll use these base R functions inside of tidyverse functions like mutate() and filter(). 
 
-People write numbers differently in different parts of the world. For example, some countries use `.` in between the integer and fractional parts of a real number, while others use `,`.
+###
 
-### 
+`readr` provides two useful functions for parsing strings into numbers: `parse_double()` and `parse_number()`.
 
-To begin, use the function  `parse_double()` with the argument "1.23".
+###
 
-```{r older-material-1, exercise = TRUE}
-
-```
-
-```{r older-material-1-hint-1, eval = FALSE}
-parse_double("1.23")
-```
-
-### 
-
-There are other `parse_*` functions such as `parse_logical()`, `parse_integer()`, and `parse_character()`.
-
-### Exercise 2
-
-What if the file you worked with used a comma to denote a decimal mark? Many functions in the [**readr**](https://readr.tidyverse.org) package provide a “locale” argument. You provide an object that specifies parsing options that differ from place to place. You can override the default value of `.` by creating a new locale and setting the `decimal_mark` argument.
-
-### 
-
-Use `parse_double()` with the argument "1,23". The second argument should set `locale` to `locale(decimal_mark = ",")`.
-
-```{r older-material-2, exercise = TRUE}
-
-```
-
-```{r older-material-2-hint-1, eval = FALSE}
-parse_double("1,23", locale = locale(..))
-```
-
-Note that `locale` is both an argument for `parse_*` functions and the name of a function itself, on which create a local object. See `?readr::locale` for [details](https://readr.tidyverse.org/articles/locales.html).
-
-### Exercise 3
-
-The function `parse_number()` ignores non-numeric characters before and after the number. 
-
-### 
-
-Use `parse_number()` with the argument "$100". Then, on the line below, use `parse_number()` again with the argument "20%".
-
-
-```{r older-material-3, exercise = TRUE}
-
-```
-
-```{r older-material-3-hint-1, eval = FALSE}
-parse_number("$100")
-parse_number("20%")
-```
-
-### 
-
-Unlike `parse_integer()` and `parse_double()`, `parse_number()` can parse both integers and doubles.
-
-### Exercise 4
-
-Use `parse_number()` with the argument "The cost of the package is $40.75" 
-
-```{r older-material-4, exercise = TRUE}
+First, let's load in the tidyverse and the readr package to make use of these methods.
+```{r making-numbers-1, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r older-material-4-hint-1, eval = FALSE}
-parse_number("The cost of ...." )
+```{r making-numbers-1-hint, eval = FALSE}
+library(tidyverse)
+library(readr)
+```
+### Exercise 2
+
+In most cases, you’ll get numbers already recorded in one of R’s numeric types: integer or double. In some cases, however, you’ll encounter them as strings.
+
+###
+
+Let's make a vector `x` that has the following values within it `"1.2"`, `"5.6"`, `"1e3"`. These values are strings for now.
+```{r making-numbers-2, exercise = TRUE}
+
 ```
 
-<!-- DK: So many knowledge drop possibilities! -->
+<button onclick = "transfer_code(this)">Copy previous code</button>
 
+```{r making-numbers-2-hint, eval = FALSE}
+x <- c(..., ..., ...)
+```
+
+### Exercise 3
+When you have numbers that have been written as strings we should use `parse_double()`. So let's use use `parse_double()` on the command we just created. 
+
+```{r making-numbers-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r making-numbers-3-hint, eval = FALSE}
+x <- c("...", "...", "...")
+parse_double(x)
+```
+
+###
+
+This should return an output of: `#> [1]    1.2    5.6 1000.0`.
+
+### Exercise 4
+Use `parse_number()` when the string contains non-numeric text that you want to ignore. This is particularly useful for currency data and percentages. Let's first make a vector y that has the string values: `"$1,234"`, `"USD 3,513"`, `59%`
+
+```{r making-numbers-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r making-numbers-4-hint, eval = FALSE}
+y <- c(..., ..., ...)
+```
+
+###
+
+As you can see, in this vector `y` there are non-numeric text that we would normally want to ignore if we were to see this in a dataset. 
+
+### Exercise 5
+
+Let's use `parse_number()` to ignore this non-numeric text.
+
+```{r making-numbers-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r making-numbers-5-hint, eval = FALSE}
+y <- c(..., ..., ...)
+parse_number(y)
+```
+
+###
+
+The result you should've received is `#> [1] 1234 3513   59`
+
+## Counts
+### 
+
+In this section, we will be reviewing how to use `count()` and other similar functions to make data analysis easier. 
+
+
+## Numeric Transformations
+### 
+
+This section will go over transforming numeric vectors with the function `mutate()` and using various mathematic methods to make new columns in a certain dataset.
+
+## More Transformations
+### 
+
+This section will allow you to make use of transformations on an actual dataset.
+
+## Numeric Summaries
+### 
+
+This section will introduce more useful summary functions that will help to summarize your data much better.
 
 ## Summary
 ### 
