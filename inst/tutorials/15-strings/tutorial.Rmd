@@ -1,6 +1,6 @@
 ---
 title: Strings
-author: David Kane
+author: Anish Bellamkonda and David Kane
 tutorial:
   id: strings
 output:
@@ -494,7 +494,7 @@ The tibble has two columns named "name" and "fruit". Carmen has more than one fr
 
 ### Exercise 14
 
-Start a pipe with `df2` to `group_by()` which takes `name` as arguement.
+Start a pipe with `df3` to `group_by()` which takes `name` as argument.
 
 ```{r creating-many-string-14, exercise = TRUE}
 
@@ -503,11 +503,13 @@ Start a pipe with `df2` to `group_by()` which takes `name` as arguement.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-14-hint, eval = FALSE}
-df2 |>
+df3 |>
   ...(...)
 ```
 
 ###
+
+Most data operations are done on groups defined by variables. `group_by()` takes an existing tbl and converts it into a grouped tbl where operations are performed "by group". `ungroup()` removes grouping. If you want more info check out ["dplyr"](https://dplyr.tidyverse.org/reference/group_by.html).
 
 ### Exercise 15
 
@@ -520,14 +522,19 @@ Continue the pipe from `group_by()` to `summarize()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-15-hint, eval = FALSE}
-
+... |>
+  ...(name) |>
+  ...()
 ```
 
 ###
 
+`summarize()` creates a new data frame. It returns one row for each combination of grouping variables; if there are no grouping variables, the output will have a single row summarising all observations in the input.
+
+
 ### Exercise 16
 
-Within `summarize()`, set the column `fruit` to `str_flatten(fruit, ",")`.
+Within `summarize()`, type the column `fruit` and set it to `str_flatten(fruit, ",")`.
 
 ```{r creating-many-string-16, exercise = TRUE}
 
@@ -536,15 +543,17 @@ Within `summarize()`, set the column `fruit` to `str_flatten(fruit, ",")`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-16-hint, eval = FALSE}
-
+... |>
+  ...|>
+  summarize(fruits = ...)
+  
 ```
 
 ###
 
+The final outcome ensures the absence of duplicate names while effectively organizing all fruits based on their respective associations.
 
-
-
-
+To review, `mutate()` either changes an existing column or adds a new one. `summarise()` calculates a single value (per group).
 
 ## Extracting data from strings
 ### 
@@ -559,7 +568,163 @@ It's very common for multiple variables to be crammed together into a single str
 ## Letters
 ### 
 
-In this section, we’ll introduce you to functions that allow you to work with the individual letters within a string. You’ll learn how to find the length of a string, extract substrings, and handle long strings in plots and tables.
+In this section, we’ll introduce you to functions that allow you to work with the individual letters within a string. You’ll learn how to find the length of a string, extract sub strings, and handle long strings in plots and tables.
+
+### Exercise 1
+
+How do you find length of a string? That's where `str_length()` comes into play. `str_length()` tells you the number of letters in the string.
+
+Type the function `str_length()` and type "hello world" as the arguement and run it.
+
+```{r letters-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r letters-1-hint, eval = FALSE}
+str_length(...)
+```
+
+###
+
+`str_length()` not only counts the letters but also the spaces in between the words in a string. If you want to explore more, check out [`str_length()`](https://stringr.tidyverse.org/reference/str_length.html).
+
+### Exercise 2
+
+In addition to "hello world" in `str_length()`, add two more values which are `NA` and `programming`. Make sure to put these three string in vector like `c(...,...,...)`.
+
+```{r letters-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r letters-2-hint, eval = FALSE}
+str_length(c(...,...,...))
+```
+
+###
+
+The values you'll get are 11, 11 and NA. 
+
+### Exercise 3
+
+Let's load the "babynames" using `library()`.
+
+```{r letters-3, exercise = TRUE}
+
+```
+
+
+
+```{r letters-3-hint, eval = FALSE}
+
+```
+
+###
+
+The `babynames` is a data set which contained names used for babies from 1880 to 2017. If you want to explore the data set, checkout [popular baby names](https://www.ssa.gov/oact/babynames/limits.html).
+
+### Exercise 4
+
+Run `babynames` to have an overview of the data set.
+
+```{r letters-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r letters-4-hint, eval = FALSE}
+babynames
+```
+
+###
+
+We have five columns(year, sex, name, n, prop). The `n` means the count of the name and the `prop` is the proportion or fraction of individuals with that name out of the total number of individuals.
+
+### Exercise 5
+
+To discover some findings lets use this with `count()` to find the distribution of lengths of US baby names. 
+
+Start a pipe with babynames to `count()`.
+
+```{r letters-5, exercise = TRUE}
+
+```
+
+
+
+```{r letters-5-hint, eval = FALSE}
+... |>
+  count()
+```
+
+###
+
+We see that there are a total count of 1924665 names used. Let's make the function more complex to find the distribution of lengths of baby names.
+
+### Exercise 6
+
+Let's create two columns to see the length of the name and also the count. Within `count()` type `length` and set it equal to `str_length(name)` and then type `wt` and set it to `n`.
+
+```{r letters-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r letters-6-hint, eval = FALSE}
+... |>
+  count(... = str_length(...),wt = ...)
+```
+
+###
+
+What `wt = n` does is that it specifies that the count (n) should be used as the weight for the calculation. Looking at the results, we see that the biggest name contains 15 letters.
+
+### Exercise 7
+
+Now that we know that the longest name is 15 letters. Let's find the most famous names which are 15 letters. Start a pipe with `babynames` to `filter()`. We have to select the names which are 15 letters so type `str_length(name)` and set it to be equal to be 15 using `==`. 
+
+```{r letters-7, exercise = TRUE}
+
+```
+
+
+
+```{r letters-7-hint, eval = FALSE}
+... |>
+  filter(...(name)== 15)
+```
+
+###
+
+In RStudio, the `==` operator is used to test for equality between two values. It is a comparison operator that returns a logical value of TRUE if the values are equal and FALSE otherwise. 
+
+
+### Exercise 8
+
+Now that we have all the names with 15 letters, let's continue the pipe from `filter()` to `count()`. Within `count()` type `name`, set `wt` to `n` and then set `sort` to TRUE.
+
+```{r letters-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r letters-8-hint, eval = FALSE}
+... |>
+  ...|>
+  count(..., wt = ..., sort = ...)
+```
+
+###
+
+Looks at the results, the most famous name is Francisco Javier, being used 123 times. Looking at the other names, Christopher looks similar is most of the other names.
+
+
 
 ## Non-English Text
 ### 
@@ -574,7 +739,7 @@ The **[babynames](http://hadley.github.io/babynames/)** package contains data ab
 
 ### 
 
-Using this data, let's create the folllowing graph.
+Using this data, let's create the following graph.
 
 ```{r baby-lastnames}
 boys_p <- babynames |>
