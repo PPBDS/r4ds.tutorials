@@ -21,6 +21,12 @@ knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
+df <- tribble(
+  ~x, ~y,
+  1,  3,
+  5,  2,
+  7, NA,
+)
 
 ```
 
@@ -340,6 +346,7 @@ library(dplyr)
 
 ### Exercise 2
 
+We can see this in operation more easily if we create some vectors outside of a data frame. Make a new vector `x` so that the vector has the values `1, 2, 10, 20` in it. 
 ```{r numeric-transformati-2, exercise = TRUE}
 
 ```
@@ -347,12 +354,14 @@ library(dplyr)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-2-hint-1, eval = FALSE}
-
+x <- c(...)
 ```
 
 ### 
 
 ### Exercise 3
+
+Divide the vector `x` by 5.
 
 ```{r numeric-transformati-3, exercise = TRUE}
 
@@ -361,13 +370,16 @@ library(dplyr)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-3-hint-1, eval = FALSE}
-
+x <- c(...)
+x / 5
 ```
 
 ### 
 
-### Exercise 4
+This operation is shorthand for `x / c(5, 5, 5, 5)`. Generally, you only want to recycle single numbers (i.e. vectors of length 1), but R will recycle any shorter length vector. It usually (but not always) gives you a warning if the longer vector isn’t a multiple of the shorter.
 
+### Exercise 4
+You can see the warning message displayes when you try using a longer vector that isn't a multiple of the shorter vector. Try using the same vector but multiplying `x` with the values `1, 2, 3`.
 ```{r numeric-transformati-4, exercise = TRUE}
 
 ```
@@ -375,12 +387,19 @@ library(dplyr)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-4-hint-1, eval = FALSE}
-
+x <- c(1, 2, 10, 20)
+x * c(...)
 ```
 
 ### 
 
 ### Exercise 5
+
+These recycling rules are also applied to logical comparisons (==, <, <=, >, >=, !=) and can lead to a surprising result if you accidentally use == instead of %in% and the data frame has an unfortunate number of rows.
+
+###
+
+Let's try to find all the flights in January and February. Make a new pipeline with `flights` and use the `filter()` function on `month` being 1 or 2 (January or February). However, instead of using `%in%` use `==`.
 
 ```{r numeric-transformati-5, exercise = TRUE}
 
@@ -389,13 +408,27 @@ library(dplyr)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-5-hint-1, eval = FALSE}
-
+flights |> 
+  filter(month == c(...))
 ```
 
 ### 
 
+The code runs without error, but it doesn’t return what you want. Because of the recycling rules it finds flights in odd numbered rows that departed in January and flights in even numbered rows that departed in February. And unfortunately there’s no warning because `flights` has an even number of rows.
+
+###
+
+To protect you from this type of silent failure, most tidyverse functions use a stricter form of recycling that only recycles single values. Unfortunately that doesn’t help here, or in many other cases, because the key computation is performed by the base R function ==, not filter().
+
+###
+
 ### Exercise 6
 
+Most arithmetic functions work with pairs of variables. Two closely related functions are `pmin()` and `pmax()`, which when given two or more variables will return the smallest or largest value in each row. 
+
+###
+
+Let's utilize a premade dataframe `df`. Display this dataframe.
 ```{r numeric-transformati-6, exercise = TRUE}
 
 ```
@@ -403,12 +436,13 @@ library(dplyr)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-6-hint-1, eval = FALSE}
-
+df
 ```
 
 ### 
 
 ### Exercise 7
+Now, make a new pipeline with df. Then, make two new columns named min and max using the `mutate()` function representing the row min and row max of the columns x and y. For example, the code for the `min` column should look like `pmin(x, y, na.rm = TRUE)`. 
 
 ```{r numeric-transformati-7, exercise = TRUE}
 
@@ -417,12 +451,26 @@ library(dplyr)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-7-hint-1, eval = FALSE}
-
+df |> 
+  mutate(
+    min = pmin(x, y, na.rm = TRUE),
+    max = pmax(x, y, na.rm = TRUE)
+  )
 ```
 
 ### 
 
+Note that these are different to the summary functions min() and max() which take multiple observations and return a single value.
+
+###
+
 ### Exercise 8
+
+Modular arithmetic is the technical name for the type of math you did before you learned about decimal places, i.e. division that yields a whole number and a remainder. In R, `%/%` does integer division and `%%` computes the remainder.
+
+###
+
+Make a new vector `z` equal to the numbers ranging from 1 to 10. 
 
 ```{r numeric-transformati-8, exercise = TRUE}
 
@@ -431,13 +479,14 @@ library(dplyr)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-8-hint-1, eval = FALSE}
-
+z <- c(1:10)
 ```
 
 ### 
 
 ### Exercise 9
 
+Using the same vector, `z`, divide by 3 using integer division (`%/%`) and also compute the remainder using `%%`.
 ```{r numeric-transformati-9, exercise = TRUE}
 
 ```
@@ -445,13 +494,20 @@ library(dplyr)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-9-hint-1, eval = FALSE}
-
+z <- c(1:10)
+z %/% 3
+z %% 3
 ```
 
 ### 
 
 ### Exercise 10
 
+Modular arithmetic is handy for the `flights` dataset, because we can use it to unpack the `sched_dep_time` variable into `hour` and `minute`. `sched_dep_time` has the time in a numerical form where the thousands and hundreds place is the hour and the ones' and tens' place is the minute.
+
+###
+
+Make a new pipeline with flights and use `mutate()` to make 2 new columns named `hour` and `minute` using integer division to find the hour and remainder computation to find the minute. Add the parameter `.keep = "used"` to retain only the columns used in `sched_dep_time` to create new columns
 ```{r numeric-transformati-10, exercise = TRUE}
 
 ```
@@ -459,13 +515,23 @@ library(dplyr)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-10-hint-1, eval = FALSE}
-
+flights |> 
+  mutate(
+    hour = sched_dep_time %/% 100,
+    minute = ...,
+    .keep = "used"
+  )
 ```
 
 ### 
 
 ### Exercise 11
 
+Now let's make a plot to see how the proportion of cancelled flights varies over the course of the day.
+
+###
+
+Copy the previous code and make a new column named `prop_cancelled` using `summarize()` that is equivalent to `mean(is.na(dep_time)), n = n())`
 ```{r numeric-transformati-11, exercise = TRUE}
 
 ```
@@ -473,12 +539,124 @@ library(dplyr)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-11-hint-1, eval = FALSE}
-
+flights |> 
+  mutate(
+    hour = sched_dep_time %/% 100,
+    minute = ...,
+    .keep = "used"
+  ) |> 
+  summarize(prop_cancelled = mean(is.na(dep_time)), n = n())
 ```
 
 ### 
 
-## More Transformations
+### Exercise 12
+
+Continue by filtering the hours that are greater than 1 AM.
+```{r numeric-transformati-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-12-hint, eval = FALSE}
+... |> 
+  filter(hour > 1)
+```
+
+###
+
+### Exercise 13
+
+Add to the pipeline by adding `ggplot()` and mapping the x-axis to `hour` and the y-axis to `prop_cancelled`
+```{r numeric-transformati-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-13-hint, eval = FALSE}
+... |> 
+  ggplot(aes(x = hour, y = prop_cancelled))
+```
+
+###
+
+### Exercise 14
+
+Make a line plot with a line that is gray using `geom_line()` and a color with the value of `"grey50"` within `geom_line()`
+```{r numeric-transformati-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-14-hint, eval = FALSE}
+... +
+  geom_line(color = "grey50")
+```
+
+###
+
+### Exercise 15
+
+Add points to the line that represent the density of flights that were cancelled per hour mapping size to n.
+```{r numeric-transformati-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-15-hint, eval = FALSE}
+... + 
+  geom_point(aes(size = n))
+```
+
+###
+
+### Exercise 16
+
+
+```{r numeric-transformati-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-16-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 17
+
+Add appropriate labels for the title, x-axis, and the y-axis using labs().
+```{r numeric-transformati-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-17-hint, eval = FALSE}
+... +
+  labs(title = ..., ..., ...)
+```
+
+###
+
+This is a line plot with scheduled departure hour on the x-axis, and proportion of cancelled flights on the y-axis. An observation that we could make is that cancellations seem to accumulate over the course of the day until 8pm, very late flights are much less likely to be cancelled.
+
+###
+
+## Random Number Functions
+### 
+
+This section will allow you to practice with many random number functions with many different uses.
+
+<!-- SG: This above needs some changing (its not descriptive enough-->
+
+## General Transformations
 ### 
 
 This section will allow you to make use of transformations on an actual dataset.
