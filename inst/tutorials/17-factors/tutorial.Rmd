@@ -8,19 +8,25 @@ output:
     progressive: yes
     allow_skip: yes
 runtime: shiny_prerendered
-description: 'Tutorial for Chapter 18: Dates and times'
+description: 'Tutorial for Chapter 17: Factors'
 ---
 
 ```{r setup, include = FALSE}
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
-library(primer.data)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
+x1 <- c("Dec", "Apr", "Jan", "Mar")
 
+x2 <- c("Dec", "Apr", "Jam", "Mar")
+
+month_levels <- c(
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+)
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -32,166 +38,804 @@ options(tutorial.exercise.timelimit = 60,
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 17: Factors](https://r4ds.hadley.nz/factors.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
+This tutorial covers [Chapter 17: Factors](https://r4ds.hadley.nz/factors.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. [**forcats**](https://forcats.tidyverse.org/) is the core *Tidyverse* package for working with categorical variables, called "factors" in R. Key commands include [`fct()`](https://forcats.tidyverse.org/reference/fct.html) for creating factors, [`fct_reorder()`](https://forcats.tidyverse.org/reference/fct_reorder.html) for changing the order of the levels, and [`fct_recode()`](https://forcats.tidyverse.org/reference/fct_recode.html) for recoding factors.
 
-## Older material
+## Factor basics
 ### 
+
+Factors are used for categorical variables, variables that have a fixed and known set of possible values. They are also useful when you want to display character vectors in a non-alphabetical order.
 
 ### Exercise 1
 
-Use `select()` to look at the `ideology` variable of the `cces` data set.
+Load the **tidyverse** library.
 
-```{r older-material-1, exercise = TRUE}
+```{r factor-basics-1, exercise = TRUE}
 
 ```
 
-```{r older-material-1-hint-1, eval = FALSE}
-cces |> 
-  select(...)
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-1-hint-1, eval = FALSE}
+library(...)
 ```
 
 ### 
 
-Look underneath the column name. Notice that this is a factor (`<fctr>`) variable. 
-
+One of the eight core packages within the *Tidyverse* is [**forcats**](https://forcats.tidyverse.org/), a package dedicated to working with factors. By loading **tidyverse**, we automatically get access to **forcats** and the other "core" *Tidyverse* packages.
 
 ### Exercise 2
 
-Use `str()` with the argument `cces$ideology`. On the line below, use `levels()` with the same argument. 
+Look up the help page for **forcats** by entering `help(package = "forcats")` at the Console. Copy/paste the lines for the first help pages.
 
-```{r older-material-2, exercise = TRUE}
-
-```
-
-```{r older-material-2-hint-1, eval = FALSE}
-str(...)
-levels(...)
-```
-
-### Exercise 3
-
-Let's now get a frequency table as a tibble. Use `fct_count()` with the argument `cces$ideology`.
-
-```{r older-material-3, exercise = TRUE}
-
-```
-
-```{r older-material-3-hint-1, eval = FALSE}
-fct_count(...)
-```
-
-### Exercise 4
-
-Now use `nlevels()` with the argument `cces$ideology` to find the number of existing levels.
-
-```{r older-material-4, exercise = TRUE}
-
-```
-
-```{r older-material-4-hint-1, eval = FALSE}
-nlevels(...)
-```
-
-### Exercise 5
-
-Now try ordering the levels of `cces$ideology` by frequency. Start a pipe with `cces$ideology` and use the function `fct_infreq()`. Then on the line below, use `levels()` to display the new order of the levels. 
-
-```{r older-material-5, exercise = TRUE}
-
-```
-
-```{r older-material-5-hint-1, eval = FALSE}
-cces$ideology |> 
-  fct_infreq() 
-
-levels(cces$ideology)
+```{r factor-basics-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 5)
 ```
 
 ### 
 
-Compare this with the old order of the levels in Exercise 2 and the frequency table in Exercise 3.
+**forcats** provides tools for dealing with **cat**egorical variables --- and it’s an anagram of teh word "factors" --- using a wide range of helpers for working with factors.
+
+### Exercise 3
+
+Hit "Run Code" to create the variable `x1`.
+
+```{r factor-basics-3, exercise = TRUE}
+x1 <- c("Dec", "Apr", "Jan", "Mar")
+```
+
+### 
+
+Note that `x1` is a character variable. This can lead to all sorts of problems given that months are a good example of a categorical variable, given that there are exactly 12 possible values.
+
+### Exercise 4
+
+Run `sort()` on `x1`.
+
+```{r factor-basics-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-4-hint-1, eval = FALSE}
+sort(...)
+```
+
+### 
+
+Because `x1` is a character variable, this sorts alphabetically, which is not what we want. We would prefer that the sort order correspond to the order in which months appear in the calendar.
+
+### Exercise 5
+
+Hit "Run Code" to create the `x2` variable, another character vector. But note the misspelling of "Jan" as "Jam".
+
+```{r factor-basics-5, exercise = TRUE}
+x2 <- c("Dec", "Apr", "Jam", "Mar")
+```
+
+### 
+
+Because `x1` and `x2` are both character vectors, nothing will catch the contradiction between "Jan" and "Jam." Using factors will force us to notice such errors.
 
 ### Exercise 6
 
-Now `filter()` `cces` to only a few ideologies: `Conservative` , `Moderate`, `Liberal` and `Not Sure`. Save your work to an object named `cces_filt`.
+To create a factor you must start by creating a list of the valid "levels." Hit "Run Code" to create the `month_levels` variable.
 
-```{r older-material-6, exercise = TRUE}
 
+```{r factor-basics-6, exercise = TRUE}
+month_levels <- c(
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+)
 ```
 
-```{r older-material-6-hint-1, eval = FALSE}
-Use %in%  and c() within filter(). Within c(), place the ideologies in quotes. 
-```
+### 
 
-```{r older-material-6-hint-2, eval = FALSE}
-cces_filt <- cces |>
-  filter(... %in% c(..., ..., ..., ...))
-```
-
-The ideologies are in quotes because they are not column names, but strings within the column. 
+Note that `month_levels` is just another character vector. We need it, however, to create a factor variable.
 
 ### Exercise 7
 
-On a new line, use `nlevels()` with the argument `cces_filt$ideology`. The code which creates `cces_filt` has been included for you. Notice that you have  the same number of levels even though you have filtered to include fewer ideologies.
+Run `factor(x1, levels = month_levels)`.
 
-```{r older-material-7, exercise = TRUE}
-cces_filt <- cces |>
-  filter(ideology %in% c("Conservative", "Moderate", " Liberal","Not Sure"))
-
+```{r factor-basics-7, exercise = TRUE}
 
 ```
 
-```{r older-material-7-hint-1, eval = FALSE}
-cces_filt <- cces |>
-  filter(ideology %in% c("Conservative", "Moderate", " Liberal","Not Sure"))
-
-nlevels(...)
+```{r factor-basics-7-hint-1, eval = FALSE}
+factor(x1, ... = month_levels)
 ```
 
-<!-- I had to pipe the code from the previous exercise in order to get the desired output. The code in the hint kept the output at 6 levels.
-What worked for me was cces_filt <- cces |> filter(ideology %in% c("Conservative" ...)) |> droplevels() -->
+### 
+
+The function `factor()` is a part of base R, not **forcats**. It creates a factor variable. Notice how, in addition to the values of `x1` being printed, as they are when we print a character variable, we also see the levels, printed out in order.
 
 ### Exercise 8
 
-Let's drop all the unused levels from `cces_filt`. Continue the pipe started for you and add the `droplevels()` function. 
+Wrap `factor(x1, levels = month_levels)` within a call to `sort()`.
 
-
-```{r older-material-8, exercise = TRUE}
-cces_filt <- cces |>
-  filter(ideology %in% c("Conservative", "Moderate", " Liberal","Not Sure")) 
+```{r factor-basics-8, exercise = TRUE}
 
 ```
 
-```{r older-material-8-hint-1, eval = FALSE}
-cces_filt <- cces |>
-  filter(ideology %in% c("Conservative", "Moderate", " Liberal","Not Sure")) |> 
-  droplevels()
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-8-hint-1, eval = FALSE}
+sort(...(x1, levels = ...))
 ```
+
+### 
+
+Instead of being sorted in alphabetical order, as before, the values are sorted in the order of the levels, which is almost always what we want when sorting months.
+
 
 ### Exercise 9
 
-On a new line, use `nlevels()` with the argument `cces_filt$ideology` to see how many levels exist after you dropped levels. The code which creates `cces_filt` has been included for you. 
+Run `factor(x2, levels = month_levels)`.
 
-```{r older-material-9, exercise = TRUE}
-cces_filt <- cces |>
-  filter(ideology %in% c("Conservative", "Moderate", " Liberal","Not Sure")) |> 
-  droplevels()
-  
+
+```{r factor-basics-9, exercise = TRUE}
 
 ```
 
-```{r older-material-9-hint-1, eval = FALSE}
-cces_filt <- cces |>
-  filter(ideology %in% c("Conservative", "Moderate", " Liberal","Not Sure")) |> 
-  droplevels()
-
-nlevels(...)
+```{r factor-basics-9-hint-1, eval = FALSE}
+...(x2, ... = month_levels)
 ```
+
+### 
+
+Since "Jam" is not one of the levels, `factor()` coerces it to be missing, as shown with the `<NA>` symbol. One big advantage of working with factors is that you are prevented from using values which are not one of the levels.
+
+### Exercise 10
+
+Instead of `factor()`, we recommend using the `fct()` function from the **forcats** package, precisely because it generates an explicit error rather than a silent conversion to `NA`.
+
+Run `fct(x2, levels = month_levels)`.
+
+
+```{r factor-basics-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-10-hint-1, eval = FALSE}
+...(x2, ... = month_levels)
+```
+
+### 
+
+Notice the thorough error message. "Jam" is missing from the `levels` as defined in the `month_levels` variable.
+
+### Exercise 11
+
+Run `factor()` and `x1`.
+
+```{r factor-basics-11, exercise = TRUE}
+
+```
+
+```{r factor-basics-11-hint-1, eval = FALSE}
+factor(...)
+```
+
+### 
+
+Because we did not provide a `levels` argument, the values for the levels will be taken from the values of the `x1` vector, sorted in alphabetical order.
+
+### Exercise 12
+
+Run `fct()` and `x1`.
+
+```{r factor-basics-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-12-hint-1, eval = FALSE}
+fct(...)
+```
+
+### 
+
+Sorting alphabetically is slightly risky because not every computer will sort strings in the same way. So `forcats::fct()` orders by first appearance in the original vector.
+
+### Exercise 13
+
+Take the code from the previous exercise use it as an argument to the function `levels()`.
+
+```{r factor-basics-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-13-hint-1, eval = FALSE}
+levels(fct(...))
+```
+
+### 
+
+If you ever need to access the set of valid levels directly, you can do so with `levels()`.
+
+### Exercise 14
+
+<!-- DK: Really ought to reorganize and splut this up so that students have to do some typing. Show what happens, first, when you don't use col_factor(). -->
+
+Hit "Run Code".
+
+```{r factor-basics-14, exercise = TRUE}
+csv <- "
+month,value
+Jan,12
+Feb,56
+Mar,12"
+
+df <- read_csv(csv, col_types = cols(month = col_factor(month_levels)))
+df$month
+```
+
+### 
+
+Besides the use of `factor()` and `fct()` as described above, `col_factor()`, when used within `read_csv()` and similar import functions, is the most common way of creating factor variables.
+
+
+## General Social Survey
+### 
+
+The `gss_cat` tibble is a data set in the **forcats** package. It’s a sample of data from the General Social Survey, a long-running US survey conducted by the independent research organization NORC at the University of Chicago. 
+
+### Exercise 1
+
+Type `gss_cat` and hit "Run Code."
+
+```{r general-social-surve-1, exercise = TRUE}
+
+```
+
+```{r general-social-surve-1-hint-1, eval = FALSE}
+gss_cat
+```
+
+### 
+
+There are 9 variables and more than 20,000 observations. Note how the `print()` method for tibbles, which is called whenever you just enter the name of a tibble, like `gss_cat`, gives the variable types across the top.
+
+### Exercise 2
+
+Look up the help page for `gss_cat` by typing `?gss_cat` at the Console. Copy/paste the Description.
+
+```{r general-social-surve-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 2)
+```
+
+### 
+
+When referring to a tibble (or other variable) which is part of a package, you can just use the variable name if you have already loaded the package. (Recall that running `library(tidyverse)` loads all the *Tidyverse* libraries, including **forcats**.) You can also refer to the variable directly using the double colon notation -- `::` -- i.e., `forcats::gss_cat`.
+
+
+### Exercise 3
+
+When factors are stored in a tibble, you can’t see their levels so easily. One way to view them is with `count()`. Pipe `gss_cat` to `count(race)`.
+
+```{r general-social-surve-3, exercise = TRUE}
+
+```
+
+```{r general-social-surve-3-hint-1, eval = FALSE}
+gss_cat |>
+  ...(race)
+```
+
+### 
+
+The `<fct>` indicator above `race` indicates that it is a factor variable, not character.
+
+<!-- DK: This is where the chapter stops. We could add more examples working with this data. Or we could work through the exercises from 17.3.1-->
+
+## Modifying factor order
+### 
+
+When working with factors, one common operation is changing the order of the levels. Let's create this plot:
+
+```{r make-plot1}
+plot1 <- gss_cat |>
+  summarize(n = n(),
+            tvhours = mean(tvhours, na.rm = TRUE),
+            .by = relig) |> 
+  mutate(relig = fct_reorder(relig, tvhours)) |> 
+  ggplot(aes(x = tvhours, y = relig)) +
+  geom_point() +
+  labs(title = "TV Watching and Religious Affiliation",
+       subtitle = "Don't Knows watch a lot of TV",
+       x = "TV Hours Watched Per Day",
+       y = "Religious Affiliation")
+
+plot1
+```
+
+### Exercise 1
+
+Run `glimpse()` on `gss_cat`.
+
+```{r modifying-factor-ord-1, exercise = TRUE}
+
+```
+
+```{r modifying-factor-ord-1-hint-1, eval = FALSE}
+glimpse(...)
+```
+
+### 
+
+We will be working with two variables: `relig` and `tvhours`. `relig` is a factor variable reporting religious affiliation, if any. `tvhours` is hours per day spent watching TV, on average.
+
+### Exercise 2
+
+Pipe `gss_cat` to `summarize(n = n())`
+
+```{r modifying-factor-ord-2, exercise = TRUE}
+
+```
+
+```{r modifying-factor-ord-2-hint-1, eval = FALSE}
+gss_cat |>
+  summarize(n = n())
+```
+
+### 
+
+Note how the letter "n" is used in two ways. First, it is the name of a new variable `n`, created via `summarize()`. In statistics, it is common for the letter "n" to mean the number of observations. Second, `n()` is a function, hence the `()`, which calculates the number of observations. Since there is no `.by` argument, the result is a tibble with a single row.
+
+### Exercise 3
+
+Use the same pipe again, but add `.by = relig` as an argument/value pairing to `summarize()`.
+
+```{r modifying-factor-ord-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-3-hint-1, eval = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            .by = relig)
+```
+
+### 
+
+The result is a tibble with one row for each level of `relig`. (Older R code will often use the `group_by()` function when calculating statistics for each level of a factor. You should avoid this approac. Use the `.by` argument to `summarize()` and similar functions.)
+
+### Exercise 4
+
+Use the same code again, adding another variable creation step to `summarize()`: `tvhours = mean(tvhours)`.
+
+```{r modifying-factor-ord-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-4-hint-1, eval = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            tvhours = mean(tvhours),
+            .by = relig)
+```
+
+### 
+
+Note that each argument (or variable creation step) in `summarize()` must be separated by a command. Alas, there are `NA` values present at least one person in every level of `relig`.
+
+
+### Exercise 5
+
+Modify the pipe by add `na.rm = TRUE` as an argument **within* the `mean()` function.
+
+```{r modifying-factor-ord-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-5-hint-1, eval = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            tvhours = mean(tvhours, na.rm = TRUE),
+            .by = relig)
+```
+
+### 
+
+All statistical functions in R will produce a value of NA if even a single one of the input values is NA, consistent with the rules of mathematics. Most statistical functions have a `na.rm` --- short for NA remove --- which allows us to remove any NA values prior to the calculation.
+
+### Exercise 6
+
+Continue the pipe with a call to `ggplot()`, setting the `mapping` argument to `aes(x = tvhours, y = relig)`.
+
+```{r modifying-factor-ord-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-6-hint-1, eval = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            tvhours = mean(tvhours, na.rm = TRUE),
+            .by = relig) |> 
+  ggplot(aes(x = tvhours, y = relig))
+```
+
+### 
+
+Without a geom function, no data is plotted. But we still get the plotting area and the axis labels. Does the ordering of the religious affiliations on the y-axis seem reasonable? 
+
+### Exercise 7
+
+Add `geom_point()` to the pipe. Don't forget that calls to **ggplot** components are separated by plus signs, not pipes -- by `+` not `|>`.
+
+```{r modifying-factor-ord-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-7-hint-1, eval = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            tvhours = mean(tvhours, na.rm = TRUE),
+            .by = relig) |> 
+  ggplot(aes(x = tvhours, y = relig)) +
+  geom_point()
+```
+
+### 
+
+It is hard to read this plot because there’s no overall pattern. We can improve it by reordering the levels of relig using `fct_reorder()`. `fct_reorder()` takes three arguments:
+
+* `f`, the factor whose levels you want to modify.
+* `x`, a numeric vector that you want to use to reorder the levels.
+* Optionally, `fun`, a function that’s used if there are multiple values of `x` for each value of `f`. The default value is median.
+
+### Exercise 8
+
+Replace `y = relig` with `y = fct_reorder(relig, tvhours)` in your pipe.
+
+```{r modifying-factor-ord-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-8-hint-1, eval = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            tvhours = mean(tvhours, na.rm = TRUE),
+            .by = relig) |> 
+  ggplot(aes(x = tvhours, y = fct_reorder(relig, tvhours))) +
+  geom_point()
+```
+
+### 
+
+Reordering religion makes it much easier to see that people in the “Don’t know” category watch much more TV, and Hinduism & Other Eastern religions watch much less.
+
+### Exercise 9
+
+As you start making more complicated transformations, we recommend moving them out of `aes()` and into a separate `mutate()` step.
+
+```{r modifying-factor-ord-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-9-hint-1, eval = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            tvhours = mean(tvhours, na.rm = TRUE),
+            .by = relig) |> 
+  mutate(relig = fct_reorder(relig, tvhours)) |> 
+  ggplot(aes(x = tvhours, y = relig)) +
+  geom_point()
+```
+
+### 
+
+### Exercise 10
+
+```{r modifying-factor-ord-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-10-hint-1, eval = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            tvhours = mean(tvhours, na.rm = TRUE),
+            .by = relig) |> 
+  mutate(relig = fct_reorder(relig, tvhours)) |> 
+  ggplot(aes(x = tvhours, y = relig)) +
+  geom_point() +
+  labs(title = "TV Watching and Religious Affiliation",
+       subtitle = "Don't Knows watch a lot of TV",
+       x = "TV Hours Watched Per Day",
+       y = "Religious Affiliation")
+```
+
+Remember that the plot looks like this:
+
+```{r plot1-answer}
+plot1
+```
+
+### 
+
+## Modifying factor levels
+### 
+
+More powerful than changing the orders of the levels is changing their values. This allows you to clarify labels for publication, and collapse levels for high-level displays. The most general and powerful tool is `fct_recode()`. It allows you to recode, or change, the value of each level. 
+
+### Exercise 1
+
+Pipe `gss_cat` to `count(partyid)`
+
+
+```{r modifying-factor-lev-1, exercise = TRUE}
+
+```
+
+```{r modifying-factor-lev-1-hint-1, eval = FALSE}
+... |> 
+  count(...)
+```
+
+### 
+
+The levels of `partyid` are terse and inconsistent. Let’s tweak them to be longer and use a parallel construction.
+
+### Exercise 2
+
+Like most rename and recoding functions in the *Tidyverse*, the new values go on the left and the old values go on the right. Pipe `gss_cat` to `mutate()`. Within `mutate()`, use `partyid = fct_recode(partyid, "Republican, weak" = "Not str republican")` to change `partyid`.
+
+
+```{r modifying-factor-lev-2, exercise = TRUE}
+
+```
+
+```{r modifying-factor-lev-2-hint-1, eval = FALSE}
+gss_cat |>
+  mutate(
+    partyid = ...(partyid,
+      "Republican, weak"      = ...
+    )
+  ) 
+```
+
+### 
+
+Note how the second and seventh values for `partyid` have been changed from "Not str republican" to  "Republican, weak". `fct_recode()` is the easiest way to change the value for a given factor level. Sometimes, as here, we change the value "in place," that is, we replace `partyid` with `partyid`. Other times, we use `mutate()` to create a new variable.
+
+### Exercise 3
+
+Let's change all the values for `partyid`. Here is the mapping from new values to old values:
+
+```{verbatim echo = TRUE}
+      "Republican, strong"    = "Strong republican",
+      "Republican, weak"      = "Not str republican",
+      "Independent, near rep" = "Ind,near rep",
+      "Independent, near dem" = "Ind,near dem",
+      "Democrat, weak"        = "Not str democrat",
+      "Democrat, strong"      = "Strong democrat"
+```
+
+Use these within the call to `fct_code()`.
+
+
+```{r modifying-factor-lev-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-lev-3-hint-1, eval = FALSE}
+gss_cat |>
+  mutate(
+    partyid = fct_recode(partyid,
+      "Republican, strong"    = "Strong republican",
+      "Republican, weak"      = "Not str republican",
+      "Independent, near rep" = "Ind,near rep",
+      "Independent, near dem" = ...,
+      ...       = "Not str democrat",
+      "Democrat, strong"      = "Strong democrat"
+    )
+  ) 
+```
+
+### 
+
+`fct_recode()` will leave the levels that aren’t explicitly mentioned as they are, and will warn you if you accidentally refer to a level that doesn’t exist.
+
+### Exercise 4
+
+To combine groups, you can assign multiple old levels to the same new level. With the same pipe as above, use this mapping:
+
+```{verbatim echo = TRUE}
+      "Republican, strong"    = "Strong republican",
+      "Republican, weak"      = "Not str republican",
+      "Independent, near rep" = "Ind,near rep",
+      "Independent, near dem" = "Ind,near dem",
+      "Democrat, weak"        = "Not str democrat",
+      "Democrat, strong"      = "Strong democrat",
+      "Other"                 = "No answer",
+      "Other"                 = "Don't know",
+      "Other"                 = "Other party"
+```
+
+```{r modifying-factor-lev-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-lev-4-hint-1, eval = FALSE}
+gss_cat |>
+  mutate(
+    partyid = fct_recode(partyid,
+      "Republican, strong"    = "Strong republican",
+      "Republican, weak"      = "Not str republican",
+      "Independent, near rep" = "Ind,near rep",
+      "Independent, near dem" = "Ind,near dem",
+      "Democrat, weak"        = "Not str democrat",
+      "Democrat, strong"      = "Strong democrat",
+      "Other"                 = "No answer",
+      "Other"                 = "Don't know",
+      "Other"                 = "Other party"
+    )
+  )
+```
+
+### 
+
+Use this technique with care: if you group together categories that are truly different, you will end up with misleading results.
+
+### Exercise 5
+
+Continue the pipe to `count(partyid)` to confirm that the recoding has worked.
+
+```{r modifying-factor-lev-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-lev-5-hint-1, eval = FALSE}
+... |> 
+  count(partyid)
+```
+
+### 
+
+<!-- DK: Better knowledge drop. -->
+
+Read the help page for [`fct_recode()`](https://forcats.tidyverse.org/reference/fct_recode.html) for more details.
+
+### Exercise 6
+
+If you want to collapse a lot of levels, `fct_collapse()` is a useful variant of `fct_recode()`. For each new variable, you can provide a vector of old levels. Replace the call to `fct_record()` in the previous pipe with this:
+
+```{verbatim echo = TRUE}
+fct_collapse(partyid,
+      "other" = c("No answer", "Don't know", "Other party"),
+      "rep" = c("Strong republican", "Not str republican"),
+      "ind" = c("Ind,near rep", "Independent", "Ind,near dem"),
+      "dem" = c("Not str democrat", "Strong democrat")
+    )
+```
+
+```{r modifying-factor-lev-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-lev-6-hint-1, eval = FALSE}
+gss_cat |>
+  mutate(
+    partyid = fct_collapse(partyid,
+      "other" = c("No answer", "Don't know", "Other party"),
+      "rep" = c("Strong republican", "Not str republican"),
+      "ind" = c("Ind,near rep", "Independent", "Ind,near dem"),
+      "dem" = c("Not str democrat", "Strong democrat")
+    )
+  ) |> 
+  count(partyid)
+```
+
+### 
+
+Read the help page for [`fct_collapse()`](https://forcats.tidyverse.org/reference/fct_collapse.html) for more details. The `other_level` argument is sometimes useful.
+
+### Exercise 7
+
+<!-- DK: This could be split into some a couple of smaller steps. -->
+
+Sometimes you just want to lump together the small groups to make a plot or table simpler. That’s the job of the `fct_lump_*()` family of functions. `fct_lump_lowfreq()` is a simple starting point that progressively lumps the smallest groups categories into “Other”, always keeping “Other” as the smallest category.
+
+Pipe `gss_cat` to `mutate()` with `relig = fct_lump_lowfreq(relig)` as its argument. Pipe the result to `count(relig)`.
+
+```{r modifying-factor-lev-7, exercise = TRUE}
+
+```
+
+```{r modifying-factor-lev-7-hint-1, eval = FALSE}
+gss_cat |>
+  mutate(relig = fct_lump_lowfreq(relig)) |>
+  count(relig)
+```
+
+### 
+
+In this case it’s not very helpful: it is true that the majority of Americans in this survey are Protestant, but we’d probably like to see some more details! 
+
+### Exercise 8
+
+Instead, we can use the `fct_lump_n()` to specify that we want exactly 10 groups. Use the current pipe with two changes. First, replace `fct_lump_lowfreq(relig)` with `fct_lump_n(relig, n = 10)`. Second, add `sort = TRUE` as an argument to `count()`.
+
+```{r modifying-factor-lev-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-lev-8-hint-1, eval = FALSE}
+gss_cat |>
+  mutate(relig = fct_lump_n(relig, n = 10)) |>
+  count(relig, sort = TRUE)
+```
+
+### 
+
+Read the documentation to learn about [`fct_lump_min()`](https://forcats.tidyverse.org/reference/fct_lump.html) and [`fct_lump_prop()`](https://forcats.tidyverse.org/reference/fct_lump.html) which are useful in other cases.
+
+## Ordered factors
+### 
+
+Ordered factors, created with ordered(), imply a strict ordering and equal distance between levels: the first level is “less than” the second level by the same amount that the second level is “less than” the third level, and so on.
+
+### Exercise 1
+
+Run this code
+
+```{r ordered-factors-1, exercise = TRUE}
+ordered(c("a", "b", "c"))
+```
+
+### 
+
+You can recognize ordered factors when printing because they use `<` between the factor levels. We don't recommend using ordered factors unless you have a compelling reason for doing so.
+
+
 
 ## Summary
 ### 
 
-This tutorial covered [Chapter 17: Factors](https://r4ds.hadley.nz/factors.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
+This tutorial covered [Chapter 17: Factors](https://r4ds.hadley.nz/factors.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. [**forcats**](https://forcats.tidyverse.org/) is the core *Tidyverse* package for working with categorical variables, called "factors" in R. Key commands include [`fct()`](https://forcats.tidyverse.org/reference/fct.html) for creating factors, [`fct_reorder()`](https://forcats.tidyverse.org/reference/fct_reorder.html) for changing the order of the levels, and [`fct_recode()`](https://forcats.tidyverse.org/reference/fct_recode.html) for recoding factors.
+
+If you want to learn more about factors, read "[Wrangling categorical data in R](https://peerj.com/preprints/3163/))" by Amelia McNamara and Nicholas Horton.   
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
