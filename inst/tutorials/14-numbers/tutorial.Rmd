@@ -1,6 +1,6 @@
 ---
 title: Numbers
-author: David Kane
+author: Srihith Garlapati
 tutorial:
   id: numbers
 output:
@@ -15,10 +15,18 @@ description: 'Tutorial for Chapter 14: Numbers'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
+library(primer.data)
+library(readr)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
+df <- tribble(
+  ~x, ~y,
+  1,  3,
+  5,  2,
+  7, NA,
+)
 
 ```
 
@@ -31,91 +39,632 @@ options(tutorial.exercise.timelimit = 60,
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 14: Numbers](https://r4ds.hadley.nz/numbers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to import data into your R project using [`read_csv()`](https://readr.tidyverse.org/reference/read_delim.html) and related functions from the [**readr**](https://readr.tidyverse.org/) package. You will also learn how to write out data to files with functions like [`write_csv()`](https://readr.tidyverse.org/reference/write_delim.html).
+This tutorial covers [Chapter 14: Numbers](https://r4ds.hadley.nz/numbers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to parse numbers, utilize numeric transformations on variables within datasets, and learn new ways to numerically summarize data. 
 
-
-<!-- INSERT BOOK MATERIAL HERE. -->
-
-
-## Older material
+## Making Numbers
 ### 
+
+Our ultimate goal in this section is to make use of the functions `parse_double()` and `parse_number()` to get specific values of a variable from a certain dataset.
 
 ### Exercise 1
 
-People write numbers differently in different parts of the world. For example, some countries use `.` in between the integer and fractional parts of a real number, while others use `,`.
+This chapter mostly uses functions from base R, which are available without loading any packages. But we still need the tidyverse because we’ll use these base R functions inside of tidyverse functions like mutate() and filter(). 
 
 ### 
 
-To begin, use the function  `parse_double()` with the argument "1.23".
-
-```{r older-material-1, exercise = TRUE}
-
-```
-
-```{r older-material-1-hint-1, eval = FALSE}
-parse_double("1.23")
-```
+`readr` provides two useful functions for parsing strings into numbers: `parse_double()` and `parse_number()`.
 
 ### 
 
-There are other `parse_*` functions such as `parse_logical()`, `parse_integer()`, and `parse_character()`.
-
-### Exercise 2
-
-What if the file you worked with used a comma to denote a decimal mark? Many functions in the [**readr**](https://readr.tidyverse.org) package provide a “locale” argument. You provide an object that specifies parsing options that differ from place to place. You can override the default value of `.` by creating a new locale and setting the `decimal_mark` argument.
-
-### 
-
-Use `parse_double()` with the argument "1,23". The second argument should set `locale` to `locale(decimal_mark = ",")`.
-
-```{r older-material-2, exercise = TRUE}
-
-```
-
-```{r older-material-2-hint-1, eval = FALSE}
-parse_double("1,23", locale = locale(..))
-```
-
-Note that `locale` is both an argument for `parse_*` functions and the name of a function itself, on which create a local object. See `?readr::locale` for [details](https://readr.tidyverse.org/articles/locales.html).
-
-### Exercise 3
-
-The function `parse_number()` ignores non-numeric characters before and after the number. 
-
-### 
-
-Use `parse_number()` with the argument "$100". Then, on the line below, use `parse_number()` again with the argument "20%".
-
-
-```{r older-material-3, exercise = TRUE}
-
-```
-
-```{r older-material-3-hint-1, eval = FALSE}
-parse_number("$100")
-parse_number("20%")
-```
-
-### 
-
-Unlike `parse_integer()` and `parse_double()`, `parse_number()` can parse both integers and doubles.
-
-### Exercise 4
-
-Use `parse_number()` with the argument "The cost of the package is $40.75" 
-
-```{r older-material-4, exercise = TRUE}
+First, let's load in the tidyverse and the readr package to make use of these methods.
+```{r making-numbers-1, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r older-material-4-hint-1, eval = FALSE}
-parse_number("The cost of ...." )
+```{r making-numbers-1-hint-1, eval = FALSE}
+library(tidyverse)
+library(readr)
 ```
 
-<!-- DK: So many knowledge drop possibilities! -->
+### Exercise 2
 
+In most cases, you’ll get numbers already recorded in one of R’s numeric types: integer or double. In some cases, however, you’ll encounter them as strings.
+
+### 
+
+Let's make a vector `x` that has the following values within it `"1.2"`, `"5.6"`, `"1e3"`. These values are strings for now.
+```{r making-numbers-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r making-numbers-2-hint-1, eval = FALSE}
+x <- c(..., ..., ...)
+```
+
+### Exercise 3
+
+When you have numbers that have been written as strings we should use `parse_double()`. So let's use use `parse_double()` on the command we just created. 
+
+```{r making-numbers-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r making-numbers-3-hint-1, eval = FALSE}
+x <- c("...", "...", "...")
+parse_double(x)
+```
+
+### 
+
+This should return an output of: `#> [1]    1.2    5.6 1000.0`.
+
+### Exercise 4
+
+Use `parse_number()` when the string contains non-numeric text that you want to ignore. This is particularly useful for currency data and percentages. Let's first make a vector y that has the string values: `"$1,234"`, `"USD 3,513"`, `59%`
+
+```{r making-numbers-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r making-numbers-4-hint-1, eval = FALSE}
+y <- c(..., ..., ...)
+```
+
+### 
+
+As you can see, in this vector `y` there are non-numeric text that we would normally want to ignore if we were to see this in a dataset. 
+
+### Exercise 5
+
+Let's use `parse_number()` to ignore this non-numeric text.
+
+```{r making-numbers-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r making-numbers-5-hint-1, eval = FALSE}
+y <- c(..., ..., ...)
+parse_number(y)
+```
+
+### 
+
+The result you should've received is `#> [1] 1234 3513   59`
+
+## Counts
+### 
+
+In this section, we will be reviewing how to use `count()` and other similar functions to make data analysis easier. 
+
+### Exercise 1
+
+Load in the package `tidyverse` and `dplyr`.
+```{r counts-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r counts-1-hint-1, eval = FALSE}
+library(tidyverse)
+library(dplyr)
+```
+
+### 
+
+### Exercise 2
+
+Now let's load in the dataset, `flights` that we will be making use of. This dataset contains information about all flights that departed from NYC (e.g. EWR, JFK and LGA) to destinations in the United States, Puerto Rico, and the American Virgin Islands) in 2013: 336,776 flights in total. To help understand what causes delays, it also includes a number of other useful datasets.
+
+### 
+
+Let's load up `flights` and display the dataset.
+```{r counts-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r counts-2-hint-1, eval = FALSE}
+flights
+```
+
+### 
+
+### Exercise 3
+
+It’s surprising how much data science you can do with just counts and a little basic arithmetic, so dplyr strives to make counting as easy as possible with count(). This function is great for quick exploration and checks during analysis
+
+### 
+
+Let's count the number of planes of which departed from a certain destination. Make a pipeline from `flights` and use the function `count()` on `dest`.
+
+```{r counts-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r counts-3-hint-1, eval = FALSE}
+flights |> count(dest)
+```
+
+### 
+
+We usually put `count()` on a single line because it’s usually used at the console for a quick check that a calculation is working as expected.
+
+### Exercise 4
+
+If you want to see the most common values, add the parameter sort = TRUE:
+
+```{r counts-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r counts-4-hint-1, eval = FALSE}
+flights |> count(..., sort = TRUE)
+```
+
+### 
+
+And remember that if you want to see all the values, you can use `|> View()` or `|> print(n = Inf)`.
+
+### Exercise 5
+
+`n()` is a special summary function that doesn’t take any arguments and instead accesses information about the “current” group. This means that it only works inside `dplyr` verbs.
+
+### 
+
+Let's first make a pipeline with `flights` and group by the destination `dest`.
+
+```{r counts-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r counts-5-hint-1, eval = FALSE}
+flights |> 
+  group_by(...)
+```
+
+### Exercise 6
+
+Then let's use `n_distinct(x)` which counts the number of distinct (unique) values of one or more variables. For example, we could figure out which destinations are served by the most carriers. 
+
+### 
+
+We can use `n_distinct(x)` by adding `summarize()` to the pipeline and making a new column named `carriers` to be the number of distinct values of the `carrier` variable.
+
+```{r counts-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r counts-6-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(carriers = n_distinct(...))
+```
+
+### Exercise 7
+
+A weighted count is a sum. For example you could “count” the number of miles each plane flew by using the `sum()` function.
+
+### 
+
+But, `count()` has a `wt` argument that does the same thing. So let's make a new pipeline with flights and count that utilizes the `tailnum` and will make a weighted count with `distance`.
+
+```{r counts-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r counts-7-hint-1, eval = FALSE}
+flights |> count(tailnum, wt = distance)
+```
+
+### Exercise 8
+
+Now, let's count the number of cancelled flights or missing values of each destination `dest`. 
+
+### 
+
+Make a new pipeline with `flights` and group by the destinations. 
+
+```{r counts-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r counts-8-hint-1, eval = FALSE}
+flights |> 
+  group_by(dest)
+```
+
+### Exercise 9
+
+Next, let's count the canceled flights in each destination by using the `summarize()` function making a new column called `n_cancelled()` and getting the sum of the number of missing values by doing the following: `sum(is.na(dep_time))`
+
+```{r counts-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r counts-9-hint-1, eval = FALSE}
+flights |> 
+  group_by(dest) |> 
+  summarize(n_cancelled = sum(is.na(dep_time)))
+```
+
+## Numeric Transformations
+### 
+
+This section will go over transforming numeric vectors with the function `mutate()` and using various mathematic methods to make new columns in a certain dataset.
+
+### 
+
+But we need to briefly talk about the *recycling rules* which determine what happens when the left and right hand sides have different lengths.
+
+### 
+
+For example operations like `flights |> mutate(air_time = air_time / 60)` have different lengths in the left and the right hand side. There are 336,776 individual numbers on the left of the `/` but only one number on the right. This would normally be a problem but R handles these mismatched lengths by *recycling*, or repeating, the short vector.
+
+### 
+
+### Exercise 1
+
+Load in the tidyverse and dplyr packages. 
+```{r numeric-transformati-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-1-hint-1, eval = FALSE}
+library(tidyverse)
+library(dplyr)
+```
+
+### 
+
+### Exercise 2
+
+We can see this in operation more easily if we create some vectors outside of a data frame. Make a new vector `x` so that the vector has the values `1, 2, 10, 20` in it. 
+```{r numeric-transformati-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-2-hint-1, eval = FALSE}
+x <- c(...)
+```
+
+### 
+
+### Exercise 3
+
+Divide the vector `x` by 5.
+
+```{r numeric-transformati-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-3-hint-1, eval = FALSE}
+x <- c(...)
+x / 5
+```
+
+### 
+
+This operation is shorthand for `x / c(5, 5, 5, 5)`. Generally, you only want to recycle single numbers (i.e. vectors of length 1), but R will recycle any shorter length vector. It usually (but not always) gives you a warning if the longer vector isn’t a multiple of the shorter.
+
+### Exercise 4
+You can see the warning message displayes when you try using a longer vector that isn't a multiple of the shorter vector. Try using the same vector but multiplying `x` with the values `1, 2, 3`.
+```{r numeric-transformati-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-4-hint-1, eval = FALSE}
+x <- c(1, 2, 10, 20)
+x * c(...)
+```
+
+### 
+
+### Exercise 5
+
+These recycling rules are also applied to logical comparisons (==, <, <=, >, >=, !=) and can lead to a surprising result if you accidentally use == instead of %in% and the data frame has an unfortunate number of rows.
+
+###
+
+Let's try to find all the flights in January and February. Make a new pipeline with `flights` and use the `filter()` function on `month` being 1 or 2 (January or February). However, instead of using `%in%` use `==`.
+
+```{r numeric-transformati-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-5-hint-1, eval = FALSE}
+flights |> 
+  filter(month == c(...))
+```
+
+### 
+
+The code runs without error, but it doesn’t return what you want. Because of the recycling rules it finds flights in odd numbered rows that departed in January and flights in even numbered rows that departed in February. And unfortunately there’s no warning because `flights` has an even number of rows.
+
+###
+
+To protect you from this type of silent failure, most tidyverse functions use a stricter form of recycling that only recycles single values. Unfortunately that doesn’t help here, or in many other cases, because the key computation is performed by the base R function ==, not filter().
+
+###
+
+### Exercise 6
+
+Most arithmetic functions work with pairs of variables. Two closely related functions are `pmin()` and `pmax()`, which when given two or more variables will return the smallest or largest value in each row. 
+
+###
+
+Let's utilize a premade dataframe `df`. Display this dataframe.
+```{r numeric-transformati-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-6-hint-1, eval = FALSE}
+df
+```
+
+### 
+
+### Exercise 7
+Now, make a new pipeline with df. Then, make two new columns named min and max using the `mutate()` function representing the row min and row max of the columns x and y. For example, the code for the `min` column should look like `pmin(x, y, na.rm = TRUE)`. 
+
+```{r numeric-transformati-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-7-hint-1, eval = FALSE}
+df |> 
+  mutate(
+    min = pmin(x, y, na.rm = TRUE),
+    max = pmax(x, y, na.rm = TRUE)
+  )
+```
+
+### 
+
+Note that these are different to the summary functions min() and max() which take multiple observations and return a single value.
+
+###
+
+### Exercise 8
+
+Modular arithmetic is the technical name for the type of math you did before you learned about decimal places, i.e. division that yields a whole number and a remainder. In R, `%/%` does integer division and `%%` computes the remainder.
+
+###
+
+Make a new vector `z` equal to the numbers ranging from 1 to 10. 
+
+```{r numeric-transformati-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-8-hint-1, eval = FALSE}
+z <- c(1:10)
+```
+
+### 
+
+### Exercise 9
+
+Using the same vector, `z`, divide by 3 using integer division (`%/%`) and also compute the remainder using `%%`.
+```{r numeric-transformati-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-9-hint-1, eval = FALSE}
+z <- c(1:10)
+z %/% 3
+z %% 3
+```
+
+### 
+
+### Exercise 10
+
+Modular arithmetic is handy for the `flights` dataset, because we can use it to unpack the `sched_dep_time` variable into `hour` and `minute`. `sched_dep_time` has the time in a numerical form where the thousands and hundreds place is the hour and the ones' and tens' place is the minute.
+
+###
+
+Make a new pipeline with flights and use `mutate()` to make 2 new columns named `hour` and `minute` using integer division to find the hour and remainder computation to find the minute. Add the parameter `.keep = "used"` to retain only the columns used in `sched_dep_time` to create new columns
+```{r numeric-transformati-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-10-hint-1, eval = FALSE}
+flights |> 
+  mutate(
+    hour = sched_dep_time %/% 100,
+    minute = ...,
+    .keep = "used"
+  )
+```
+
+### 
+
+### Exercise 11
+
+Now let's make a plot to see how the proportion of cancelled flights varies over the course of the day.
+
+###
+
+Copy the previous code and make a new column named `prop_cancelled` using `summarize()` that is equivalent to `mean(is.na(dep_time)), n = n())`
+```{r numeric-transformati-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-11-hint-1, eval = FALSE}
+flights |> 
+  mutate(
+    hour = sched_dep_time %/% 100,
+    minute = ...,
+    .keep = "used"
+  ) |> 
+  summarize(prop_cancelled = mean(is.na(dep_time)), n = n())
+```
+
+### 
+
+### Exercise 12
+
+Continue by filtering the hours that are greater than 1 AM.
+```{r numeric-transformati-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-12-hint, eval = FALSE}
+... |> 
+  filter(hour > 1)
+```
+
+###
+
+### Exercise 13
+
+Add to the pipeline by adding `ggplot()` and mapping the x-axis to `hour` and the y-axis to `prop_cancelled`
+```{r numeric-transformati-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-13-hint, eval = FALSE}
+... |> 
+  ggplot(aes(x = hour, y = prop_cancelled))
+```
+
+###
+
+### Exercise 14
+
+Make a line plot with a line that is gray using `geom_line()` and a color with the value of `"grey50"` within `geom_line()`
+```{r numeric-transformati-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-14-hint, eval = FALSE}
+... +
+  geom_line(color = "grey50")
+```
+
+###
+
+### Exercise 15
+
+Add points to the line that represent the density of flights that were cancelled per hour mapping size to n.
+```{r numeric-transformati-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-15-hint, eval = FALSE}
+... + 
+  geom_point(aes(size = n))
+```
+
+###
+
+### Exercise 16
+
+
+```{r numeric-transformati-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-16-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 17
+
+Add appropriate labels for the title, x-axis, and the y-axis using labs().
+```{r numeric-transformati-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-17-hint, eval = FALSE}
+... +
+  labs(title = ..., ..., ...)
+```
+
+###
+
+This is a line plot with scheduled departure hour on the x-axis, and proportion of cancelled flights on the y-axis. An observation that we could make is that cancellations seem to accumulate over the course of the day until 8pm, very late flights are much less likely to be cancelled.
+
+###
+
+## Random Number Functions
+### 
+
+This section will allow you to practice with many random number functions with many different uses.
+
+<!-- SG: This above needs some changing (its not descriptive enough-->
+
+## General Transformations
+### 
+
+This section will allow you to make use of transformations on an actual dataset.
+
+## Numeric Summaries
+### 
+
+This section will introduce more useful summary functions that will help to summarize your data much better.
 
 ## Summary
 ### 
