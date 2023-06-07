@@ -41,13 +41,14 @@ This tutorial covers [Chapter 14: Numbers](https://r4ds.hadley.nz/numbers.html) 
 Our ultimate goal in this section is to make use of the functions `parse_double()` and `parse_number()` to get specific values of a variable from a certain dataset.
 
 ### Exercise 1
+
 This chapter mostly uses functions from base R, which are available without loading any packages. But we still need the tidyverse because we’ll use these base R functions inside of tidyverse functions like mutate() and filter(). 
 
-###
+### 
 
 `readr` provides two useful functions for parsing strings into numbers: `parse_double()` and `parse_number()`.
 
-###
+### 
 
 First, let's load in the tidyverse and the readr package to make use of these methods.
 ```{r making-numbers-1, exercise = TRUE}
@@ -56,15 +57,16 @@ First, let's load in the tidyverse and the readr package to make use of these me
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r making-numbers-1-hint, eval = FALSE}
+```{r making-numbers-1-hint-1, eval = FALSE}
 library(tidyverse)
 library(readr)
 ```
+
 ### Exercise 2
 
 In most cases, you’ll get numbers already recorded in one of R’s numeric types: integer or double. In some cases, however, you’ll encounter them as strings.
 
-###
+### 
 
 Let's make a vector `x` that has the following values within it `"1.2"`, `"5.6"`, `"1e3"`. These values are strings for now.
 ```{r making-numbers-2, exercise = TRUE}
@@ -73,11 +75,12 @@ Let's make a vector `x` that has the following values within it `"1.2"`, `"5.6"`
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r making-numbers-2-hint, eval = FALSE}
+```{r making-numbers-2-hint-1, eval = FALSE}
 x <- c(..., ..., ...)
 ```
 
 ### Exercise 3
+
 When you have numbers that have been written as strings we should use `parse_double()`. So let's use use `parse_double()` on the command we just created. 
 
 ```{r making-numbers-3, exercise = TRUE}
@@ -86,16 +89,17 @@ When you have numbers that have been written as strings we should use `parse_dou
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r making-numbers-3-hint, eval = FALSE}
+```{r making-numbers-3-hint-1, eval = FALSE}
 x <- c("...", "...", "...")
 parse_double(x)
 ```
 
-###
+### 
 
 This should return an output of: `#> [1]    1.2    5.6 1000.0`.
 
 ### Exercise 4
+
 Use `parse_number()` when the string contains non-numeric text that you want to ignore. This is particularly useful for currency data and percentages. Let's first make a vector y that has the string values: `"$1,234"`, `"USD 3,513"`, `59%`
 
 ```{r making-numbers-4, exercise = TRUE}
@@ -104,11 +108,11 @@ Use `parse_number()` when the string contains non-numeric text that you want to 
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r making-numbers-4-hint, eval = FALSE}
+```{r making-numbers-4-hint-1, eval = FALSE}
 y <- c(..., ..., ...)
 ```
 
-###
+### 
 
 As you can see, in this vector `y` there are non-numeric text that we would normally want to ignore if we were to see this in a dataset. 
 
@@ -122,12 +126,12 @@ Let's use `parse_number()` to ignore this non-numeric text.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r making-numbers-5-hint, eval = FALSE}
+```{r making-numbers-5-hint-1, eval = FALSE}
 y <- c(..., ..., ...)
 parse_number(y)
 ```
 
-###
+### 
 
 The result you should've received is `#> [1] 1234 3513   59`
 
@@ -145,35 +149,39 @@ Load in the package `tidyverse` and `dplyr`.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r counts-1-hint, eval = FALSE}
+```{r counts-1-hint-1, eval = FALSE}
 library(tidyverse)
 library(dplyr)
 ```
 
-###
+### 
 
 ### Exercise 2
 
 Now let's load in the dataset, `flights` that we will be making use of. This dataset contains information about all flights that departed from NYC (e.g. EWR, JFK and LGA) to destinations in the United States, Puerto Rico, and the American Virgin Islands) in 2013: 336,776 flights in total. To help understand what causes delays, it also includes a number of other useful datasets.
 
-###
+### 
 
-
-Let's count the number of planes of which departed from a certain destination. Make a pipeline from `flights` and use the function `count()` on the `dest`.
+Let's load up `flights` and display the dataset.
 ```{r counts-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r counts-2-hint, eval = FALSE}
+```{r counts-2-hint-1, eval = FALSE}
 flights
 ```
 
-###
+### 
 
 ### Exercise 3
 
+It’s surprising how much data science you can do with just counts and a little basic arithmetic, so dplyr strives to make counting as easy as possible with count(). This function is great for quick exploration and checks during analysis
+
+### 
+
+Let's count the number of planes of which departed from a certain destination. Make a pipeline from `flights` and use the function `count()` on `dest`.
 
 ```{r counts-3, exercise = TRUE}
 
@@ -181,14 +189,17 @@ flights
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r counts-3-hint, eval = FALSE}
-
+```{r counts-3-hint-1, eval = FALSE}
+flights |> count(dest)
 ```
 
-###
+### 
+
+We usually put `count()` on a single line because it’s usually used at the console for a quick check that a calculation is working as expected.
 
 ### Exercise 4
 
+If you want to see the most common values, add the parameter sort = TRUE:
 
 ```{r counts-4, exercise = TRUE}
 
@@ -196,14 +207,21 @@ flights
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r counts-4-hint, eval = FALSE}
-
+```{r counts-4-hint-1, eval = FALSE}
+flights |> count(..., sort = TRUE)
 ```
 
-###
+### 
+
+And remember that if you want to see all the values, you can use `|> View()` or `|> print(n = Inf)`.
 
 ### Exercise 5
 
+`n()` is a special summary function that doesn’t take any arguments and instead accesses information about the “current” group. This means that it only works inside `dplyr` verbs.
+
+### 
+
+Let's first make a pipeline with `flights` and group by the destination `dest`.
 
 ```{r counts-5, exercise = TRUE}
 
@@ -211,14 +229,18 @@ flights
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r counts-5-hint, eval = FALSE}
-
+```{r counts-5-hint-1, eval = FALSE}
+flights |> 
+  group_by(...)
 ```
-
-###
 
 ### Exercise 6
 
+Then let's use `n_distinct(x)` which counts the number of distinct (unique) values of one or more variables. For example, we could figure out which destinations are served by the most carriers. 
+
+### 
+
+We can use `n_distinct(x)` by adding `summarize()` to the pipeline and making a new column named `carriers` to be the number of distinct values of the `carrier` variable.
 
 ```{r counts-6, exercise = TRUE}
 
@@ -226,14 +248,19 @@ flights
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r counts-6-hint, eval = FALSE}
-
+```{r counts-6-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(carriers = n_distinct(...))
 ```
-
-###
 
 ### Exercise 7
 
+A weighted count is a sum. For example you could “count” the number of miles each plane flew by using the `sum()` function.
+
+### 
+
+But, `count()` has a `wt` argument that does the same thing. So let's make a new pipeline with flights and count that utilizes the `tailnum` and will make a weighted count with `distance`.
 
 ```{r counts-7, exercise = TRUE}
 
@@ -241,14 +268,17 @@ flights
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r counts-7-hint, eval = FALSE}
-
+```{r counts-7-hint-1, eval = FALSE}
+flights |> count(tailnum, wt = distance)
 ```
-
-###
 
 ### Exercise 8
 
+Now, let's count the number of cancelled flights or missing values of each destination `dest`. 
+
+### 
+
+Make a new pipeline with `flights` and group by the destinations. 
 
 ```{r counts-8, exercise = TRUE}
 
@@ -256,14 +286,14 @@ flights
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r counts-8-hint, eval = FALSE}
-
+```{r counts-8-hint-1, eval = FALSE}
+flights |> 
+  group_by(dest)
 ```
-
-###
 
 ### Exercise 9
 
+Next, let's count the canceled flights in each destination by using the `summarize()` function making a new column called `n_cancelled()` and getting the sum of the number of missing values by doing the following: `sum(is.na(dep_time))`
 
 ```{r counts-9, exercise = TRUE}
 
@@ -271,48 +301,182 @@ flights
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r counts-9-hint, eval = FALSE}
-
+```{r counts-9-hint-1, eval = FALSE}
+flights |> 
+  group_by(dest) |> 
+  summarize(n_cancelled = sum(is.na(dep_time)))
 ```
-
-###
-
-### Exercise 10
-
-
-```{r counts-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r counts-10-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 11
-
-
-```{r counts-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r counts-11-hint, eval = FALSE}
-
-```
-
-###
-
-
 
 ## Numeric Transformations
 ### 
 
 This section will go over transforming numeric vectors with the function `mutate()` and using various mathematic methods to make new columns in a certain dataset.
+
+### 
+
+But we need to briefly talk about the *recycling rules* which determine what happens when the left and right hand sides have different lengths.
+
+### 
+
+For example operations like `flights |> mutate(air_time = air_time / 60)` have different lengths in the left and the right hand side. There are 336,776 individual numbers on the left of the `/` but only one number on the right. This would normally be a problem but R handles these mismatched lengths by *recycling*, or repeating, the short vector.
+
+### 
+
+### Exercise 1
+
+Load in the tidyverse and dplyr packages. 
+```{r numeric-transformati-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-1-hint-1, eval = FALSE}
+library(tidyverse)
+library(dplyr)
+```
+
+### 
+
+### Exercise 2
+
+```{r numeric-transformati-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-2-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 3
+
+```{r numeric-transformati-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-3-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 4
+
+```{r numeric-transformati-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-4-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 5
+
+```{r numeric-transformati-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-5-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 6
+
+```{r numeric-transformati-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-6-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 7
+
+```{r numeric-transformati-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-7-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 8
+
+```{r numeric-transformati-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-8-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 9
+
+```{r numeric-transformati-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-9-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 10
+
+```{r numeric-transformati-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-10-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 11
+
+```{r numeric-transformati-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-transformati-11-hint-1, eval = FALSE}
+
+```
+
+### 
 
 ## More Transformations
 ### 
