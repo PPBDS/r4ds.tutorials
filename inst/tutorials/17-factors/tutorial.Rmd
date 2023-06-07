@@ -534,7 +534,7 @@ Reordering religion makes it much easier to see that people in the “Don’t kn
 
 ### Exercise 9
 
-As you start making more complicated transformations, we recommend moving them out of `aes()` and into a separate `mutate()` step.
+As you start making more complicated transformations, we recommend moving them out of `aes()` and into a separate `mutate()` step. After the `summarize()` step, insert this line: `mutate(relig = fct_reorder(relig, tvhours)) |> `. Then, change `y = fct_reorder(relig, tvhours)` back to `y = relig`.
 
 ```{r modifying-factor-ord-9, exercise = TRUE}
 
@@ -547,14 +547,22 @@ gss_cat |>
   summarize(n = n(),
             tvhours = mean(tvhours, na.rm = TRUE),
             .by = relig) |> 
-  mutate(relig = fct_reorder(relig, tvhours)) |> 
-  ggplot(aes(x = tvhours, y = relig)) +
+  mutate(... = fct_reorder(relig, ...)) |> 
+  ggplot(aes(x = tvhours, ... = relig)) +
   geom_point()
 ```
 
 ### 
 
+It is almost always better to complete your data transformations before starting your plot.
+
 ### Exercise 10
+
+Finish the plot by adding a title, subtitle, and axis labels. Remember that the plot looks like this:
+
+```{r plot1-answer}
+plot1
+``` 
 
 ```{r modifying-factor-ord-10, exercise = TRUE}
 
@@ -563,26 +571,37 @@ gss_cat |>
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r modifying-factor-ord-10-hint-1, eval = FALSE}
-gss_cat |>
-  summarize(n = n(),
-            tvhours = mean(tvhours, na.rm = TRUE),
-            .by = relig) |> 
-  mutate(relig = fct_reorder(relig, tvhours)) |> 
-  ggplot(aes(x = tvhours, y = relig)) +
-  geom_point() +
-  labs(title = "TV Watching and Religious Affiliation",
-       subtitle = "Don't Knows watch a lot of TV",
-       x = "TV Hours Watched Per Day",
-       y = "Religious Affiliation")
+... +
+  labs(... = "TV Watching and Religious Affiliation",
+       subtitle = ...,
+       x = ...,
+       ... = "Religious Affiliation")
 ```
 
-Remember that the plot looks like this:
+###
 
-```{r plot1-answer}
-plot1
+The subtitle of a plot should be the one sentence conclusion/summary/observation with which you most want viewers to come away. 
+
+<!-- DK: There are two more plots in the section. Here is one. Someone should add them later, but they require some work. -->
+
+```{r make-plot2}
+plot2 <- gss_cat |>
+  filter(!is.na(age)) |> 
+  count(age, marital) |>
+  group_by(age) |>
+  mutate(
+    prop = n / sum(n)
+  ) |> 
+  ggplot(aes(x = age, 
+             y = prop, 
+             color = fct_reorder2(marital, age, prop))) +
+    geom_line(linewidth = 1) +
+    scale_color_brewer(palette = "Set1") + 
+    labs(color = "marital") 
 ```
 
-### 
+
+
 
 ## Modifying factor levels
 ### 
