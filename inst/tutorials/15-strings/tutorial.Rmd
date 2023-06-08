@@ -23,6 +23,8 @@ knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
+x1 <- c("one\ntwo", "one\ttwo", "\u00b5", "\U0001f604")
+
 set.seed(9)
 police <- read_csv("data/philly-clean.csv",
                    col_types = cols()) |>
@@ -182,9 +184,11 @@ str_view(...)
 
 ### 
 
+The printed representation of a string is not the same as the string itself because the printed representation shows the escapes. To see the raw contents of the string, we use `str_view()`
+
 ### Exercise 8
 
-Let's do the same thing on single quote, so create a new variable `y` and set it to `"'"` using `<-`. Then on a new line, type `str_view()` and set `y` as arguement.
+Let's do the same thing on single quote, so create a new variable `y` and set it to `"'"` using `<-`. Then on a new line, type `str_view()` and set `y` as argument.
 
 ```{r creating-a-string-8, exercise = TRUE}
 
@@ -213,11 +217,11 @@ single_quote <- '\''
 
 ### 
 
-If you wanted to include a literal backslash in your string, you'll need to escape it with "\\".
+You might wonder what do you do if you wanted to include a literal backslash in your string. We'll see how in next exercise.
 
 ### Exercise 10
 
-Let's assign
+To include a literal backlash in your string, it is pretty simple and all you need to do is have two backslashes in a string to have one literal one. So just type two backslashes in a string and run it within `str_view()`.
 
 ```{r creating-a-string-10, exercise = TRUE}
 
@@ -226,26 +230,131 @@ Let's assign
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-a-string-10-hint-1, eval = FALSE}
-
+str_view("...")
 ```
 
 ### 
 
 ### Exercise 11
 
-The printed representation of a string is not the same as the string itself because the printed representation shows the escapes. To see the raw contents of the string, we use `str_view()`
+What if I have too many backslashes and quotes to include that I get confused by the amount of backslashes and quotes. To demonstrate the problem, create a variable `tricky` and set it to `"double_quote <- \"\\\"\" # or '\"' single_quote <- '\\'' # or \"'\""`
 
 ```{r creating-a-string-11, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+
 
 ```{r creating-a-string-11-hint-1, eval = FALSE}
-
+tricky <- ...
 ```
 
 ### 
+
+That’s a lot of backslashes! (This is sometimes called [leaning toothpick syndrome](https://en.wikipedia.org/wiki/Leaning_toothpick_syndrome).)
+
+### Exercise 12
+
+Copy the previous code and type `str_view()` and set `tricky` as the argument.
+
+```{r creating-a-string-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-a-string-12-hint, eval = FALSE}
+tricky <- ...
+str_view(tricky)
+```
+
+###
+
+When we run it we should get `double_quote <- "\"" # or '"' single_quote <- '\'' # or "'"` but to make a string representation like this is very confusing sicne you need a lot of backslashes and quotes. In the next exercise we will see how we solve the problem.
+
+### Exercise 13
+
+Copy the previous code and modify `tricky` to be  
+`r"(double_quote <- "\"" # or '"' single_quote <- '\'' # or "'")"` and run it with `str_view()`.
+
+Now the string has much less quotes and backslashes but will we get same result?
+
+```{r creating-a-string-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-a-string-13-hint, eval = FALSE}
+tricky <- ...
+str_view(tricky)
+```
+
+###
+
+To eliminate the problem we used a raw string:  a special type of string literal that allows you to represent strings without any special character interpretation or escape sequences.
+
+
+A raw string usually starts with r"( and finishes with )". But if your string contains )" you can instead use r"[]" or r"{}", and if that’s still not enough, you can insert any number of dashes to make the opening and closing pairs unique, e.g., `r"--()--", `r"---()---", etc. Raw strings are flexible enough to handle any text.
+
+### Exercise 14
+
+As well as `\", \', and \\`, there are a handful of other special characters that may come in handy. The most common are `\n`, a new line, and `\t`, tab. 
+
+Let's now see how `str_view()` handeles special characters.
+
+Create a new variable `x1` and set it equal to vector which contains:`"one\ntwo", "one\ttwo", "\u00b5", "\U0001f604"`
+
+```{r creating-a-string-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-a-string-14-hint, eval = FALSE}
+x1 <- c(...)
+```
+
+###
+
+If you want to check out a complete list of other special characters, check out in [`Quotes`](https://rdrr.io/r/base/Quotes.html).
+
+### Exercise 15
+
+Run `x1`.
+
+```{r creating-a-string-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-a-string-15-hint, eval = FALSE}
+x1
+```
+
+###
+
+All we get is the same as what we types and dosent actually take all the special characters that we put except the smiley face.
+
+### Exercise 16
+
+Now run `x1` with `str_view()` as the argument.
+
+```{r creating-a-string-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-a-string-16-hint, eval = FALSE}
+str_view(x1)
+```
+
+###
+
+Compared to just printing the strings in console, we actually see the spaces for the first string, we see a tab which shows that `str_view` can take in special characters.
+
 
 ## Creating many strings from data
 ### 
