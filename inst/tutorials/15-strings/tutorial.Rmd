@@ -23,6 +23,8 @@ knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
+x1 <- c("one\ntwo", "one\ttwo", "\u00b5", "\U0001f604")
+
 set.seed(9)
 police <- read_csv("data/philly-clean.csv",
                    col_types = cols()) |>
@@ -41,6 +43,8 @@ df2 <- tribble(
   "Terence", "papaya",
   "Terence", "mandarin"
 )
+
+y <- c("Apple", "Banana", "Pear")
 
 ```
 
@@ -180,9 +184,11 @@ str_view(...)
 
 ### 
 
+The printed representation of a string is not the same as the string itself because the printed representation shows the escapes. To see the raw contents of the string, we use `str_view()`
+
 ### Exercise 8
 
-Let's do the same thing on single quote, so create a new variable `y` and set it to `"'"` using `<-`. Then on a new line, type `str_view()` and set `y` as arguement.
+Let's do the same thing on single quote, so create a new variable `y` and set it to `"'"` using `<-`. Then on a new line, type `str_view()` and set `y` as argument.
 
 ```{r creating-a-string-8, exercise = TRUE}
 
@@ -211,11 +217,11 @@ single_quote <- '\''
 
 ### 
 
-If you wanted to include a literal backslash in your string, you'll need to escape it with "\\".
+You might wonder what do you do if you wanted to include a literal backslash in your string. We'll see how in next exercise.
 
 ### Exercise 10
 
-Let's assign
+To include a literal backlash in your string, it is pretty simple and all you need to do is have two backslashes in a string to have one literal one. So just type two backslashes in a string and run it within `str_view()`.
 
 ```{r creating-a-string-10, exercise = TRUE}
 
@@ -224,26 +230,131 @@ Let's assign
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-a-string-10-hint-1, eval = FALSE}
-
+str_view("...")
 ```
 
 ### 
 
 ### Exercise 11
 
-The printed representation of a string is not the same as the string itself because the printed representation shows the escapes. To see the raw contents of the string, we use `str_view()`
+What if I have too many backslashes and quotes to include that I get confused by the amount of backslashes and quotes. To demonstrate the problem, create a variable `tricky` and set it to `"double_quote <- \"\\\"\" # or '\"' single_quote <- '\\'' # or \"'\""`
 
 ```{r creating-a-string-11, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+
 
 ```{r creating-a-string-11-hint-1, eval = FALSE}
-
+tricky <- ...
 ```
 
 ### 
+
+That’s a lot of backslashes! (This is sometimes called [leaning toothpick syndrome](https://en.wikipedia.org/wiki/Leaning_toothpick_syndrome).)
+
+### Exercise 12
+
+Copy the previous code and type `str_view()` and set `tricky` as the argument.
+
+```{r creating-a-string-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-a-string-12-hint, eval = FALSE}
+tricky <- ...
+str_view(tricky)
+```
+
+###
+
+When we run it we should get `double_quote <- "\"" # or '"' single_quote <- '\'' # or "'"` but to make a string representation like this is very confusing sicne you need a lot of backslashes and quotes. In the next exercise we will see how we solve the problem.
+
+### Exercise 13
+
+Copy the previous code and modify `tricky` to be  
+`r"(double_quote <- "\"" # or '"' single_quote <- '\'' # or "'")"` and run it with `str_view()`.
+
+Now the string has much less quotes and backslashes but will we get same result?
+
+```{r creating-a-string-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-a-string-13-hint, eval = FALSE}
+tricky <- ...
+str_view(tricky)
+```
+
+###
+
+To eliminate the problem we used a raw string:  a special type of string literal that allows you to represent strings without any special character interpretation or escape sequences.
+
+
+A raw string usually starts with r"( and finishes with )". But if your string contains )" you can instead use r"[]" or r"{}", and if that’s still not enough, you can insert any number of dashes to make the opening and closing pairs unique, e.g., `r"--()--", `r"---()---", etc. Raw strings are flexible enough to handle any text.
+
+### Exercise 14
+
+As well as `\", \', and \\`, there are a handful of other special characters that may come in handy. The most common are `\n`, a new line, and `\t`, tab. 
+
+Let's now see how `str_view()` handeles special characters.
+
+Create a new variable `x1` and set it equal to vector which contains:`"one\ntwo", "one\ttwo", "\u00b5", "\U0001f604"`
+
+```{r creating-a-string-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-a-string-14-hint, eval = FALSE}
+x1 <- c(...)
+```
+
+###
+
+If you want to check out a complete list of other special characters, check out in [`Quotes`](https://rdrr.io/r/base/Quotes.html).
+
+### Exercise 15
+
+Run `x1`.
+
+```{r creating-a-string-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-a-string-15-hint, eval = FALSE}
+x1
+```
+
+###
+
+All we get is the same as what we types and dosent actually take all the special characters that we put except the smiley face.
+
+### Exercise 16
+
+Now run `x1` with `str_view()` as the argument.
+
+```{r creating-a-string-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-a-string-16-hint, eval = FALSE}
+str_view(x1)
+```
+
+###
+
+Compared to just printing the strings in console, we actually see the spaces for the first string, we see a tab which shows that `str_view` can take in special characters.
+
 
 ## Creating many strings from data
 ### 
@@ -724,6 +835,138 @@ Now that we have all the names with 15 letters, let's continue the pipe from `fi
 
 Looks at the results, the most famous name is Francisco Javier, being used 123 times. Looking at the other names, Christopher looks similar is most of the other names.
 
+### Exercise 9
+
+Now that we have learned `str_length()`. Let's move on to learning about `str_sub()`. 
+
+Create a variable `y` and set it equal to a vector containing strings: Apple, Banana , and Pear.
+
+```{r letters-9, exercise = TRUE}
+
+```
+
+
+
+```{r letters-9-hint, eval = FALSE}
+y <- c(...,...,...)
+```
+
+###
+
+You can extract parts of a string using `str_sub(string, start, end)`, where start and end are the positions where the substring should start and end. 
+
+### Exercise 10
+
+Type `str_sub()` and within the argument, for the first argument type `y` which we declared, then 1 which is starting position and then 3 our ending position.
+
+```{r letters-10, exercise = TRUE}
+
+```
+
+
+
+```{r letters-10-hint, eval = FALSE}
+str_sub(y, ...,...)
+```
+
+###
+
+Looking at results, when using `str_sub()`The start and end arguments are inclusive, so the length of the returned string will be end - start + 1
+
+### Exercise 11
+
+Let's modify the line from previous code and change the 2nd arguemnt to `-3` and the 3rd argument to `-1`.
+
+```{r letters-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r letters-11-hint, eval = FALSE}
+str_sub(..., ...,...)
+```
+
+###
+
+If you want to look at the end of the string, you can use negative values to count back from the end of the string: -1 is the last character, -2 is the second to last character, etc.
+
+### Exercise 12
+
+You might ask what if the range is bigger than the actual string? Let's see then, type `str_sub()` and in the first argument type "a", then type `1` for 2nd arguemtn and `5` for 3rd arguemnt.
+
+```{r letters-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r letters-12-hint, eval = FALSE}
+str_sub("...",1,...)
+```
+
+###
+
+Seeing the results, we have to note that `str_sub()` won’t fail if the string is too short: it will just return as much as possible
+
+### Exercise 13
+
+Now's that we have a sense of `str_sub()`, let's find the first and last letter of each name.
+Start a pipe with `babynames` to `mutate()`.
+
+```{r letters-13, exercise = TRUE}
+
+```
+
+
+
+```{r letters-13-hint, eval = FALSE}
+babynames |>
+  mutate()
+```
+
+###
+
+We are using `mutate()` because we will be add two new columns called first and last.
+
+### Exercise 14
+
+Within `mutate()`, create a new column called `first` and set it to `str_sub(name, 1,1)` to get the first letter. 
+
+```{r letters-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r letters-14-hint, eval = FALSE}
+... |>
+  ...(... = str_...(name,1,...))
+```
+
+###
+
+If you didnt know, In Python, indexing starts from zero, whereas in RStudio, indexing starts from one, resulting in a slight variation in accessing elements and slicing sequences.
+
+### Exercise 15
+
+In addition to creating the `first` column , let's add the `last` column. Within `mutate()`, add `last` and set it to `str_sub(name, -1,-1)`.
+
+```{r letters-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r letters-15-hint, eval = FALSE}
+... |>
+  ...(... = str_...(name,1,...),
+      last = ..._sub(name, -1,-1))
+```
+
+###
+
+When we ran the code, we see two new columns `first` and `last` which show the first and last letters of a name.
 
 
 ## Non-English Text
