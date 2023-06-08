@@ -44,6 +44,8 @@ cms_pivoted <- cms_patient_experience |>
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- DK: We need a lot of knowledge drops. And some questions split up into two or three steps. -->
+
 ## Introduction
 ### 
 
@@ -752,7 +754,9 @@ Inside of `ggplot()`, we need to add multiple things. First is `aes()`. Inside o
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r lengthening-data-12-hint-1, eval = FALSE}
-ggplot(aes(x = ..., y = ..., group = ...))
+ggplot(aes(x = ..., 
+           y = ..., 
+           group = ...))
 ```
 
 ### 
@@ -764,14 +768,14 @@ We didn't have to specify data because this plot is part of a pipe where the dat
 Next, we need to ad a `geom`. We will be using `geom_line()`. Inside `geom_line()` we need to change the opacity of the lines using `alpha`. We will set it to 0.25.
 
 ```{r lengthening-data-13, exercise = TRUE}
-ggplot(...) +
-  geom_line(alpha = ...)
+
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r lengthening-data-13-hint-1, eval = FALSE}
-
+ggplot(...) +
+  geom_line(alpha = ...)
 ```
 
 ### 
@@ -833,7 +837,9 @@ Now you know how to pivot really wide datasets, and when to pivot. Now, we need 
 
 ### 
 
-For this section, we'll be using the dataset `cms_patient_experience`, a dataset from the Centers of Medicare and Medicaid services that collects data about patient experiences. Please restart your R session before proceeding using `Cmd-Shift-0`.
+For this section, we'll be using the dataset `cms_patient_experience`, a patient experiences dataset from the Centers of Medicare and Medicaid Services. Please restart your R session before proceeding using `Cmd-Shift-0`.
+
+<!-- DK: Why the need to restart? -->
 
 ### Exercise 1
 
@@ -842,8 +848,6 @@ Load in the `tidyverse` in the box below.
 ```{r widening-data-1, exercise = TRUE}
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r widening-data-1-hint-1, eval = FALSE}
 library(...)
@@ -855,7 +859,7 @@ We are going to be focusing on the package `tidyr`, on the fourth line of the se
 
 ### Exercise 2
 
-In the Console, look up the help page for `tidyr` using `?` before the package name. Copy and paste the help page to before the section titled "Author(s)" into the box below.
+In the Console, look up the help page for `tidyr` using `?` before the package name. Copy and paste the Description from the help page into the box below.
 
 ```{r widening-data-2}
 question_text(NULL,
@@ -868,7 +872,7 @@ question_text(NULL,
 
 ### 
 
-Putting a question mark before a package name is a shortcut to looking up the help page. You could always go to the help pane in the bottom left corner, and search for `tidyr`, but it is a much faster way. Putting two question marks before a function will pull up the help page for functions or datasets in a package.
+Putting a question mark before a package name is a shortcut to looking up the help page. You could always go to the help pane in the bottom left corner, and search for `tidyr`, but it is a much faster way. 
 
 ### Exercise 3
 
@@ -1016,169 +1020,6 @@ pivot_wider(id_cols = starts_with("org"),
 
 This will get rid of any duplicate rows in the columns that start with "org'. And as we can see, there are many duplicates. `id_cols` cut the row count from 500 to 95.
 
-### Exercise 11
-
-Save your pipe to an object called `cms_pivoted`
-
-```{r widening-data-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r widening-data-11-hint, eval = FALSE}
-cms_pivoted <- cms_patient_experience |>
-  pivot_wider(...)
-```
-
-###
-
-When you save your modified data, it makes it easier to plot, that way you don't have to make a huge pipe, and can just start plotting with your saved object at the top.
-
-### Exercise 12
-
-We will be making this plot:
-
-```{r echol = FALSE}
-cms_plot <- cms_pivoted |>
-  ggplot(aes(y = CAHPS_GRP_1, x = org_nm, color = org_nm)) +
-  geom_point() +
-  theme(axis.text.x = element_text(angle = 30, hjust = 0.5, vjust = 0.5))+
-  labs(title = "Patient Satisfaction",
-       subtitle = "Group 1 of Survey",
-       x = "Hospitals",
-       y = "Rating",
-       color = "Hospitals",
-       caption = "Data: Centers for Medicare & Medicaid Services")
-```
-
-```{r}
-cms_plot
-```
-
-###
-
-Start a pipe with `cms_pivoted`.
-
-```{r widening-data-12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r widening-data-12-hint, eval = FALSE}
-cms_pivoted |> 
-```
-
-### Exercise 13
-
-Before we can start plotting, we need to filter to cut down on the row count. There is no way we can fit 95 different hospital names on one axis. We are going to filter for the id's that start with "0".
-
-###
-
-We do this by continuing our pipe with `filter()`. We need to filter for strings that start with "0". We can do that by putting `str_starts(org_pac_id, "0")` inside of the parenthesis.
-
-###
-
-Add that to your pipe.
-
-```{r widening-data-13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r widening-data-13-hint, eval = FALSE}
-filter(str_...(org_pac_id, "..."))
-```
-
-### Exercise 14
-
-Now, we can start plotting. Add `ggplot` to your pipe.
-
-```{r widening-data-14, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r widening-data-14-hint, eval = FALSE}
-
-```
-
-### Exercise 15
-
-Inside `ggplot`, we need `x` and `color` to be equal to `org_nm`, and y to be equal to `CAHPS_GRP_1`.
-
-```{r widening-data-15, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r widening-data-15-hint, eval = FALSE}
-...|> 
-ggplot(aes(x = ... y = ... color = ...))
-```
-
-### Exercise 16
-
-Add `geom_point()` to your plot.
-
-```{r widening-data-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r widening-data-16-hint, eval = FALSE}
-ggplot(...) +
-  geom_...()
-```
-
-### Exercise 17
-
-We need to fix the x axis labels. All the Hospital names are overlapping. We can rotate them with `theme()`. Inside of `theme`, we need to put `axis.text.x = element_text(angle = 30, hjust = 0.5, vjust = 0.5)`. 
-
-```{r widening-data-17, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r widening-data-17-hint, eval = FALSE}
-geom_point()+
-  theme(axis.text.x = element_text(angle = 30, hjust = 0.5, vjust = 0.5))
-```
-
-### Exercise 18
-
-Now all we need to do is add labels. This is what your plot should look like:
-
-```{r}
-cms_plot
-```
-
-
-```{r widening-data-18, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r widening-data-18-hint, eval = FALSE}
-
-```
-
-###
-
-Remember to name `x` and `color` the same thing, so we can avoid having multiple labels for the same thing
-
-###
-
-Now, we are going to explore a larger dataset, and use both `pivot_longer()`, and `pivot_wider()` multiple times
-
-### 
 
 ## Michigan voter experiment
 ### 
