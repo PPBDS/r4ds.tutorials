@@ -872,6 +872,9 @@ df4 <- tibble(x = c(...))
 
 `separate_wider_delim()` requires a fixed and known set of columns. What happens if some of the rows don’t have the expected number of pieces?
 
+Create a `tibble()`, set `x` as the name of the column and set `x` equal to a vector which looks like  `c("1-1-1", "1-1-2", "1-3", "1-3-2", "1")` and lastly assign it to `df`.
+
+
 ```{r extracting-data-from-10, exercise = TRUE}
 
 ```
@@ -879,12 +882,16 @@ df4 <- tibble(x = c(...))
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r extracting-data-from-10-hint-1, eval = FALSE}
-
+df <- tibble(x = c(...))
 ```
 
 ### 
 
+In response to not having the same number of pieces, there are two possible problems, too few or too many pieces, so `separate_wider_delim()` provides two arguments to help: `too_few` and `too_many`.
+
 ### Exercise 11
+
+CP/PR and start pipe with `df` to `separate_wider_delim()`, within the function, type `x`, then set the `delim` to "-" and finally set the names to a vector which looks like `c("x", "y", "z")`.
 
 ```{r extracting-data-from-11, exercise = TRUE}
 
@@ -893,12 +900,22 @@ df4 <- tibble(x = c(...))
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r extracting-data-from-11-hint-1, eval = FALSE}
-
+df <- tibble(x = c(...))
+... |> 
+  separate_wider_delim(
+    x,
+    ... = "-",
+    ... = c("x", "y", "z")
+  )
 ```
 
-### 
+###
+
+You’ll notice that we get an error, but the error gives us some suggestions on how you might proceed. Let’s start by debugging the problem
 
 ### Exercise 12
+
+CP/PR and within `separate_wider_delim()` add `too_few` to be "debug". Also create a variable `debug` and set it to the pipe then at the end call `debug`.
 
 ```{r extracting-data-from-12, exercise = TRUE}
 
@@ -907,13 +924,26 @@ df4 <- tibble(x = c(...))
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r extracting-data-from-12-hint-1, eval = FALSE}
-
+df <- tibble(x = c(...))
+debug <- ... |> 
+  separate_wider_delim(
+    x,
+    ... = "-",
+    ... = c("x", "y", "z"),
+    too_few = ...
+  )
+...
 ```
 
 ### 
 
+When you use the debug mode, you get three extra columns added to the output: `x_ok`, `x_pieces`, and `x_remainder` (if you separate a variable with a different name, you’ll get a different prefix).
+
+`x_pieces` tells us how many pieces were found, compared to the expected 3 (the length of names). `x_remainder` isn’t useful when there are too few pieces, but we’ll see it again shortly
+
 ### Exercise 13
 
+In other cases, you may want to fill in the missing pieces with NAs and move on. That’s the job of `too_few` = "align_start" and `too_few` = "align_end" which allow you to control where the NAs should go
 
 ```{r extracting-data-from-13, exercise = TRUE}
 
@@ -941,6 +971,37 @@ df4 <- tibble(x = c(...))
 ```
 
 ###
+
+### Exercise 15
+
+
+```{r extracting-data-from-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r extracting-data-from-15-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 16
+
+
+```{r extracting-data-from-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r extracting-data-from-16-hint, eval = FALSE}
+
+```
+
+###
+
 
 
 ## Letters
