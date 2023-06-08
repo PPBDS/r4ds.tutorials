@@ -28,6 +28,19 @@ df <- tribble(
   7, NA,
 )
 
+x3 <- c(1, 2, 5, 10, 15, 20)
+x4 <- 1:10
+x6 <- c(1, 2, 2, 3, 4, NA)
+
+ranktypes <- tibble(x6 = x6)
+numbers <- tibble(id = 1:10)
+times_visited <- tibble(
+  time = c(0, 1, 2, 3, 5, 10, 12, 15, 17, 19, 20, 27, 28, 30)
+)
+repetition <- tibble(
+  x = c("a", "a", "a", "b", "c", "c", "d", "e", "a", "a", "b", "b"),
+  y = c(1, 2, 3, 2, 4, 1, 3, 9, 4, 8, 10, 199)
+)
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -39,7 +52,10 @@ df <- tribble(
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 14: Numbers](https://r4ds.hadley.nz/numbers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to parse numbers, utilize numeric transformations on variables within datasets, and learn new ways to numerically summarize data. 
+This tutorial covers [Chapter 14: Numbers](https://r4ds.hadley.nz/numbers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. Key commands include [`parse_double()`](https://readr.tidyverse.org/reference/parse_atomic.html) for parsing numbers directly from strings, [`parse_number()`](https://readr.tidyverse.org/reference/parse_number.html) for removing useless characters and parsing numbers from strings.
+
+
+The goal of this chapter is to learn how to parse numbers from strings, utilize numeric transformations on variables within datasets, and learn new ways to numerically summarize data. 
 
 ## Making Numbers
 ### 
@@ -49,10 +65,6 @@ Our ultimate goal in this section is to make use of the functions `parse_double(
 ### Exercise 1
 
 This chapter mostly uses functions from base R, which are available without loading any packages. But we still need the tidyverse because we’ll use these base R functions inside of tidyverse functions like mutate() and filter(). 
-
-### 
-
-
 
 ### 
 
@@ -66,7 +78,7 @@ Use `library()` let's load in the **tidyverse** package.
 library(...)
 ```
 
-###
+### 
 
 The [**readr**](https://readr.tidyverse.org/) package is one of the eight core packages in the *Tidyverse*. It provides two useful functions for parsing strings into numbers: `parse_double()` and `parse_number()`.
 
@@ -85,7 +97,7 @@ Define a vector `x` that has the following values within it `"1.2"`, `"5.6"`, `"
 x <- c(..., ..., ...)
 ```
 
-###
+### 
 
 In most cases, you’ll get numbers already recorded in one of R’s numeric types: integer or double. In some cases, however, you’ll encounter them as strings.
 
@@ -163,7 +175,7 @@ question_text(NULL,
 	rows = 3)
 ```
 
-###
+### 
 
 <!-- DK: Drop knowledge. Maybe mention add_count() or tally()? -->
 
@@ -385,6 +397,7 @@ x / 5
 This operation is shorthand for `x / c(5, 5, 5, 5)`. Generally, you only want to recycle single numbers (i.e. vectors of length 1), but R will recycle any shorter length vector. It usually (but not always) gives you a warning if the longer vector isn’t a multiple of the shorter.
 
 ### Exercise 4
+
 You can see the warning message displayes when you try using a longer vector that isn't a multiple of the shorter vector. Try using the same vector but multiplying `x` with the values `1, 2, 3`.
 ```{r numeric-transformati-4, exercise = TRUE}
 
@@ -403,7 +416,7 @@ x * c(...)
 
 These recycling rules are also applied to logical comparisons (==, <, <=, >, >=, !=) and can lead to a surprising result if you accidentally use == instead of %in% and the data frame has an unfortunate number of rows.
 
-###
+### 
 
 Let's try to find all the flights in January and February. Make a new pipeline with `flights` and use the `filter()` function on `month` being 1 or 2 (January or February). However, instead of using `%in%` use `==`.
 
@@ -422,17 +435,17 @@ flights |>
 
 The code runs without error, but it doesn’t return what you want. Because of the recycling rules it finds flights in odd numbered rows that departed in January and flights in even numbered rows that departed in February. And unfortunately there’s no warning because `flights` has an even number of rows.
 
-###
+### 
 
 To protect you from this type of silent failure, most tidyverse functions use a stricter form of recycling that only recycles single values. Unfortunately that doesn’t help here, or in many other cases, because the key computation is performed by the base R function ==, not filter().
 
-###
+### 
 
 ### Exercise 6
 
 Most arithmetic functions work with pairs of variables. Two closely related functions are `pmin()` and `pmax()`, which when given two or more variables will return the smallest or largest value in each row. 
 
-###
+### 
 
 Let's utilize a premade dataframe `df`. Display this dataframe.
 ```{r numeric-transformati-6, exercise = TRUE}
@@ -448,6 +461,7 @@ df
 ### 
 
 ### Exercise 7
+
 Now, make a new pipeline with df. Then, make two new columns named min and max using the `mutate()` function representing the row min and row max of the columns x and y. For example, the code for the `min` column should look like `pmin(x, y, na.rm = TRUE)`. 
 
 ```{r numeric-transformati-7, exercise = TRUE}
@@ -468,13 +482,13 @@ df |>
 
 Note that these are different to the summary functions min() and max() which take multiple observations and return a single value.
 
-###
+### 
 
 ### Exercise 8
 
 Modular arithmetic is the technical name for the type of math you did before you learned about decimal places, i.e. division that yields a whole number and a remainder. In R, `%/%` does integer division and `%%` computes the remainder.
 
-###
+### 
 
 Make a new vector `z` equal to the numbers ranging from 1 to 10. 
 
@@ -511,7 +525,7 @@ z %% 3
 
 Modular arithmetic is handy for the `flights` dataset, because we can use it to unpack the `sched_dep_time` variable into `hour` and `minute`. `sched_dep_time` has the time in a numerical form where the thousands and hundreds place is the hour and the ones' and tens' place is the minute.
 
-###
+### 
 
 Make a new pipeline with flights and use `mutate()` to make 2 new columns named `hour` and `minute` using integer division to find the hour and remainder computation to find the minute. Add the parameter `.keep = "used"` to retain only the columns used in `sched_dep_time` to create new columns
 ```{r numeric-transformati-10, exercise = TRUE}
@@ -535,7 +549,7 @@ flights |>
 
 Now let's make a plot to see how the proportion of cancelled flights varies over the course of the day.
 
-###
+### 
 
 Copy the previous code and make a new column named `prop_cancelled` using `summarize()` that is equivalent to `mean(is.na(dep_time)), n = n())`
 ```{r numeric-transformati-11, exercise = TRUE}
@@ -565,12 +579,12 @@ Continue by filtering the hours that are greater than 1 AM.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r numeric-transformati-12-hint, eval = FALSE}
+```{r numeric-transformati-12-hint-1, eval = FALSE}
 ... |> 
   filter(hour > 1)
 ```
 
-###
+### 
 
 ### Exercise 13
 
@@ -581,47 +595,46 @@ Add to the pipeline by adding `ggplot()` and mapping the x-axis to `hour` and th
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r numeric-transformati-13-hint, eval = FALSE}
+```{r numeric-transformati-13-hint-1, eval = FALSE}
 ... |> 
   ggplot(aes(x = hour, y = prop_cancelled))
 ```
 
-###
+### 
 
 ### Exercise 14
 
-Make a line plot with a line that is gray using `geom_line()` and a color with the value of `"grey50"` within `geom_line()`
+Add to the pipeline by using `geom_line()` to make a line plot and add a `color` argument with the value of `"grey50"` to make a gray line. 
 ```{r numeric-transformati-14, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r numeric-transformati-14-hint, eval = FALSE}
+```{r numeric-transformati-14-hint-1, eval = FALSE}
 ... +
   geom_line(color = "grey50")
 ```
 
-###
+### 
 
 ### Exercise 15
 
-Add points to the line that represent the density of flights that were cancelled per hour mapping size to n.
+Add to the pipeline and use `geom_point()` mapping `size` to `n` using `aes()`. 
 ```{r numeric-transformati-15, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r numeric-transformati-15-hint, eval = FALSE}
+```{r numeric-transformati-15-hint-1, eval = FALSE}
 ... + 
   geom_point(aes(size = n))
 ```
 
-###
+### 
 
 ### Exercise 16
-
 
 ```{r numeric-transformati-16, exercise = TRUE}
 
@@ -629,11 +642,11 @@ Add points to the line that represent the density of flights that were cancelled
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r numeric-transformati-16-hint, eval = FALSE}
+```{r numeric-transformati-16-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 17
 
@@ -644,33 +657,1485 @@ Add appropriate labels for the title, x-axis, and the y-axis using labs().
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r numeric-transformati-17-hint, eval = FALSE}
+```{r numeric-transformati-17-hint-1, eval = FALSE}
 ... +
-  labs(title = ..., ..., ...)
+  labs(title = ..., 
+       subtitle = ..., 
+       x = ..., 
+       y = ...)
 ```
 
-###
+### 
 
 This is a line plot with scheduled departure hour on the x-axis, and proportion of cancelled flights on the y-axis. An observation that we could make is that cancellations seem to accumulate over the course of the day until 8pm, very late flights are much less likely to be cancelled.
 
-###
-
-## Random Number Functions
 ### 
 
-This section will allow you to practice with many random number functions with many different uses.
+## Other Number Functions
+### 
 
-<!-- SG: This above needs some changing (its not descriptive enough-->
+This section will allow you to practice with many other number functions with many different uses.
+
+### Exercise 1
+
+Run `?log()` in the Console and copy paste the Description below. (Don't worry about formatting)
+```{r other-number-functio-1}
+question_text(NULL,
+	message = "Place correct answer here.",
+	answer(NULL, correct = TRUE),
+	allow_retry = FALSE,
+	incorrect = NULL,
+	rows = 6)
+```
+
+### 
+
+Logarithms are an incredibly useful transformation for dealing with data that ranges across multiple orders of magnitude and converting exponential growth to linear growth.
+
+### 
+
+### Exercise 2
+
+Use the function `round()` with the argument `123.456` and hit "Run Code".
+```{r other-number-functio-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-2-hint-1, eval = FALSE}
+round(...)
+```
+
+### 
+
+The function round(x) rounds a number to the nearest integer. You can control the precision of the rounding with the second argument, digits. round(x, digits) rounds to the nearest 10^-n so digits = 2 will round to the nearest 0.01.
+
+### 
+
+### Exercise 3
+
+Copy your previous code and add the `digits` argument to the `round()` function and make `digits = 2`.
+```{r other-number-functio-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-3-hint-1, eval = FALSE}
+round(..., digits = 2)
+```
+
+### 
+
+You can control the precision of the rounding with the second argument, digits. round(x, digits) rounds to the nearest 10^-n so digits = 2 will round to the nearest 0.01.
+
+### 
+
+### Exercise 4
+
+Copy your previous code and change the `digits` argument to `-2`. 
+```{r other-number-functio-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-4-hint-1, eval = FALSE}
+round(..., digits = ...)
+```
+
+### 
+
+The *-2* argument in the `round()` function will round the number `123.456` to the nearest hundred which would be 100 in this case.
+
+### 
+
+### Exercise 5
+
+Type in `round(c(1.5, 2.5))` and hit "Run Code".
+
+```{r other-number-functio-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-5-hint-1, eval = FALSE}
+round(...)
+```
+
+### 
+
+round() uses what’s known as “round half to even” or Banker’s rounding: if a number is half way between two integers, it will be rounded to the even integer. This is a good strategy because it keeps the rounding unbiased: half of all 0.5s are rounded up, and half are rounded down.
+
+### 
+
+### Exercise 6
+
+The functions `floor()` and `ceiling()` are paired with `round()`. Use the function `floor()` with the numerical argument of `123.456`. 
+```{r other-number-functio-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-6-hint-1, eval = FALSE}
+floor(...)
+```
+
+### 
+
+The function `floor()` will always round down to the nearest integer.
+### Exercise 7
+
+Type in ceiling() with the numerical argument of `123.456`. 
+```{r other-number-functio-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-7-hint-1, eval = FALSE}
+ceiling(...)
+```
+
+### 
+
+The function `ceiling()` always round up to the nearest integer.
+
+### 
+
+### Exercise 8
+
+Make a new variable `x` and set it to the number 123.456.
+```{r other-number-functio-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-8-hint-1, eval = FALSE}
+x <- ...
+```
+
+### 
+
+The `floor()` and `ceiling()` functions don’t have a digits argument, so you can instead scale down, round, and then scale back up
+
+### 
+
+### Exercise 9
+
+Let's round down to the nearest two digits. Type in `floor(x / 0.01) * 0.01` and hit "Run Code".
+```{r other-number-functio-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-9-hint-1, eval = FALSE}
+floor(...) * ...
+```
+
+### 
+
+### Exercise 10
+
+Let's round up to the nearest two digits. Type in `ceiling(x / 0.01) * 0.01` and hit "Run Code". 
+```{r other-number-functio-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-10-hint-1, eval = FALSE}
+
+```
+
+### 
+
+You can use the same technique if you want to round() to a multiple of some other number
+
+### 
+
+### Exercise 11
+
+Let's round to the nearest multiple of 4. Type in `round(x / 4) * 4` and hit "Run Code".
+```{r other-number-functio-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-11-hint-1, eval = FALSE}
+round(...) * ...
+```
+
+### 
+
+### Exercise 12
+
+This time let's round to the nearest 0.25. Type in `round(x / 0.25) * 0.25` and hit "Run Code".
+```{r other-number-functio-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-12-hint-1, eval = FALSE}
+round(...) * ...
+```
+
+### 
+
+### Exercise 13
+
+Make a new vector `x3` and set it to equal `c(1, 2, 5, 10, 15, 20)`. 
+```{r other-number-functio-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-13-hint-1, eval = FALSE}
+x3 <- c(...)
+```
+
+### 
+
+Use `cut()`(https://rdrr.io/r/base/cut.html) to break up (aka bin) a numeric vector into discrete buckets.
+
+### 
+
+### Exercise 14
+
+Use `cut()` on the numeric vector `x` and add in the `breaks` argument and set `breaks` to `c(0, 5, 10, 15, 20)`
+```{r other-number-functio-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-14-hint-1, eval = FALSE}
+cut(x3, breaks = ...)
+```
+
+### 
+
+### Exercise 15
+
+The breaks don't need to be evenly spaced. Copy the previous code and change the `breaks` argument and set it to `c(0, 5, 10, 100)`.
+```{r other-number-functio-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-15-hint-1, eval = FALSE}
+cut(x3, breaks = ...)
+```
+
+### 
+
+You can optionally supply your own `labels`. Note that there should be one less `labels` than `breaks`. 
+
+### 
+
+### Exercise 16
+
+Copy your previous code and add a new argument called `labels` and set it to `c("sm", "md", "lg")`.
+```{r other-number-functio-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-16-hint-1, eval = FALSE}
+cut(x3, 
+    breaks = ...,
+    labels = c(...))
+```
+
+### 
+
+Any values outside of the range of the breaks will become `NA`. See the documentation for other useful arguments like `right` and `include.lowest`, which control if the intervals are [a, b) or (a, b] and if the lowest interval should be [a, b] by running `?cut()` in the Console.
+
+### 
+
+### Exercise 17
+
+Make a new vector `x4` and set it to `1:10`.
+
+```{r other-number-functio-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-17-hint-1, eval = FALSE}
+x4 <- ...
+```
+
+### 
+
+The function `cumsum()` will cumulate the sum using all the previous integers within the vector
+
+### 
+
+### Exercise 18
+
+Use the function `cumsum()` on `x4`.
+```{r other-number-functio-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r other-number-functio-18-hint-1, eval = FALSE}
+cumsum(...)
+```
+
+### 
+
+Base R provides cumsum(), cumprod(), cummin(), cummax() for running, or cumulative, sums, products, mins and maxes. dplyr provides cummean() for cumulative means. Cumulative sums tend to come up the most in practice. 
+
+### 
 
 ## General Transformations
 ### 
 
-This section will allow you to make use of transformations on an actual dataset.
+This section will utilize the package **dplyr** and allow you to make use of transformations on an actual dataframe.
+
+### Exercise 1
+
+Make a new vector named `x6` that has the values of `c(1, 2, 3, 4, NA)`.
+```{r general-transformati-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-1-hint-1, eval = FALSE}
+x6 <- ...
+```
+
+### 
+
+dplyr provides a number of ranking functions inspired by SQL, but you should always start with dplyr::min_rank(). It uses the typical method for dealing with ties, e.g., 1st, 2nd, 2nd, 4th
+
+### 
+
+### Exercise 2
+
+Use the function `min_rank()` taking `x6` as the argument.
+```{r general-transformati-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-2-hint-1, eval = FALSE}
+min_rank(x6)
+```
+
+### 
+
+Note that the smallest values get the lowest ranks; use desc(x) to give the largest values the smallest ranks
+
+### 
+
+### Exercise 3
+
+Now, use the function `min_rank()` taking `desc(x6)` as its argument.
+```{r general-transformati-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-3-hint-1, eval = FALSE}
+min_rank(...)
+```
+
+### 
+
+If min_rank() doesn’t do what you need, look at the variants `dplyr::row_number()`, `dplyr::dense_rank()`, `dplyr::percent_rank()`, and `dplyr::cume_dist()`. See the documentation for details.
+
+### 
+
+### Exercise 4
+
+`
+Type in `ranktypes` and hit "Run Code".
+```{r general-transformati-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-4-hint-1, eval = FALSE}
+ranktypes
+```
+
+### 
+
+Right now, ranktypes is just a tibble of the vector x6.
+
+### 
+
+### Exercise 5
+
+Pipe `ranktypes` to the `mutate()` function. Within the call to `mutate()`, create a variable `row_number` which equals `row_number(x6)`.
+```{r general-transformati-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-5-hint-1, eval = FALSE}
+ranktypes |> 
+  mutate(row_number = ...)
+```
+
+### 
+
+### Exercise 6
+
+Using the same pipe as above, create another variable, within the call to `mutate()`, called `dense_rank` equal to `dense_rank(x6)`.
+```{r general-transformati-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-6-hint-1, eval = FALSE}
+ranktypes |> 
+  mutate(row_number = ..., 
+         dense_rank = ...)
+```
+
+### 
+
+### Exercise 7
+
+Using the same pipe as above, create another variable, within the call to `mutate()`, called `percent_rank` equal to `percent_rank(x6)`.
+```{r general-transformati-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-7-hint-1, eval = FALSE}
+ranktypes |> 
+  mutate(row_number = ..., 
+         dense_rank = ...,
+         percent_rank = ...)
+```
+
+### 
+
+### Exercise 8
+
+Using the same pipe as above, create another variable, within the call to `mutate()`, called `cume_dist` equal to `cume_dist(x6)`.
+```{r general-transformati-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-8-hint-1, eval = FALSE}
+ranktypes |> 
+  mutate(row_number = ..., 
+         dense_rank = ...,
+         percent_rank = ...,
+         cume_dist = ...)
+```
+
+### 
+
+You can achieve many of the same results by picking the appropriate ties.method argument to base R’s rank(); you’ll probably also want to set na.last = "keep" to keep NAs as NA.
+
+### 
+
+### Exercise 9
+
+Type in numbers and hit "Run Code". 
+```{r general-transformati-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-9-hint-1, eval = FALSE}
+numbers
+```
+
+### 
+
+The numbers dataset just lists the numbers from 1 through 10.
+
+### 
+
+### Exercise 10
+
+Pipe `numbers` to the `mutate()` function. Within the call to `mutate()`, create a variable `row0` which equals `row_number()` minus `1`.
+```{r general-transformati-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-10-hint-1, eval = FALSE}
+numbers |> 
+  mutate(
+    row0 = ... - ...
+  )
+```
+
+### 
+
+row_number() can also be used without any arguments when inside a dplyr verb. In this case, it’ll give the number of the “current” row.
+
+### 
+
+### Exercise 11
+
+Using the same pipe as above, create another variable, within the call to `mutate()`, called `three_groups` equal to `row0 %% 3`.
+```{r general-transformati-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-11-hint-1, eval = FALSE}
+numbers |> 
+  mutate(
+    row0 = ... - ..., 
+    three_groups = row0 %% 3
+  )
+```
+
+### 
+
+### Exercise 12
+
+Using the same pipe as above, create another variable, within the call to `mutate()`, called `three_in_each_group` set to `row0 %/% 3`.
+```{r general-transformati-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-12-hint-1, eval = FALSE}
+numbers |> 
+  mutate(
+    row0 = ... - ..., 
+    three_groups = row0 %% 3,
+    three_in_each_group = row0 %/% 3
+  )
+```
+
+### 
+
+When the function `row_number()` is combined with `%%` or `%/%` this can be a useful tool for dividing data into similarly sized groups
+
+### 
+
+### Exercise 13
+
+Create a new vector `x7` and set it to `c(2, 5, 11, 11, 19, 35)`
+```{r general-transformati-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-13-hint-1, eval = FALSE}
+x7 <- ...
+```
+
+### 
+
+dplyr::lead() and dplyr::lag() allow you to refer the values just before or just after the “current” value. They return a vector of the same length as the input, padded with NAs at the start or end
+
+### 
+
+### Exercise 14
+
+Use the function `lag()` taking in `x7` as its argument.
+```{r general-transformati-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-14-hint-1, eval = FALSE}
+lag(...)
+```
+
+### 
+
+### Exercise 15
+
+Use the function `lead()` taking in `x7` as its argument. 
+```{r general-transformati-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-15-hint-1, eval = FALSE}
+lead(...)
+```
+
+### 
+
+### Exercise 16
+
+Subtract `x7` by `lag(x)`.
+```{r general-transformati-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-16-hint-1, eval = FALSE}
+x7 - ...
+```
+
+### 
+
+x - lag(x) gives you the difference between the current and previous value.
+
+### 
+
+### Exercise 17
+
+Type in `x == lag(x)` and hit "Run Code".
+```{r general-transformati-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-17-hint-1, eval = FALSE}
+x == ...
+```
+
+### 
+
+x == lag(x) tells you when the current value changes. You can lead or lag by more than one position by using the second argument, n.
+
+### 
+
+### Exercise 18
+
+When you’re looking at website data, it’s common to want to break up events into sessions, where you begin a new session after a gap of more than `x` minutes since the last activity. For example, the `times_visited` dataset has the times when someone visited a website. Type in `times_visited` and hit "Run Code".
+```{r general-transformati-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-18-hint-1, eval = FALSE}
+times_visited
+```
+
+### 
+
+Sometimes you want to start a new group every time some event occurs. We've computed the time between each event, and figured out that there's a gap that's big enough to qualify.
+
+### 
+
+### Exercise 19
+
+Pipe `times_visited` to the `mutate()` function. Within the call to `mutate()`, create a variable `diff` which is set to `time` minus `lag(time, default = first(time))`.
+```{r general-transformati-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-19-hint-1, eval = FALSE}
+times_visited |> 
+  mutate(diff = ...)
+```
+
+### 
+
+### Exercise 20
+
+Using the same pipe as above, create another variable, within the call to `mutate()`, called `has_gap` set to `diff >= 5`.
+```{r general-transformati-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-20-hint-1, eval = FALSE}
+times_visited |> 
+  mutate(
+    diff = ..., 
+    has_gap = ...)
+```
+
+### 
+
+### Exercise 21
+
+Using the same pipe as above, create another variable, within the call to `mutate()`, called `group` set to `cumsum(has_gap)`. 
+```{r general-transformati-21, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-21-hint-1, eval = FALSE}
+times_visited |> 
+  mutate(
+    diff = ..., 
+    has_gap = ...,
+    group = ...)
+```
+
+### 
+
+When `has_gap` is `TRUE`, `cumsum()` will increment `group` by `1`. 
+
+### 
+
+### Exercise 22
+
+Imagine you have a dataframe with a bunch of repeated values. Type in `repetition` and hit "Run Code".
+```{r general-transformati-22, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-22-hint-1, eval = FALSE}
+repetition
+```
+
+### 
+
+### Exercise 23
+
+Pipe `repetition` to the `group_by()` function. Within the call to `group_by()`, create a variable `id` which is set to `consecutive_id(x)`.
+```{r general-transformati-23, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-23-hint-1, eval = FALSE}
+repetition |> 
+  group_by(...)
+```
+
+### 
+
+### Exercise 24
+
+Using the same pipe as above, pipe `slice_head()` to the current pipe with the argument `n` set to `1`.
+```{r general-transformati-24, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-24-hint-1, eval = FALSE}
+repetition |> 
+  group_by(...) |> 
+  slice_head(...)
+```
+
+### 
+
+This keeps the first row from each repeated `x`.
+
+### 
 
 ## Numeric Summaries
 ### 
 
 This section will introduce more useful summary functions that will help to summarize your data much better.
+
+### Exercise 1
+
+Type in `flights` and hit "Run Code".
+```{r numeric-summaries-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-1-hint-1, eval = FALSE}
+flights
+```
+
+### 
+
+### Exercise 2
+
+Pipe `flights` to the `group_by()` function. Within the call to `group_by()`, have the arguments be `year`, `month`, and `day`.
+```{r numeric-summaries-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-2-hint-1, eval = FALSE}
+flights |> 
+  group_by(...)
+```
+
+### 
+
+### Exercise 3
+
+Using the same pipe as above, add the `summarize()` function to the pipeline. Within the `summarize()` function, create a new variable `mean` and set it to `mean(dep_delay, na.rm = TRUE)`.
+```{r numeric-summaries-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-3-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    mean = ...
+  )
+```
+
+### 
+
+### Exercise 4
+
+Using the same pipe as above, create another variable, within the call to `summarize()`, called `median` and set it to `median(dep_delay, na.rm = TRUE)`. 
+```{r numeric-summaries-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-4-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    mean = ...,
+    median = ...
+  )
+```
+
+### 
+
+### Exercise 5
+
+Using the same pipe as above, create another variable, within the call to `summarize()`, called `n` and set it to `n()`. 
+```{r numeric-summaries-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-5-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    mean = ...,
+    median = ...,
+    n = ...
+  )
+```
+
+### 
+
+### Exercise 6
+
+Using the same pipe as above, add an argument, within the call to `summarize()`, called `.groups` and set it to `"drop"`. 
+```{r numeric-summaries-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-6-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    mean = ...,
+    median = ...,
+    n = ...,
+    .groups = "drop"
+  )
+```
+
+### 
+
+### Exercise 7
+
+Using the same pipe as above, add the `ggplot()` function to the pipeline. Within the `ggplot()` function, map `x` to `mean` and `y` to `median`.
+```{r numeric-summaries-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-7-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    mean = ...,
+    median = ...,
+    n = ...,
+    .groups = "drop"
+  ) |> 
+  ggplot(aes(x = mean, y = median))
+```
+
+### 
+
+### Exercise 8
+
+Using the same pipe as above, add the `geom_abline()` function to the pipeline. Within the `geom_abline()` function, add the argument `slope` and set it to `1`.
+```{r numeric-summaries-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-8-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    mean = ...,
+    median = ...,
+    n = ...,
+    .groups = "drop"
+  ) |> 
+  ggplot(aes(x = ..., y = ...)) + 
+  geom_abline(slope = ...)
+```
+
+### 
+
+### Exercise 9
+
+Using the same pipe as above, within the `geom_abline()` function, add another argument called `intercept` and set it to `0`.
+```{r numeric-summaries-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-9-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    mean = ...,
+    median = ...,
+    n = ...,
+    .groups = "drop"
+  ) |> 
+  ggplot(aes(x = ..., y = ...)) + 
+  geom_abline(slope = ..., intercept = ...)
+```
+
+### 
+
+### Exercise 10
+
+Using the same pipe as above, within the `geom_abline()` function, add another argument called `color` and set it to `"white"`.
+```{r numeric-summaries-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-10-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    mean = ...,
+    median = ...,
+    n = ...,
+    .groups = "drop"
+  ) |> 
+  ggplot(aes(x = ..., y = ...)) + 
+  geom_abline(slope = ..., intercept = ..., color = ...)
+```
+
+### 
+
+### Exercise 11
+
+Using the same pipe as above, within the `geom_abline()` function, add another argument called `linewidth` and set it to `2`.
+```{r numeric-summaries-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-11-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    mean = ...,
+    median = ...,
+    n = ...,
+    .groups = "drop"
+  ) |> 
+  ggplot(aes(x = ..., y = ...)) + 
+  geom_abline(slope = ..., intercept = ..., color = ..., linewidth = ...)
+```
+
+### 
+
+Depending on the shape of the distribution of the variable you’re interested in, mean or median might be a better measure of center. For example, for symmetric distributions we generally report the mean while for skewed distributions we usually report the median.
+
+### 
+
+### Exercise 12
+
+Using the same pipe as above, add the `geom_point()` function to the pipeline.
+```{r numeric-summaries-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-12-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    mean = ...,
+    median = ...,
+    n = ...,
+    .groups = "drop"
+  ) |> 
+  ggplot(aes(x = ..., y = ...)) + 
+  geom_abline(slope = ..., intercept = ..., color = ..., linewidth = ...) +
+  ...
+```
+
+### 
+
+This plot compares the mean vs. the median departure delay (in minutes) for each destination. The median delay is always smaller than the mean delay because flights sometimes leave multiple hours late, but never leave multiple hours early. It is a scatterplot showing the differences of summarizing daily depature delay with median instead of mean.
+
+### 
+
+### Exercise 13
+
+Create a new pipeline. Pipe `flights` to the `group_by()` function. Within the call to `group_by()`, have the arguments be `year`, `month`, and `day`.
+```{r numeric-summaries-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-13-hint-1, eval = FALSE}
+flights |> 
+  group_by(...)
+```
+
+### 
+
+### Exercise 14
+
+Using the same pipe as above, add the `summarize()` function to the pipeline. Within the `summarize()` function, create a new variable `max` and set it to `max(dep_delay, na.rm = TRUE)`.
+```{r numeric-summaries-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-14-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    max = ...
+  )
+```
+
+### 
+
+min() and max() will give you the largest and smallest values.
+
+### 
+
+### Exercise 15
+
+Using the same pipe as above, create another variable, within the call to `summarize()`, called `q95` and set it to `quantile(dep_delay, 0.95, na.rm = TRUE)`. 
+```{r numeric-summaries-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-15-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    max = ..., 
+    q95 = ...
+  )
+```
+
+### 
+
+Another powerful tool is quantile() which is a generalization of the median: quantile(x, 0.25) will find the value of x that is greater than 25% of the values, quantile(x, 0.5) is equivalent to the median, and quantile(x, 0.95) will find the value that’s greater than 95% of the values.
+
+### 
+
+### Exercise 16
+
+Using the same pipe as above, add an argument, within the call to `summarize()`, called `.groups` and set it to `"drop"`. 
+```{r numeric-summaries-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-16-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    max = ..., 
+    q95 = ...,
+    .groups = ...
+  )
+```
+
+### 
+
+For the flights data, we are looking at the 95% quantile of delays rather than the maximum, because it will ignore the 5% of most delayed flights which can be quite extreme.
+
+### Exercise 17
+
+Create a new pipeline. Pipe `flights` to the `group_by()` function. Within the call to `group_by()`, have the arguments be `origin` and `dest`.
+```{r numeric-summaries-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-17-hint-1, eval = FALSE}
+flights |> 
+  group_by(...)
+```
+
+### 
+
+### Exercise 18
+
+Using the same pipe as above, add the `summarize()` function to the pipeline. Within the `summarize()` function, create a new variable `distance_sd` and set it to `IQR(distance)`.
+```{r numeric-summaries-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-18-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    distance_sd = ...
+  )
+```
+
+### 
+
+Two commonly used summaries are the standard deviation, sd(x), and the inter-quartile range, `IQR()`. `IQR()` gives us the range that contains the middle 50% of the data and is calculated by subtracting `quantile(x, 0.75) - quantile(x, 0.25)`.
+
+### 
+
+### Exercise 19
+
+Using the same pipe as above, create another variable, within the call to `summarize()`, called `n` and set it to `n()`. 
+```{r numeric-summaries-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-19-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    distance_sd = ...,
+    n = n()
+  )
+```
+
+### 
+
+### Exercise 20
+
+Using the same pipe as above, add an argument, within the call to `summarize()`, called `.groups` and set it to `"drop"`. 
+```{r numeric-summaries-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-20-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    distance_sd = ...,
+    n = n(),
+    .groups = "drop"
+  )
+```
+
+### 
+
+### Exercise 21
+
+Using the same pipe as above, add the `filter()` function to the pipeline. Within the `filter()` function add the argument `distance_sd > 0`.
+```{r numeric-summaries-21, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-21-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    distance_sd = ...,
+    n = n(),
+    .groups = "drop"
+  ) |> 
+  filter(...)
+```
+
+### 
+
+We can use this to reveal a small oddity in the flights data. You might expect the spread of the distance between origin and destination to be zero, since airports are always in the same place. But the code below reveals a data oddity for airport
+
+### 
+
+### Exercise 22
+
+Describe the oddity.
+
+```{r numeric-summaries-22}
+question_text(NULL,
+	message = "Place correct answer here.",
+	answer(NULL, correct = TRUE),
+	allow_retry = FALSE,
+	incorrect = NULL,
+	rows = 6)
+```
+
+### 
+
+### Exercise 23
+
+Create a new pipeline. Pipe `flights` to the `filter()` function. Within the call to `filter()`, have the argument be `dep_delay < 120`, filtering out any departure delay that is greater than 2 hours. 
+```{r numeric-summaries-23, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-23-hint-1, eval = FALSE}
+flights |> 
+  filter(...)
+```
+
+### 
+
+### Exercise 24
+
+Using the same pipe as above, add the `ggplot()` function to the pipeline. Within the `ggplot()` function map `x` to `dep_delay` and `group` to `interaction(day, month)`
+```{r numeric-summaries-24, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-24-hint-1, eval = FALSE}
+flights |> 
+  filter(...) |> 
+  ggplot(aes(x = ..., group = ...))
+```
+
+### 
+
+### Exercise 25
+
+Using the same pipe as above, add the `geom_freqpoly()` function to the pipeline. Within the `geom_freqpoly()` function set the argument `binwidth` to `5` and `alpha` to `1/5`.
+```{r numeric-summaries-25, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-25-hint-1, eval = FALSE}
+flights |> 
+  filter(...) |> 
+  ggplot(aes(x = ..., group = ...)) |> 
+  geom_freqpoly(...)
+```
+
+### 
+
+In the following plot 365 frequency polygons of dep_delay, one for each day, are overlaid. The distributions seem to follow a common pattern, suggesting it’s fine to use the same summary for each day.
+
+### 
+
+### Exercise 26
+
+Create a new pipeline. Pipe `flights` to the `group_by()` function. Within the call to `group_by()`, have the arguments be `year`, `month`, and `day`.
+```{r numeric-summaries-26, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-26-hint-1, eval = FALSE}
+flights |> 
+  group_by(...)
+```
+
+### 
+
+### Exercise 27
+
+Using the same pipe as above, add the `summarize()` function to the pipeline. Within the `summarize()` function, create a new variable `first_dep` and set it to `first(dep_time, na_rm = TRUE)`.
+```{r numeric-summaries-27, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-27-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    first_dep = ...
+  )
+```
+
+### 
+
+### Exercise 28
+
+Using the same pipe as above, create another variable, within the call to `summarize()`, called `fifth_dep` and set it to `nth(dep_time, 5, na_rm = TRUE)`. 
+```{r numeric-summaries-28, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-28-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    first_dep = ...,
+    fifth_dep = ...
+  )
+```
+
+### 
+
+### Exercise 29
+
+Using the same pipe as above, create another variable, within the call to `summarize()`, called `last_dep` and set it to `last(dep_time, na_rm = TRUE)`. 
+```{r numeric-summaries-29, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-29-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  summarize(
+    first_dep = ...,
+    fifth_dep = ...,
+    last_dep = ...
+  )
+```
+
+### 
+
+The functions `first(x)`, `last(x)`, and `nth(x, n)` extract a value at a specific position.
+
+### Exercise 30
+
+```{r numeric-summaries-30, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-30-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 31
+
+Create a new pipeline. Pipe `flights` to the `group_by()` function. Within the call to `group_by()`, have the arguments be `year`, `month`, and `day`.
+```{r numeric-summaries-31, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-31-hint-1, eval = FALSE}
+flights |> 
+  group_by(...)
+```
+
+### 
+
+### Exercise 32
+
+Using the same pipe as above, add the `mutate()` function to the pipeline. Within the `mutate()` function, create a new variable `y` and set it to `min_rank(sched_dep_time)`.
+```{r numeric-summaries-32, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-32-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  mutate(y = min_rank(...)) 
+```
+
+### 
+
+### Exercise 33
+
+Using the same pipe as above, add the `filter()` function to the pipeline. Within the `filter()` function, add the argument `y %in% c(1, max(y))`.
+
+```{r numeric-summaries-33, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r numeric-summaries-33-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  mutate(y = min_rank(...)) |> 
+  filter(...)
+```
+
+### 
+
+Extracting values at positions is complementary to filtering on ranks. Filtering gives you all variables, with each observation in a separate row.
+
+### 
 
 ## Summary
 ### 
