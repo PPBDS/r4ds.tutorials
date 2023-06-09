@@ -505,11 +505,29 @@ df1 |>
 
 After modifying the tibble, we still have a  column called `name`. We used the `mutate()` function from the ["dplyr"](https://dplyr.tidyverse.org/) package to create a new column called `greeting`. As you can see, `str_glue()` currently converts missing values to the string "NA" unfortunately making it inconsistent with `str_c()`.
 
-### Exercise 9
+### Exercise 8
 
 `str_c()` and `str_glue()` are suitable for use with `mutate()` since their output matches the length of their inputs. However, if you need a function that works well with `summarize()` and always returns a single string, `str_flatten()` comes into play. It takes a character vector as input and combines each element of the vector into a single string.
 
 Type `str_flatten()` and within it have a vector of strings like this `c("x","y","z")`.
+
+```{r creating-many-string-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-many-string-8-hint-1, eval = FALSE}
+str_flatten(...)
+```
+
+### 
+
+One variation of `str_flatten()` is `str_flatten_comma()` is a variation designed specifically for flattening with commas. It automatically recognizes if last uses the Oxford comma and handles the special case of 2 elements.
+
+### Exercise 9
+
+What if you want commas after every letter. Copy the previous code and within the argument, add a comma and type a comma in string like this `","`.
 
 ```{r creating-many-string-9, exercise = TRUE}
 
@@ -518,16 +536,16 @@ Type `str_flatten()` and within it have a vector of strings like this `c("x","y"
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-9-hint-1, eval = FALSE}
-str_flatten(...)
+str_flatten(c(...),...)
 ```
 
 ### 
 
-One variation of `str_flatten()` is `str_flatten_comma()` is a variation designed specifically for flattening with commas. It automatically recognizes if last uses the Oxford comma and handles the special case of 2 elements.
+The second argument which was a comma as a string as we saw, it is actually knows as a `collapse`: a string to enter between each piece. Defaults to "".
 
 ### Exercise 10
 
-What if you want commas after every letter. Copy the previous code and within the argument, add a comma and type a comma in string like this `","`.
+Let's fix the grammar of the string we got in previous exercise, copy the previous code and add `last = ", and "`.
 
 ```{r creating-many-string-10, exercise = TRUE}
 
@@ -536,16 +554,16 @@ What if you want commas after every letter. Copy the previous code and within th
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-10-hint-1, eval = FALSE}
-str_flatten(c(...),...)
+str_flatten(c(...),..., last = ...)
 ```
 
 ### 
 
-The second argument which was a comma as a string as we saw, it is actually knows as a `collapse`: a string to enter between each piece. Defaults to "".
+The `last` argument is a optional string to use in place of the final separator.
 
 ### Exercise 11
 
-Let's fix the grammar of the string we got in previous exercise, copy the previous code and add `last = ", and "`.
+Let's now use `str_flatten()` with `summarize()`. Run `df2` to have a quick look at the data frame.
 
 ```{r creating-many-string-11, exercise = TRUE}
 
@@ -554,16 +572,16 @@ Let's fix the grammar of the string we got in previous exercise, copy the previo
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-11-hint-1, eval = FALSE}
-str_flatten(c(...),..., last = ...)
+df2
 ```
 
 ### 
 
-The `last` argument is a optional string to use in place of the final separator.
+The tibble has two columns named "name" and "fruit". Carmen has more than one fruit to his name and Terence has more than two fruits to his name.
 
 ### Exercise 12
 
-Let's now use `str_flatten()` with `summarize()`. Run `df2` to have a quick look at the data frame.
+Start a pipe with `df2` to `group_by()` which takes `name` as argument.
 
 ```{r creating-many-string-12, exercise = TRUE}
 
@@ -572,24 +590,6 @@ Let's now use `str_flatten()` with `summarize()`. Run `df2` to have a quick look
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-12-hint-1, eval = FALSE}
-df2
-```
-
-### 
-
-The tibble has two columns named "name" and "fruit". Carmen has more than one fruit to his name and Terence has more than two fruits to his name.
-
-### Exercise 13
-
-Start a pipe with `df2` to `group_by()` which takes `name` as argument.
-
-```{r creating-many-string-13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r creating-many-string-13-hint-1, eval = FALSE}
 df2 |>
   ...(...)
 ```
@@ -598,17 +598,17 @@ df2 |>
 
 Most data operations are done on groups defined by variables. `group_by()` takes an existing tbl and converts it into a grouped tbl where operations are performed "by group". `ungroup()` removes grouping. If you want more info check out ["dplyr"](https://dplyr.tidyverse.org/reference/group_by.html).
 
-### Exercise 14
+### Exercise 13
 
 Continue the pipe from `group_by()` to `summarize()`.
 
-```{r creating-many-string-14, exercise = TRUE}
+```{r creating-many-string-13, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r creating-many-string-14-hint-1, eval = FALSE}
+```{r creating-many-string-13-hint-1, eval = FALSE}
 ... |>
   ...(name) |>
   ...()
@@ -619,17 +619,17 @@ Continue the pipe from `group_by()` to `summarize()`.
 `summarize()` creates a new data frame. It returns one row for each combination of grouping variables; if there are no grouping variables, the output will have a single row summarizing all observations in the input.
 
 
-### Exercise 15
+### Exercise 14
 
 Within `summarize()`, type the column `fruit` and set it to `str_flatten(fruit, ",")`.
 
-```{r creating-many-string-15, exercise = TRUE}
+```{r creating-many-string-14, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r creating-many-string-15-hint-1, eval = FALSE}
+```{r creating-many-string-14-hint-1, eval = FALSE}
 ... |>
   ...|>
   summarize(fruits = ...)
@@ -710,7 +710,7 @@ As you looks at the tibble, we can't separate the numbers by commas to make the 
 
 ### Exercise 4
 
-CP/PR and start pipe with `df2` to `separate_longer_position()`, within the function, type the column `x` and then set the `width` to 1.
+Copy the previous code and start pipe with `df2` to `separate_longer_position()`, within the function, type the column `x` and then set the `width` to 1.
 
 ```{r extracting-data-from-4, exercise = TRUE}
 
@@ -753,7 +753,7 @@ In this following data set, x is made up of a code, an edition number, and a yea
 
 ### Exercise 6
 
-CP/PR and start pip with `df3` to `separate_wider_delim()`, within the function, type `x`, then set the `delim` to "." and finally set the names to a vector which looks like ` c("code", "edition", "year")`.
+Copy the previous code and start pip with `df3` to `separate_wider_delim()`, within the function, type `x`, then set the `delim` to "." and finally set the names to a vector which looks like ` c("code", "edition", "year")`.
 
 ```{r extracting-data-from-6, exercise = TRUE}
 
@@ -817,7 +817,7 @@ df4 <- tibble(x = c(...))
 
 ### Exercise 9
 
-CP/PR and start a pipe with `df4` to `separate_wider_position()`, within the function, type `x`, then set the `widths` to  a vector which looks like ` c(year = 4, age = 2, state = 2)`.
+Copy the previous code and start a pipe with `df4` to `separate_wider_position()`, within the function, type `x`, then set the `widths` to  a vector which looks like ` c(year = 4, age = 2, state = 2)`.
 
 ```{r extracting-data-from-9, exercise = TRUE}
 
@@ -861,7 +861,7 @@ In response to not having the same number of pieces, there are two possible prob
 
 ### Exercise 11
 
-CP/PR and start pipe with `df` to `separate_wider_delim()`, within the function, type `x`, then set the `delim` to "-" and finally set the names to a vector which looks like `c("x", "y", "z")`.
+Copy the previous code and start pipe with `df` to `separate_wider_delim()`, within the function, type `x`, then set the `delim` to "-" and finally set the names to a vector which looks like `c("x", "y", "z")`.
 
 ```{r extracting-data-from-11, exercise = TRUE}
 
@@ -885,7 +885,7 @@ You’ll notice that we get an error, but the error gives us some suggestions on
 
 ### Exercise 12
 
-CP/PR and within `separate_wider_delim()` add `too_few` to be "debug". Also create a variable `debug` and set it to the pipe then at the end call `debug`.
+Copy the previous code and within `separate_wider_delim()` add `too_few` to be "debug". Also create a variable `debug` and set it to the pipe then at the end call `debug`.
 
 ```{r extracting-data-from-12, exercise = TRUE}
 
@@ -915,7 +915,7 @@ When you use the debug mode, you get three extra columns added to the output: `x
 
 In other cases, you may want to fill in the missing pieces with NAs and move on. That’s the job of `too_few` = "align_start" and `too_few` = "align_end" which allow you to control where the NAs should go.
 
-CP the previous code and change `too_few` to be set to "align_start".
+Copy the previous code and change `too_few` to be set to "align_start".
 
 ```{r extracting-data-from-13, exercise = TRUE}
 
@@ -960,7 +960,7 @@ df <- tibble(x = ...)
 
 ### Exercise 15
 
-CP/PR and start pipe with `df` to `separate_wider_delim()`, within the function, type `x`, then set the `delim` to "-" and finally set the names to a vector which looks like `c("x", "y", "z")`.
+Copy the previous code and start pipe with `df` to `separate_wider_delim()`, within the function, type `x`, then set the `delim` to "-" and finally set the names to a vector which looks like `c("x", "y", "z")`.
 
 ```{r extracting-data-from-15, exercise = TRUE}
 
@@ -984,7 +984,7 @@ You will get an error and get suggestions to use `too_many = "debug"` or `too_ma
 
 ### Exercise 16
 
-CP the previous code add `too_many = "debug"` within `separate_wider_delim()`.
+Copy the previous code add `too_many = "debug"` within `separate_wider_delim()`.
 
 ```{r extracting-data-from-16, exercise = TRUE}
 
@@ -1009,7 +1009,7 @@ When we debug the result, you can see the purpose of `x_remainder`: it shows wha
 
 ### Exercise 17
 
-CP the previous code and change `too_many` to "drop".
+Copy the previous code and change `too_many` to "drop".
 
 ```{r extracting-data-from-17, exercise = TRUE}
 
@@ -1029,6 +1029,7 @@ df <- tibble(x = ...)
 ```
 
 ### 
+
 As we are already aware by the word `drop`, it has been established that Rstudio will discard the remaining x remainders.
 
 ### Exercise 18
