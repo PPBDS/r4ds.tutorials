@@ -28,6 +28,8 @@ df <- tribble(
   7, NA,
 )
 
+x <- c("1.2", "5.6", "1e3")
+y <- c("$1,234", "USD 3,513", "59%")
 x3 <- c(1, 2, 5, 10, 15, 20)
 x4 <- 1:10
 x6 <- c(1, 2, 2, 3, 4, NA)
@@ -52,7 +54,7 @@ repetition <- tibble(
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 14: Numbers](https://r4ds.hadley.nz/numbers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. Key commands include [`parse_double()`](https://readr.tidyverse.org/reference/parse_atomic.html) for parsing numbers directly from strings, [`parse_number()`](https://readr.tidyverse.org/reference/parse_number.html) for removing useless characters and parsing numbers from strings.
+This tutorial covers [Chapter 14: Numbers](https://r4ds.hadley.nz/numbers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. Key commands include [`parse_double()`](https://readr.tidyverse.org/reference/parse_atomic.html) for parsing numbers directly from strings, [`parse_number()`](https://readr.tidyverse.org/reference/parse_number.html) for removing useless characters and parsing numbers from strings, [`count()`](https://dplyr.tidyverse.org/reference/count.html) which counts the unique values of one or more variables, [`round()`](https://rdrr.io/r/base/Round.html) which rounds values in its first argument to the specified number of decimal places, and [`IQR()`](https://rdrr.io/r/stats/IQR.html) which computes the interquantile range of the `x` values.
 
 
 The goal of this chapter is to learn how to parse numbers from strings, utilize numeric transformations on variables within datasets, and learn new ways to numerically summarize data. 
@@ -82,6 +84,7 @@ library(...)
 
 The [**readr**](https://readr.tidyverse.org/) package is one of the eight core packages in the *Tidyverse*. It provides two useful functions for parsing strings into numbers: `parse_double()` and `parse_number()`.
 
+### 
 
 ### Exercise 2
 
@@ -103,7 +106,7 @@ In most cases, you’ll get numbers already recorded in one of R’s numeric typ
 
 ### Exercise 3
 
-When you have numbers that have been written as strings we should use `parse_double()`. So let's use use `parse_double()` on the command we just created. 
+When you have numbers that have been written as strings we should use `parse_double()`. So let's use use `parse_double()` on `x` we just created. 
 
 ```{r making-numbers-3, exercise = TRUE}
 
@@ -112,8 +115,7 @@ When you have numbers that have been written as strings we should use `parse_dou
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r making-numbers-3-hint-1, eval = FALSE}
-x <- c("...", "...", "...")
-parse_double(x)
+parse_double(...)
 ```
 
 ### 
@@ -122,7 +124,7 @@ This should return an output of: `#> [1]    1.2    5.6 1000.0`.
 
 ### Exercise 4
 
-Use `parse_number()` when the string contains non-numeric text that you want to ignore. This is particularly useful for currency data and percentages. Let's first make a vector y that has the string values: `"$1,234"`, `"USD 3,513"`, `59%`
+Use `parse_number()` when the string contains non-numeric text that you want to ignore. This is particularly useful for currency data and percentages. Let's first make a vector `y` that has the string values: `"$1,234"`, `"USD 3,513"`, `"59%"`
 
 ```{r making-numbers-4, exercise = TRUE}
 
@@ -138,9 +140,11 @@ y <- c(..., ..., ...)
 
 As you can see, in this vector `y` there are non-numeric text that we would normally want to ignore if we were to see this in a dataset. 
 
+### 
+
 ### Exercise 5
 
-Let's use `parse_number()` to ignore this non-numeric text.
+Let's use `parse_number()` with `y` as the argument to ignore this non-numeric text.
 
 ```{r making-numbers-5, exercise = TRUE}
 
@@ -149,7 +153,6 @@ Let's use `parse_number()` to ignore this non-numeric text.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r making-numbers-5-hint-1, eval = FALSE}
-y <- c(..., ..., ...)
 parse_number(y)
 ```
 
@@ -177,7 +180,9 @@ question_text(NULL,
 
 ### 
 
-<!-- DK: Drop knowledge. Maybe mention add_count() or tally()? -->
+The functions `add_count()` and `add_tally()` are equivalents to `count()` and `tally()` but use `mutate()` instead of `summarise()` so that they add a new column with group-wise counts.
+
+### 
 
 ### Exercise 2
 
@@ -185,7 +190,7 @@ Now let's load in the dataset, `flights` that we will be making use of. This dat
 
 ### 
 
-Let's load up `flights` and display the dataset.
+Type in `flights` and hit "Run Code".
 
 ```{r counts-2, exercise = TRUE}
 
@@ -201,11 +206,7 @@ flights
 
 ### Exercise 3
 
-It’s surprising how much data science you can do with just counts and a little basic arithmetic, so dplyr strives to make counting as easy as possible with count(). This function is great for quick exploration and checks during analysis
-
-### 
-
-Let's count the number of planes of which departed from a certain destination. Make a pipeline from `flights` and use the function `count()` on `dest`.
+Let's count the number of planes of which departed from a certain destination. Pipe `flights` to the `count()` function. Within the call to `count()`, put an argument of `dest`.
 
 ```{r counts-3, exercise = TRUE}
 
@@ -221,9 +222,11 @@ flights |> count(dest)
 
 We usually put `count()` on a single line because it’s usually used at the console for a quick check that a calculation is working as expected.
 
+### 
+
 ### Exercise 4
 
-If you want to see the most common values, add the parameter sort = TRUE:
+If you want to see the most common values, use the previous pipe and add the parameter `sort = TRUE` to the function `count()`.
 
 ```{r counts-4, exercise = TRUE}
 
@@ -239,13 +242,11 @@ flights |> count(..., sort = TRUE)
 
 And remember that if you want to see all the values, you can use `|> View()` or `|> print(n = Inf)`.
 
-### Exercise 5
-
-`n()` is a special summary function that doesn’t take any arguments and instead accesses information about the “current” group. This means that it only works inside `dplyr` verbs.
-
 ### 
 
-Let's first make a pipeline with `flights` and group by the destination `dest`.
+### Exercise 5
+
+Create a new pipeline. Pipe `flights` to the `group_by()` function. Within the call to `group_by()`, put an argument of `dest`.
 
 ```{r counts-5, exercise = TRUE}
 
@@ -258,13 +259,15 @@ flights |>
   group_by(...)
 ```
 
-### Exercise 6
+### 
 
-Then let's use `n_distinct(x)` which counts the number of distinct (unique) values of one or more variables. For example, we could figure out which destinations are served by the most carriers. 
+`n()` is a special summary function that doesn’t take any arguments and instead accesses information about the “current” group. This means that it only works inside `dplyr` verbs.
 
 ### 
 
-We can use `n_distinct(x)` by adding `summarize()` to the pipeline and making a new column named `carriers` to be the number of distinct values of the `carrier` variable.
+### Exercise 6
+
+Let's figure out which destinations are served by the most carriers. Using the same pipe as above, add the `summarize()` function to the pipeline. Within the `summarize()` function, create a new variable `carriers` and set it to `n_distinct(carriers)`.
 
 ```{r counts-6, exercise = TRUE}
 
@@ -278,13 +281,15 @@ flights |>
   summarize(carriers = n_distinct(...))
 ```
 
-### Exercise 7
+### 
 
-A weighted count is a sum. For example you could “count” the number of miles each plane flew by using the `sum()` function.
+The function `n_distinct(x)` counts the number of distinct (unique) values of one or more variables. For example, we could figure out which destinations are served by the most carriers. 
 
 ### 
 
-But, `count()` has a `wt` argument that does the same thing. So let's make a new pipeline with flights and count that utilizes the `tailnum` and will make a weighted count with `distance`.
+### Exercise 7
+
+Create a new pipeline. Pipe `flights` to the `count()` function. Within the call to `count`, put the arguments `tailnum` and `wt = distance`.
 
 ```{r counts-7, exercise = TRUE}
 
@@ -293,16 +298,18 @@ But, `count()` has a `wt` argument that does the same thing. So let's make a new
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r counts-7-hint-1, eval = FALSE}
-flights |> count(tailnum, wt = distance)
+flights |> count(tailnum, ...)
 ```
-
-### Exercise 8
-
-Now, let's count the number of cancelled flights or missing values of each destination `dest`. 
 
 ### 
 
-Make a new pipeline with `flights` and group by the destinations. 
+A weighted count is a sum. For example you could “count” the number of miles each plane flew by using the `sum()` function. But, `count()` has a `wt` argument that does the same thing. 
+
+### 
+
+### Exercise 8
+
+Now, let's count the number of cancelled flights or missing values of each destination. Create a new pipeline. Pipe `flights` to the `group_by()` function. Within the call to `group_by()`, put an argument of `dest`.
 
 ```{r counts-8, exercise = TRUE}
 
@@ -312,12 +319,14 @@ Make a new pipeline with `flights` and group by the destinations.
 
 ```{r counts-8-hint-1, eval = FALSE}
 flights |> 
-  group_by(dest)
+  group_by(...)
 ```
+
+### 
 
 ### Exercise 9
 
-Next, let's count the canceled flights in each destination by using the `summarize()` function making a new column called `n_cancelled()` and getting the sum of the number of missing values by doing the following: `sum(is.na(dep_time))`
+Using the same pipe as above, add the `summarize()` function to the pipeline. Within the `summarize()` function, create a new variable `n_cancelled` and set it to `sum(is.na(dep_time))`.
 
 ```{r counts-9, exercise = TRUE}
 
@@ -327,9 +336,15 @@ Next, let's count the canceled flights in each destination by using the `summari
 
 ```{r counts-9-hint-1, eval = FALSE}
 flights |> 
-  group_by(dest) |> 
-  summarize(n_cancelled = sum(is.na(dep_time)))
+  group_by(...) |> 
+  summarize(n_cancelled = ...))
 ```
+
+### 
+
+The summarize() function here counts the canceled flights in each destination.
+
+### 
 
 ## Numeric Transformations
 ### 
