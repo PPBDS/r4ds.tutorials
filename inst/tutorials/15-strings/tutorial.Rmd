@@ -373,7 +373,9 @@ We’ll show you how to combine strings with `str_c()` and `str_glue()` and how 
  
 ### Exercise 1
 
-The first function we will learn is `str_c()`. `str_c()`takes any number of vectors as arguments and returns a character vector, so run `str_c("x","y")` and see what you get.
+The first function we will learn is `str_c()`. 
+
+`str_c()`takes any number of vectors as arguments and returns a character vector, so run `str_c("x","y")` and see what you get.
 
 ```{r creating-many-string-1, exercise = TRUE}
 
@@ -400,7 +402,7 @@ Copy previous code and change the argument to `str_c("Hello", c("Precptor","Anis
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-2-hint-1, eval = FALSE}
-str_c("Hello", c("Precptor","Anish"))
+str_c("Hello ", c("Precptor","Anish"))
 ```
 
 ### 
@@ -410,7 +412,7 @@ Based from the result we can see that `str_c()` is vectorized, which means it ca
  
 ### Exercise 3
 
-To show how we can use `str_c()` on a dataset, lets create a tibble. Create a variable named `df` and set it to `tibble(name = c("Flora","Preceptor","Terra",NA))` which create a data set with the string characters.
+To demonstrate the usage of `str_c()` on a data set, let's create a tibble. Create a variable called `df` and assign it to `tibble(name = c("Flora", "Preceptor", "Terra", NA))`. This will generate a data set with string characters.
 
 ```{r creating-many-string-3, exercise = TRUE}
 
@@ -419,7 +421,7 @@ To show how we can use `str_c()` on a dataset, lets create a tibble. Create a va
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-3-hint-1, eval = FALSE}
-... <- ...
+... <- tibble(...=c(...))
 ```
 
 ### 
@@ -464,64 +466,50 @@ Let's modify the tibble by first piping the tibble `df` to the `mutate()` functi
 
 ### 
 
-If you want missing values to display in another way, use [`coalesce()`](https://dplyr.tidyverse.org/reference/coalesce.html) to replace them.
+After modifying the tibble, we still have a  column called `name`. We used the `mutate()` function from the ["dplyr"](https://dplyr.tidyverse.org/) package to create a new column called `greeting`. The `str_c()` function is used to concatenate the string "Hi " with the values in the `name` column. 
 
 ### Exercise 6
 
-Run `df` to see the modified data frame.
+If you are mixing many fixed and variable strings with `str_c()`, you’ll notice that you type a lot of `"`s, making it hard to see the overall goal of the code. An alternative approach is provided by the glue package via `str_glue()`.
+
+Let's create a variable named `df1` and set it to `tibble(name = c("Flora","Preceptor","Terra",NA))` which create a data set with the string characters.
 
 ```{r creating-many-string-6, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r creating-many-string-6-hint-1, eval = FALSE}
-
-```
-
-### 
-
-After modifying the tibble, we still have a  column called `name`. We used the `mutate()` function from the ["dplyr"](https://dplyr.tidyverse.org/) package to create a new column called `greeting`. The `str_c()` function is used to concatenate the string "Hi " with the values in the `name` column. 
-
-### Exercise 7
-
-If you are mixing many fixed and variable strings with str_c(), you’ll notice that you type a lot of `"`s, making it hard to see the overall goal of the code. An alternative approach is provided by the glue package via `str_glue()`.
-
-Let's create a variable named `df1` and set it to `tibble(name = c("Flora","Preceptor","Terra",NA))` which create a data set with the string characters.
-
-```{r creating-many-string-7, exercise = TRUE}
-
-```
-
-```{r creating-many-string-7-hint-1, eval = FALSE}
-... <- ...
-```
-
-### 
-
-### Exercise 8
-
-Let's modify the tibble by first piping the tibble `df1` to the `mutate()` function, then in `mutate()`, we will create new column `greeting` and set it equal to `str_glue("Hi {name} !")`.
-
-```{r creating-many-string-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r creating-many-string-8-hint-1, eval = FALSE}
-df1 |>
-  ...(greeting = ...())
+... <- tibble(...=c(...))
 ```
 
 ### 
 
 How `str_glue()` works is that if you give it a single string that has a special feature: anything inside `{}` will be evaluated like it’s outside of the quotes.
 
+### Exercise 7
+
+Let's modify the tibble by first piping the tibble `df1` to the `mutate()` function, then in `mutate()`, we will create new column `greeting` and set it equal to `str_glue("Hi {name} !")`.
+
+```{r creating-many-string-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-many-string-7-hint-1, eval = FALSE}
+df1 |>
+  ...(greeting = ...())
+```
+
+### 
+
+After modifying the tibble, we still have a  column called `name`. We used the `mutate()` function from the ["dplyr"](https://dplyr.tidyverse.org/) package to create a new column called `greeting`. As you can see, `str_glue()` currently converts missing values to the string "NA" unfortunately making it inconsistent with `str_c()`.
+
 ### Exercise 9
 
-Run `df1` to see the data frame.
+`str_c()` and `str_glue()` are suitable for use with `mutate()` since their output matches the length of their inputs. However, if you need a function that works well with `summarize()` and always returns a single string, `str_flatten()` comes into play. It takes a character vector as input and combines each element of the vector into a single string.
+
+Type `str_flatten()` and within it have a vector of strings like this `c("x","y","z")`.
 
 ```{r creating-many-string-9, exercise = TRUE}
 
@@ -530,18 +518,16 @@ Run `df1` to see the data frame.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-9-hint-1, eval = FALSE}
-...
+str_flatten(...)
 ```
 
 ### 
 
-After modifying the tibble, we still have a  column called `name`. We used the `mutate()` function from the ["dplyr"](https://dplyr.tidyverse.org/) package to create a new column called `greeting`. As you can see, `str_glue()` currently converts missing values to the string "NA" unfortunately making it inconsistent with `str_c()`.
+One variation of `str_flatten()` is `str_flatten_comma()` is a variation designed specifically for flattening with commas. It automatically recognizes if last uses the Oxford comma and handles the special case of 2 elements.
 
 ### Exercise 10
 
-`str_c()` and `str_glue()` work well with mutate() because their output is the same length as their inputs. What if you want a function that works well with `summarize()`, i.e. something that always returns a single string? That’s the job of `str_flatten()`: it takes a character vector and combines each element of the vector into a single string.
-
-Type `str_flatten()` and within it have a vector of strings like this `c("x","y","z")`.
+What if you want commas after every letter. Copy the previous code and within the argument, add a comma and type a comma in string like this `","`.
 
 ```{r creating-many-string-10, exercise = TRUE}
 
@@ -550,16 +536,16 @@ Type `str_flatten()` and within it have a vector of strings like this `c("x","y"
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-10-hint-1, eval = FALSE}
-str_flatten(...)
+str_flatten(c(...),...)
 ```
 
 ### 
 
-One variation of `str_flatten()` is `str_flatten_comma()` is a variation designed specifically for flattening with commas. It automatically recognizes if last uses the Oxford comma and handles the special case of 2 elements.
+The second argument which was a comma as a string as we saw, it is actually knows as a `collapse`: a string to enter between each piece. Defaults to "".
 
 ### Exercise 11
 
-What if you want commas after every letter. Copy the previous code and within the argument, add a comma and type a comma in string like this `","`.
+Let's fix the grammar of the string we got in previous exercise, copy the previous code and add `last = ", and "`.
 
 ```{r creating-many-string-11, exercise = TRUE}
 
@@ -568,16 +554,16 @@ What if you want commas after every letter. Copy the previous code and within th
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-11-hint-1, eval = FALSE}
-str_flatten(c(...),...)
+str_flatten(c(...),..., last = ...)
 ```
 
 ### 
 
-The second argument which was a comma as a string as we saw, it is actually knows as a `collapse`: a string to enter between each piece. Defaults to "".
+The `last` argument is a optional string to use in place of the final separator.
 
 ### Exercise 12
 
-Let's fix the grammar of the string we got in previous exercise, copy the previous code and add `last = ", and "`.
+Let's now use `str_flatten()` with `summarize()`. Run `df2` to have a quick look at the data frame.
 
 ```{r creating-many-string-12, exercise = TRUE}
 
@@ -586,16 +572,16 @@ Let's fix the grammar of the string we got in previous exercise, copy the previo
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-12-hint-1, eval = FALSE}
-
+df2
 ```
 
 ### 
 
-The `last` argument is a optional string to use in place of the final separator.
+The tibble has two columns named "name" and "fruit". Carmen has more than one fruit to his name and Terence has more than two fruits to his name.
 
 ### Exercise 13
 
-Let's now use `str_flatten()` with `summarize()`. Run `df3` to have a quick look at the data frame.
+Start a pipe with `df2` to `group_by()` which takes `name` as argument.
 
 ```{r creating-many-string-13, exercise = TRUE}
 
@@ -604,16 +590,17 @@ Let's now use `str_flatten()` with `summarize()`. Run `df3` to have a quick look
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-13-hint-1, eval = FALSE}
-df3
+df2 |>
+  ...(...)
 ```
 
 ### 
 
-The tibble has two columns named "name" and "fruit". Carmen has more than one fruit to his name and Terence has more than two fruits to his name.
+Most data operations are done on groups defined by variables. `group_by()` takes an existing tbl and converts it into a grouped tbl where operations are performed "by group". `ungroup()` removes grouping. If you want more info check out ["dplyr"](https://dplyr.tidyverse.org/reference/group_by.html).
 
 ### Exercise 14
 
-Start a pipe with `df3` to `group_by()` which takes `name` as argument.
+Continue the pipe from `group_by()` to `summarize()`.
 
 ```{r creating-many-string-14, exercise = TRUE}
 
@@ -622,17 +609,19 @@ Start a pipe with `df3` to `group_by()` which takes `name` as argument.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-14-hint-1, eval = FALSE}
-df3 |>
-  ...(...)
+... |>
+  ...(name) |>
+  ...()
 ```
 
 ### 
 
-Most data operations are done on groups defined by variables. `group_by()` takes an existing tbl and converts it into a grouped tbl where operations are performed "by group". `ungroup()` removes grouping. If you want more info check out ["dplyr"](https://dplyr.tidyverse.org/reference/group_by.html).
+`summarize()` creates a new data frame. It returns one row for each combination of grouping variables; if there are no grouping variables, the output will have a single row summarizing all observations in the input.
+
 
 ### Exercise 15
 
-Continue the pipe from `group_by()` to `summarize()`.
+Within `summarize()`, type the column `fruit` and set it to `str_flatten(fruit, ",")`.
 
 ```{r creating-many-string-15, exercise = TRUE}
 
@@ -641,27 +630,6 @@ Continue the pipe from `group_by()` to `summarize()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-many-string-15-hint-1, eval = FALSE}
-... |>
-  ...(name) |>
-  ...()
-```
-
-### 
-
-`summarize()` creates a new data frame. It returns one row for each combination of grouping variables; if there are no grouping variables, the output will have a single row summarising all observations in the input.
-
-
-### Exercise 16
-
-Within `summarize()`, type the column `fruit` and set it to `str_flatten(fruit, ",")`.
-
-```{r creating-many-string-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r creating-many-string-16-hint-1, eval = FALSE}
 ... |>
   ...|>
   summarize(fruits = ...)
@@ -839,8 +807,6 @@ Create a `tibble()`, set `x` as the name of the column and set `x` equal to a ve
 
 ```
 
-
-
 ```{r extracting-data-from-8-hint-1, eval = FALSE}
 df4 <- tibble(x = c(...))
 ```
@@ -913,7 +879,7 @@ df <- tibble(x = c(...))
   )
 ```
 
-###
+### 
 
 You’ll notice that we get an error, but the error gives us some suggestions on how you might proceed. Let’s start by debugging the problem
 
@@ -957,7 +923,7 @@ CP the previous code and change `too_few` to be set to "align_start".
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r extracting-data-from-13-hint, eval = FALSE}
+```{r extracting-data-from-13-hint-1, eval = FALSE}
 df <- tibble(x = c(...))
 ... |> 
   separate_wider_delim(
@@ -969,7 +935,7 @@ df <- tibble(x = c(...))
 
 ```
 
-###
+### 
 
 You see that some of colums are filled with `NA` since we put `too_few = "align_start"`.
 
@@ -986,12 +952,11 @@ Create a `tibble()`, set `x` as the name of the column and set `x` equal to a ve
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r extracting-data-from-14-hint, eval = FALSE}
+```{r extracting-data-from-14-hint-1, eval = FALSE}
 df <- tibble(x = ...)
 ```
 
-###
-
+### 
 
 ### Exercise 15
 
@@ -1003,7 +968,7 @@ CP/PR and start pipe with `df` to `separate_wider_delim()`, within the function,
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r extracting-data-from-15-hint, eval = FALSE}
+```{r extracting-data-from-15-hint-1, eval = FALSE}
 df <- tibble(x = ...)
 ... |> 
   separate_wider_delim(
@@ -1013,7 +978,7 @@ df <- tibble(x = ...)
   )
 ```
 
-###
+### 
 
 You will get an error and get suggestions to use `too_many = "debug"` or `too_many = "drop/merge"`. We will use "debug" to see what being kept and what's being left and after that we will talk about use drop and merge.
 
@@ -1027,7 +992,7 @@ CP the previous code add `too_many = "debug"` within `separate_wider_delim()`.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r extracting-data-from-16-hint, eval = FALSE}
+```{r extracting-data-from-16-hint-1, eval = FALSE}
 df <- tibble(x = ...)
 ... |> 
   separate_wider_delim(
@@ -1038,7 +1003,7 @@ df <- tibble(x = ...)
   )
 ```
 
-###
+### 
 
 When we debug the result, you can see the purpose of x_remainder: it shows what was left behind and not inserted into the columns.
 
@@ -1052,7 +1017,7 @@ CP the previous code and change `too_many` to "drop".
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r extracting-data-from-17-hint, eval = FALSE}
+```{r extracting-data-from-17-hint-1, eval = FALSE}
 df <- tibble(x = ...)
 ... |> 
   separate_wider_delim(
@@ -1063,7 +1028,7 @@ df <- tibble(x = ...)
   )
 ```
 
-###
+### 
 
 As we already based of the word, Rstudio will drop the x remainders.
 
@@ -1077,7 +1042,7 @@ Copy previous and now change `too_many` to "merge".
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r extracting-data-from-18-hint, eval = FALSE}
+```{r extracting-data-from-18-hint-1, eval = FALSE}
 df <- tibble(x = ...)
 ... |> 
   separate_wider_delim(
@@ -1088,7 +1053,7 @@ df <- tibble(x = ...)
   )
 ```
 
-###
+### 
 
 The x remainders are merged into the final column.
 
