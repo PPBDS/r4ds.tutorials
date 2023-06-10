@@ -340,6 +340,127 @@ Regular expressions are very compact and use a lot of punctuation characters, so
 
 Now that you’ve got the basics of regular expressions under your belt, let’s use them with some **stringr** and **tidyr** functions. In the following section, you’ll learn how to detect the presence or absence of a match, how to count the number of matches, how to replace a match with fixed text, and how to extract text using a pattern.
 
+### Exercise 1
+
+`str_detect()` returns a logical vector that is `TRUE` if the pattern matches an element of the character vector and `FALSE` otherwise.  Run `str_detect()` with the `string` argument equal to `c("a", "b", "c")` and the `pattern` argument equal to  `"[aeiou]"`.
+
+```{r key-functions-1, exercise = TRUE}
+
+```
+
+```{r key-functions-1-hint-1, eval = FALSE}
+str_detect(string = ..., 
+           pattern = ...)
+```
+
+### 
+
+Most of the time, we admit the argument names (`string` and `pattern`) and simply rely on "positional mapping," meaning that `string` is always the first argument (and `pattern` the second) because that is how the function is defined.
+
+### Exercise 2
+
+Since `str_detect()` returns a logical vector of the same length as the initial vector, it pairs well with `filter()`. Pipe `babynames` to `filter()`, using `str_detect(name, "x")` as the argument to `filter()`.
+
+```{r key-functions-2, exercise = TRUE}
+
+```
+
+```{r key-functions-2-hint-1, eval = FALSE}
+babynames |> 
+  filter(...(name, ...))
+```
+
+### 
+
+Note that `name` is one of the variables in `babynames`. This pipe reduces the almost 2 million rows in `babynames` to just the 16,000 or so rows in which `name` contains the letter `x`.
+
+
+### Exercise 3
+
+<!-- DK: Note how the `n` column in `babynames` makes this code harder than we would like. Maybe break this up into three steps? -->
+
+Continue the pipe with `count()`, using the arguments `name, wt = n, sort = TRUE`. 
+
+
+```{r key-functions-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r key-functions-3-hint-1, eval = FALSE}
+... |> 
+  count(..., wt = n, ... = TRUE)
+```
+
+### 
+
+We want to determine the most popular `name`'s with an "x" in them, which is why we have `sort = TRUE`. We need `wt = n` because we want to account for the role of `n` in indicating how many times, in a single year, a given names was used.
+
+### Exercise 4
+
+<!-- DK: Should this be `x` or `string` in this paragraph? -->
+
+We can also use `str_detect()` with `summarize()` by pairing it with `sum()` or `mean()`: `sum(str_detect(x, pattern))` tells you the number of observations that match and `mean(str_detect(x, pattern))` tells you the proportion that match. 
+
+Pipe `babynames` to `summarize()` with the argument `prop_x = mean(str_detect(name, "x"))`.
+
+```{r key-functions-4, exercise = TRUE}
+
+```
+
+```{r key-functions-4-hint-1, eval = FALSE}
+babynames |> 
+  summarize(prop_x = ...(str_detect(name, ...)))
+```
+
+### 
+
+The result indicates that about 8% of the `names` in `babynames` include the letter "x."
+
+### Exercise 5
+
+We are interested in how this percentage has changed over time, so modify the code by adding `.by = year` to the class to `summarize()`.
+
+```{r key-functions-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r key-functions-5-hint-1, eval = FALSE}
+babynames |> 
+  summarize(... = mean(str_detect(name, "x")),
+            .by = ...)
+```
+
+### 
+
+This gives us the proportion of names that contain an "x." if you wanted the proportion of babies with a name containing an "x," you would need to perform a weighted mean.
+
+### Exercise 6
+
+Continue the pipe to a call to `ggplot()`, with `aes(x = year, y = prop_x)`. Add `geom_line()`. Don;t forget that commands after `ggplot()` are separated by `+`, not `|>`.
+
+```{r key-functions-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r key-functions-6-hint-1, eval = FALSE}
+... |> 
+  ggplot(aes(x = ..., ... = prop_x)) + 
+  geom_...()
+```
+
+### 
+
+There are two functions that are closely related to `str_detect()`:  
+
+* `str_subset()` returns a character vector containing only the strings that match. 
+* `str_which()` returns an integer vector giving the positions of the strings that match.
+
 ## Pattern details
 ### 
 
