@@ -18,6 +18,17 @@ library(tidyverse)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
+
+people <- tribble(
+  ~str,
+  "<Sheryl>-F_34",
+  "<Kisha>-F_45", 
+  "<Brandon>-N_33",
+  "<Sharon>-F_38", 
+  "<Penny>-F_58",
+  "<Justin>-M_41", 
+  "<Patricia>-F_84", 
+)
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -461,8 +472,250 @@ There are two functions that are closely related to `str_detect()`:
 * `str_subset()` returns a character vector containing only the strings that match. 
 * `str_which()` returns an integer vector giving the positions of the strings that match.
 
+
+### Exercise 7
+
+The next step up in complexity from `str_detect()` is `str_count()`: rather than a true or false, it tells you how many matches there are in each string. Run `str_count()` with two arguments: the vector `c("apple", "banana", "pear")` and the letter "p".
+
+```{r key-functions-7, exercise = TRUE}
+
+```
+
+```{r key-functions-7-hint-1, eval = FALSE}
+str_count(..., "p")
+```
+
+### 
+
+There are two "p"'s in "apple" but zero in "pear."
+
+### Exercise 8
+
+Note that each match starts at the end of the previous match, i.e. regex matches never overlap. 
+
+Run `str_count()` on `"abababa"` and `"aba"`.
+
+
+```{r key-functions-8, exercise = TRUE}
+
+```
+
+```{r key-functions-8-hint-1, eval = FALSE}
+str_count("abababa", ...)
+```
+
+### 
+
+For example, in "abababa", how many times will the pattern "aba" match? Regular expressions say two, not three.
+
+### Exercise 9
+
+To better see this, `str_view()` on `"abababa"` and `"aba"`.
+
+```{r key-functions-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r key-functions-9-hint-1, eval = FALSE}
+str_view(..., "aba")
+```
+
+### 
+
+In other words, the "second" "aba" string, which relies on the second "a" in the first "aba" string, does not count because regular expressions, by default, are exclusive.
+
+
+### Exercise 10
+
+Pipe `babynames` to `count(name)`.
+
+
+```{r key-functions-10, exercise = TRUE}
+
+```
+
+```{r key-functions-10-hint-1, eval = FALSE}
+babynames |> 
+  ...(name)
+```
+
+### 
+
+The reduces the almost 2 million entries to just the 100,000 or so unique names. Note how often the letter "a" appears in the first ten names.
+
+### Exercise 11
+
+Continue the pipe with `mutate()`, creating a new variable, `vowels`, which is equal to `str_count(name, "[aeiou]")`.
+
+```{r key-functions-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r key-functions-11-hint-1, eval = FALSE}
+babynames |> 
+  count(name) |> 
+  mutate(
+    vowels = ...(..., "[aeiou]")
+  )
+```
+
+### 
+
+If you look closely, you’ll notice that there’s something off with our calculations: “Aaban” contains three “a”s, but our summary reports only two vowels. That’s because regular expressions are case sensitive. Ignore that error for now.
+
+
+### Exercise 12
+
+Add another variable creation argument to `mutate()`. Create `consonants` as the result of `str_count(name, "[^aeiou]")`.
+
+```{r key-functions-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r key-functions-12-hint-1, eval = FALSE}
+babynames |> 
+  count(name) |> 
+  mutate(
+    vowels = str_count(name, "[aeiou]"),
+    consonants = ...(name, ...)
+  )
+```
+
+### 
+
+This suffers from the same problem as `vowels`. The capital letter "A" is not in the set `aeiou`, so it is counted, incorrectly, as a consonant. Among, other approaches, we could fix this by:
+
+* Adding the upper case vowels to the character class: `str_count(name, "[aeiouAEIOU]")`.
+
+* Telling the regular expression to ignore case: `str_count(name, regex("[aeiou]", ignore_case = TRUE))`.
+
+### Exercise 13
+
+Change `mutate()` so that the first step is to change-in-place the variable `name` to be all in lower case. We do that with `name = str_to_lower(name)`.
+
+```{r key-functions-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r key-functions-13-hint-1, eval = FALSE}
+babynames |> 
+  count(name) |> 
+  mutate(
+    ... = ...(name),
+    vowels = str_count(name, "[aeiou]"),
+    consonants = str_count(name, "[^aeiou]")
+  )
+```
+
+### 
+
+This variety of approaches is pretty typical when working with strings — there are often multiple ways to reach your goal, either by making your pattern more complicated or by doing some preprocessing on your string. If you get stuck trying one approach, it can often be useful to switch gears and tackle the problem from a different perspective.
+
+### Exercise 14
+
+As well as detecting and counting matches, we can also modify them with `str_replace()` and `str_replace_all()`. Run `str_replace_all()` on with `string` equal to `c("apple", "pear", "banana")`, `pattern` equal to  `"[aeiou]"`, and `replacement` equal to `"-"`.
+
+
+```{r key-functions-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r key-functions-14-hint-1, eval = FALSE}
+str_replace_all(string = ..., 
+                ... = "[aeiou]", 
+                replacement = ...)
+```
+
+### 
+
+We usually omit the argument names, so this code would normally be: `str_replace_all(c("apple", "pear", "banana"), "[aeiou]", "-")`.
+
+### Exercise 15
+
+`str_remove()` and `str_remove_all()` are handy shortcuts for `str_replace(x, pattern, "")`. Run `str_remove_all()` on `c("apple", "pear", "banana")` and `"[aeiou]"`.
+
+
+```{r key-functions-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r key-functions-15-hint-1, eval = FALSE}
+str_remove_all(c("apple", "pear", "banana"), ...)
+```
+
+### 
+
+These commands with the `_all` suffix just act on the *first* match in each element of the vector. Try `str_remove(c("apple", "pear", "banana"), "[aeiou]")` for an example.
+
+These functions are naturally paired with `mutate()` when doing data cleaning, and you’ll often apply them repeatedly to peel off layers of inconsistent formatting.
+
+### Exercise 16
+
+The last function we’ll discuss in this section uses regular expressions to extract data out of one column into one or more new columns: `separate_wider_regex()`. It’s a peer of the `separate_wider_position()` and `separate_wider_delim()` functions that you learned about previously. These functions live in the **tidyr** package because they operate on (columns of) data frames, rather than individual vectors.
+
+Run `people` to examine the tibble which we will use.
+
+```{r key-functions-16, exercise = TRUE}
+
+```
+
+```{r key-functions-16-hint-1, eval = FALSE}
+people
+```
+
+### 
+
+We have the name, gender, and age of a bunch of people in a rather weird format. We wish we could reassure you that you’d never see something this weird in real life, but unfortunately over the course of your career you’re likely to see much weirder!
+
+### Exercise 17
+
+To extract this data using separate_wider_regex() we just need to construct a sequence of regular expressions that match each piece. If we want the contents of that piece to appear in the output, we give it a name. Consider:
+
+<!-- DK: Shouldn't we split this up into a series of steps, perhaps with on-purpose errors and debugging? -->
+
+```{r key-functions-17, exercise = TRUE}
+people |> 
+  separate_wider_regex(
+    str,
+    patterns = c(
+      "<", 
+      name = "[A-Za-z]+", 
+      ">-", 
+      gender = ".", "_", 
+      age = "[0-9]+"
+    )
+  )
+```
+
+```{r key-functions-17-hint-1, eval = FALSE}
+No hint needed!
+```
+
+### 
+
+<!-- DK: Note the typo in the original in R4DS. -->
+
+If the match fails, you can use `too_few = "debug"` to figure out what went wrong, just like `separate_wider_delim()` and `separate_wider_position()`.
+
+
+
 ## Pattern details
 ### 
+
+
+
 
 ## Pattern control
 ### 
