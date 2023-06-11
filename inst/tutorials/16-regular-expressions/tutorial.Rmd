@@ -41,6 +41,8 @@ people <- tribble(
 
 <!-- Maybe one of the nice looking babynames lots could go at the end of this tutorial. Or maybe we make a new one? -->
 
+<!-- This tutorial is long! Maybe don't include the practice section? Or maybe it is just long to write! -->
+
 
 ## Introduction
 ### 
@@ -710,9 +712,214 @@ No hint needed!
 If the match fails, you can use `too_few = "debug"` to figure out what went wrong, just like `separate_wider_delim()` and `separate_wider_position()`.
 
 
-
 ## Pattern details
 ### 
+
+<!-- DK: Revisit this section. There are too many paragraphs of prose. And too many instructions to just run some code. -->
+
+Now that you understand the basics of the pattern language and how to use it with some stringr and tidyr functions, it’s time to dig into more of the details. First, we’ll start with **escaping**, which allows you to match metacharacters that would otherwise be treated specially. Next, you’ll learn about **anchors** which allow you to match the start or end of the string. Then, you’ll learn more about **character classes** and their shortcuts which allow you to match any character from a set. Next, you’ll learn the final details of **quantifiers** which control how many times a pattern can match. Then, we have to cover the important (but complex) topic of **operator precedence** and parentheses. And we’ll finish off with some details of **grouping** components of the pattern.
+
+
+### Exercise 1
+
+In order to match a literal `.`, you need an escape which tells the regular expression to match metacharacters literally. Like strings, regexps use the backslash for escaping. So, to match a `.`, you need the regexp `\.`. Unfortunately this creates a problem. We use strings to represent regular expressions, and `\` is also used as an escape symbol in strings. So to create the regular expression `\.` we need the string `"\\."`, as the following example shows. Run this code:
+
+
+```{r pattern-details-1, exercise = TRUE}
+# To create the regular expression \., we need to use \\.
+dot <- "\\."
+
+# But the expression itself only contains one \
+str_view(dot)
+
+# And this tells R to look for an explicit .
+str_view(c("abc", "a.c", "bef"), "a\\.c")
+```
+
+```{r pattern-details-1-hint-1, eval = FALSE}
+No hint needed.
+```
+
+### 
+
+In this section, we’ll usually write regular expression without quotes, like `\.`. If we need to emphasize what you’ll actually type, we’ll surround it with quotes and add extra escapes, like `"\\."`.
+
+
+### Exercise 2
+
+If `\` is used as an escape character in regular expressions, how do you match a literal `\`? Well, you need to escape it, creating the regular expression `\\`. To create that regular expression, you need to use a string, which also needs to escape `\`. 
+
+
+```{r pattern-details-2, exercise = TRUE}
+x <- "a\\b"
+str_view(x)
+str_view(x, "\\\\")
+```
+
+```{r pattern-details-2-hint-1, eval = FALSE}
+No hint needed.
+```
+
+### 
+
+In other words, to match a literal `\` you need to write `"\\\\"` — you need four backslashes to match one!
+
+### Exercise 3
+
+Probably better is to use the raw strings you learned about previously. That lets you avoid one layer of escaping. Run this code.
+
+```{r pattern-details-3, exercise = TRUE}
+x <- "a\\b"
+str_view(x, r"{\\}")
+```
+
+```{r pattern-details-3-hint-1, eval = FALSE}
+No hint needed.
+```
+
+### 
+
+`str_view()` highlights the single backslash which is part of the `x` variable. But, to match that single backslash, we need a raw string pattern with two blackslashes.
+
+### Exercise 4
+
+If you’re trying to match a literal `.`, `$`, `|`, `*`, `+`, `?`, `{`, `}`, `(`, `)`, there’s an alternative to using a backslash escape: you can use a character class: `[.]`, `[$]`, `[|]`, ... all match the literal values. Run this code.
+
+```{r pattern-details-4, exercise = TRUE}
+str_view(c("abc", "a.c", "a*c", "a c"), "a[.]c")
+str_view(c("abc", "a.c", "a*c", "a c"), ".[*]c")
+```
+
+```{r pattern-details-4-hint-1, eval = FALSE}
+No hint needed.
+```
+
+### 
+
+Regular expressions require care and attention. That last example, which uses `".[*]c"`, means any character (the `.`), followed by a `*` (captured in as a character class), followed by a "c". Only `"a*c"` matches this pattern.
+
+### Exercise 5
+
+By default, regular expressions will match any part of a string. If you want to match at the start or end you need to *anchor* the regular expression using `^` to match the start or `$` to match the end. Run `str_view()` with `fruit` as the first argument and `"^a"` as the second.
+
+```{r pattern-details-5, exercise = TRUE}
+
+```
+
+```{r pattern-details-5-hint-1, eval = FALSE}
+str_view(fruit, ...)
+```
+
+### 
+
+Although there are many fruits that include the letter "a," only three begin with the letter "a."
+
+### Exercise 6
+
+Run `str_view()` with `fruit` as the first argument and `"a$"` as the second.
+
+```{r pattern-details-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r pattern-details-6-hint-1, eval = FALSE}
+str_view(fruit, ...)
+```
+
+### 
+
+Note how we use `"^a"` with the `^` at the front of the pattern, indicating that "a" belongs at the start of the string, and `"a$`, with the `$` at the end of the pattern, indicating that "a" belongs at the end of the string.
+
+### Exercise 7
+
+To force a regular expression to match only the full string, anchor it with both `^` and `$`. Run `str_view()` twice, both times with `fruit` as the first argument. In one, `"apple"` is the pattern. In another, `"^apples$` is the pattern.
+
+```{r pattern-details-7, exercise = TRUE}
+
+```
+
+```{r pattern-details-7-hint-1, eval = FALSE}
+str_view(..., "apple")
+str_view(fruit, ...)
+```
+
+### 
+
+Are you getting overwhelmed yet? No worries. The rise of ChatGPT and other AI tools makes the creation of regular expressions to do exactly what you want much easier.
+
+### Exercise 8
+
+You can also match the boundary between words (i.e. the start or end of a word) with `\b`. This can be particularly useful when using RStudio’s find and replace tool. Add `str_view(x, "sum")` to this exercise block
+
+```{r pattern-details-8, exercise = TRUE}
+x <- c("summary(x)", "summarize(df)", "rowsum(x)", "sum(x)")
+
+```
+
+```{r pattern-details-8-hint-1, eval = FALSE}
+x <- c("summary(x)", "summarize(df)", "rowsum(x)", "sum(x)")
+str_view(x, "sum")
+```
+
+### 
+
+Every element of our vector matches the pattern.
+
+### Exercise 9
+
+Add `str_view(x, "\\bsum\\b")` to this exercise block
+
+```{r pattern-details-9, exercise = TRUE}
+x <- c("summary(x)", "summarize(df)", "rowsum(x)", "sum(x)")
+
+```
+
+```{r pattern-details-9-hint-1, eval = FALSE}
+x <- c("summary(x)", "summarize(df)", "rowsum(x)", "sum(x)")
+str_view(x, "\\bsum\\b")
+```
+
+### 
+
+This is not easy. `\b` means a word boundary, which includes the implicit start of the words "summary()," "summarize()," and "sum()." The first two, however, do not match the `\b` end of the pattern. Yet "sum()" does match because `(`, not being a letter, counts as a boundary. Finally, we need to escape the `\` for both usages of `\b`, leading to `\\b` at both the front and the back.
+
+
+### Exercise 10
+
+<!-- DK: need to start with a simple example which explains using a vector of parameters. -->
+
+When used alone, anchors will produce a zero-width match. Run `str_view()` on the string "abc" and the patterns `c("$", "^", "\\b")`.
+
+```{r pattern-details-10, exercise = TRUE}
+
+```
+
+```{r pattern-details-10-hint-1, eval = FALSE}
+str_view(..., c("$", "^", "\\b"))
+```
+
+### 
+
+Note how we have a single string but three different patterns, each of which does match the string. The display, with its zero-width brackets --- `<>` --- indicates that the matches do not involve the contents of the string.
+
+### Exercise 11
+
+The previous example helps you understand what happens when you replace a standalone anchor. Run `str_replace_all()` on the string `"abc"` and the patterns `c("$", "^", "\\b")` with using  `"--"` as the replacement. 
+
+
+```{r pattern-details-11, exercise = TRUE}
+
+```
+
+```{r pattern-details-11-hint-1, eval = FALSE}
+str_replace_all("abc", ..., "--")
+```
+
+### 
+
+Even though the input is a single string, the three patterns generate a vector of three elements as the output. 
 
 
 
