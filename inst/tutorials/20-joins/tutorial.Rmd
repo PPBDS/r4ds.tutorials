@@ -16,6 +16,8 @@ library(tutorial.helpers)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
+
+library(nycflights13)
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -47,6 +49,139 @@ You will also learn about basic joins, keys, foreign keys and more which is basi
 ###
 
 To understand joins, you need to first understand how two tables can be connected through a pair of keys, within each table. In this section, you’ll learn about the two types of key and see examples of both in the datasets of the ["nycflights13"](https://www.rdocumentation.org/packages/nycflights13/versions/1.0.1) package. You’ll also learn how to check that your keys are valid, and what to do if your table lacks a key.
+
+### Exercise 1
+
+Every join involves a pair of keys: a primary key and a foreign key. A primary key is a variable or set of variables that uniquely identifies each observation.
+
+As a example run `airlines`.
+
+```{r keys-1, exercise = TRUE}
+
+```
+
+
+```{r keys-1-hint, eval = FALSE}
+airlines
+```
+
+###
+
+airlines records two pieces of data about each airline: its `carrier` code and its full `name`. You can identify an airline with its two letter carrier code, making carrier the primary key.
+
+### Exercise 2
+
+Run `airports`.
+
+```{r keys-2, exercise = TRUE}
+
+```
+
+
+```{r keys-2-hint, eval = FALSE}
+airports
+```
+
+###
+
+airports records data about each airport. You can identify each airport by its three letter airport code, making `faa` the primary key.
+
+### Exercise 3
+
+Run `planes`.
+
+```{r keys-3, exercise = TRUE}
+
+```
+
+
+```{r keys-3-hint, eval = FALSE}
+planes
+```
+
+###
+
+planes records data about each plane. You can identify a plane by its tail number, making `tailnum` the primary key.
+
+### Exercise 4
+
+Run `weather`.
+
+```{r keys-4, exercise = TRUE}
+
+```
+
+
+```{r keys-4-hint, eval = FALSE}
+weather
+```
+
+###
+
+`weather` records data about the weather at the origin airports. You can identify each observation by the combination of location and time, making `origin` and `time_hour` the compound primary key.
+
+When more than one variable is needed, the key is called a `compound key`.
+
+### Exercise 5
+
+Now that we have seen couple of examples of what `primary keys` are, let's explore what a `foreign key` is. A `foreign key` is a variable (or set of variables) that corresponds to a `primary key` in another table.
+
+Run `flights$tailnum`.
+
+```{r keys-5, exercise = TRUE}
+
+```
+
+
+```{r keys-5-hint, eval = FALSE}
+flights$tailnum
+```
+
+###
+
+`flights$tailnum` is a foreign key that corresponds to the primary key `tailnum` in the `planes` tibble.
+
+### Exercise 6
+
+Run `flights$carrier`.
+
+```{r keys-6, exercise = TRUE}
+
+```
+
+
+```{r keys-6-hint, eval = FALSE}
+flights$carrier
+```
+
+###
+
+`flights$carrier` is a foreign key that corresponds to the primary key `carrier` in the airlines tibble.
+
+### Exercise 7
+
+Run `flights$origin`.
+
+```{r keys-7, exercise = TRUE}
+
+```
+
+
+```{r keys-7-hint, eval = FALSE}
+flights$origin
+```
+
+###
+
+`flights$origin` is a foreign key that corresponds to the primary key `faa` in the `airpors` tibble.
+
+The relationships which we saw can be visualized like:
+
+```{r}
+
+```
+
+
 
 ## Basic Joins
 ### 
