@@ -37,7 +37,7 @@ This tutorial covers [Chapter 13: Logical vectors](https://r4ds.hadley.nz/logica
 ## Comparisons
 ### 
 
-Logical vectors are the simplest type of vector because each element can only be one of three possible values: TRUE, FALSE, and NA. It's relatively rare to find logical vectors in your raw data, but you'll create and manipulate them in the course of almost every analysis.
+Logical vectors are the simplest type of vector because each element can only be one of three possible values: `TRUE`, `FALSE`, and `NA`. It's relatively rare to find logical vectors in your raw data, but you'll create and manipulate them in the course of almost every analysis.
 
 ### Exercise 1
 
@@ -63,8 +63,6 @@ Load the **nycflights13** package.
 
 ```
 
-<button onclick="transfer_code(this)">Copy previous code</button>
-
 ```{r comparisons-2-hint, eval = FALSE}
 library(...)
 ```
@@ -73,10 +71,9 @@ library(...)
 
 You can find more information about the package with `help(package = "nycflights13")`.
 
-
 ### Exercise 3
 
-Type `flights` and hit "Run Code."
+Type `flights` and hit "Run Code".
 
 ```{r comparisons-3, exercise = TRUE}
 
@@ -92,7 +89,7 @@ A very common way to create a logical vector is via a numeric comparison with `<
 
 ### Exercise 4
 
-Pipe `flights` into the `filter()` function. Within `filter()`, usw `dep_time > 600` to look at only flights scheduled to depart after 6:00 AM.
+Pipe `flights` into the `filter()` function. Within `filter()`, use `dep_time > 600` to look at only flights scheduled to depart after 6:00 AM.
 
 ```{r comparisons-4, exercise = TRUE}
 
@@ -102,17 +99,16 @@ Pipe `flights` into the `filter()` function. Within `filter()`, usw `dep_time > 
 
 ```{r comparisons-4-hint, eval = FALSE}
 flights |> 
-  filter(dep_time > 600)
+  filter(...)
 ```
 
 ### 
 
-<!-- DK: Drop some knowledge. -->
+As well as `&` and `|`, R also has `&&` and `||`. Don't use them in dplyr functions! These are called short-circuiting operators and only ever return a single `TRUE` or `FALSE`. They're important for programming, not data science.
 
 ### Exercise 5
 
-Use the same code as above, add `& dep_time < 2000` to the call to `filter()`.
-
+Use the same code as above, add `& dep_time < 2000` to the call to `filter()`.This will look at flights scheduled to depart after 6:00 AM and begore 8:00 PM
 
 ```{r comparisons-5, exercise = TRUE}
 
@@ -122,14 +118,16 @@ Use the same code as above, add `& dep_time < 2000` to the call to `filter()`.
 
 ```{r comparisons-5-hint, eval = FALSE}
 flights |> 
-  filter(dep_time > 600 & dep_time < 2000)
+  filter(dep_time > 600 & ...)
 ```
 
 ### 
 
+An easy way to avoid the problem of getting your `==`s and `|`s in the right order is to use `%in%`. `x %in% y` returns a logical vector the same length as `x` that is `TRUE` whenever a value in `x` is anywhere in `y` .
+
 ### Exercise 6
 
-Within `filter()`, set `abs(arr_delay)` less than 20 using `&`
+Use the same code as above and add `& abs(arr_delay) < 20` to the call to `filter()`. This will filter the data out so that the absolute value of the arrival delay is less then 20 minutes
 
 ```{r comparisons-6, exercise = TRUE}
 
@@ -139,17 +137,700 @@ Within `filter()`, set `abs(arr_delay)` less than 20 using `&`
 
 ```{r comparisons-6-hint, eval = FALSE}
 flights |> 
-  filter(dep_time > 600 & dep_time < 2000 & abs(arr_delay) < 20)
+  filter(dep_time > 600 & dep_time < 2000 & ...)
 ```
 
 ### 
+
+Good. It's useful to know that this is a shortcut and you can explicitly create the underlying logical variables with `mutate()`
+
+### Exercise 7
+
+Start a new pipe with `flights`. Pipe `flights` into the `mutate()` function. Within `mutate`, use `daytime = dep_time > 600 & dep_time < 2000`. This will create a new column called `daytime` which is `TRUE` when the `dep_time` is anytime after 6:00 AM and before 8:00 PM.
+
+```{r comparisons-7, exercise = TRUE}
+
+```
+
+```{r comparisons-7-hint, eval = FALSE}
+flights |> 
+  mutate(...)
+```
+
+### 
+
+Just remember that any manipulation we do to a free-floating vector, you can do to a variable inside a data frame with `mutate()` and friends.
+
+### Exercise 8
+
+Use the same code as above and add `, approx_ontime = abs(arr_delay) < 20` to the `mutate()` function. This will create a new column named `approx_ontime` which is true when the `arr_delay` is less than 20 minutes.
+
+```{r comparisons-8, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r comparisons-8-hint, eval = FALSE}
+flights |> 
+  mutate(daytime = dep_time > 600 & dep_time < 2000, ...)
+```
+
+### 
+
+As well as `&` and `|`, R also has `&&` and `||`. Don’t use them in **dplyr** functions!
+
+### Exercise 9
+
+Copy previous code and add `,.keep = "used"` to the `mutate()` function. This keeps only the new variables and the variables used to create that in the tibble and drops all the unused variables.
+
+```{r comparisons-9, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r comparisons-9-hint, eval = FALSE}
+flights |> 
+  mutate(daytime = dep_time > 600 & dep_time < 2000,
+         approx_ontime = abs(arr_delay) < 20,...)
+```
+
+### 
+
+`&&` and `||` are called short-circuiting operators and only ever return a single `TRUE` or `FALSE`. They’re important for programming, not data science.
+
+### Exercise 10
+
+Copy previous code and pipe it into `filter()`. Within `filter()` add `daytime & approx_ontime`. This will keep only the rows that meet the specified conditions.
+
+```{r comparisons-10, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r comparisons-10-hint, eval = FALSE}
+flights |> 
+  mutate(daytime = dep_time > 600 & dep_time < 2000,
+         approx_ontime = abs(arr_delay) < 20,
+         .keep = "used")|>
+  filter(...)
+```
+
+### 
+
+So far, we’ve mostly created logical variables transiently within `filter()` — they are computed, used, and then thrown away. For example, the previous `filter()` finds all daytime departures that arrive roughly on time.
+
+### Exercise 11
+
+Set `x` to `c(1 / 49 * 49, sqrt(2) ^ 2)` using `<-`. Click "Run Code".
+
+```{r comparisons-11, exercise = TRUE}
+
+```
+
+```{r comparisons-11-hint, eval = FALSE}
+x <- c(...)
+```
+
+### 
+
+Beware of using `==` with numbers. For example, it looks like this vector contains the numbers `1` and `2`. But if you test them for equality, you get `FALSE`.
+
+### Exercise 12
+
+Copy previous code and run `x == c(1,2)`. It should say `FALSE`.
+
+```{r comparisons-12, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r comparisons-12-hint, eval = FALSE}
+x <- c(1 / 49 * 49, sqrt(2) ^ 2)
+x <- c(...)
+```
+
+### 
+
+What's going on? Computers store numbers with a fixed number of decimal places so there's no way to exactly represent `1/49` or `sqrt(2)` and subsequent computations will be very slightly off.
+
+### Exercise 13
+
+We can see the exact values by calling `print()` with the digits argument. Copy previous code and run `print(x, digits = 16)`. This will run the values of `x` with 16 digits.
+
+```{r comparisons-13, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r comparisons-13-hint, eval = FALSE}
+x <- c(1 / 49 * 49, sqrt(2) ^ 2)
+x <- c(1,2)
+print(...)
+```
+
+### 
+
+You can see why R defaults to rounding these numbers; they really are very close to what you expect. Now that you've seen why `==`is failing, what can you do about it? One option is to use `dplyr::near()` which ignores small differences:
+
+### Exercise 14
+
+Copy previous code and type `near()` on the next line. Within `near()`, add `x, c(1,2)`. This should come out as `TRUE` for both.
+
+```{r comparisons-14, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r comparisons-14-hint, eval = FALSE}
+x <- c(1 / 49 * 49, sqrt(2) ^ 2)
+x <- c(1,2)
+print(x, digits = 16)
+near(x,...)
+```
+
+### 
+
+Missing values represent the unknown so they are "contagious": almost any operation involving an unknown value will also be unknown.
+
+### Exercise 15
+
+Run `NA > 5` and `10 == NA`. They should both come out as `NA`
+
+```{r comparisons-15, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r comparisons-15-hint, eval = FALSE}
+NA > 5
+10 == NA
+```
+
+### 
+
+R normally calls print for you (i.e. `x` is a shortcut for `print(x)`), but calling it explicitly is useful if you want to provide other arguments.
+
+### Exercise 16
+
+Now, run `NA == NA`.This should also come out as `NA`
+
+```{r comparisons-16, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r comparisons-16-hint, eval = FALSE}
+NA == NA
+```
+
+### 
+
+That is the most confusing result. It's easiest to understand why this is true if we artificially supply a little more context.
+
+### Exercise 17
+
+Set `age_mary <- NA`, then set `age_john <- NA` on the next line. On a new line set `age_mary == age_john`.
+
+```{r comparisons-17, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r comparisons-17-hint, eval = FALSE}
+age_mary <- ...
+... <- NA
+age_john == ...
+```
+
+### 
+
+This should come out as `NA` because if both of their ages are unknown, then we can't know if they are the same age.
+
+### Exercise 18
+
+Start a new pipe with `flights`. Pipe that into the `filter()` function. Within `filter()`, add `dep_time == NA`.This will attempt to find all the rows where `dep_time` is missing.
+
+```{r comparisons-18, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r comparisons-18-hint, eval = FALSE}
+flights|>
+  filter(...)
+```
+
+### 
+
+The following code doesn’t work because `dep_time == NA` will yield `NA` for every single row, and `filter()` automatically drops missing values. Instead we'll need a new tool: `is.na()`.
+
+### Exercise 19
+
+Type `is.na()` into the code chunk. Within `is.na()`, add `c(TRUE, NA, FALSE)`
+
+```{r comparisons-19, exercise = TRUE}
+
+```
+
+```{r comparisons-19-hint, eval = FALSE}
+is.na(c(TRUE, NA, FALSE))
+```
+
+### 
+
+You will see the output `FALSE` for `TRUE` and `FALSE`,but `TRUE` for `NA`. This is because `is.na()` works with any type of vector and returns `TRUE` for missing values and `FALSE` for everything else.
+
+### Exercise 20
+
+Start a new pipe with `flights`. Pipe `flights` into `filter()`. Within `filter()`, add `is.na(dep_time)`. This will find all the rows with a missing `dep_time`
+
+```{r comparisons-20, exercise = TRUE}
+
+```
+
+```{r comparisons-20-hint, eval = FALSE}
+flights |> 
+  filter(...)
+```
+
+### 
+
+`is.na()` can also be useful in `arrange()`. `arrange()` usually puts all the missing values at the end but you can override this default by first sorting by `is.na()`.
+
+### Exercise 21
+
+Start a new pipe with `flights`. Pipe `flights` into `filter()`. Within `filter()`, add `month == 1, day == 1`.
+
+```{r comparisons-21, exercise = TRUE}
+
+```
+
+```{r comparisons-21-hint, eval = FALSE}
+flights|>
+  filter(...)
+```
+
+### 
+
+The `==` operator is a comparison operator in R that checks if two values are equal. It returns `TRUE` if the values are equal and `FALSE` otherwise
+
+### Exercise 22
+
+Continue the pipe with `arrange()`. Within `arrange()`, add `dep_time`. This should arrange `dep_time` from least to greatest.
+
+```{r comparisons-22, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r comparisons-22-hint, eval = FALSE}
+flights|>
+  filter(month == 1, day == 1)|>
+  arrange(...)
+```
+
+### 
+
+The `arrange()` function is used to order rows in a data set based on a column. It allows you to sort the data set in either ascending or descending order.
+
+### Exercise 23
+
+Within `arrange()`, put `is.na(dep_time)`.
+
+```{r comparisons-23, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r comparisons-23-hint, eval = FALSE}
+flights|>
+  filter(month == 1, day == 1)|>
+  arrange(...(dep_time))
+```
+
+### 
+
+This checks if the `dep_time` column has missing values (`NA`). It returns a logical vector with `TRUE` for rows where `dep_time` is `NA` and `FALSE` otherwise.
+
+### Exercise 24
+
+Within `arrange()`, put `desc(is.na(dep_time)), dep_time`
+
+```{r comparisons-24, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">Copy previous code</button>
+
+```{r comparisons-24-hint, eval = FALSE}
+flights|>
+  filter(month == 1, day == 1)|>
+  arrange(...(is.na(dep_time)), ...)
+```
+
+### 
+
+The `desc()` function is used to create a descending order of the logical vector obtained from `is.na(dep_time)`. This means that rows with missing `dep_time` values (`NA`) will appear first in the data frame.
+
 
 
 ## Boolean algebra
 ### 
 
+Once you have multiple logical vectors, you can combine them together using Boolean algebra. In R, `&` is “and”, `|` is “or”, `!` is “not”, and `xor()` is exclusive or^2. For example, `df |> filter(!is.na(x))` finds all rows where `x` is not missing and `df |> filter(x < -10 | x > 0)` finds all rows where `x` is smaller than `-10` or bigger than `0`. Figure 13.1 shows the complete set of Boolean operations and how they work.
+
+### Exercise 1
+
+The rules for missing values in Boolean algebra are a little tricky to explain because they seem inconsistent at first glance. Click "Run Code".
+
+```{r boolean-algebra-1, exercise = TRUE}
+df <- tibble(x = c(TRUE, FALSE, NA))
+
+df |> 
+  mutate(
+    and = x & NA,
+    or = x | NA
+  )
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r boolean-algebra-1-hint, eval = FALSE}
+
+```
+
+###
+
+To understand what’s going on, think about `NA | TRUE` (`NA` or `TRUE`). A missing value in a logical vector means that the value could either be `TRUE` or `FALSE`. `TRUE | TRUE` and `FALSE | TRUE` are both `TRUE` because at least one of them is `TRUE`. `NA | TRUE` must also be `TRUE` because `NA` can either be `TRUE` or `FALSE`. However, `NA | FALSE` is `NA` because we don’t know if `NA` is `TRUE` or `FALSE`. Similar reasoning applies with `NA & FALSE`.
+
+### Exercise 2
+
+Start a new pipe with `flights`. Pipe `flights` into `filter()`. Within `filter()`, add `month == 11 | month == 12`.
+
+```{r boolean-algebra-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r boolean-algebra-2-hint, eval = FALSE}
+flights|>
+  filter(...)
+```
+
+###
+
+Note that the order of operations doesn’t work like English. Take the previous code that finds all flights that departed in November or December.You might be tempted to write it like you’d say in English: “Find all flights that departed in November or December.”.
+
+### Exercise 3
+
+Now, replace `month == 11 | month == 12` with `month == 11 | 12`. This should do the same thing as before. 
+
+```{r boolean-algebra-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r boolean-algebra-3-hint, eval = FALSE}
+flights|>
+  filter(...)
+```
+
+###
+
+This code doesn’t error but it also doesn’t seem to have worked. What’s going on? Here, R first evaluates `month == 11` creating a logical vector, which we call `nov`. It computes `nov | 12`. When you use a number with a logical operator it converts everything apart from `0` to `TRUE`, so this is equivalent to `nov | TRUE` which will always be `TRUE`, so every row will be selected.
+
+### Exercise 4
+
+Start a new pipe with `flights`. Pipe `flights` into the `mutate()` function. Within `mutate()`, set `nov = month == 11`
+
+```{r boolean-algebra-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r boolean-algebra-4-hint, eval = FALSE}
+flights|>
+  mutate(...)
+```
+
+###
+
+`nov = month == 11` creates a new variable called `nov` and assigns it the value `TRUE` for rows where the month is equal to `11`, and `FALSE` otherwise. The expression `month == 11` checks the equality between the month column and the value `11`, resulting in a logical vector.
+
+### Exercise 5
+
+Copy previous code and add `final = nov | 12, .keep = "used"` to the `mutate()` function.
+
+```{r boolean-algebra-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r boolean-algebra-5-hint, eval = FALSE}
+flights|>
+  mutate(nov = month == 12, ...)
+```
+
+###
+
+`final = nov | 12` creates another new variable called `final`. It assigns the value `TRUE` to `final` if `nov` is `TRUE` or if the value `12` is considered as `TRUE`. In R, any non-zero numeric value is considered as `TRUE` in logical operations. Therefore, the expression `nov | 12` performs a logical OR operation between the `nov` column and the value `12`, resulting in a logical vector. The `.keep = "used"` argument keeps only the new variables, and the variables that were used to make them in the tibble.
+
+### Exercise 6
+
+`x %in% y` returns `TRUE` if anything in `x` is in `y`. For example, type `1:12 %in% c(1,5,11)`. This makes `x` any number `1` through `11`, and `y` `1`,`5`, and `11`. Click "Run Code"
+
+```{r boolean-algebra-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r boolean-algebra-6-hint, eval = FALSE}
+... %in% c(...)
+```
+
+###
+
+An easy way to avoid the problem of getting your `==`s and `|`s in the right order is to use `%in%`. `x %in% y` returns a logical vector the same length as `x` that is `TRUE` whenever a value in `x` is anywhere in `y` .
+
+### Exercise 7
+
+So to find all of the flights in November and December start a new pipe with `flights`. Pipe `flights` into `filter()`, and within `filter()` add `month %in% c(11,12)`.
+
+```{r boolean-algebra-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r boolean-algebra-7-hint, eval = FALSE}
+flights|>
+  filter(...)
+```
+
+###
+
+Note that `%in%` obeys different rules for `NA` to `==`, as `NA %in% NA` is `TRUE`.
+
+### Exercise 8
+
+Type a code to check if each element of the vector `c(1, 2, NA)` is equal to `NA` using `==`.
+
+```{r boolean-algebra-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r boolean-algebra-8-hint, eval = FALSE}
+c(...) == NA
+```
+
+###
+
+This should output `#> [1] NA NA NA` because when comparing any value, including `NA`, with `NA` using the `==` operator, yields `NA` as the result. This is because the value of `NA` represents unknown information, so the result of any comparison involving `NA` is also unknown.
+
+### Exercise 9
+
+Copy previous code but instead of using `==`, use `%in%`. This checks to see if any value on the left side (`x`), is on the rights side (`y`).
+
+```{r boolean-algebra-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r boolean-algebra-9-hint, eval = FALSE}
+c(...) %in% NA
+```
+
+###
+
+This should output `#> [1] FALSE FALSE  TRUE` because `NA` is the only variable on both sides.
+
+### Exercise 10
+
+Start a new pipe with `flights`. Pipe `flights` into `filter()`. Within `filter()`, add `dep_time %in% c(NA, 0800)` to find all rows where `dep_time` is `NA`, of `0800`.
+
+```{r boolean-algebra-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r boolean-algebra-10-hint, eval = FALSE}
+flights |> 
+  filter(... %in% c(...))
+```
+
+###
+
+This should result in a tibble where there is only `NA` and `0800` values in the `dep_time` column.
+
 ## Summaries
 ### 
+
+The following sections describe some useful techniques for summarizing logical vectors. As well as functions that only work specifically with logical vectors, you can also use functions that work with numeric vectors.
+
+### Exercise 1
+
+Start a pipe with `flights`. Pipe it into `group_by`. Within `group_by`, add `year, month, day`. This will group the data in order by year, month, and day.
+
+```{r summaries-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-1-hint, eval = FALSE}
+flights|>
+  group_by(...)
+```
+
+###
+
+There are two main logical summaries: `any()` and `all()`. `any(x)` is the equivalent of `|`; it’ll return `TRUE` if there are any `TRUE`’s in `x`. `all(x)` is equivalent of `&`; it’ll return `TRUE` only if all values of `x` are `TRUE`’s.
+
+### Exercise 2
+
+Copy previous code and pipe it into `summarize()`. Within `summarize()`, add `all_delayed = all(dep_delay <= 60)`. This will make a new column named `all_delayed` that is `TRUE` when `dep_delay` is less than or equal to `60` minutes
+
+```{r summaries-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-2-hint, eval = FALSE}
+flights|>
+  group_by(year, month, day)|>
+  summarize(... = all(...))
+```
+
+###
+
+For example, we could use `all()` and `any()` to find out if every flight was delayed on departure by at most an hour or if any flights were delayed on arrival by five hours or more. And using `group_by()` allows us to do that by day:
+
+### Exercise 3
+
+Copy previous code. Within `all()`, add `na.rm = TRUE` separated with a `,`. When `na.rm` is set to `TRUE`, it removes all `NA` values. `na.rm` is short for `na.remove`.
+
+```{r summaries-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-3-hint, eval = FALSE}
+
+```
+
+###
+
+Like all summary functions, `any()` and `all()` will return `NA` if there are any missing values present, and as usual you can make the missing values go away with `na.rm = TRUE`.
+
+### Exercise 4
+
+Copy previous code. Within `summarize()`, add `any_long_delay = any(arr_delay >= 300, na.rm = TRUE)`. This will make a new column named `any_long_delay` that is `TRUE` when `arr_delay` is greater than or equal to `300` minutes. It will also remove all `NA` values.
+
+```{r summaries-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-4-hint, eval = FALSE}
+flights |> 
+  group_by(year, month, day) |> 
+  summarize(
+    all_delayed = all(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = any(...)
+```
+
+###
+
+This should output 365 rows and 5 columns. The reason there is 365 rows is because the `group_by()` argument groups it by year, month, and day, so all the flights are grouped into their separate days and there are 365 days in a year.
+
+### Exercise 5
+
+Copy previous code. Add `.groups = "drop"` to the `summarize()` function.
+
+```{r summaries-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-5-hint, eval = FALSE}
+flights |> 
+  group_by(year, month, day) |> 
+  summarize(
+    all_delayed = all(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = any(arr_delay >= 300, na.rm = TRUE),
+    .groups = "...")
+```
+
+###
+
+In most cases, however, `any()` and `all()` are a little too crude, and it would be nice to be able to get a little more detail about how many values are `TRUE` or `FALSE`. That leads us to the numeric summaries.
+
+### Exercise 6
+
+Copyprevious code. Switch `all()` for `mean()`, and `any()` for `sum()`.
+
+```{r summaries-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-6-hint, eval = FALSE}
+flights |> 
+  group_by(year, month, day) |> 
+  summarize(
+    all_delayed = ...(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = ...(arr_delay >= 300, na.rm = TRUE),
+    .groups = "drop")
+```
+
+###
+
+When you use a logical vector in a numeric context, `TRUE` becomes `1` and `FALSE` becomes `0`. This makes `sum()` and `mean()` very useful with logical vectors because `sum(x)` gives the number of `TRUE`s and `mean(x)` gives the proportion of `TRUE`s (because `mean()` is just `sum()` divided by `length()`.
+
+This allows for us to see the proportion of flights that were delayed on departure by at most 1 hour (`60` minutes) and the number of flights that were delayed on arrival by 5 hours (`300` minutes) or more
+
+### Exercise 7
+
+
+```{r summaries-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-7-hint, eval = FALSE}
+
+```
+
+###
+
+knowledge drop
 
 ## Conditional transformations
 ### 
