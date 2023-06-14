@@ -21,14 +21,6 @@ knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
-plots = flights |> 
-  group_by(hour = sched_dep_time %/% 100) |> 
-  summarize(prop_cancelled = mean(is.na(dep_time)), n = n()) |> 
-  filter(hour > 1) |> 
-  ggplot(aes(x = hour, y = prop_cancelled)) +
-  geom_line(color = "grey50") + 
-  geom_point(aes(size = n))
-
 df <- tribble(
   ~x, ~y,
   1,  3,
@@ -38,6 +30,7 @@ df <- tribble(
 
 x <- c("1.2", "5.6", "1e3")
 y <- c("$1,234", "USD 3,513", "59%")
+z <- 1:10
 x1 <- c(1, 2, 10, 20)
 x2 <- 1:10
 x3 <- c(1, 2, 5, 10, 15, 20)
@@ -62,6 +55,8 @@ repetition <- tibble(
 ```
 
 <!-- Instead of creating objects like x1, just include their creation in any exercise block which uses them. -->
+
+<!-- There are a lot of variables which we create and don't use. Delete them. -->
 
 ## Introduction
 ### 
@@ -95,7 +90,7 @@ library(...)
 
 ### 
 
-The [**readr**](https://readr.tidyverse.org/) package is one of the eight core packages in the *Tidyverse*. It provides two useful functions for parsing strings into numbers: `parse_double()` and `parse_number()`.
+The [**readr**](https://readr.tidyverse.org/) package is one of the nine core packages in the *Tidyverse*. It provides two useful functions for parsing strings into numbers: `parse_double()` and `parse_number()`.
 
 ### Exercise 2
 
@@ -104,8 +99,6 @@ Define a vector `x` that has the following values within it `"1.2"`, `"5.6"`, `"
 ```{r making-numbers-2, exercise = TRUE}
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r making-numbers-2-hint-1, eval = FALSE}
 x <- c(..., ..., ...)
@@ -122,8 +115,6 @@ When you have numbers that have been written as strings we should use `parse_dou
 ```{r making-numbers-3, exercise = TRUE}
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r making-numbers-3-hint-1, eval = FALSE}
 parse_double(...)
@@ -385,7 +376,15 @@ Operations like `flights |> mutate(air_time = air_time / 60)` have different len
 
 By the end of this section we will be making a plot that looks like this:
 
-```{r include = TRUE}
+```{r}
+plots <- flights |> 
+  group_by(hour = sched_dep_time %/% 100) |> 
+  summarize(prop_cancelled = mean(is.na(dep_time)), n = n()) |> 
+  filter(hour > 1) |> 
+  ggplot(aes(x = hour, y = prop_cancelled)) +
+  geom_line(color = "grey50") + 
+  geom_point(aes(size = n))
+
 plots
 ```
 
@@ -563,7 +562,7 @@ Modular arithmetic is the technical name for the type of math you did before you
 
 ### 
 
-Make a new vector called `x2` equal to `1:10`. 
+Make a new vector called `z` equal to `1:10`. 
 
 ```{r numeric-transformati-10, exercise = TRUE}
 
@@ -647,6 +646,8 @@ flights |>
 
 ### 
 
+<!-- DK: Knowledge drop. -->
+
 ### Exercise 15
 
 Using your previous code, within the `mutate()` function and add an argument called `.keep` and set it to `"used"`. 
@@ -668,14 +669,14 @@ flights |>
 
 ### 
 
-Modular arithmetic is handy for the flights dataset, because we can use it to unpack the sched_dep_time variable into hour and minute
+Modular arithmetic is handy for the flights dataset, because we can use it to unpack the `sched_dep_time` variable into `hour` and `minute` variables.
 
 ### Exercise 16
 
 Let's use all of the stuff we've learnt to create a graph. This is what the graph is supposed to look like.
 
 ```{r include = TRUE}
-flights
+plots
 ```
 
 ### 
@@ -1472,7 +1473,7 @@ lead(...)
 
 ### Exercise 16
 
-Subtract `x7` by `lag(x)`.
+Subtract `lag(x7)` from  `x7`.
 
 ```{r general-transformati-16, exercise = TRUE}
 
@@ -1486,25 +1487,26 @@ x7 - ...
 
 ### 
 
-x - lag(x) gives you the difference between the current and previous value.
+<!-- DK: This is sloppy. We are using two concepts at the same time. First, is the specific calculation using the `x7` vector. The second, in the knowledge drop, is the generic calculation which works for any vector `x`. Students find this juxtaposition confusing! -->
+
+`x - lag(x)` gives you the difference between the current and previous value for all the elements of the vector `x`.
 
 ### Exercise 17
 
-Type in `x == lag(x)` and hit "Run Code".
+Type in `x7 == lag(x7)` and hit "Run Code".
 
 ```{r general-transformati-17, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-17-hint-1, eval = FALSE}
-x == ...
+x7 == ...
 ```
 
 ### 
 
-x == lag(x) tells you when the current value changes. You can lead or lag by more than one position by using the second argument, n.
+`x == lag(x)` tells you when the current value changes. You can lead or lag by more than one position by using the second argument, `n`.
 
 ### Exercise 18
 
@@ -1513,8 +1515,6 @@ When you’re looking at website data, it’s common to want to break up events 
 ```{r general-transformati-18, exercise = TRUE}
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-18-hint-1, eval = FALSE}
 times_visited
@@ -1586,7 +1586,6 @@ Imagine you have a dataframe with a bunch of repeated values. Type in `repetitio
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-22-hint-1, eval = FALSE}
 repetition
@@ -1609,7 +1608,7 @@ repetition |>
 
 ### Exercise 24
 
-Using your previous code, within your call to the `summarize()` function, add the `.by` argument and set it to `id` so that we can group by id.
+Using your previous code, within your call to the `summarize()` function, add the `.by` argument and set it to `id` so that we can group by `id`.
 
 ```{r general-transformati-24, exercise = TRUE}
 
@@ -1625,6 +1624,7 @@ repetition |>
 ### Exercise 25
 
 Using the same pipe as above, pipe `slice_head()` to the current pipe with the argument `n` set to `1`.
+
 ```{r general-transformati-25, exercise = TRUE}
 
 ```
