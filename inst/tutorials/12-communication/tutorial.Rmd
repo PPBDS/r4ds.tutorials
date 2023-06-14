@@ -55,7 +55,7 @@ labels_graphic = ggplot(mpg, aes(x = displ, y = hwy)) +
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 12: Communication](https://r4ds.hadley.nz/communication.html)  from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. In this tutorial we will be making use of three core packages from *ggplot2*: [**scales**](https://scales.r-lib.org/) to override the default breaks, [**ggrepel**](https://ggrepel.slowkow.com), and [**patchwork**](https://patchwork.data-imaginist.com). Some key commands that you will be making use of are 
+This tutorial covers [Chapter 12: Communication](https://r4ds.hadley.nz/communication.html)  from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. In this tutorial we will be making use of three core packages from *ggplot2*: [**scales**](https://scales.r-lib.org/) to override the default breaks, [**ggrepel**](https://ggrepel.slowkow.com), and [**patchwork**](https://patchwork.data-imaginist.com). Some key commands that you will be making use of are [`quote()`](https://rdrr.io/r/base/substitute.html) which simply returns its argument, [`geom_label_repel()`](https://rdrr.io/cran/ggrepel/man/geom_text_repel.html) which adds text directly to the plot, and [`label_dollar()`](https://scales.r-lib.org/reference/label_dollar.html) which formats numbers as currency. 
 
 ## Labels
 ### 
@@ -1103,7 +1103,11 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 ## Scales
 ### 
 
+In this section, we will learn about how to display plots more appropriately by using scales.
+
 ### Exercise 1
+
+First load in the package **scales** using the `library()` function.
 
 ```{r scales-1, exercise = TRUE}
 
@@ -1112,12 +1116,20 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-1-hint-1, eval = FALSE}
-
+library(...)
 ```
 
 ### 
 
+The most common use of the scales package is to customise to control the appearance of axis and legend labels. Use a break_ function to control how breaks are generated from the limits, and a label_ function to control how breaks are turned in to labels.
+
 ### Exercise 2
+
+When you make a regular plot, **ggplot2* automatically adds scales for you. Let's make a simple plot to demonstrate this.
+
+###
+
+Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this function map `x` to `displ` and `y` to `hwy` using `aes()`. 
 
 ```{r scales-2, exercise = TRUE}
 
@@ -1126,12 +1138,13 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-2-hint-1, eval = FALSE}
-
+mpg |> 
+  ggplot(aes(x = ..., y = ...))
 ```
 
-### 
-
 ### Exercise 3
+
+Using your previous code, add the `geom_point()` function to the pipeline. Within this function map the argument `color` to `class` using `aes()`.
 
 ```{r scales-3, exercise = TRUE}
 
@@ -1140,12 +1153,22 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-3-hint-1, eval = FALSE}
-
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) + 
+  geom_point(aes(color = ...))
 ```
 
 ### 
 
+**ggplot2** automatically adds default scales behind the scenes such as `scale_x_continuous()`, `scale_y_continuous()`, and `scale_color_discrete()`.
+
 ### Exercise 4
+
+We can test this previous statement, by adding those functions at the end of our previous pipeline. 
+
+###
+
+Using your previous code, add the `scale_x_continuous()`, `scale_y_continuous()`, and the `scale_discrete_function()` functions to the pipeline. 
 
 ```{r scales-4, exercise = TRUE}
 
@@ -1154,12 +1177,21 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-4-hint-1, eval = FALSE}
-
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) + 
+  geom_point(aes(color = ...)) +
+  scale_x_continuous() +
+  ... +
+  scale_color_discrete()
 ```
 
 ### 
 
+We can see that the two data frames are the same. Note the naming scheme for scales: scale_ followed by the name of the aesthetic, then _, then the name of the scale. The default scales are named according to the type of variable they align with: continuous, discrete, datetime, or date.
+
 ### Exercise 5
+
+Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this function, map `x` to `displ`, `y` to `hwy`, and `color` to `drv` using `aes()`. 
 
 ```{r scales-5, exercise = TRUE}
 
@@ -1168,12 +1200,17 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-5-hint-1, eval = FALSE}
-
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...))
 ```
 
 ### 
 
+There are two primary arguments that affect the appearance of the ticks on the axes and the keys on the legend: `breaks` and `labels`. Breaks controls the position of the ticks, or the values associated with the keys.
+
 ### Exercise 6
+
+Using your previous code, add the `scale_y_continuous()` function to the pipeline. Within this function add the `breaks` argument and set it to `seq(15, 40, by = 5)`.
 
 ```{r scales-6, exercise = TRUE}
 
@@ -1182,12 +1219,18 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-6-hint-1, eval = FALSE}
-
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...)) +
+  scale_y_continuous(breaks = ...)
 ```
 
 ### 
 
+Labels controls the text label associated with each tick/key. The most common use of `breaks` is to override the default choice.
+
 ### Exercise 7
+
+Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this function map `x` to `displ`, `y` to `hwy`, and `color` to `drv` using `aes()`
 
 ```{r scales-7, exercise = TRUE}
 
@@ -1196,12 +1239,17 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-7-hint-1, eval = FALSE}
-
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...))
 ```
 
 ### 
 
+You can use labels in the same way (a character vector the same length as breaks), but you can also set it to NULL to suppress the labels altogether. This can be useful for maps, or for publishing plots where you can’t share the absolute numbers.
+
 ### Exercise 8
+
+Using your previous code, add the `geom_point()` function to the pipeline.
 
 ```{r scales-8, exercise = TRUE}
 
@@ -1210,12 +1258,14 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-8-hint-1, eval = FALSE}
-
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...)) +
+  geom_point()
 ```
 
-### 
-
 ### Exercise 9
+
+Using your previous code, add the `scale_x_continuous()` function to the pipeline. Within this function, add the `labels` argument and set it to `NULL`. 
 
 ```{r scales-9, exercise = TRUE}
 
@@ -1224,12 +1274,15 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-9-hint-1, eval = FALSE}
-
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...)) +
+  geom_point() +
+  scale_x_continuous(labels = ...)
 ```
 
-### 
-
 ### Exercise 10
+
+Using your previous code, add the `scale_y_continuous()` function to the pipeline. Within this function, add the `labels` argument and set it to `NULL`. 
 
 ```{r scales-10, exercise = TRUE}
 
@@ -1238,12 +1291,16 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-10-hint-1, eval = FALSE}
-
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...)) +
+  geom_point() +
+  scale_x_continuous(labels = ...) +
+  scale_y_continuous(labels = ...)
 ```
 
-### 
-
 ### Exercise 11
+
+Using your previous code, add the `scale_color_discrete()` function to the pipeline. Within this function, add the `labels` argument and set it to `c("4" = "4-wheel", "f" = "front", "r" = "rear")`. 
 
 ```{r scales-11, exercise = TRUE}
 
@@ -1252,12 +1309,21 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-11-hint-1, eval = FALSE}
-
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...)) +
+  geom_point() +
+  scale_x_continuous(labels = ...) +
+  scale_y_continuous(labels = ...) +
+  scale_color_discrete(labels = ...)
 ```
 
 ### 
 
+You can also use breaks and labels to control the appearance of legends. For discrete scales for categorical variables, labels can be a named list of the existing levels names and the desired labels for them.
+
 ### Exercise 12
+
+This time we will be using the **scales** package to create more efficient axis labels. Create a new pipeline and pipe `diamonds` to the `ggplot()` function. Within this function, pipe map `x` to `price` and `y` to `cut`.
 
 ```{r scales-12, exercise = TRUE}
 
@@ -1266,12 +1332,13 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-12-hint-1, eval = FALSE}
-
+diamonds |> 
+  ggplot(aes(x = ..., y = ...))
 ```
 
-### 
-
 ### Exercise 13
+
+Using your previous code, add the `geom_boxplot()` function to the pipeline. Within this function add the `alpha` argument and set it to `0.05`. 
 
 ```{r scales-13, exercise = TRUE}
 
@@ -1280,12 +1347,14 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-13-hint-1, eval = FALSE}
-
+diamonds |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_boxplot(alpha = ...)
 ```
 
-### 
-
 ### Exercise 14
+
+Using your previous code, add the `scale_x_continuous()` function. Within this function add the `labels` argument and set it equal to the `label_dollar()` function.
 
 ```{r scales-14, exercise = TRUE}
 
@@ -1294,12 +1363,19 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-14-hint-1, eval = FALSE}
-
+diamonds |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_boxplot(alpha = ...) +
+  scale_x_continuous(labels = ...)
 ```
 
 ### 
 
+The `labels` argument coupled with labelling functions from the **scales** package is also useful for formatting numbers as currency, percent, etc. The plot shows default labelling with `label_dollar()`, which adds a dollar sign as well as a thousand separator comma.
+
 ### Exercise 15
+
+Another handy label function is `label_percent()`. Create a new pipeline and pipe `diamonds` to the `ggplot()` function. Within this function, map `x` to `cut` and `fill` to `clarity`.
 
 ```{r scales-15, exercise = TRUE}
 
@@ -1308,12 +1384,13 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-15-hint-1, eval = FALSE}
-
+diamonds |> 
+  ggplot(aes(x = ..., fill = ...))
 ```
 
-### 
-
 ### Exercise 16
+
+Using your previous code, add the `geom_bar()` function. Within this function add the `position` argument and set it equal to `"fill"`. 
 
 ```{r scales-16, exercise = TRUE}
 
@@ -1322,12 +1399,14 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-16-hint-1, eval = FALSE}
-
+diamonds |> 
+  ggplot(aes(x = ..., fill = ...)) +
+  geom_bar(position = ...)
 ```
 
-### 
-
 ### Exercise 17
+
+Using your previous code, add the `scale_y_continuous()` function to the pipeline. Within this function, add the `name` argument and set equal to `"Percentage"` and add the `labels` argument and set it equal to `label_percent()`. 
 
 ```{r scales-17, exercise = TRUE}
 
@@ -1336,741 +1415,11 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-17-hint-1, eval = FALSE}
-
+diamonds |> 
+  ggplot(aes(x = ..., fill = ...)) +
+  geom_bar(position = ...) +
+  scale_y_continuous(name = ..., labels = ...)
 ```
-
-### 
-
-### Exercise 18
-
-```{r scales-18, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-18-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 19
-
-```{r scales-19, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-19-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 20
-
-```{r scales-20, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-20-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 21
-
-```{r scales-21, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-21-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 22
-
-```{r scales-22, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-22-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 23
-
-```{r scales-23, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-23-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 24
-
-```{r scales-24, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-24-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 25
-
-```{r scales-25, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-25-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 26
-
-```{r scales-26, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-26-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 27
-
-```{r scales-27, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-27-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 28
-
-```{r scales-28, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-28-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 29
-
-```{r scales-29, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-29-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 30
-
-```{r scales-30, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-30-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 31
-
-```{r scales-31, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-31-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 32
-
-```{r scales-32, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-32-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 33
-
-```{r scales-33, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-33-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 34
-
-```{r scales-34, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-34-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 35
-
-```{r scales-35, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-35-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 36
-
-```{r scales-36, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-36-hint-1, eval = FALSE}
-
-```
-
-### 
-
-## More Scales
-### 
-
-### Exercise 1
-
-```{r more-scales-1, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-1-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 2
-
-```{r more-scales-2, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-2-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 3
-
-```{r more-scales-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-3-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 4
-
-```{r more-scales-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-4-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 5
-
-```{r more-scales-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-5-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 6
-
-```{r more-scales-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-6-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 7
-
-```{r more-scales-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-7-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 8
-
-```{r more-scales-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-8-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 9
-
-```{r more-scales-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-9-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 10
-
-```{r more-scales-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-10-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 11
-
-```{r more-scales-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-11-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 12
-
-```{r more-scales-12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-12-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 13
-
-```{r more-scales-13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-13-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 14
-
-```{r more-scales-14, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-14-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 15
-
-```{r more-scales-15, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-15-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 16
-
-```{r more-scales-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-16-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 17
-
-```{r more-scales-17, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-17-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 18
-
-```{r more-scales-18, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-18-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 19
-
-```{r more-scales-19, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-19-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 20
-
-```{r more-scales-20, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-20-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 21
-
-```{r more-scales-21, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-21-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 22
-
-```{r more-scales-22, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-22-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 23
-
-```{r more-scales-23, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-23-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 24
-
-```{r more-scales-24, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-24-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 25
-
-```{r more-scales-25, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-25-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 26
-
-```{r more-scales-26, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-26-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 27
-
-```{r more-scales-27, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-27-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 28
-
-```{r more-scales-28, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-28-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 29
-
-```{r more-scales-29, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-29-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 30
-
-```{r more-scales-30, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-30-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 31
-
-```{r more-scales-31, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-31-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 32
-
-```{r more-scales-32, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-32-hint-1, eval = FALSE}
-
-```
-
-### 
-
-### Exercise 33
-
-```{r more-scales-33, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-scales-33-hint-1, eval = FALSE}
-
-```
-
-### 
 
 <!-- DK: Comments from old material, which was Wrangling: More Plots from all.primer.tutorials. May no longer apply. -->
 
