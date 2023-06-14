@@ -11,16 +11,21 @@ runtime: shiny_prerendered
 description: 'Tutorial for Chapter 19: Missing Values'
 ---
 
-
 ```{r setup, include = FALSE}
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
-library(nycflights13)
-library(primer.data)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
+
+treatment <- tribble(
+  ~person,           ~treatment, ~response,
+  "Derrick Whitmore", 1,         7,
+  NA,                 2,         10,
+  NA,                 3,         NA,
+  "Katherine Burke",  1,         4
+)
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -35,7 +40,99 @@ options(tutorial.exercise.timelimit = 60,
 This tutorial covers [Chapter 19: Missing Values](https://r4ds.hadley.nz/missing-values.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. The primary focus of this tutorial will be to teach you how to use commands like [`fill()`] to fill in missing values, [`coalesce()`] to replace missing values with another value, and [`na_if()`] to replace certain values with a missing value, [`NA`]. Additionally we will look at functions like [`complete()`] which lets you generate missing values from a set of variables, and how to use [`anti_join()`] for missing values when joining data sets.
 
 
-Ultimately, this chapter will teach you several versatile ways to deal with missing values, identify types of missing values, and show you what to do when encountering an empty group.
-
-## Explicit Missing Values
+## Explicit missing values
 ###
+
+### Exercise 1
+
+Load the **tidyverse** package with the `library()` command.
+
+```{r explicit-missing-val-1, exercise = TRUE}
+
+```
+
+```{r explicit-missing-val-1-hint, eval = FALSE}
+library(...)
+```
+
+###
+
+The functions for working with missing data mostly come from dplyr and tidyr, which are core members of the tidyverse.
+
+### Exercise 2
+
+Run this code in order to create a tibble called `treatment`.
+
+```{r explicit-missing-val-2, exercise = TRUE}
+treatment <- tribble(
+  ~person,           ~treatment, ~response,
+  "Derrick Whitmore", 1,         7,
+  NA,                 2,         10,
+  NA,                 3,         NA,
+  "Katherine Burke",  1,         4
+)
+```
+
+###
+
+A common use for missing values is as a data entry convenience. When data is entered by hand, missing values sometimes indicate that the value in the previous row has been repeated (or carried forward).
+
+### Exercise 3
+
+Write `treatment` and hit "Run Code".
+
+```{r explicit-missing-val-3, exercise = TRUE}
+
+```
+
+```{r explicit-missing-val-3-hint, eval = FALSE}
+treatment
+```
+
+###
+
+<!-- DK: Drop some knowledge. -->
+
+### Exercise 4
+
+Pipe `treatment` to `fill()` with the argument `response`.
+
+```{r explicit-missing-val-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r explicit-missing-val-4-hint, eval = FALSE}
+treatment |>
+  ...(response)
+```
+
+###
+
+This treatment is sometimes called “last observation carried forward”, or locf for short.
+
+### Exercise 5
+
+Use the same code, but replace `response` with `everything()`. Recall that `everything()` is a function which returns all the variables in a tibble.
+
+```{r explicit-missing-val-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r explicit-missing-val-5-hint, eval = FALSE}
+treatment |>
+  fill(...)
+```
+
+###
+
+You can use the `.direction` argument to fill in missing values that have been generated in more exotic ways.
+
+
+
+```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
+```
+
