@@ -13,9 +13,12 @@ description: "Tutorial for Chapter 20: Joins"
 ```{r setup, include = FALSE}
 library(learnr)
 library(tutorial.helpers)
+library(knitr)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
+
+library(nycflights13)
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -47,6 +50,252 @@ You will also learn about basic joins, keys, foreign keys and more which is basi
 ###
 
 To understand joins, you need to first understand how two tables can be connected through a pair of keys, within each table. In this section, you’ll learn about the two types of key and see examples of both in the datasets of the ["nycflights13"](https://www.rdocumentation.org/packages/nycflights13/versions/1.0.1) package. You’ll also learn how to check that your keys are valid, and what to do if your table lacks a key.
+
+### Exercise 1
+
+Every join involves a pair of keys: a primary key and a foreign key. A primary key is a variable or set of variables that uniquely identifies each observation.
+
+As a example run `airlines`.
+
+```{r keys-1, exercise = TRUE}
+
+```
+
+
+```{r keys-1-hint, eval = FALSE}
+airlines
+```
+
+###
+
+airlines records two pieces of data about each airline: its `carrier` code and its full `name`. You can identify an airline with its two letter carrier code, making carrier the primary key.
+
+### Exercise 2
+
+Run `airports`.
+
+```{r keys-2, exercise = TRUE}
+
+```
+
+
+```{r keys-2-hint, eval = FALSE}
+airports
+```
+
+###
+
+airports records data about each airport. You can identify each airport by its three letter airport code, making `faa` the primary key.
+
+### Exercise 3
+
+Run `planes`.
+
+```{r keys-3, exercise = TRUE}
+
+```
+
+
+```{r keys-3-hint, eval = FALSE}
+planes
+```
+
+###
+
+planes records data about each plane. You can identify a plane by its tail number, making `tailnum` the primary key.
+
+### Exercise 4
+
+Run `weather`.
+
+```{r keys-4, exercise = TRUE}
+
+```
+
+
+```{r keys-4-hint, eval = FALSE}
+weather
+```
+
+###
+
+`weather` records data about the weather at the origin airports. You can identify each observation by the combination of location and time, making `origin` and `time_hour` the compound primary key.
+
+When more than one variable is needed, the key is called a `compound key`.
+
+### Exercise 5
+
+Now that we have seen couple of examples of what `primary keys` are, let's explore what a `foreign key` is. A `foreign key` is a variable (or set of variables) that corresponds to a `primary key` in another table.
+
+Run `flights$tailnum`.
+
+```{r keys-5, exercise = TRUE}
+
+```
+
+
+```{r keys-5-hint, eval = FALSE}
+flights$tailnum
+```
+
+###
+
+`flights$tailnum` is a foreign key that corresponds to the primary key `tailnum` in the `planes` tibble.
+
+### Exercise 6
+
+Run `flights$carrier`.
+
+```{r keys-6, exercise = TRUE}
+
+```
+
+
+```{r keys-6-hint, eval = FALSE}
+flights$carrier
+```
+
+###
+
+`flights$carrier` is a foreign key that corresponds to the primary key `carrier` in the airlines tibble.
+
+### Exercise 7
+
+Run `flights$origin`.
+
+```{r keys-7, exercise = TRUE}
+
+```
+
+
+```{r keys-7-hint, eval = FALSE}
+flights$origin
+```
+
+###
+
+`flights$origin` is a foreign key that corresponds to the primary key `faa` in the `airpors` tibble.
+
+The relationships which we saw can be visualized like:
+
+```{r}
+knitr::include_graphics("images/relational.png")
+```
+
+### Exercise 8
+
+Now that that we’ve identified the primary keys in each table, it’s good practice to verify that they do indeed uniquely identify each observation. One way to do that is to count() the primary keys and look for entries where n is greater than one.
+
+Start a pipe with `planes` to the `count()` function and within count set the argument as `tailnum`. Start a pipe  from `count()` to filter and Apply the `filter()` function to `n > 1`. This will filter out any elements where the count (n) is not greater than 1.
+
+```{r keys-8, exercise = TRUE}
+
+```
+
+
+```{r keys-8-hint, eval = FALSE}
+... |> 
+  count(tailnum) |> 
+  filter(...)
+```
+
+###
+
+We see no observations or records which reveals that `tailnum` is good primary key and the planes tibble  look good to go.
+
+### Exercise 9
+
+Let's perform a similar check using `weather` data. Please replicate the previous code and modify the dataset to `weather`, while adjusting the `count()` argument to include `time_hour` and `origin` only.
+
+```{r keys-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r keys-9-hint, eval = FALSE}
+... |> 
+  count(time_hour, ...) |> 
+  filter(n > 1)
+```
+
+###
+
+There are also no records when we run the previous code which verifies that time_hour and origin are good primary keys. But what if there were some missing values with the primary keys?
+
+### Exercise 10
+
+Start a pipe with `planes` to `filter()` and set `is.na(tailnum)` as the argument.
+
+```{r keys-10, exercise = TRUE}
+
+```
+
+
+```{r keys-10-hint, eval = FALSE}
+planes |> 
+  filter(is.na(...))
+```
+
+###
+
+We should be getting no records when we run the code since the table has no NULL values, if there were any then `is.na()` would display them.
+
+### Exercise 11
+
+Let's perform a similar check using `weather` data. Please replicate the previous code and modify the data set to `weather`, while adjusting the `is.na()` argument to include `time_hour`and a `|` or operator then pass `origin` for another `is.na()` argument.
+
+```{r keys-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r keys-11-hint, eval = FALSE}
+... |> 
+  filter(...(time_hour) | is.na(...))
+```
+
+###
+
+So far we haven’t talked about the primary key for `flights`. It’s not super important here, because there are no data frames that use it as a foreign key, but it’s still useful to consider because it’s easier to work with observations if we have some way to describe them to others.
+
+### Exercise 12
+
+After a little thinking and experimentation, we determined that there are three variables that together uniquely identify each flight: `time_hour`, `carrier` and `flight`.
+
+Let's verify if the following variables can be used a primary keys, start a pipe with `flights` to `count()` with the three variable we talked about earlier and then pipe that to `filter()` and set n to be greated than 1 .
+
+```{r keys-12, exercise = TRUE}
+
+```
+
+
+```{r keys-12-hint, eval = FALSE}
+... |> 
+  count(time_hour, ..., flight) |> 
+  ...
+```
+
+###
+
+Does the absence of duplicates automatically make `time_hour`-`carrier`-`flight` a primary key? It’s certainly a good start, but it doesn’t guarantee it. For example, are altitude and latitude a good primary key for airports?
+
+### Exercise 13
+
+
+```{r keys-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r keys-13-hint, eval = FALSE}
+
+```
+
+###
+
 
 ## Basic Joins
 ### 
