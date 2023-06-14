@@ -186,7 +186,7 @@ knitr::include_graphics("images/relational.png")
 
 Now that that we’ve identified the primary keys in each table, it’s good practice to verify that they do indeed uniquely identify each observation. One way to do that is to count() the primary keys and look for entries where n is greater than one.
 
-Start a pipe with `planes` to the `count()` function and within count set the argument as `tailnum`. Apply the `filter()` function to the result of the previous step, using the condition `n > 1`. This will filter out any elements where the count (n) is not greater than 1.
+Start a pipe with `planes` to the `count()` function and within count set the argument as `tailnum`. Start a pipe  from `count()` to filter and Apply the `filter()` function to `n > 1`. This will filter out any elements where the count (n) is not greater than 1.
 
 ```{r keys-8, exercise = TRUE}
 
@@ -225,19 +225,76 @@ There are also no records when we run the previous code which verifies that time
 
 ### Exercise 10
 
+Start a pipe with `planes` to `filter()` and set `is.na(tailnum)` as the argument.
 
 ```{r keys-10, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r keys-10-hint, eval = FALSE}
-
+planes |> 
+  filter(is.na(...))
 ```
 
 ###
 
+We should be getting no records when we run the code since the table has no NULL values, if there were any then `is.na()` would display them.
+
+### Exercise 11
+
+Let's perform a similar check using `weather` data. Please replicate the previous code and modify the data set to `weather`, while adjusting the `is.na()` argument to include `time_hour`and a `|` or operator then pass `origin` for another `is.na()` argument.
+
+```{r keys-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r keys-11-hint, eval = FALSE}
+... |> 
+  filter(...(time_hour) | is.na(...))
+```
+
+###
+
+So far we haven’t talked about the primary key for `flights`. It’s not super important here, because there are no data frames that use it as a foreign key, but it’s still useful to consider because it’s easier to work with observations if we have some way to describe them to others.
+
+### Exercise 12
+
+After a little thinking and experimentation, we determined that there are three variables that together uniquely identify each flight: `time_hour`, `carrier` and `flight`.
+
+Let's verify if the following variables can be used a primary keys, start a pipe with `flights` to `count()` with the three variable we talked about earlier and then pipe that to `filter()` and set n to be greated than 1 .
+
+```{r keys-12, exercise = TRUE}
+
+```
+
+
+```{r keys-12-hint, eval = FALSE}
+... |> 
+  count(time_hour, ..., flight) |> 
+  ...
+```
+
+###
+
+Does the absence of duplicates automatically make `time_hour`-`carrier`-`flight` a primary key? It’s certainly a good start, but it doesn’t guarantee it. For example, are altitude and latitude a good primary key for airports?
+
+### Exercise 13
+
+
+```{r keys-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r keys-13-hint, eval = FALSE}
+
+```
+
+###
 
 
 ## Basic Joins
