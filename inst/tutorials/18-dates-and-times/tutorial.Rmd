@@ -1,6 +1,6 @@
 ---
 title: Dates and times
-author: David Kane
+author: David Kane and Mann Talati
 tutorial:
   id: dates-and-times
 output:
@@ -15,11 +15,19 @@ description: 'Tutorial for Chapter 18: Dates and times'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
+library(nycflights13)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
-
-
+flights_dt <- flights |> 
+  filter(!is.na(dep_time), !is.na(arr_time)) |> 
+  mutate(
+    dep_time = make_datetime_100(year, month, day, dep_time),
+    arr_time = make_datetime_100(year, month, day, arr_time),
+    sched_dep_time = make_datetime_100(year, month, day, sched_dep_time),
+    sched_arr_time = make_datetime_100(year, month, day, sched_arr_time)
+  ) |> 
+  select(origin, dest, ends_with("delay"), ends_with("time"))
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -31,9 +39,443 @@ options(tutorial.exercise.timelimit = 60,
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 18: Dates and times](https://r4ds.hadley.nz/datetimes.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
+This tutorial covers [Chapter 18: Dates and Times](https://r4ds.hadley.nz/datetimes.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
 
-## Older material
+
+## Creating date/times through import
+###
+In this chapter we are going to focus on dates and date-times as R doesn’t have a native class for storing times. If you need one, you can use the hms package.
+
+### Exercise 1
+
+Run `today()` and `now()` in the code chunk below. With this we can get the current date or date-time.
+
+```{r creating-data-times-im-1, exercise = TRUE}
+
+```
+
+```{r creating-data-times-1-im-hint, eval = FALSE}
+...()
+...()
+```
+
+###
+
+A date-time is a date plus a time: it uniquely identifies an instant in time (typically to the nearest second). Tibbles print this as <dttm>. Base R calls these POSIXct, but doesn’t exactly trip off the tongue.
+
+###
+
+## Exercise 2
+
+Set `csv` to "date 01/02/15"
+
+```{r creating-data-times-2-im, exercise = TRUE}
+
+```
+
+```{r creating-data-times-2-im-hint, eval = FALSE}
+... <- "date
+  01/02/15"
+```
+
+### Exercise 3
+
+Let's read this data by using the `read_csv()` function on the `csv` from above.
+
+```{r creating-data-times-3-im, exercise = TRUE}
+
+```
+
+```{r creating-data-times-3-im-hint, eval = FALSE}
+...(csv)
+```
+
+###
+
+With `read_csv()` we are able to analyze the aspects of the date-time with `col_types` such as `col_date()`, and `col_datetime()`. We can view the year features, month features, day features, time features, and other features.
+
+### Exercise 4
+
+Now we are going to utilize `col_types` to format date from the `csv` we read. Set `col_types` to cols(date = col_date("%m/%d/%y")) in `read_csv()``.
+
+```{r creating-data-times-4-im, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-data-times-4-im-hint, eval = FALSE}
+read_csv(csv, col_types = ...)
+```
+
+###
+
+With this we can see a tibble that formats our date in year/month/day format.
+
+### Exercise 5
+
+Let's try this now with a different format. Set `col_types` to cols(date = col_date("%d/%m/%y")) in `read_csv()`.
+
+```{r creating-data-times-5-im, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-data-times-5-im-hint, eval = FALSE}
+read_csv(csv, col_types = ...)
+```
+
+###
+
+Note that no matter how you specify the date format, it’s always displayed the same way once you get it into R.
+
+###
+
+With non-English dates and %b or %B you will need to use `locale()`. Check out [**date_names_langs()**](https://readr.tidyverse.org/reference/date_names.html) or create with `date_names()`.
+
+## Creating date/times with strings
+###
+The date-time specification language is powerful, but requires careful analysis of the date format. An alternative approach is to use lubridate’s helpers which attempt to automatically determine the format once you specify the order of the component.
+
+### Exercise 1
+
+Set `ymd()` to "2017-01-31". On another line set `mdy()` to "January 31st, 2017".
+
+```{r creating-data-times-strings-1, exercise = TRUE}
+
+```
+
+```{r creating-data-times-strings-1-hint, eval = FALSE}
+ymd(...)
+...("January 31st, 2017")
+```
+
+###
+
+Using these three formats we need to identify the order in which year, month, and day appear in your dates, then arrange “y”, “m”, and “d” in the same order. That gives you the name of the lubridate function that will parse your date.
+
+###
+
+### Exercise 2
+
+Besides this we can also force set this by supplying a timezone. Set `tz` within to `ymd()` to "UTC".
+
+```{r creating-data-times-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-data-times-2-hint, eval = FALSE}
+ymd("2017-01-31", tz = ...)
+```
+
+## Exercise 3
+
+We can also use the "hms" function to create an datetime. Set `ymd_hms()` to "2017-01-31 20:11:59".
+
+```{r creating-data-times-strings-3, exercise = TRUE}
+make_datetime_100 <- function(year, month, day, time) {
+  make_datetime(year, month, day, time %/% 100, time %% 100)
+}
+```
+
+```{r creating-data-times-strings-3-hint, eval = FALSE}
+ymd_hms(...)
+```
+
+###
+
+With this we are able to create a datetime that is automatically set to UTC. `hms()` stands for **h**our, **m**inute, **s**econd.
+
+## Creating date/times with individual components
+###
+We can use the datetime features on pieces of data. We will use the datetime component on the `flights` data.
+
+Let's make this line graph using `geom_point()`:
+
+```{r creating-datetimes-w}
+flight_grph <- flights |>
+                  mutate(dep_time = make_datetime(year, month, day, dep_time),
+            sched_dep_time = make_datetime(year, month, day, sched_dep_time)) |>
+            ggplot(mapping = aes(x = sched_dep_time, y = dep_time, color=flight)) +              geom_point() + 
+            labs(title = "Flights",
+                subtitle = "Flight departed time based on scheduled departed time.",
+                color = "Flight",
+                x = "Scheduled Departure Time",
+                y = "Departure Time")
+
+flight_grph
+```
+
+### Exercise 1
+
+View the `flights` data through `glimpse()`
+
+```{r creating-datetimes-w-1, exercise = TRUE}
+
+```
+
+```{r creating-datetimes-w-1-hint, eval = FALSE}
+glimpse(...())
+```
+
+###
+Here we can see all of the `flights` data with all of the important aspects of the `flights` data.
+
+### Exercise 2
+
+We want to look at the `dep_time` and the `sched_dep_time`. Mutate the `flights` data by setting `dep_time` and `sched_dep_time` to `make_datetime()` and selection the columns of `year`, `month`, `day`, and `dep_time/sched_dep_time`.
+
+```{r creating-datetimes-w-2, exercise = TRUE}
+
+```
+
+```{r creating-datetimes-w-2-hint, eval = FALSE}
+flights |>
+  mutate(dep_time = make_datetime(..., ..., ..., dep_time),
+            sched_dep_time = make_datetime(..., ..., ..., sched_dep_time))
+```
+
+###
+Here we are able to make a datetime based on the `flights` data that we have. When creating a a date/time from this sort of input, we use `make_date()` for dates, or `make_datetime()` for date-times.
+
+### Exercise 3
+
+Continue the extension by adding `ggplot()` and in `aes()` set `x` to `sched_dep_time` and `y` to `dep_time`
+
+```{r creating-datetimes-w-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-datetimes-w-3-hint, eval = FALSE}
+... |>
+    ggplot(mapping = aes(x = ..., y = ...))
+```
+
+###
+
+### Exercise 4
+
+Let's plot this by adding `geom_point()` and within `aes()` set `color` to `flight`
+
+```{r creating-datetimes-w-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-datetimes-w-4-hint, eval = FALSE}
+... |>
+  ggplot(mapping = aes(x = ..., y = ..., color = ...)) +
+  ...()
+```
+
+###
+
+### Exercise 5
+
+Finally add the labels to the graph to complete the graph with `labs()`
+
+```{r creating-datetimes-w-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-datetimes-w-5-hint, eval = FALSE}
++ labs(title = ...,
+                subtitle = ...,
+                color = "Flight",
+                x = ...,
+                y = ...)
+```
+
+Remember your graph should look like this:
+
+```{r creating-datetimes-w, eval = FALSE}
+flight_grph
+```
+
+###
+Besides the use of datetime, we can use date which can be done through `as_datetime()` and `as_date()`. Visit [**as_datetime()**](https://lubridate.tidyverse.org/reference/as_date.html) for more information.
+
+## Date-time components with getting components
+###
+You can pull out individual parts of the date with the accessor functions `year()`, `month()`, `mday()` (day of the month), `yday()` (day of the year), `wday()` (day of the week), `hour()`, `minute()`, and `second()`. These are effectively the opposites of `make_datetime()`.
+
+###
+We are going to use the `flights_dt` dataset which includes the `dep_time`, `sched_dep_time`, `arr_time`, `sched_arr_time` with datetimes to see our data.
+
+### Exercise 1
+
+Let's `glimpse()` the `flights_dt` data to take a look at the data found within `flights_dt`
+
+```{r datetime-components--1, exercise = TRUE}
+
+```
+
+```{r datetime-components--1-hint, eval = FALSE}
+glimpse(...)
+```
+
+###
+You will find that there are 9 main columns which contain all of the information that we will use regarding the information about our flights.
+
+### Exercise 2
+
+Let's start an extension with the `flights_dt` to mutate our data with `wday()` set to `wday(dep_time, label = TRUE)`.
+
+```{r datetime-components--2, exercise = TRUE}
+
+```
+
+```{r datetime-components--2-hint, eval = FALSE}
+flights_dt |> 
+  mutate(wday = wday(..., label = ...))
+```
+
+###
+
+### Exercise 3
+
+Now let's plot our data using `ggplot()` and within `aes()` set `x` to `wday`
+
+```{r datetime-components--3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r datetime-components--3-hint, eval = FALSE}
+... |> 
+ ... |> 
+  ggplot(aes(x = ...))
+```
+
+###
+
+### Exercise 4
+
+Let's view our data with `geom_bar()`. Add the bar to the data that we have used.
+
+```{r datetime-components--4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r datetime-components--4-hint, eval = FALSE}
+... |> 
+  ... |> 
+  ... +
+  geom_bar()
+```
+
+###
+We can use `wday()` to see that more flights depart during the week than on the weekend
+
+## Date-time components with rounding
+###
+An alternative approach to plotting individual components is to round the date to a nearby unit of time, with `floor_date()`, `round_date()`, and `ceiling_date()`. Each function takes a vector of dates to adjust and then the name of the unit to round down (floor), round up (ceiling), or round to. 
+
+### Exercise 1
+
+Let's use the `flights_dt` dataset again by `mutate()`. Set `dep_hour` to `dep_time`- `floor_date(dep_time, "day").
+
+```{r datetime-components--1, exercise = TRUE}
+
+```
+
+```{r datetime-components--1-hint, eval = FALSE}
+flights_dt |>
+  mutate(dep_hour = ... - ...())
+```
+
+###
+Computing the difference between a pair of date-times yields a difftime
+
+### Exercise 2
+
+Let's plot the data through `ggplot()` Set `x` to `dep_hour` in `aes()`.
+
+```{r datetime-components--2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r datetime-components--2-hint, eval = FALSE}
+... |>
+  ... |>
+  ggplot(aes(x = ...))
+```
+
+###
+
+### Exercise 3
+
+Let's use `geom_freqpoly()` to view the difference by setting `binwidth` to "60*30" in `geom_freqpoly()`.
+
+```{r datetime-components--3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r datetime-components--3-hint, eval = FALSE}
+... |>
+  ... |>
+  ... +
+  geom_freqpoly(binwidth = ...)
+```
+
+###
+You can use rounding to show the distribution of flights across the course of a day by computing the difference between `dep_time` and the earliest instant of that day
+
+## Date-time components with modifying components
+###
+You can also use each accessor function to modify the components of a date/time. This doesn’t come up much in data analysis, but can be useful when cleaning data that has clearly incorrect dates.
+
+### Exercise 1
+
+Let's modify this date: "2026-07-08 12:34:56" with the `ymd_hms()` function.
+
+```{r datetime-components--1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r datetime-components--1-hint, eval = FALSE}
+(datetime <- ymd_hms("..."))
+```
+
+###
+
+### Exercise 2
+
+Let's modify the date by setting year to 2030 in `datetime`. Type `datetime` after to see whether it has been changed.
+
+```{r datetime-components--2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r datetime-components--2-hint, eval = FALSE}
+year(...) <- 2030
+datetime
+```
+
+###
+Alternatively, rather than modifying an existing variable, you can create a new date-time with update(). Check out [**update()**](https://rdrr.io/r/stats/update.html) for more information.
+
+
+<!-- ## Older material
 ### 
 
 ### Exercise 1
@@ -41,7 +483,7 @@ This tutorial covers [Chapter 18: Dates and times](https://r4ds.hadley.nz/dateti
 Run `today()` and `now()` in the code chunk below.
 
 ```{r older-material-1, exercise = TRUE}
-
+glimpse(flights)
 ```
 
 ### 
@@ -55,7 +497,7 @@ Run `today()` and `now()` in the code chunk below.
 <!-- date_1_dt <- ymd(date_1) -->
 <!-- typeof(date_1_dt) -->
 
-Now use the function `ymd()` to convert the string `date_1` below into the proper date-time format. 
+<!-- Now use the function `ymd()` to convert the string `date_1` below into the proper date-time format.
 
 ```{r older-material-2, exercise = TRUE}
 date_1 <- "2020-2-29"
@@ -150,7 +592,7 @@ flights |>
 <!-- AM: This section needs a big rehaul: It's short, confusing, and doesn't help the user learn. -->
 
 
-### Exercise 6
+<!-- ### Exercise 6
 
 The function `parse_date()` allows you to parse a date. The function requires the following criteria: a four digit year,  a `-` or `/`, the month, a `-` or `/`, then the day. An example would be "2010-10-01".
 
@@ -188,8 +630,7 @@ parse_datetime("2010-10-01T2010")
 
 ### 
 
-The user can also specify which number is the month, day and year by using the `%` symbol which allows more flexibility. Type "?parse_datetime" in the console to see examples.
-
+The user can also specify which number is the month, day and year by using the `%` symbol which allows more flexibility. Type "?parse_datetime" in the console to see examples. -->
 
 ## Summary
 ### 
