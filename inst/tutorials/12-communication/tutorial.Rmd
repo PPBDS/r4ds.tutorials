@@ -1,6 +1,6 @@
 ---
 title: Communication
-author: David Kane
+author: David Kane and Srihith Garlapati
 tutorial:
   id: communication
 output:
@@ -22,16 +22,17 @@ library(ggdist)
 library(babynames)
 library(scales)
 library(ggrepel)
+library(patchwork)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
-df <- tibble(
+labels_tib <- tibble(
   x = 1:10,
   y = cumsum(x^2)
 )
 
-labels = ggplot(mpg, aes(x = displ, y = hwy)) +
+labels_graphic = ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point(aes(color = class)) +
   geom_smooth(se = FALSE) +
   labs(
@@ -51,31 +52,27 @@ labels = ggplot(mpg, aes(x = displ, y = hwy)) +
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-
-
-
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 12: Communication](https://r4ds.hadley.nz/communication.html)  from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to use [**ggplot2**](https://ggplot2.tidyverse.org/) and related packages to create persuasive graphics. 
-
-<!-- BOOK MATERIAL GOES HERE. -->
+This tutorial covers [Chapter 12: Communication](https://r4ds.hadley.nz/communication.html)  from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. In this tutorial we will be making use of three core packages from *ggplot2*: [**scales**](https://scales.r-lib.org/) to override the default breaks, [**ggrepel**](https://ggrepel.slowkow.com), and [**patchwork**](https://patchwork.data-imaginist.com). Some key commands that you will be making use of are 
 
 ## Labels
-###
+### 
 
 In this section, you will learn that good labels makes for a great graphic. By the end of this section, we will have learnt how to make an exploratory graphic into an expository graphic. 
 
-###
+### 
 
 By the end of this section we should have this great expository plot:
 
 ```{r include = TRUE}
-labels
+labels_graphic
 ```
 
 ### Exercise 1
 
+Let's first load in the package **tidyverse** using the `library()` function. 
 
 ```{r labels-1, exercise = TRUE}
 
@@ -83,14 +80,17 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-1-hint, eval = FALSE}
-
+```{r labels-1-hint-1, eval = FALSE}
+library(...)
 ```
 
-###
+### 
+
+Let's start with the basics and make a plot with well-formatted labels.
 
 ### Exercise 2
 
+Now, let's explore the dataset that we want to create a plot on. Type in `mpg` and hit "Run Code". 
 
 ```{r labels-2, exercise = TRUE}
 
@@ -98,14 +98,17 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-2-hint, eval = FALSE}
-
+```{r labels-2-hint-1, eval = FALSE}
+mpg
 ```
 
-###
+### 
+
+The `mpg` dataset provides fuel economy data from 1999 and 2008 for 38 popular models of cars. The dataset is shipped with [**ggplot2**](https://ggplot2.tidyverse.org/) package.
 
 ### Exercise 3
 
+Create a new pipeline. Pipe `mpg` to the `ggplot()` function. Within the `ggplot()` function, map `x` to the `displ` variable and `y` to the hwy variable using the `aes()` function.
 
 ```{r labels-3, exercise = TRUE}
 
@@ -113,14 +116,16 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-3-hint, eval = FALSE}
-
+```{r labels-3-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...))
 ```
 
-###
+### 
 
 ### Exercise 4
 
+Using your previous code, add the `geom_point()` function to the pipeline.
 
 ```{r labels-4, exercise = TRUE}
 
@@ -128,14 +133,15 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-4-hint, eval = FALSE}
-
+```{r labels-4-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point()
 ```
-
-###
 
 ### Exercise 5
 
+Using your previous code, within the `geom_point()` function, map the argument `color` to the variable `class` using the `aes()` function. 
 
 ```{r labels-5, exercise = TRUE}
 
@@ -143,14 +149,19 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-5-hint, eval = FALSE}
-
+```{r labels-5-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point(aes(color = ...))
 ```
 
-###
+### 
+
+Now that we have a basic dot plot. We need to add a trend line that can allow us to see the trend of the points very clearly.
 
 ### Exercise 6
 
+Using your previous code, add the `geom_smooth()` function to the pipeline.
 
 ```{r labels-6, exercise = TRUE}
 
@@ -158,14 +169,16 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-6-hint, eval = FALSE}
-
+```{r labels-6-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point(aes(color = ...)) +
+  geom_smooth()
 ```
-
-###
 
 ### Exercise 7
 
+Using your previous code, within your call to the function `geom_smooth()` add the argument called `se` and set it to `FALSE`. This removes the gray background of the line.
 
 ```{r labels-7, exercise = TRUE}
 
@@ -173,14 +186,22 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-7-hint, eval = FALSE}
-
+```{r labels-7-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point(aes(color = ...)) +
+  geom_smooth(se = ...)
 ```
 
-###
+### 
+
+Our graphic is currently exploratory, let's turn it into an expository graphic with some good labels.
 
 ### Exercise 8
 
+Using your previous code, add a `labs()` function to the pipeline and add a `title`, `subtitle`, `x` axis title, `y` axis title, `color` title, and a `caption`. 
+
+(Hint the `caption` should be the following: `"Data from fueleconomy.gov"`)
 
 ```{r labels-8, exercise = TRUE}
 
@@ -188,14 +209,36 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-8-hint, eval = FALSE}
-
+```{r labels-8-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point(aes(color = ...)) +
+  geom_smooth(se = ...) +
+  labs(
+    title = ...,
+    subtitle = ...,
+    x = ...,
+    y = ...,
+    color = ...,
+    caption = ...
+  )
 ```
 
-###
+### 
+
+The purpose of a plot title is to summarize the main finding. Avoid titles that just describe what the plot is, e.g., “A scatterplot of engine displacement vs. fuel economy”. The argument, `subtitle`, adds additional detail in a smaller font beneath the `title` and the argument, `caption`, adds text at the bottom right of the plot, often used to describe the source of the data.
+
+### 
+
+Reminder: The graphic should look something like this
+
+```{r include = TRUE}
+labels_graphic
+```
 
 ### Exercise 9
 
+It’s also possible to use mathematical equations instead of text strings. Let's take a look at a tibble called `labels_tib`. Type in `labels_tib` and hit "Run Code". 
 
 ```{r labels-9, exercise = TRUE}
 
@@ -203,14 +246,17 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-9-hint, eval = FALSE}
-
+```{r labels-9-hint-1, eval = FALSE}
+labels_tib
 ```
 
-###
+### 
+
+We can use mathematical equations instead of textstrings for the labels if we switch `""` for the function `quote()`
 
 ### Exercise 10
 
+Create a new pipeline. Pipe `labels_tib` to the function `ggplot()`. Within this function, map `x` to `x` and `y` to `y` using the `aes()` function.
 
 ```{r labels-10, exercise = TRUE}
 
@@ -218,14 +264,16 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-10-hint, eval = FALSE}
-
+```{r labels-10-hint-1, eval = FALSE}
+labels_tib |> 
+  ggplot(aes(x = ..., y = ...))
 ```
 
-###
+### 
 
 ### Exercise 11
 
+Using your previous code, add the `geom_point()` function to the pipeline.
 
 ```{r labels-11, exercise = TRUE}
 
@@ -233,14 +281,15 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-11-hint, eval = FALSE}
-
+```{r labels-11-hint-1, eval = FALSE}
+labels_tib |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point()
 ```
-
-###
 
 ### Exercise 12
 
+Using your previous code, add the `labs()` function to the pipeline. Within the `labs()` function, set the `x` axis title to `quote(x[i])`.
 
 ```{r labels-12, exercise = TRUE}
 
@@ -248,14 +297,20 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-12-hint, eval = FALSE}
-
+```{r labels-12-hint-1, eval = FALSE}
+labels_tib |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  labs(
+    x = ...
+  )
 ```
 
-###
+### 
 
 ### Exercise 13
 
+Using your previous code, within your call to the `labs()` function add the `y` axis title and set it to `quote(sum(x[i] ^ 2, i == 1, n))`. 
 
 ```{r labels-13, exercise = TRUE}
 
@@ -263,34 +318,37 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-13-hint, eval = FALSE}
-
+```{r labels-13-hint-1, eval = FALSE}
+labels_tib |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  labs(
+    x = ...,
+    y = ...
+  )
 ```
-
-###
 
 ### Exercise 14
 
+Type in `?plotmath` in the Console and learn more about what kind of syntax you can input into the `quote()` function. Copy/paste an interesting syntax and a meaning to the textbox below and hit "Submit".
 
-```{r labels-14, exercise = TRUE}
-
+```{r labels-14}
+question_text(NULL,
+	message = "Place correct answer here.",
+	answer(NULL, correct = TRUE),
+	allow_retry = FALSE,
+	incorrect = NULL,
+	rows = 6)
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r labels-14-hint, eval = FALSE}
-
-```
-
-###
-
-
 
 ## Annotations
-###
+### 
+
+In this section we will learn how to label an individual observation or a group of observations instead of just labelling major components of a plot. 
 
 ### Exercise 1
 
+Load in the `ggrepel` package using the `library()` function.
 
 ```{r annotations-1, exercise = TRUE}
 
@@ -298,14 +356,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-1-hint, eval = FALSE}
-
+```{r annotations-1-hint-1, eval = FALSE}
+library(...)
 ```
-
-###
 
 ### Exercise 2
 
+Let's make a new dataframe called `label_info` and set it to equal the dataset `mpg`.
 
 ```{r annotations-2, exercise = TRUE}
 
@@ -313,14 +370,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-2-hint, eval = FALSE}
-
+```{r annotations-2-hint-1, eval = FALSE}
+label_info <- mpg
 ```
-
-###
 
 ### Exercise 3
 
+Using your previous code, create a new pipeline. Pipe `mpg` to the `arrange()` function. Within this function, add the argument `desc(displ)`.
 
 ```{r annotations-3, exercise = TRUE}
 
@@ -328,14 +384,14 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-3-hint, eval = FALSE}
-
+```{r annotations-3-hint-1, eval = FALSE}
+label_info <- mpg |> 
+  arrange(...)
 ```
-
-###
 
 ### Exercise 4
 
+Using your previous code, add the `slice_head()` function. Within this function set the argument `n` to `1`.
 
 ```{r annotations-4, exercise = TRUE}
 
@@ -343,14 +399,17 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-4-hint, eval = FALSE}
-
+```{r annotations-4-hint-1, eval = FALSE}
+label_info <- mpg |> 
+  arrange(...) |> 
+  slice_head(n = ...)
 ```
 
-###
+### 
 
 ### Exercise 5
 
+Using your previous code, within your call to `slice_head()`, add a `by` argument and set it to `drv` (drivetype). 
 
 ```{r annotations-5, exercise = TRUE}
 
@@ -358,13 +417,20 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-5-hint, eval = FALSE}
-
+```{r annotations-5-hint-1, eval = FALSE}
+label_info <- mpg |> 
+  arrange(...) |> 
+  slice_head(n = ..., by = ...)
 ```
 
-###
+### 
+
+The by argument will group by whatever is inputted into the argument. 
 
 ### Exercise 6
+
+Using your previous code, add the `mutate()` function to the pipeline. Within this function, create a new variable called `drive_type` and set it to: 
+`case_when(drv == "f" ~ "front-wheel drive", drv == "r" ~ "rear-wheel drive", drv == "4" ~ "4-wheel drive")`
 
 
 ```{r annotations-6, exercise = TRUE}
@@ -373,14 +439,16 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-6-hint, eval = FALSE}
-
+```{r annotations-6-hint-1, eval = FALSE}
+label_info <- mpg |> 
+  arrange(...) |> 
+  slice_head(n = ..., by = ...) |> 
+  mutate(drive_type = case_when(...))
 ```
-
-###
 
 ### Exercise 7
 
+Using your previous code, add the `select()` function to the pipeline. Select the following columns: `displ`, `hwy`, `drv`, `drive_type`.
 
 ```{r annotations-7, exercise = TRUE}
 
@@ -388,14 +456,21 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-7-hint, eval = FALSE}
-
+```{r annotations-7-hint-1, eval = FALSE}
+label_info <- mpg |> 
+  arrange(...) |> 
+  slice_head(n = ..., by = ...) |> 
+  mutate(drive_type = case_when(...)) |> 
+  select(...)
 ```
 
-###
+### 
+
+So, far we have pulled out the cars with the highest engine size in each drive type and saved their information as a new data frame called `label_info`.
 
 ### Exercise 8
 
+Display `label_info` by typing `label_info` below and hitting "Run Code".
 
 ```{r annotations-8, exercise = TRUE}
 
@@ -403,14 +478,17 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-8-hint, eval = FALSE}
-
+```{r annotations-8-hint-1, eval = FALSE}
+label_info
 ```
 
-###
+### 
+
+We will now use this new data frame to directly label the three groups and replace the legend by placing labels directly on the plot. 
 
 ### Exercise 9
 
+Create a new pipeline. Pipe `mpg` to the `ggplot()` function. Within this function, map `x` to `displ`, `y` to `hwy`, and `color` to `drv` using `aes()`.
 
 ```{r annotations-9, exercise = TRUE}
 
@@ -418,14 +496,14 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-9-hint, eval = FALSE}
-
+```{r annotations-9-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...))
 ```
-
-###
 
 ### Exercise 10
 
+Using your previous code, add the `geom_point()` function to the pipeline. Within this function set the argument `alpha` to `0.3`.
 
 ```{r annotations-10, exercise = TRUE}
 
@@ -433,14 +511,15 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-10-hint, eval = FALSE}
-
+```{r annotations-10-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...)) |> 
+  geom_point(alpha = ...)
 ```
-
-###
 
 ### Exercise 11
 
+Using your previous code, add the `geom_smooth()` function to the pipeline. Within this function set the `se` argument to `FALSE`. 
 
 ```{r annotations-11, exercise = TRUE}
 
@@ -448,14 +527,16 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-11-hint, eval = FALSE}
-
+```{r annotations-11-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...)) |> 
+  geom_point(alpha = ...) |> 
+  geom_smooth(se = ...)
 ```
-
-###
 
 ### Exercise 12
 
+Using your previous code, add the `geom_text()` function to the pipeline. Within this function set the argument `data` to the dataframe `label_info`. 
 
 ```{r annotations-12, exercise = TRUE}
 
@@ -463,14 +544,19 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-12-hint, eval = FALSE}
-
+```{r annotations-12-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...)) |> 
+  geom_point(alpha = ...) |> 
+  geom_smooth(se = ...) |> 
+  geom_text(
+    data = ...
+  )
 ```
-
-###
 
 ### Exercise 13
 
+Using your previous code, within your call to `geom_text()`, map `x` to `displ`, `y` to `hwy`, and `label` to `drive_type` using `aes()`.
 
 ```{r annotations-13, exercise = TRUE}
 
@@ -478,14 +564,20 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-13-hint, eval = FALSE}
-
+```{r annotations-13-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...)) |> 
+  geom_point(alpha = ...) |> 
+  geom_smooth(se = ...) |> 
+  geom_text(
+    data = ..., 
+    aes(...)
+  )
 ```
-
-###
 
 ### Exercise 14
 
+Using your previous code, within your call to `geom_text()`, add the argument `fontface` and set it to `"bold"`. 
 
 ```{r annotations-14, exercise = TRUE}
 
@@ -493,14 +585,21 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-14-hint, eval = FALSE}
-
+```{r annotations-14-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...)) |> 
+  geom_point(alpha = ...) |> 
+  geom_smooth(se = ...) |> 
+  geom_text(
+    data = ..., 
+    aes(...), 
+    fontface = ...
+  )
 ```
-
-###
 
 ### Exercise 15
 
+Using your previous code, within your call to `geom_text()`, add the argument `size` and set it to `5`.
 
 ```{r annotations-15, exercise = TRUE}
 
@@ -508,14 +607,26 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-15-hint, eval = FALSE}
-
+```{r annotations-15-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...)) |> 
+  geom_point(alpha = ...) |> 
+  geom_smooth(se = ...) |> 
+  geom_text(
+    data = ..., 
+    aes(...), 
+    fontface = ..., 
+    size = ...
+  )
 ```
 
-###
+### 
+
+The `fontface` and `size` arguments we can customize the look of the text labels. In this case, these arguments make the labels larger than the rest of the text on the plot and bolded.
 
 ### Exercise 16
 
+Using your previous code, within your call to `geom_text()` add the `hjust` and `vjust` arguments. Set the `hjust` argument to `"right"` and the `vjust` argument to `"bottom"`. 
 
 ```{r annotations-16, exercise = TRUE}
 
@@ -523,14 +634,28 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-16-hint, eval = FALSE}
-
+```{r annotations-16-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...)) |> 
+  geom_point(alpha = ...) |> 
+  geom_smooth(se = ...) |> 
+  geom_text(
+    data = ..., 
+    aes(...), 
+    fontface = ..., 
+    size = ...,
+    hjust = ...,
+    vjust = ...
+  )
 ```
 
-###
+### 
+
+Note the use of `hjust` (horizontal justification) and `vjust` (vertical justification) to control the alignment of the label.
 
 ### Exercise 17
 
+Using your previous code, add the `theme()` function to the pipeline. Within this function, add the argument `legend.position` and set it to `"none"`. 
 
 ```{r annotations-17, exercise = TRUE}
 
@@ -538,14 +663,27 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-17-hint, eval = FALSE}
-
+```{r annotations-17-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...)) |> 
+  geom_point(alpha = ...) |> 
+  geom_smooth(se = ...) |> 
+  geom_text(
+    data = ..., 
+    aes(...), 
+    fontface = ..., 
+    size = ...
+  ) |> 
+  theme(legend.position = ...)
 ```
 
-###
+### 
+
+The function `theme()` with the argument `legend.position = "none"` turns all the legends off — we’ll talk about it more shortly.)
 
 ### Exercise 18
 
+Using your previous code, remove the `hjust` and `vjust` arguments from within the `geom_text()` function. In addition, change the `geom_text()` function to the `geom_label_repel()` function. 
 
 ```{r annotations-18, exercise = TRUE}
 
@@ -553,137 +691,32 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r annotations-18-hint, eval = FALSE}
-
+```{r annotations-18-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ..., color = ...)) |> 
+  geom_point(alpha = ...) |> 
+  geom_smooth(se = ...) |> 
+  geom_label_repel(
+    data = ..., 
+    aes(...), 
+    fontface = ..., 
+    size = ...
+  ) + 
+  theme(legend.position = ...)
 ```
 
-###
+### 
 
-### Exercise 19
-
-
-```{r annotations-19, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-19-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 20
-
-
-```{r annotations-20, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-20-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 21
-
-
-```{r annotations-21, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-21-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 22
-
-
-```{r annotations-22, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-22-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 23
-
-
-```{r annotations-23, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-23-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 24
-
-
-```{r annotations-24, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-24-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 25
-
-
-```{r annotations-25, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-25-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 26
-
-
-```{r annotations-26, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-26-hint, eval = FALSE}
-
-```
-
-###
+The annotated plot we made before is hard to read because the labels overlap with each other and with the points. We can use the `geom_label_repel()` function from the **ggrepel** package to address both of these issues. This useful package will automatically adjust labels so that they don’t overlap as you can see above.
 
 ## More Annotations
-###
+### 
+
+In this section, we will discuss and learn more ways to add annotations to your plots.
 
 ### Exercise 1
 
+Create a new variable called `potential_outliers` and set it equal to the dataset `mpg`. 
 
 ```{r more-annotations-1, exercise = TRUE}
 
@@ -691,14 +724,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-1-hint, eval = FALSE}
-
+```{r more-annotations-1-hint-1, eval = FALSE}
+potential_outliers <- mpg
 ```
-
-###
 
 ### Exercise 2
 
+Using your previous code, create a new pipeline and pipe `mpg` to the `filter()` function. Within this function add the following code: `hwy > 40 | (hwy > 20 & displ > 5)`. 
 
 ```{r more-annotations-2, exercise = TRUE}
 
@@ -706,14 +738,14 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-2-hint, eval = FALSE}
-
+```{r more-annotations-2-hint-1, eval = FALSE}
+potential_outliers <- mpg |> 
+  filter(...)
 ```
-
-###
 
 ### Exercise 3
 
+Create a new pipeline. Pipe `mpg` to the `ggplot()` function. Within this function map `x` to `displ` and `y` to `hwy` using `aes()`. 
 
 ```{r more-annotations-3, exercise = TRUE}
 
@@ -721,14 +753,14 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-3-hint, eval = FALSE}
-
+```{r more-annotations-3-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...))
 ```
-
-###
 
 ### Exercise 4
 
+Using your previous code, add the `geom_point()` function to the pipeline. 
 
 ```{r more-annotations-4, exercise = TRUE}
 
@@ -736,14 +768,15 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-4-hint, eval = FALSE}
-
+```{r more-annotations-4-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point()
 ```
-
-###
 
 ### Exercise 5
 
+Using your previous code, add the `geom_text_repel()` function. Within this function add the argument `data` and set it to `potential_outliers`.
 
 ```{r more-annotations-5, exercise = TRUE}
 
@@ -751,14 +784,20 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-5-hint, eval = FALSE}
-
+```{r more-annotations-5-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  geom_text_repel(data = ...)
 ```
 
-###
+### 
+
+In addition to `geom_text()` and `geom_label()`, you have many other geoms in **ggplot2** available to help annotate your plot. For example, you can use `geom_hline()` and `geom_vline()` to add reference lines. We often make them thick (`linewidth = 2`) and white (`color = white`), and draw them underneath the primary data layer. That makes them easy to see, without drawing attention away from the data.
 
 ### Exercise 6
 
+Using your previous code, within your call to `geom_text_repel()`, map `label` to `model` using `aes()`.
 
 ```{r more-annotations-6, exercise = TRUE}
 
@@ -766,14 +805,21 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-6-hint, eval = FALSE}
-
+```{r more-annotations-6-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  geom_text_repel(data = ..., 
+                  aes(label = ...))
 ```
 
-###
+### 
+
+Another geom that can help annotate your plot is `geom_rect()`. You can use `geom_rect()` to draw a rectangle around points of interest. The boundaries of the rectangle are defined by aesthetics `xmin`, `xmax`, `ymin`, `ymax`. Alternatively, look into the [**ggforce**](https://ggforce.data-imaginist.com/) package, specifically [`geom_mark_hull()`](https://ggforce.data-imaginist.com/reference/geom_mark_hull.html), which allows you to annotate subsets of points with hulls.
 
 ### Exercise 7
 
+Using your previous code, add the `geom_point()` function to the pipeline. Within this function, add the argument `data` and set it to `potential_outliers`. 
 
 ```{r more-annotations-7, exercise = TRUE}
 
@@ -781,14 +827,22 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-7-hint, eval = FALSE}
-
+```{r more-annotations-7-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  geom_text_repel(data = ..., 
+                  aes(label = ...)) +
+  geom_point(data = ...)
 ```
 
-###
+### 
+
+You can use `geom_segment()` with the arrow argument to draw attention to a point with an arrow. Use aesthetics `x` and `y` to define the starting location, and `xend` and `yend` to define the end location. 
 
 ### Exercise 8
 
+Using your previous code, within your most recent call to `geom_point()`, add the argument `color` and set it to `"red"`.
 
 ```{r more-annotations-8, exercise = TRUE}
 
@@ -796,14 +850,20 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-8-hint, eval = FALSE}
-
+```{r more-annotations-8-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  geom_text_repel(data = ..., 
+                  aes(label = ...)) +
+  geom_point(data = ..., color = ...) 
 ```
 
-###
+### 
 
 ### Exercise 9
 
+Using your previous code, add another `geom_point()` function to the pipeline. Within this function, add an argument called `data` and set it to `potential_outliers`. 
 
 ```{r more-annotations-9, exercise = TRUE}
 
@@ -811,14 +871,19 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-9-hint, eval = FALSE}
-
+```{r more-annotations-9-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  geom_text_repel(data = ..., 
+                  aes(label = ...)) +
+  geom_point(data = ..., color = ...) +
+  geom_point(data = ...)
 ```
-
-###
 
 ### Exercise 10
 
+Using your previous code, within your most previous call to geom_point(), add an argument called `color` and set it to `"red"`.
 
 ```{r more-annotations-10, exercise = TRUE}
 
@@ -826,14 +891,20 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-10-hint, eval = FALSE}
-
+```{r more-annotations-10-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  geom_text_repel(data = ..., 
+                  aes(label = ...)) +
+  geom_point(data = ..., color = ...) +
+  geom_point(data = ..., 
+             color = ...)
 ```
-
-###
 
 ### Exercise 11
 
+Using your previous code, within your most previous call to the `geom_point()` function, add an argument called `size` and set it to `3`. 
 
 ```{r more-annotations-11, exercise = TRUE}
 
@@ -841,14 +912,21 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-11-hint, eval = FALSE}
-
+```{r more-annotations-11-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  geom_text_repel(data = ..., 
+                  aes(label = ...)) +
+  geom_point(data = ..., color = ...) +
+  geom_point(data = ..., 
+             color = ...,
+             size = ...)
 ```
-
-###
 
 ### Exercise 12
 
+Using your previous code, within your most previous call to the `geom_point()` function, add the `shape` argument and set it to `"circle open"`. 
 
 ```{r more-annotations-12, exercise = TRUE}
 
@@ -856,14 +934,30 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-12-hint, eval = FALSE}
-
+```{r more-annotations-12-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  geom_text_repel(data = ..., 
+                  aes(label = ...)) +
+  geom_point(data = ..., color = ...) +
+  geom_point(data = ..., 
+             color = ...,
+             size = ..., 
+             shape = ...)
 ```
 
-###
+### 
+
+Note another handy technique used here: we added a second layer of large, hollow points to further highlight the labelled points.
 
 ### Exercise 13
 
+Another handy function for adding annotations to plots is `annotate()`. As a rule of thumb, geoms are generally useful for highlighting a subset of the data while `annotate()` is useful for adding one or few annotation elements to a plot.
+
+### 
+
+Create a new variable called `trend_text` and set it to `"Larger engine sizes tend to have lower fuel economy."`
 
 ```{r more-annotations-13, exercise = TRUE}
 
@@ -871,14 +965,17 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-13-hint, eval = FALSE}
-
+```{r more-annotations-13-hint-1, eval = FALSE}
+trend_text <- ...
 ```
 
-###
+### 
+
+To demonstrate using `annotate()`, let’s create some text to add to our plot. The text is a bit long, so we’ll use `stringr::str_wrap()` to automatically add line breaks to it given the number of characters you want per line.
 
 ### Exercise 14
 
+Using your previous code, create a new pipeline and pipe `trend_text` with the `str_wrap()` function. Within this function add an argument called `width` and set it to `30`. 
 
 ```{r more-annotations-14, exercise = TRUE}
 
@@ -886,14 +983,14 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-14-hint, eval = FALSE}
-
+```{r more-annotations-14-hint-1, eval = FALSE}
+trend_text <- ... |> 
+  str_wrap(width = ...)
 ```
-
-###
 
 ### Exercise 15
 
+Now let's make use of this annotation within a plot. Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this function map `x` to `displ` and `y` to `hwy` using `aes()`.
 
 ```{r more-annotations-15, exercise = TRUE}
 
@@ -901,14 +998,14 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-15-hint, eval = FALSE}
-
+```{r more-annotations-15-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...))
 ```
-
-###
 
 ### Exercise 16
 
+Using your previous code, add the `geom_point()` function to the pipeline.
 
 ```{r more-annotations-16, exercise = TRUE}
 
@@ -916,29 +1013,42 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-16-hint, eval = FALSE}
-
+```{r more-annotations-16-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point()
 ```
 
-###
+### 
 
 ### Exercise 17
 
-
+Using your previous code, add the `annotate()` function to the pipeline. Within this function set the argument `geom` to `"label"`, `x` to `3.5`, and `y` to `38`. 
+ 
 ```{r more-annotations-17, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-17-hint, eval = FALSE}
-
+```{r more-annotations-17-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  annotate(
+    geom = ...,
+    x = ..., 
+    y = ...
+  )
 ```
 
-###
+### 
+
+Now let's end the annotation about the trend into the plot.
 
 ### Exercise 18
 
+Using your previous code, within your most recent call to the `annotate()` function, add the argument `label` and set it to `trend_text`. 
 
 ```{r more-annotations-18, exercise = TRUE}
 
@@ -946,14 +1056,25 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-18-hint, eval = FALSE}
-
+```{r more-annotations-18-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  annotate(
+    geom = ...,
+    x = ..., 
+    y = ...,
+    label = trend_text
+  )
 ```
 
-###
+### 
+
+Now, let's alighn it horizontally using the argument `hjust`. 
 
 ### Exercise 19
 
+Using your previous code, within your most recent call to the `annotate()` function, add the arguments `hjust` and set it to `"left"` and `color` and set it to `"red"`.
 
 ```{r more-annotations-19, exercise = TRUE}
 
@@ -961,107 +1082,28 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-19-hint, eval = FALSE}
-
+```{r more-annotations-19-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  annotate(
+    geom = ...,
+    x = ..., 
+    y = ...,
+    label = ..., 
+    hjust = ...,
+    color = ...
+  )
 ```
 
-###
+### 
 
-### Exercise 20
-
-
-```{r more-annotations-20, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-20-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 21
-
-
-```{r more-annotations-21, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-21-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 22
-
-
-```{r more-annotations-22, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-22-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 23
-
-
-```{r more-annotations-23, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-23-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 24
-
-
-```{r more-annotations-24, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-24-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 25
-
-
-```{r more-annotations-25, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-25-hint, eval = FALSE}
-
-```
-
-###
+Annotation is a powerful tool for communicating main takeaways and interesting features of your visualizations. The only limit is your imagination (and your patience with positioning annotations to be aesthetically pleasing)!
 
 ## Scales
-###
+### 
 
 ### Exercise 1
-
 
 ```{r scales-1, exercise = TRUE}
 
@@ -1069,14 +1111,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-1-hint, eval = FALSE}
+```{r scales-1-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 2
-
 
 ```{r scales-2, exercise = TRUE}
 
@@ -1084,14 +1125,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-2-hint, eval = FALSE}
+```{r scales-2-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 3
-
 
 ```{r scales-3, exercise = TRUE}
 
@@ -1099,14 +1139,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-3-hint, eval = FALSE}
+```{r scales-3-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 4
-
 
 ```{r scales-4, exercise = TRUE}
 
@@ -1114,14 +1153,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-4-hint, eval = FALSE}
+```{r scales-4-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 5
-
 
 ```{r scales-5, exercise = TRUE}
 
@@ -1129,14 +1167,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-5-hint, eval = FALSE}
+```{r scales-5-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 6
-
 
 ```{r scales-6, exercise = TRUE}
 
@@ -1144,14 +1181,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-6-hint, eval = FALSE}
+```{r scales-6-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 7
-
 
 ```{r scales-7, exercise = TRUE}
 
@@ -1159,14 +1195,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-7-hint, eval = FALSE}
+```{r scales-7-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 8
-
 
 ```{r scales-8, exercise = TRUE}
 
@@ -1174,14 +1209,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-8-hint, eval = FALSE}
+```{r scales-8-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 9
-
 
 ```{r scales-9, exercise = TRUE}
 
@@ -1189,14 +1223,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-9-hint, eval = FALSE}
+```{r scales-9-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 10
-
 
 ```{r scales-10, exercise = TRUE}
 
@@ -1204,14 +1237,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-10-hint, eval = FALSE}
+```{r scales-10-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 11
-
 
 ```{r scales-11, exercise = TRUE}
 
@@ -1219,14 +1251,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-11-hint, eval = FALSE}
+```{r scales-11-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 12
-
 
 ```{r scales-12, exercise = TRUE}
 
@@ -1234,14 +1265,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-12-hint, eval = FALSE}
+```{r scales-12-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 13
-
 
 ```{r scales-13, exercise = TRUE}
 
@@ -1249,14 +1279,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-13-hint, eval = FALSE}
+```{r scales-13-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 14
-
 
 ```{r scales-14, exercise = TRUE}
 
@@ -1264,14 +1293,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-14-hint, eval = FALSE}
+```{r scales-14-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 15
-
 
 ```{r scales-15, exercise = TRUE}
 
@@ -1279,14 +1307,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-15-hint, eval = FALSE}
+```{r scales-15-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 16
-
 
 ```{r scales-16, exercise = TRUE}
 
@@ -1294,14 +1321,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-16-hint, eval = FALSE}
+```{r scales-16-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 17
-
 
 ```{r scales-17, exercise = TRUE}
 
@@ -1309,14 +1335,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-17-hint, eval = FALSE}
+```{r scales-17-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 18
-
 
 ```{r scales-18, exercise = TRUE}
 
@@ -1324,14 +1349,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-18-hint, eval = FALSE}
+```{r scales-18-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 19
-
 
 ```{r scales-19, exercise = TRUE}
 
@@ -1339,14 +1363,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-19-hint, eval = FALSE}
+```{r scales-19-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 20
-
 
 ```{r scales-20, exercise = TRUE}
 
@@ -1354,14 +1377,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-20-hint, eval = FALSE}
+```{r scales-20-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 21
-
 
 ```{r scales-21, exercise = TRUE}
 
@@ -1369,14 +1391,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-21-hint, eval = FALSE}
+```{r scales-21-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 22
-
 
 ```{r scales-22, exercise = TRUE}
 
@@ -1384,14 +1405,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-22-hint, eval = FALSE}
+```{r scales-22-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 23
-
 
 ```{r scales-23, exercise = TRUE}
 
@@ -1399,14 +1419,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-23-hint, eval = FALSE}
+```{r scales-23-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 24
-
 
 ```{r scales-24, exercise = TRUE}
 
@@ -1414,14 +1433,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-24-hint, eval = FALSE}
+```{r scales-24-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 25
-
 
 ```{r scales-25, exercise = TRUE}
 
@@ -1429,14 +1447,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-25-hint, eval = FALSE}
+```{r scales-25-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 26
-
 
 ```{r scales-26, exercise = TRUE}
 
@@ -1444,14 +1461,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-26-hint, eval = FALSE}
+```{r scales-26-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 27
-
 
 ```{r scales-27, exercise = TRUE}
 
@@ -1459,14 +1475,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-27-hint, eval = FALSE}
+```{r scales-27-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 28
-
 
 ```{r scales-28, exercise = TRUE}
 
@@ -1474,14 +1489,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-28-hint, eval = FALSE}
+```{r scales-28-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 29
-
 
 ```{r scales-29, exercise = TRUE}
 
@@ -1489,14 +1503,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-29-hint, eval = FALSE}
+```{r scales-29-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 30
-
 
 ```{r scales-30, exercise = TRUE}
 
@@ -1504,14 +1517,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-30-hint, eval = FALSE}
+```{r scales-30-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 31
-
 
 ```{r scales-31, exercise = TRUE}
 
@@ -1519,14 +1531,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-31-hint, eval = FALSE}
+```{r scales-31-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 32
-
 
 ```{r scales-32, exercise = TRUE}
 
@@ -1534,14 +1545,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-32-hint, eval = FALSE}
+```{r scales-32-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 33
-
 
 ```{r scales-33, exercise = TRUE}
 
@@ -1549,14 +1559,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-33-hint, eval = FALSE}
+```{r scales-33-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 34
-
 
 ```{r scales-34, exercise = TRUE}
 
@@ -1564,14 +1573,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-34-hint, eval = FALSE}
+```{r scales-34-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 35
-
 
 ```{r scales-35, exercise = TRUE}
 
@@ -1579,14 +1587,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-35-hint, eval = FALSE}
+```{r scales-35-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 36
-
 
 ```{r scales-36, exercise = TRUE}
 
@@ -1594,17 +1601,16 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-36-hint, eval = FALSE}
+```{r scales-36-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ## More Scales
-###
+### 
 
 ### Exercise 1
-
 
 ```{r more-scales-1, exercise = TRUE}
 
@@ -1612,14 +1618,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-1-hint, eval = FALSE}
+```{r more-scales-1-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 2
-
 
 ```{r more-scales-2, exercise = TRUE}
 
@@ -1627,14 +1632,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-2-hint, eval = FALSE}
+```{r more-scales-2-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 3
-
 
 ```{r more-scales-3, exercise = TRUE}
 
@@ -1642,14 +1646,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-3-hint, eval = FALSE}
+```{r more-scales-3-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 4
-
 
 ```{r more-scales-4, exercise = TRUE}
 
@@ -1657,14 +1660,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-4-hint, eval = FALSE}
+```{r more-scales-4-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 5
-
 
 ```{r more-scales-5, exercise = TRUE}
 
@@ -1672,14 +1674,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-5-hint, eval = FALSE}
+```{r more-scales-5-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 6
-
 
 ```{r more-scales-6, exercise = TRUE}
 
@@ -1687,14 +1688,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-6-hint, eval = FALSE}
+```{r more-scales-6-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 7
-
 
 ```{r more-scales-7, exercise = TRUE}
 
@@ -1702,14 +1702,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-7-hint, eval = FALSE}
+```{r more-scales-7-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 8
-
 
 ```{r more-scales-8, exercise = TRUE}
 
@@ -1717,14 +1716,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-8-hint, eval = FALSE}
+```{r more-scales-8-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 9
-
 
 ```{r more-scales-9, exercise = TRUE}
 
@@ -1732,14 +1730,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-9-hint, eval = FALSE}
+```{r more-scales-9-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 10
-
 
 ```{r more-scales-10, exercise = TRUE}
 
@@ -1747,14 +1744,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-10-hint, eval = FALSE}
+```{r more-scales-10-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 11
-
 
 ```{r more-scales-11, exercise = TRUE}
 
@@ -1762,14 +1758,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-11-hint, eval = FALSE}
+```{r more-scales-11-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 12
-
 
 ```{r more-scales-12, exercise = TRUE}
 
@@ -1777,14 +1772,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-12-hint, eval = FALSE}
+```{r more-scales-12-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 13
-
 
 ```{r more-scales-13, exercise = TRUE}
 
@@ -1792,14 +1786,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-13-hint, eval = FALSE}
+```{r more-scales-13-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 14
-
 
 ```{r more-scales-14, exercise = TRUE}
 
@@ -1807,14 +1800,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-14-hint, eval = FALSE}
+```{r more-scales-14-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 15
-
 
 ```{r more-scales-15, exercise = TRUE}
 
@@ -1822,14 +1814,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-15-hint, eval = FALSE}
+```{r more-scales-15-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 16
-
 
 ```{r more-scales-16, exercise = TRUE}
 
@@ -1837,14 +1828,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-16-hint, eval = FALSE}
+```{r more-scales-16-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 17
-
 
 ```{r more-scales-17, exercise = TRUE}
 
@@ -1852,14 +1842,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-17-hint, eval = FALSE}
+```{r more-scales-17-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 18
-
 
 ```{r more-scales-18, exercise = TRUE}
 
@@ -1867,14 +1856,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-18-hint, eval = FALSE}
+```{r more-scales-18-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 19
-
 
 ```{r more-scales-19, exercise = TRUE}
 
@@ -1882,14 +1870,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-19-hint, eval = FALSE}
+```{r more-scales-19-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 20
-
 
 ```{r more-scales-20, exercise = TRUE}
 
@@ -1897,14 +1884,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-20-hint, eval = FALSE}
+```{r more-scales-20-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 21
-
 
 ```{r more-scales-21, exercise = TRUE}
 
@@ -1912,14 +1898,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-21-hint, eval = FALSE}
+```{r more-scales-21-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 22
-
 
 ```{r more-scales-22, exercise = TRUE}
 
@@ -1927,14 +1912,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-22-hint, eval = FALSE}
+```{r more-scales-22-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 23
-
 
 ```{r more-scales-23, exercise = TRUE}
 
@@ -1942,14 +1926,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-23-hint, eval = FALSE}
+```{r more-scales-23-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 24
-
 
 ```{r more-scales-24, exercise = TRUE}
 
@@ -1957,14 +1940,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-24-hint, eval = FALSE}
+```{r more-scales-24-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 25
-
 
 ```{r more-scales-25, exercise = TRUE}
 
@@ -1972,14 +1954,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-25-hint, eval = FALSE}
+```{r more-scales-25-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 26
-
 
 ```{r more-scales-26, exercise = TRUE}
 
@@ -1987,14 +1968,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-26-hint, eval = FALSE}
+```{r more-scales-26-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 27
-
 
 ```{r more-scales-27, exercise = TRUE}
 
@@ -2002,14 +1982,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-27-hint, eval = FALSE}
+```{r more-scales-27-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 28
-
 
 ```{r more-scales-28, exercise = TRUE}
 
@@ -2017,14 +1996,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-28-hint, eval = FALSE}
+```{r more-scales-28-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 29
-
 
 ```{r more-scales-29, exercise = TRUE}
 
@@ -2032,14 +2010,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-29-hint, eval = FALSE}
+```{r more-scales-29-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 30
-
 
 ```{r more-scales-30, exercise = TRUE}
 
@@ -2047,14 +2024,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-30-hint, eval = FALSE}
+```{r more-scales-30-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 31
-
 
 ```{r more-scales-31, exercise = TRUE}
 
@@ -2062,14 +2038,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-31-hint, eval = FALSE}
+```{r more-scales-31-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 32
-
 
 ```{r more-scales-32, exercise = TRUE}
 
@@ -2077,14 +2052,13 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-32-hint, eval = FALSE}
+```{r more-scales-32-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 33
-
 
 ```{r more-scales-33, exercise = TRUE}
 
@@ -2092,423 +2066,11 @@ labels
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-scales-33-hint, eval = FALSE}
+```{r more-scales-33-hint-1, eval = FALSE}
 
 ```
 
-###
-
-## Scales Part 3
-###
-
-### Exercise 1
-
-
-```{r scales-part-3-1, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-1-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 2
-
-
-```{r scales-part-3-2, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-2-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 3
-
-
-```{r scales-part-3-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-3-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 4
-
-
-```{r scales-part-3-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-4-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 5
-
-
-```{r scales-part-3-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-5-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 6
-
-
-```{r scales-part-3-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-6-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 7
-
-
-```{r scales-part-3-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-7-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 8
-
-
-```{r scales-part-3-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-8-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 9
-
-
-```{r scales-part-3-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-9-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 10
-
-
-```{r scales-part-3-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-10-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 11
-
-
-```{r scales-part-3-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-11-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 12
-
-
-```{r scales-part-3-12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-12-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 13
-
-
-```{r scales-part-3-13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-13-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 14
-
-
-```{r scales-part-3-14, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-14-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 15
-
-
-```{r scales-part-3-15, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-15-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 16
-
-
-```{r scales-part-3-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-16-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 17
-
-
-```{r scales-part-3-17, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-17-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 18
-
-
-```{r scales-part-3-18, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-18-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 19
-
-
-```{r scales-part-3-19, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-19-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 20
-
-
-```{r scales-part-3-20, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-20-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 21
-
-
-```{r scales-part-3-21, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-21-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 22
-
-
-```{r scales-part-3-22, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-22-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 23
-
-
-```{r scales-part-3-23, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-23-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 24
-
-
-```{r scales-part-3-24, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-24-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 25
-
-
-```{r scales-part-3-25, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-25-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 26
-
-
-```{r scales-part-3-26, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-26-hint, eval = FALSE}
-
-```
-
-###
-
-### Exercise 27
-
-
-```{r scales-part-3-27, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-part-3-27-hint, eval = FALSE}
-
-```
-
-###
-
-
-
-
+### 
 
 <!-- DK: Comments from old material, which was Wrangling: More Plots from all.primer.tutorials. May no longer apply. -->
 
@@ -2987,7 +2549,6 @@ Reminder: This is what your plot should look like.
 ```{r nhanes17-answer}
 nhanes_p3
 ```
-
 
 ## Kenya voter registration experiment
 ### 

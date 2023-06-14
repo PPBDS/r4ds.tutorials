@@ -646,7 +646,7 @@ flights |>
 
 ### 
 
-<!-- DK: Knowledge drop. -->
+<!-- Knowledge drop. -->
 
 ### Exercise 15
 
@@ -1487,7 +1487,7 @@ x7 - ...
 
 ### 
 
-<!-- DK: This is sloppy. We are using two concepts at the same time. First, is the specific calculation using the `x7` vector. The second, in the knowledge drop, is the generic calculation which works for any vector `x`. Students find this juxtaposition confusing! -->
+<!-- This is sloppy. We are using two concepts at the same time. First, is the specific calculation using the `x7` vector. The second, in the knowledge drop, is the generic calculation which works for any vector `x`. Students find this juxtaposition confusing! -->
 
 `x - lag(x)` gives you the difference between the current and previous value for all the elements of the vector `x`.
 
@@ -1498,7 +1498,6 @@ Type in `x7 == lag(x7)` and hit "Run Code".
 ```{r general-transformati-17, exercise = TRUE}
 
 ```
-
 
 ```{r general-transformati-17-hint-1, eval = FALSE}
 x7 == ...
@@ -1586,14 +1585,13 @@ Imagine you have a dataframe with a bunch of repeated values. Type in `repetitio
 
 ```
 
-
 ```{r general-transformati-22-hint-1, eval = FALSE}
 repetition
 ```
 
 ### Exercise 23
 
-Pipe `repetition` to the `summarize()` function. Within the call to `summarize()`, create a variable `id` and set it to `consecutive_id(x)`.
+Create a new pipeline and pipe `repetition` to the `summarize()` function. Within the call to `summarize()`, create a variable `id` and set it to `consecutive_id(x)`.
 
 ```{r general-transformati-23, exercise = TRUE}
 
@@ -1608,7 +1606,7 @@ repetition |>
 
 ### Exercise 24
 
-Using your previous code, within your call to the `summarize()` function, add the `.by` argument and set it to `id` so that we can group by `id`.
+Using your previous code, within your call to the `summarize()` function, add the parameters `x` and `y` so that we could include these columns in our plot.
 
 ```{r general-transformati-24, exercise = TRUE}
 
@@ -1618,12 +1616,12 @@ Using your previous code, within your call to the `summarize()` function, add th
 
 ```{r general-transformati-24-hint-1, eval = FALSE}
 repetition |> 
-  summarize(id = ..., .by = ...)
+  summarize(id = ..., x, ...)
 ```
 
 ### Exercise 25
 
-Using the same pipe as above, pipe `slice_head()` to the current pipe with the argument `n` set to `1`.
+Using the same pipe as above, add the function `slice_head()` to the pipeline. Within this function add the argument `n` and set it to `1`.
 
 ```{r general-transformati-25, exercise = TRUE}
 
@@ -1633,13 +1631,31 @@ Using the same pipe as above, pipe `slice_head()` to the current pipe with the a
 
 ```{r general-transformati-25-hint-1, eval = FALSE}
 repetition |> 
-  summarize(id = ..., .by = ...)
+  summarize(id = ..., x, ...)
   slice_head(n = ...)
 ```
 
 ### 
 
 This keeps the first row from each repeated `x`.
+
+### 
+
+### Exercise 26
+
+Using your previous code, within the `slice_head()` function, add the `by` argument and set it to `id`.
+
+```{r general-transformati-26, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r general-transformati-26-hint-1, eval = FALSE}
+repetition |> 
+  summarize(id = ..., x, ...)
+  slice_head(n = ..., by = ...)
+```
 
 ### 
 
@@ -2227,7 +2243,7 @@ The functions `first(x)`, `last(x)`, and `nth(x, n)` extract a value at a specif
 
 ### Exercise 30
 
-Create a new pipeline. Pipe `flights` to the `summarize` function. Within the call to `summarize()`, add the `.by` argument and set it to `c(year, month, day)`.
+Create a new pipeline and pipe `flights` to the `mutate()` function to the pipeline. Within the `mutate()` function, create a new variable `y` and set it to `min_rank(sched_dep_time)`.
 
 ```{r numeric-summaries-30, exercise = TRUE}
 
@@ -2237,12 +2253,12 @@ Create a new pipeline. Pipe `flights` to the `summarize` function. Within the ca
 
 ```{r numeric-summaries-30-hint-1, eval = FALSE}
 flights |> 
-  summarize(.by = ...)
+  mutate(y = min_rank(...)) 
 ```
 
 ### Exercise 31
 
-Using the same pipe as above, add the `mutate()` function to the pipeline. Within the `mutate()` function, create a new variable `y` and set it to `min_rank(sched_dep_time)`.
+Using your previous code, within your call to the `mutate()` function, add another argument called `.by` and set it to `c(year, month, day)`. 
 
 ```{r numeric-summaries-31, exercise = TRUE}
 
@@ -2252,9 +2268,12 @@ Using the same pipe as above, add the `mutate()` function to the pipeline. Withi
 
 ```{r numeric-summaries-31-hint-1, eval = FALSE}
 flights |> 
-  summarize(.by = ...)
-  mutate(y = min_rank(...)) 
+  mutate(y = min_rank(...), .by = ...) 
 ```
+
+###
+
+As the names suggest, the summary functions are typically paired with summarize(). However, because of the recycling rules, they can also be usefully paired with mutate()
 
 ### Exercise 32
 
