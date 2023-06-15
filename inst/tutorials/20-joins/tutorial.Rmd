@@ -14,11 +14,15 @@ description: "Tutorial for Chapter 20: Joins"
 library(learnr)
 library(tutorial.helpers)
 library(knitr)
+library(dplyr)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
 library(nycflights13)
+flights2 <- flights |> 
+  select(year, time_hour, origin, dest, tailnum, carrier)
+flights2
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -299,9 +303,251 @@ Does the absence of duplicates automatically make `time_hour`-`carrier`-`flight`
 
 ## Basic Joins
 ### 
+Now that you understand how data frames are connected via keys, we can start using joins to better understand the flights dataset. In this section, you’ll learn how to use one mutating join, `left_join()`, and two filtering joins, `semi_join()` and `anti_join()`.
 
-## How do joins work?
+### Exercise 1
+
+Start a pipe with `flights` to `select()` where you will select the following variables: `year, time_hour, origin, dest, tailnum, carrier` and then assign the whole code to `flights2` and run `flights2` on a new line.
+
+```{r basic-joins-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r basic-joins-1-hint, eval = FALSE}
+flights2 <- ... |> 
+ ...(year, ..., origin, dest, ....,...)
+flights2
+```
+
 ###
+
+A mutating join allows you to combine variables from two data frames: it first matches observations by their keys, then copies across variables from one data frame to the other. 
+### Exercise 2
+
+There are four types of mutating join, but there’s one that you’ll use almost all of the time: `left_join()`. It’s special because the output will always have the same rows as x. The primary use of `left_join()` is to add in additional metadata. 
+
+To add full airline name to the flights2 data, let's start a pipe with `flights2` to `left_join()` and pass in `airlines` as argument.
+
+```{r basic-joins-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r basic-joins-2-hint, eval = FALSE}
+... |>
+  left_join(...)
+```
+
+###
+
+Like `mutate()`, the join functions add variables to the right, so if your dataset has many variables, you won’t see the new ones as we saw inb the previous code.
+
+### Exercise 3
+
+Instead of filling in the names of the airlines, let's add metadata about the wind speed, temperature and the time the plane departed.
+
+Copy the previous code, modify the arguemet for `left_join()` to `weather |> select(origin,time_hour, temp, wind_speed)` which just select the origin, time, temperature and wind speed from `weather` data set.
+
+```{r basic-joins-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r basic-joins-3-hint, eval = FALSE}
+... |> 
+  ...(weather |> select(origin, time_hour, temp, wind_speed))
+```
+
+###
+
+If you want to explore `left_join()` more in depth, check out this [website](https://dplyr.tidyverse.org/reference/mutate-joins.html).
+
+### Exercise 4
+
+What if we want ot know the size of the plane? 
+Copy the previous code and modify the arguement in `left_join()` to `planes |> select(tailnum, type, engines, seats)` which selects the varibale which are associated with a size of a plane.
+
+```{r basic-joins-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r basic-joins-4-hint, eval = FALSE}
+... |> 
+  ...(...)
+```
+
+###
+
+What happens when `left_join()` failes to find a match for a row in x?
+
+### Exercise 5
+
+To demostarte this, start a pipe with `flights2` to `filter()` where you only select the records where the tailnum is equal to `N3ALAA` which dosent exist and then create another pipe from `filter()` to `left_join()` and pass in `planes |> select(tailnum, type, engines, seats)` as the arguement. 
+
+```{r basic-joins-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r basic-joins-5-hint, eval = FALSE}
+
+```
+
+###
+
+When `left_join()` fails to find a match for a row in x, it fills in the new variables with missing values. For example, there’s no information about the plane with tail number `N3ALAA` so the type, engines, and seats will be missings
+
+
+### Exercise 6
+
+By default, `left_join()` will use all variables that appear in both data frames as the join key, the so called natural join.  This is a useful heuristic, but it doesn’t always work. 
+
+To demostarte the flaw, join the `flights2` with the `planes` dataset using `left_join()`.
+To do so, start of by creating pipe with `flights2` to `left_join()` and pass in `planes` as the arguement.
+
+```{r basic-joins-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r basic-joins-6-hint, eval = FALSE}
+
+```
+
+###
+
+We get a lot of missing matches because our join is trying to use tailnum and year as a compound key. Both flights and planes have a year column but they mean different things: `flights$year` is the year the flight occurred and `planes$year` is the year the plane was built.
+
+### Exercise 7
+
+We only want to join on `tailnum` so we need to provide an explicit specification with `join_by()`.
+
+Copy the previous code and within `left_join()`, add `join_by()` and pass in `tailnum` as the arguement.
+
+```{r basic-joins-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r basic-joins-7-hint, eval = FALSE}
+... |> 
+  ...(planes, join_by(...))
+```
+
+###
+
+`join_by(tailnum)` is short for `join_by(tailnum == tailnum)`. It’s important to know about this fuller form for two reasons. Firstly, it describes the relationship between the two tables: the keys must be equal. That’s why this type of join is often called an equi join.
+
+### Exercise 8
+
+As we saw `join_by()` gives us the flexibilty to join  based on the variables we want. For example we know that we can join `flights2` and `airports` by `dest` or `origin`.
+
+Copy the previous code change `planes` to `airports` and in `join_by()` set `dest == faa`.
+
+```{r basic-joins-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r basic-joins-8-hint, eval = FALSE}
+... |> 
+  ...(airports, join_by(...))
+```
+
+###
+
+Now let's change `join_by()` to change the tables to join by `origin`.
+
+
+### Exercise 9
+
+Copy the previous code and change `join_by()` arguement to `origin == faa`.
+
+```{r basic-joins-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r basic-joins-9-hint, eval = FALSE}
+
+```
+
+###
+
+If we compare both the tibbbles we can see the difference in the `name` variable.
+
+### Exercise 10
+
+
+```{r basic-joins-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r basic-joins-10-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 11
+
+
+```{r basic-joins-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r basic-joins-11-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 12
+
+
+```{r basic-joins-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r basic-joins-12-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 13
+
+
+```{r basic-joins-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r basic-joins-13-hint, eval = FALSE}
+
+```
+
+###
+
+
 
 ## Non-equi joins
 ###
