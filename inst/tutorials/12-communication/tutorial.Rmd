@@ -44,6 +44,27 @@ labels_graphic = ggplot(mpg, aes(x = displ, y = hwy)) +
     caption = "Data from fueleconomy.gov"
   )
 
+label_info <- mpg |>
+  group_by(drv) |>
+  arrange(desc(displ)) |>
+  slice_head(n = 1) |>
+  mutate(
+    drive_type = case_when(
+      drv == "f" ~ "front-wheel drive",
+      drv == "r" ~ "rear-wheel drive",
+      drv == "4" ~ "4-wheel drive"
+    )
+  ) |>
+  select(displ, hwy, drv, drive_type)
+
+potential_outliers <- mpg |>
+  filter(hwy > 40 | (hwy > 20 & displ > 5))
+
+trend_text <- "Larger engine sizes tend to have lower fuel economy." |>
+  str_wrap(width = 30)
+
+base <- ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point(aes(color = class))
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -1420,6 +1441,390 @@ diamonds |>
   geom_bar(position = ...) +
   scale_y_continuous(name = ..., labels = ...)
 ```
+
+### Exercise 18
+
+Type in `presidential` and hit "Run Code".
+
+```{r scales-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r scales-18-hint, eval = FALSE}
+presedential
+```
+
+###
+
+The dataset, `presidential` gives the names of each president, the start and end date of their term, and their party of 12 US presidents from Eisenhower to Trump. This data is in the public domain.
+
+### Exercise 19
+
+Create a new pipeline and pipe `presidential` to the `mutate()` function. Within this function, create a new variable `id` and set it equal to `33` plus `row_number()`.
+
+```{r scales-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r scales-19-hint, eval = FALSE}
+presidential |> 
+  mutate(id = ...)
+```
+
+### Exercise 20
+
+Using your previous code, add the `ggplot()` function to the pipeline. Within this function, map `x` to `start` and `y` to `id` using `aes()`. 
+
+```{r scales-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r scales-20-hint, eval = FALSE}
+presidential |> 
+  mutate(id = ...) |> 
+  ggplot(aes(x = ..., y = ...))
+```
+
+### Exercise 21
+
+Using your previous code, add the `geom_point()` function to the pipeline. 
+
+```{r scales-21, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r scales-21-hint, eval = FALSE}
+presidential |> 
+  mutate(id = ...) |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point()
+```
+
+### Exercise 22
+
+Using your previous code, add the `geom_segment()` function. Within this function, map `xend` to `end` and `yend` to `id`.
+
+```{r scales-22, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r scales-22-hint, eval = FALSE}
+presidential |> 
+  mutate(id = ...) |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  geom_segment(aes(xend = ..., yend = ...))
+```
+
+###
+
+Another use of breaks is when you have relatively few data points and want to highlight exactly where the observations occur.
+
+### Exercise 23
+
+Using your previous code, add the `scale_x_date()` function. Within this function add the argument `name` and set it equal to `NULL`.
+
+```{r scales-23, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r scales-23-hint, eval = FALSE}
+presidential |> 
+  mutate(id = ...) |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  geom_segment(aes(xend = ..., yend = ...)) +
+  scale_x_date(name = ...)
+```
+
+### Exercise 24
+
+Using your previous code, within your call to the function `scale_x_discrete()`, add the argument `breaks` and set it equal to `presidential$start`.
+
+```{r scales-24, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r scales-24-hint, eval = FALSE}
+presidential |> 
+  mutate(id = ...) |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point() +
+  geom_segment(aes(xend = ..., yend = ...)) +
+  scale_x_date(name = ..., breaks = ...)
+```
+
+###
+
+Note that for the breaks argument we pulled out the start variable as a vector with presidential$start because we can’t do an aesthetic mapping for this argument. Also note that the specification of breaks and labels for date and datetime scales is a little different:
+
+### Exercise 25
+
+Using your previous code, within your call to the function `scale_x_date()`, add the argument `date_labels` and set it equal to `"'%y"`.
+
+```{r scales-25, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r scales-25-hint, eval = FALSE}
+
+```
+
+###
+
+The argument `date_labels` takes a format specification, in the same form as `parse_datetime()`. This plot shown here shows when each US president started and ended their term.
+
+## Legend Layout
+###
+
+In this section we will learn how to adjust the placement of the legend and how to customize the legend of your plot.
+
+### Exercise 1
+
+First create a new variable called base. 
+
+```{r legend-layout-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-1-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 2
+
+
+```{r legend-layout-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-2-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 3
+
+
+```{r legend-layout-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-3-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 4
+
+
+```{r legend-layout-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-4-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 5
+
+
+```{r legend-layout-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-5-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 6
+
+
+```{r legend-layout-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-6-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 7
+
+
+```{r legend-layout-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-7-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 8
+
+
+```{r legend-layout-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-8-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 9
+
+
+```{r legend-layout-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-9-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 10
+
+
+```{r legend-layout-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-10-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 11
+
+
+```{r legend-layout-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-11-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 12
+
+
+```{r legend-layout-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-12-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 13
+
+
+```{r legend-layout-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-13-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 14
+
+
+```{r legend-layout-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-14-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 15
+
+
+```{r legend-layout-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r legend-layout-15-hint, eval = FALSE}
+
+```
+
+###
+
+
+
+
+
 
 <!-- DK: Comments from old material, which was Wrangling: More Plots from all.primer.tutorials. May no longer apply. -->
 
