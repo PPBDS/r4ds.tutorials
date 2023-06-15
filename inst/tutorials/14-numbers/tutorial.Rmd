@@ -28,20 +28,15 @@ df <- tribble(
   7, NA,
 )
 
-x <- c("1.2", "5.6", "1e3")
-y <- c("$1,234", "USD 3,513", "59%")
-z <- 1:10
-x1 <- c(1, 2, 10, 20)
-x2 <- 1:10
-x3 <- c(1, 2, 5, 10, 15, 20)
-x4 <- 1:10
-x6 <- c(1, 2, 2, 3, 4, NA)
-
+x6 <- c(1, 2, 3, 4, NA)
 ranktypes <- tibble(x6 = x6)
+
 numbers <- tibble(id = 1:10)
+
 times_visited <- tibble(
   time = c(0, 1, 2, 3, 5, 10, 12, 15, 17, 19, 20, 27, 28, 30)
 )
+
 repetition <- tibble(
   x = c("a", "a", "a", "b", "c", "c", "d", "e", "a", "a", "b", "b"),
   y = c(1, 2, 3, 2, 4, 1, 3, 9, 4, 8, 10, 199)
@@ -113,10 +108,11 @@ In most cases, you’ll get numbers already recorded in one of R’s numeric typ
 When you have numbers that have been written as strings we should use `parse_double()`. So let's use use `parse_double()` on `x` we just created. 
 
 ```{r making-numbers-3, exercise = TRUE}
-
+x <- c("1.2", "5.6", "1e3")
 ```
 
 ```{r making-numbers-3-hint-1, eval = FALSE}
+x <- c("1.2", "5.6", "1e3")
 parse_double(...)
 ```
 
@@ -147,12 +143,13 @@ As you can see, in this vector `y` there are non-numeric text that we would norm
 Let's use `parse_number()` with `y` as the argument to ignore this non-numeric text.
 
 ```{r making-numbers-5, exercise = TRUE}
-
+y <- c("$1,234", "USD 3,513", "59%")
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r making-numbers-5-hint-1, eval = FALSE}
+y <- c("$1,234", "USD 3,513", "59%")
 parse_number(y)
 ```
 
@@ -407,12 +404,13 @@ x <- c(...)
 Divide the vector `x` by 5.
 
 ```{r numeric-transformati-2, exercise = TRUE}
-
+x <- c(1, 2, 10, 20)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-2-hint-1, eval = FALSE}
+x <- c(1, 2, 10, 20)
 x / ...
 ```
 
@@ -423,15 +421,21 @@ This operation is shorthand for `x / c(5, 5, 5, 5)`. Generally, you only want to
 ### Exercise 3
 
 Multiply the vector `x` with the values `c(1, 2, 3)`
-```{r numeric-transformati-3, exercise = TRUE}
 
+```{r numeric-transformati-3, exercise = TRUE}
+x <- c(1, 2, 10, 20)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-3-hint-1, eval = FALSE}
+x <- c(1, 2, 10, 20)
 x * c(...)
 ```
+
+### 
+
+It usually (but not always) gives you a warning if the longer vector isn’t a multiple of the shorter:
 
 ### Exercise 4
 
@@ -504,7 +508,7 @@ Using the previous pipe, add the argument `na.rm` to the `pmin()` function call 
 ```{r numeric-transformati-7-hint-1, eval = FALSE}
 df |> 
   mutate(
-    min = pmin(x, y, na.rm = TRUE)
+    min = pmin(x, y, na.rm = ...)
   )
 ```
 
@@ -525,7 +529,7 @@ Using the previous pipeline. Within the call to the `mutate()` function create a
 ```{r numeric-transformati-8-hint-1, eval = FALSE}
 df |> 
   mutate(
-    min = pmin(x, y, na.rm = TRUE), 
+    min = pmin(x, y, na.rm = ...), 
     max = pmax(x, y)
   )
 ```
@@ -547,8 +551,8 @@ Using the previous pipe, add the argument `na.rm` to the `pmax()` function call 
 ```{r numeric-transformati-9-hint-1, eval = FALSE}
   df |> 
   mutate(
-    min = pmin(x, y, na.rm = TRUE), 
-    max = pmax(x, y, na.rm = TRUE)
+    min = pmin(x, y, na.rm = ...), 
+    max = pmax(x, y, na.rm = ...)
   )
 ```
 
@@ -579,12 +583,13 @@ z <- c(1:10)
 Using the same vector, `z`, divide by 3 using integer division (`%/%`).
 
 ```{r numeric-transformati-11, exercise = TRUE}
-
+z <- 1:10
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-11-hint-1, eval = FALSE}
+z <- 1:10
 z %/% 3
 ```
 
@@ -597,12 +602,13 @@ We can also find the remainder using `%%`.
 Compute the remainder of the vector `z` divided by `3` by typing in `z %% 3` and hitting "Run Code". 
 
 ```{r numeric-transformati-12, exercise = TRUE}
-
+z <- 1:10
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-12-hint-1, eval = FALSE}
+z <- 1:10
 z %% 3
 ```
 
@@ -646,7 +652,7 @@ flights |>
 
 ### 
 
-<!-- Knowledge drop. -->
+You can read more about other arithmetic operators here: https://rdrr.io/r/base/Arithmetic.html
 
 ### Exercise 15
 
@@ -1044,12 +1050,13 @@ The `floor()` and `ceiling()` functions don’t have a digits argument, so you c
 
 Let's round down to the nearest two digits. Type in `floor(x / 0.01) * 0.01` and hit "Run Code".
 ```{r other-number-functio-9, exercise = TRUE}
-
+x <- 123.456
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r other-number-functio-9-hint-1, eval = FALSE}
+x <- 123.456
 floor(...) * ...
 ```
 
@@ -1057,13 +1064,14 @@ floor(...) * ...
 
 Let's round up to the nearest two digits. Type in `ceiling(x / 0.01) * 0.01` and hit "Run Code". 
 ```{r other-number-functio-10, exercise = TRUE}
-
+x <- 123.456
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r other-number-functio-10-hint-1, eval = FALSE}
-
+x <- 123.456
+ceiling(... / 0.01) * ...
 ```
 
 ### 
@@ -1074,12 +1082,13 @@ You can use the same technique if you want to round() to a multiple of some othe
 
 Let's round to the nearest multiple of 4. Type in `round(x / 4) * 4` and hit "Run Code".
 ```{r other-number-functio-11, exercise = TRUE}
-
+x <- 123.456
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r other-number-functio-11-hint-1, eval = FALSE}
+x <- 123.456
 round(...) * ...
 ```
 
@@ -1087,12 +1096,13 @@ round(...) * ...
 
 This time let's round to the nearest 0.25. Type in `round(x / 0.25) * 0.25` and hit "Run Code".
 ```{r other-number-functio-12, exercise = TRUE}
-
+x <- 123.456
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r other-number-functio-12-hint-1, eval = FALSE}
+x <- 123.456
 round(...) * ...
 ```
 
@@ -1117,12 +1127,13 @@ Use `cut()`(https://rdrr.io/r/base/cut.html) to break up (aka bin) a numeric vec
 
 Use `cut()` on the numeric vector `x` and add in the `breaks` argument and set `breaks` to `c(0, 5, 10, 15, 20)`
 ```{r other-number-functio-14, exercise = TRUE}
-
+x3 <- c(1, 2, 5, 10, 15, 20)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r other-number-functio-14-hint-1, eval = FALSE}
+x3 <- c(1, 2, 5, 10, 15, 20)
 cut(x3, breaks = ...)
 ```
 
@@ -1130,12 +1141,13 @@ cut(x3, breaks = ...)
 
 The breaks don't need to be evenly spaced. Copy the previous code and change the `breaks` argument and set it to `c(0, 5, 10, 100)`.
 ```{r other-number-functio-15, exercise = TRUE}
-
+x3 <- c(1, 2, 5, 10, 15, 20)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r other-number-functio-15-hint-1, eval = FALSE}
+x3 <- c(1, 2, 5, 10, 15, 20)
 cut(x3, breaks = ...)
 ```
 
@@ -1147,12 +1159,13 @@ You can optionally supply your own `labels`. Note that there should be one less 
 
 Copy your previous code and add a new argument called `labels` and set it to `c("sm", "md", "lg")`.
 ```{r other-number-functio-16, exercise = TRUE}
-
+x3 <- c(1, 2, 5, 10, 15, 20)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r other-number-functio-16-hint-1, eval = FALSE}
+x3 <- c(1, 2, 5, 10, 15, 20)
 cut(x3, 
     breaks = ...,
     labels = c(...))
@@ -1184,12 +1197,13 @@ The function `cumsum()` will cumulate the sum using all the previous integers wi
 
 Use the function `cumsum()` on `x4`.
 ```{r other-number-functio-18, exercise = TRUE}
-
+x4 <- 1:10
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r other-number-functio-18-hint-1, eval = FALSE}
+x4 <- 1:10
 cumsum(...)
 ```
 
@@ -1225,12 +1239,13 @@ dplyr provides a number of ranking functions inspired by SQL, but you should alw
 Use the function `min_rank()` taking `x6` as the argument.
 
 ```{r general-transformati-2, exercise = TRUE}
-
+x6 <- c(1, 2, 3, 4, NA)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-2-hint-1, eval = FALSE}
+x6 <- c(1, 2, 3, 4, NA)
 min_rank(x6)
 ```
 
@@ -1243,12 +1258,13 @@ Note that the smallest values get the lowest ranks; use desc(x) to give the larg
 Now, use the function `min_rank()` taking `desc(x6)` as its argument.
 
 ```{r general-transformati-3, exercise = TRUE}
-
+x6 <- c(1, 2, 3, 4, NA)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-3-hint-1, eval = FALSE}
+x6 <- c(1, 2, 3, 4, NA)
 min_rank(...)
 ```
 
@@ -1258,7 +1274,6 @@ If min_rank() doesn’t do what you need, look at the variants `dplyr::row_numbe
 
 ### Exercise 4
 
-`
 Type in `ranktypes` and hit "Run Code".
 
 ```{r general-transformati-4, exercise = TRUE}
@@ -1273,19 +1288,20 @@ ranktypes
 
 ### 
 
-Right now, ranktypes is just a tibble of the vector x6.
+Right now, `ranktypes` is just a tibble of the vector `x6`.
 
 ### Exercise 5
 
 Pipe `ranktypes` to the `mutate()` function. Within the call to `mutate()`, create a variable `row_number` which equals `row_number(x6)`.
 
 ```{r general-transformati-5, exercise = TRUE}
-
+x6 <- c(1, 2, 3, 4, NA)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-5-hint-1, eval = FALSE}
+x6 <- c(1, 2, 3, 4, NA)
 ranktypes |> 
   mutate(row_number = ...)
 ```
@@ -1295,12 +1311,13 @@ ranktypes |>
 Using the same pipe as above, create another variable, within the call to `mutate()`, called `dense_rank` equal to `dense_rank(x6)`.
 
 ```{r general-transformati-6, exercise = TRUE}
-
+x6 <- c(1, 2, 3, 4, NA)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-6-hint-1, eval = FALSE}
+x6 <- c(1, 2, 3, 4, NA)
 ranktypes |> 
   mutate(row_number = ..., 
          dense_rank = ...)
@@ -1311,12 +1328,13 @@ ranktypes |>
 Using the same pipe as above, create another variable, within the call to `mutate()`, called `percent_rank` equal to `percent_rank(x6)`.
 
 ```{r general-transformati-7, exercise = TRUE}
-
+x6 <- c(1, 2, 3, 4, NA)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-7-hint-1, eval = FALSE}
+x6 <- c(1, 2, 3, 4, NA)
 ranktypes |> 
   mutate(row_number = ..., 
          dense_rank = ...,
@@ -1328,12 +1346,13 @@ ranktypes |>
 Using the same pipe as above, create another variable, within the call to `mutate()`, called `cume_dist` equal to `cume_dist(x6)`.
 
 ```{r general-transformati-8, exercise = TRUE}
-
+x6 <- c(1, 2, 3, 4, NA)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-8-hint-1, eval = FALSE}
+x6 <- c(1, 2, 3, 4, NA)
 ranktypes |> 
   mutate(row_number = ..., 
          dense_rank = ...,
@@ -1448,12 +1467,13 @@ dplyr::lead() and dplyr::lag() allow you to refer the values just before or just
 Use the function `lag()` taking in `x7` as its argument.
 
 ```{r general-transformati-14, exercise = TRUE}
-
+x7 <- c(2, 5, 11, 11, 19, 35)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-14-hint-1, eval = FALSE}
+x7 <- c(2, 5, 11, 11, 19, 35)
 lag(...)
 ```
 
@@ -1462,12 +1482,13 @@ lag(...)
 Use the function `lead()` taking in `x7` as its argument. 
 
 ```{r general-transformati-15, exercise = TRUE}
-
+x7 <- c(2, 5, 11, 11, 19, 35)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-15-hint-1, eval = FALSE}
+x7 <- c(2, 5, 11, 11, 19, 35)
 lead(...)
 ```
 
@@ -1476,12 +1497,13 @@ lead(...)
 Subtract `lag(x7)` from  `x7`.
 
 ```{r general-transformati-16, exercise = TRUE}
-
+x7 <- c(2, 5, 11, 11, 19, 35)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-16-hint-1, eval = FALSE}
+x7 <- c(2, 5, 11, 11, 19, 35)
 x7 - ...
 ```
 
@@ -1489,27 +1511,32 @@ x7 - ...
 
 <!-- This is sloppy. We are using two concepts at the same time. First, is the specific calculation using the `x7` vector. The second, in the knowledge drop, is the generic calculation which works for any vector `x`. Students find this juxtaposition confusing! -->
 
-`x - lag(x)` gives you the difference between the current and previous value for all the elements of the vector `x`.
+`x7 - lag(x)` will give you the difference between the current and previous value for all the elements of the vector `x7`.
 
 ### Exercise 17
 
 Type in `x7 == lag(x7)` and hit "Run Code".
 
 ```{r general-transformati-17, exercise = TRUE}
-
+x7 <- c(2, 5, 11, 11, 19, 35)
 ```
 
 ```{r general-transformati-17-hint-1, eval = FALSE}
+x7 <- c(2, 5, 11, 11, 19, 35)
 x7 == ...
 ```
 
 ### 
 
-`x == lag(x)` tells you when the current value changes. You can lead or lag by more than one position by using the second argument, `n`.
+`x7 == lag(x7)` tells you when the current value changes. You can lead or lag by more than one position by using the second argument, `n`.
 
 ### Exercise 18
 
-When you’re looking at website data, it’s common to want to break up events into sessions, where you begin a new session after a gap of more than `x` minutes since the last activity. For example, the `times_visited` dataset has the times when someone visited a website. Type in `times_visited` and hit "Run Code".
+When you’re looking at website data, it’s common to want to break up events into sessions, where you begin a new session after a gap of more than `x` minutes since the last activity. For example, the `times_visited` dataset has the times when someone visited a website.
+
+### 
+
+Type in `times_visited` and hit "Run Code".
 
 ```{r general-transformati-18, exercise = TRUE}
 
@@ -1967,7 +1994,12 @@ Using your previous code, within your call to the `summarize()` function, add th
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-summaries-15-hint-1, eval = FALSE}
-
+flights |> 
+  summarize(
+    max = ..., 
+    q95 = ...,
+    .by = ...
+  )
 ```
 
 ### 
@@ -2271,7 +2303,7 @@ flights |>
   mutate(y = min_rank(...), .by = ...) 
 ```
 
-###
+### 
 
 As the names suggest, the summary functions are typically paired with summarize(). However, because of the recycling rules, they can also be usefully paired with mutate()
 
