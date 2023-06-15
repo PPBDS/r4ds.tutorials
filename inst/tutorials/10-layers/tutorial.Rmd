@@ -23,6 +23,8 @@ knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
+nz <- map_data("nz")
+
 polling_data <- read_csv("data/vis4_polling_data.csv",
               col_types = cols(createddate = col_date(),
                                approval_type = col_character(),
@@ -34,6 +36,8 @@ polling_data <- read_csv("data/vis4_polling_data.csv",
 
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
+
+<!-- DK: Stop using tibbles from primer.data, mainly trains. Either replace with a built in data set, like diamonds, or just delete those sections. -->
 
 <!-- Note that the later material sucks! There are not enough knowledge drops.  -->
 
@@ -437,11 +441,11 @@ summary(...)
 
 ### 
 
-This data was taken from the fivethirtyeight website. You will learn how to modify data into CSVs and use them in R in a later tutorial.
+This data was taken from the fivethirtyeight website. 
 
 ### Exercise 2
 
-Write down the name of the three column headers.
+Write down the name of the three variables.
 
 ```{r geometric-objects-with-smooth-2}
 question_text(NULL,
@@ -1113,6 +1117,7 @@ You can completely transform the look of your plot by changing its geom, and dif
 ### 
 
 Let's make the same plot, using a related function, `geom_col()`. Unlike `geom_bar()`, you have to specify the value for the y-axis when using this function. 
+
 ```{r make-col-p}
 col_p <- trains  |> 
   summarize(total = n(),
@@ -1540,322 +1545,10 @@ Finally let us use the `coord_quickmap()` which sets the aspect ratio correctly 
 ```
 
 ###
-Now you should see the New Zealand data plotted out based on the spatial data. We can visualize more data through `coord_polar()`. Take a look at the functions of [**coord_polar()**](https://r4ds.hadley.nz/layers.html#coordinate-systems)
 
-## Make a `plotly` graph
-### 
+Now you should see the New Zealand data plotted out based on the spatial data. We can visualize more data through `coord_polar()`. Take a look at the use of [`coord_polar()`](https://r4ds.hadley.nz/layers.html#coordinate-systems)
 
-`plotly` allows us to make interactive graphs. It's especially useful with `geom_point()`. Hover over the points to see more information about them.
 
-```{r make-plotly}
-nominate_plot <- nominate |> 
-  filter(congress == 116) |> 
-  ggplot(aes(nominate_dim1, nominate_dim2, color = party,
-             text = paste("Name:", name, "\n",
-                                    "State:", state, "\n",
-                                     "Chamber:", chamber))) +
-  geom_point(size = 0.8) +
-  labs(title = "Economic and Social Ideology of 116th U.S. Congress", 
-       x = "Economic Ideology", 
-       y = "Social Ideology", 
-       color = "Party",
-       caption = "Voteview")
-
-nom_p <- ggplotly(nominate_plot, tooltip = "text")
-
-nom_p
-```
-
-### Exercise 1
-
-Run `?nominate` to open the help page for the nominate data set. 
-
-```{r plotly-1, exercise = TRUE}
-
-```
-
-### Exercise 2
-
-Start a new pipe with `nominate`. Arrange the tibble by `congress` in descending order to find the number of the most recent congress in the data set. 
-
-```{r plotly-2, exercise = TRUE}
-
-```
-
-```{r plotly-2-hint-1, eval = FALSE}
-... |> 
-  arrange(desc(...))
-```
-
-### 
-
-The most recent congress is the 116th. 
-
-### Exercise 3
-
-Start a new pipe with `nominate`. Filter to keep rows in which the value of `congress` is 116. 
-
-```{r plotly-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plotly-3-hint-1, eval = FALSE}
-... |> 
-  filter(congress == ...)
-```
-
-The variable `congress` indicates the number of Congress, i.e. the 116th Congress being Congress from 2019-2021, the 115th Congress from 2017-2019, etc. 
-
-### Exercise 4
-
-Drop any rows with `N/A` values in the `nominate_dim1` and `nominate_dim2` columns with `drop_na()`. 
-
-```{r plotly-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plotly-4-hint-1, eval = FALSE}
-... |> 
-  drop_na(..., ...)
-```
-
-### Exercise 5
-
-Select the columns `nominate_dim1`, `nominate_dim2`, `party`, `name`, `state`, and `chamber`. 
-
-```{r plotly-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plotly-5-hint-1, eval = FALSE}
-... |> 
-  select(..., ..., ..., ..., ..., ...)
-```
-
-### Exercise 6
-
-Use `ggplot()` and `aes()` to map `nominate_dim1` to `x` and `nominate_dim2` to `y`.
-
-```{r plotly-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plotly-6-hint-1, eval = FALSE}
-... |> 
-  ggplot(mapping = aes(x = ...,
-                       y = ...))
-```
-
-### Exercise 7
-
-Add the layer `geom_point().`
-
-```{r plotly-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plotly-7-hint-1, eval = FALSE}
-... |> 
-  ggplot(mapping = aes(x = ...,
-                       y = ...)) +
-    ...()
-```
-
-### 
-
-Currently, we can't tell the difference between parties. We will fix this by changing the colors to represent each party.
-
-### Exercise 8
-
-Map `party` to `color` within `aes()`. Within `geom_point()` set the argument `size` to 0.8.
-
-```{r plotly-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plotly-8-hint-1, eval = FALSE}
-... |> 
-  ggplot(mapping = aes(x = ..., 
-                       y = ..., 
-                       color = ...))
-```
-
-### Exercise 9
-
-Within `geom_point()`, set the argument `size` to 0.8. 
-
-```{r plotly-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plotly-9-hint-1, eval = FALSE}
-... |> 
-  ggplot(mapping = aes(x = ..., 
-                       y = ..., 
-                       color = ...)) +
-  geom_point()
-```
-
-### 
-
-### Exercise 10
-
-Within `aes()` in `ggplot()`, add the argument `text` and set this equal to the function `paste`. This will return an error because we have not assigned anything to `text` yet.  We will do this in the following exercises. 
-
-```{r plotly-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plotly-10-hint-1, eval = FALSE}
-... |> 
-  ggplot(mapping = aes(x = ..., 
-                       y = ..., 
-                       color = ..., 
-                       text = paste()))+ 
-  geom_point(...)
-```
-
-The `paste` function allows quoted strings and variables to be combined into one string. We will use this function to create our `plotly` labels. Note, you should get an error during this.
-
-### Exercise 11
-
-Let's make the first line that will appear on our plotly label. Within `paste()`, first enter the string `"Name:"`. Separate this string by a comma a then write `name` without quotes, this is the column whose info we want to appear in this position on our label. Separate this by a comma, and then write `"\n"`. This is the symbol for a new line and it will not be printed. Keep this all on one line for the easiest formatting. Refer to the hint if needed.
-
-```{r plotly-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plotly-11-hint-1, eval = FALSE}
-... |> 
-  ggplot(mapping = aes(x = ..., 
-                       y = ..., 
-                       color = ..., 
-                       text = paste("Name:", name, "\n"))) + 
-  geom_point(...)
-```
-
-### Exercise 12
-
-Let's make an equivalent label for a congressman's state. Place a comma after the `"\n"` from the previous exercise. On a new line within paste, enter the string `"State:"`. Separate this string by a comma and then write `state` without quotes. Separate this by a comma and then include the new line symbol, `"\n"`. 
-
-```{r plotly-12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plotly-12-hint-1, eval = FALSE}
-... |> 
-  ggplot(mapping = aes(x = ..., 
-                       y = ..., 
-                       color = ..., 
-                       text = paste("Name:", name, "\n",
-                                    "State:", state, "\n"))) +
-  geom_point(...)
-```
-
-### Exercise 13
-
-Let's make an equivalent label for a congressman's chamber. Place a comma after the `"\n"` from the previous exercise. On a new line within paste, enter the string `"Chamber:"`. Separate this string by a comma and then write `chamber` without quotes. Since this is our final line, do not include another new line symbol, simply add the closing the parentheses (if it is not there already). 
-
-```{r plotly-13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plotly-13-hint-1, eval = FALSE}
-... |> 
-  ggplot(mapping = aes(x = ..., 
-                       y = ..., 
-                       color = ..., 
-                       text = paste("Name:", name, "\n",
-                                    "State:", state, "\n",
-                                    "Chamber:", chamber))) +
-  geom_point(...)
-```
-
-### Exercise 14
-
-Use `labs()` to add a title, axes labels, legend labels, and a caption to your plot. `ggplotly()` does not support subtitles. 
-
-```{r plotly-14, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plotly-14-hint-1, eval = FALSE}
-+ labs(title = "...",
-       subtitle = "...",
-       x = "...",
-       y = "...",
-       color = "...",
-       caption = "...")
-```
-
-### Exercise 15
-
-To make a graph with `plotly`, you need to save your `ggplot()` to an object in R, which you will use in the function `ggplotly`. Copy/paste your full pipe from the previous exercise and assignment. At the beginning of the pipe use the `<-` to assign this to an object named `nominate_plot`.
-
-```{r plotly-15, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plotly-15-hint-1, eval = FALSE}
-nominate_plot <- nominate |> 
-  filter(congress == 116) 
-  ...
-```
-
-### Exercise 16
-
-Copy/paste the code from above. On a new line not connected to the pipe above, type the function `ggplotly()`. The first argument should be the name of the ggplot object, `nominate_plot`. Make the second argument `tooltip = "text"`. This tells `ggplotly()` to make the label based on what we have in the `text` argument in `ggplot()`.
-
-```{r plotly-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plotly-16-hint-1, eval = FALSE}
-nominate_plot <- nominate |> 
-  filter(congress == 116) |> 
-  ... 
-
-ggplotly(nominate_plot, tooltip = ...)
-
-```
-
-Reminder: This is what your graph should look like. Test to make sure you can interact with your graph. 
-
-```{r}
-nom_p
-```
-
-### 
-
-Plotly allows for users to interact with graphs and enter a vast new world which can provide users the opportunity to display their data in an whole new way. 
 
 ## Summary
 ### 
