@@ -15,6 +15,7 @@ description: 'Tutorial for Chapter 19: Missing Values'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
+library(nycflights13)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
@@ -26,6 +27,13 @@ treatment <- tribble(
   NA,                 3,         NA,
   "Katherine Burke",  1,         4
 )
+
+stocks <- tibble(
+  year  = c(2020, 2020, 2020, 2020, 2021, 2021, 2021),
+  qtr   = c(   1,    2,    3,    4,    2,    3,    4),
+  price = c(1.88, 0.59, 0.35,   NA, 0.92, 0.17, 2.66)
+)
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -321,7 +329,269 @@ This yet again produces `NaN` because of its indeterminate result.
 ## Implicit missing values
 ###
 
+### Exercise 1
 
+Run this code to create a tibble called `stocks`
+
+```{r implicit-missing-val-1, exercise = TRUE}
+stocks <- tibble(
+  year  = c(2020, 2020, 2020, 2020, 2021, 2021, 2021),
+  qtr   = c(   1,    2,    3,    4,    2,    3,    4),
+  price = c(1.88, 0.59, 0.35,   NA, 0.92, 0.17, 2.66)
+)
+```
+
+###
+
+Missing values can also be **implicitly** missing, if an entire row of data is simply absent from the data.
+
+### Exercise 2
+
+Write `stocks` and hit "Run Code".
+
+```{r implicit-missing-val-2, exercise = TRUE}
+
+```
+
+```{r implicit-missing-val-2-hint, eval = FALSE}
+stocks
+```
+
+###
+
+The price in the fourth quarter of 2020 is explicitly missing, because its value is NA. The price for the first quarter of 2021 is implicitly missing, because it simply does not appear in the dataset.
+
+### Exercise 3
+
+Pipe `stocks` to the command `pivot_wider()` with the argument `names_from = qtr` and `values_from = price`.
+
+```{r implicit-missing-val-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r implicit-missing-val-3-hint, eval = FALSE}
+stocks |>
+  pivot_wider(
+    ... =  qtr,
+    ... = price
+  )
+```
+
+###
+
+Making data wider can make implicit missing values explicit because every combination of the rows and new columns must have some value. For example, if we pivot stocks to put the quarter in the columns, both missing values become explicit.
+
+
+### Exercise 4
+
+Pipe `stocks` to the command `complete()` with the argument `year`.
+
+```{r implicit-missing-val-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r implicit-missing-val-4-hint, eval = FALSE}
+
+stocks |> 
+  ...(year)
+
+```
+
+###
+
+`tidyr::complete()` allows you to generate explicit missing values by providing a set of variables that define the combination of rows that should exist.
+
+### Exercise 5
+
+Copy the previous code, but add the argument `qtr` to the `complete()` command.
+
+```{r implicit-missing-val-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r implicit-missing-val-5-hint, eval = FALSE}
+stocks |>
+  complete(year, ...)
+```
+
+###
+
+Typically, you’ll call complete() with names of existing variables, filling in the missing combinations. 
+
+### Exercise 6
+
+Copy the previous code and set the `year` argument to `2019`.
+
+```{r implicit-missing-val-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r implicit-missing-val-6-hint, eval = FALSE}
+stocks |>
+  complete(year = ..., qtr)
+```
+
+###
+
+Sometimes the individual variables are themselves incomplete, so you can instead provide your own data.
+
+### Exercise 7
+
+Copying the code from the previous exercise, set the `year` argument to the year range `2019:2021`.
+
+```{r implicit-missing-val-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r implicit-missing-val-7-hint, eval = FALSE}
+stocks |>
+  complete(year = ..., qtr)
+```
+
+###
+
+For example, you might know that the stocks dataset is supposed to run from `2019` to `2021`, so you could explicitly supply those values for year.
+
+### Exercise 8
+
+Load in the `nycflights13` package with `library()`.
+
+```{r implicit-missing-val-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r implicit-missing-val-8-hint, eval = FALSE}
+library(...)
+```
+
+###
+
+Recall that `nycflights13` is a data package that holds all the flight information from the three biggest New York City airports in 2013.
+
+### Exercise 9
+
+Write `flights` to print it out and view the data.
+
+```{r implicit-missing-val-9, exercise = TRUE}
+
+```
+
+```{r implicit-missing-val-9-hint, eval = FALSE}
+flights
+```
+
+###
+
+Recall that `distinct()` displays all unique rows in the dataset.
+
+### Exercise 10
+
+Pipe `flights` to the command `distinct()` with the argument `dest`.
+
+```{r implicit-missing-val-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r implicit-missing-val-10-hint, eval = FALSE}
+flights |>
+  ...(dest)
+```
+
+###
+
+Note this produces 105 unique flight destinations.
+
+### Exercise 11
+
+Copy the previous code but change the argument name to `faa = dest` to change the column name.
+
+```{r implicit-missing-val-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r implicit-missing-val-11-hint, eval = FALSE}
+flights |>
+  distinct(faa = ...)
+```
+
+###
+
+Note we change this because the column is listed as `dest` in `flights` but `faa` in `airports` and our next command, `anti_join()` requires common variables.
+
+### Exercise 12
+
+Copy the previous code and pipe it with `anti_join()` with the argument `airports`. 
+
+```{r implicit-missing-val-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r implicit-missing-val-12-hint, eval = FALSE}
+flights |>
+  distinct(faa = dest) |>
+  anti_join(...)
+```
+
+###
+
+You can often only know that values are missing from one dataset when you compare it to another. `anti_join()` is a particularly useful tool here because it selects only the rows in `flights` that don’t have a match in `airports`
+
+### Exercise 13
+
+Pipe `flights` with the command `distinct()` again except with the argument `tailnum`.
+
+```{r implicit-missing-val-13, exercise = TRUE}
+
+```
+
+```{r implicit-missing-val-13-hint, eval = FALSE}
+flights |>
+  distinct(...)
+```
+
+###
+
+Note that this produces all 4,044 unique tail number, or every unique plane.
+
+### Exercise 14
+
+Copy the previous code and pipe it to `anti_join()` with the argument `planes`.
+
+```{r implicit-missing-val-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r implicit-missing-val-14-hint, eval = FALSE}
+
+flights |>
+  distinct(tailnum) |>
+  anti_join(planes)
+
+```
+
+###
+
+We can use two `anti_join()`s to reveal that we’re missing information for four airports and 722 planes mentioned in `flights`.
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
