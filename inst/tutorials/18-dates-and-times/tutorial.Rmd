@@ -12,9 +12,6 @@ description: 'Tutorial for Chapter 18: Dates and times'
 ---
 
 ```{r setup, include = FALSE}
-make_datetime_100 <- function(year, month, day, time) {
-  make_datetime(year, month, day, time %/% 100, time %% 100)
-}
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
@@ -22,6 +19,11 @@ library(nycflights13)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
+
+make_datetime_100 <- function(year, month, day, time) {
+  make_datetime(year, month, day, time %/% 100, time %% 100)
+}
+
 flights_dt <- flights |> 
   filter(!is.na(dep_time), !is.na(arr_time)) |> 
   mutate(
@@ -39,6 +41,8 @@ flights_dt <- flights |>
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- Fix plot by using na_drop(). -->
+
 ## Introduction
 ### 
 
@@ -47,9 +51,12 @@ This tutorial covers [Chapter 18: Dates and Times](https://r4ds.hadley.nz/dateti
 
 ## Creating date/times through import
 ###
+
 In this chapter we are going to focus on dates and date-times as R doesn’t have a native class for storing times. If you need one, you can use the hms package.
 
 ### Exercise 1
+
+<!-- Split into two questions. -->
 
 Run `today()` and `now()` in the code chunk below. With this we can get the current date or date-time.
 
@@ -68,7 +75,7 @@ A date-time is a date plus a time: it uniquely identifies an instant in time (ty
 
 ###
 
-## Exercise 2
+### Exercise 2
 
 Set `csv` to "date 01/02/15"
 
@@ -139,6 +146,7 @@ With non-English dates and %b or %B you will need to use `locale()`. Check out [
 
 ## Creating date/times with strings
 ###
+
 The date-time specification language is powerful, but requires careful analysis of the date format. An alternative approach is to use lubridate’s helpers which attempt to automatically determine the format once you specify the order of the component.
 
 ### Exercise 1
@@ -174,7 +182,7 @@ Besides this we can also force set this by supplying a timezone. Set `tz` within
 ymd("2017-01-31", tz = ...)
 ```
 
-## Exercise 3
+### Exercise 3
 
 We can also use the "hms" function to create an datetime. Set `ymd_hms()` to "2017-01-31 20:11:59".
 
@@ -190,39 +198,52 @@ ymd_hms(...)
 
 With this we are able to create a datetime that is automatically set to UTC. `hms()` stands for **h**our, **m**inute, **s**econd.
 
+
 ## Creating date/times with individual components
 ###
+
 We can use the datetime features on pieces of data. We will use the datetime component on the `flights` data.
 
 Let's make this line graph using `geom_point()`:
 
+<!-- Add a select after mutate(). -->
+
 ```{r creating-datetimes-w}
-flight_grph <- flights |>
-                  mutate(dep_time = make_datetime(year, month, day, dep_time),
+flight_grph <- 
+  flights |>
+    mutate(dep_time = make_datetime(year, month, day, dep_time),
             sched_dep_time = make_datetime(year, month, day, sched_dep_time)) |>
-            ggplot(mapping = aes(x = sched_dep_time, y = dep_time, color=flight)) +              geom_point() + 
-            labs(title = "Flights",
-                subtitle = "Flight departed time based on scheduled departed time.",
-                color = "Flight",
-                x = "Scheduled Departure Time",
-                y = "Departure Time")
+    select(flight, dep_time, sched_dep_time) |> 
+    drop_na() |> 
+    ggplot(mapping = aes(x = sched_dep_time, 
+                         y = dep_time,
+                         color = flight)) +
+      geom_point() +
+      labs(title = "Flights",
+           subtitle = "Flight departed time based on scheduled departed time.",
+           color = "Flight",
+           x = "Scheduled Departure Time",
+           y = "Departure Time")
 
 flight_grph
 ```
 
 ### Exercise 1
 
-View the `flights` data through `glimpse()`
+Run `glimpse()` on `flights`.
 
 ```{r creating-datetimes-w-1, exercise = TRUE}
 
 ```
 
 ```{r creating-datetimes-w-1-hint, eval = FALSE}
-glimpse(...())
+glimpse(...)
 ```
 
 ###
+
+<!-- Awk -->
+
 Here we can see all of the `flights` data with all of the important aspects of the `flights` data.
 
 ### Exercise 2
@@ -236,10 +257,11 @@ We want to look at the `dep_time` and the `sched_dep_time`. Mutate the `flights`
 ```{r creating-datetimes-w-2-hint, eval = FALSE}
 flights |>
   mutate(dep_time = make_datetime(..., ..., ..., dep_time),
-            sched_dep_time = make_datetime(..., ..., ..., sched_dep_time))
+         sched_dep_time = make_datetime(..., ..., ..., sched_dep_time))
 ```
 
 ###
+
 Here we are able to make a datetime based on the `flights` data that we have. When creating a a date/time from this sort of input, we use `make_date()` for dates, or `make_datetime()` for date-times.
 
 ### Exercise 3
