@@ -25,6 +25,10 @@ options(tutorial.exercise.timelimit = 60,
 
 nz <- map_data("nz")
 
+car_names <- c(`f` = "Front Wheel Drive",
+               `4` = "4 Wheel Drive",
+               `r` = "Rear Wheel Drive")
+
 polling_data <- read_csv("data/vis4_polling_data.csv",
               col_types = cols(createddate = col_date(),
                                approval_type = col_character(),
@@ -933,218 +937,41 @@ Let's try the same data for before but with a `geom_boxplot()` instead of a `geo
 
 ggplot2 provides a vast amount of opportunities, however, there are a countless number of plots that can be made through different geoms and extensions. Check out [**possible options**](https://exts.ggplot2.tidyverse.org/gallery/) for any future implementations or possibilities. 
 
-## Geometric Objects with `geom_density()`
-### 
-
-Let's create the following density plot.
-
-```{r}
-dens_p <- trains |> 
-  filter(age >= 40) |> 
-  ggplot(aes(age, fill = party)) +
-  geom_density(alpha = 0.5) + 
-  xlim(40, 75) +
-  labs (title = "Age of Democrats and Republicans in Trains Experiment",
-        subtitle = "More seniors are democrats in the experiment",
-        x = "Age",
-        y = "Density",
-        fill = "Party",
-        caption = " Source: Enos (2014)")
-
-dens_p
-```
-
-### Exercise 1
-
-Type `trains` to view the data set. 
-
-```{r geomdensity-1, exercise = TRUE}
-
-```
-
-### Exercise 2
-
-Use the `$` operator to extract the `age` column as a vector. 
-
-```{r geomdensity-2, exercise = TRUE}
-
-```
-
-```{r geomdensity-2-hint-1, eval = FALSE}
-trains$...
-```
-
-### 
-
-The numbers in square brackets help you keep track of what row the number belongs to.
-
-### Exercise 3
-
-Start a new pipe with `trains`. Filter for rows in which `age` is greater than or equal to 40.
-
-```{r geomdensity-3, exercise = TRUE}
-
-```
-
-```{r geomdensity-3-hint-1, eval = FALSE}
-... |> 
-  filter(age >= ...)
-```
-
-### Exercise 4
-
-Use `ggplot()` to map `age` to the x-axis.
-
-```{r geomdensity-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geomdensity-4-hint-1, eval = FALSE}
-... |> 
-  ggplot(aes(x = ...))
-```
-
-Note: no points will be plotted because `geom` has not been used
-
-### Exercise 5
-
-Add the layer `geom_density()`.
-
-```{r geomdensity-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geomdensity-5-hint-1, eval = FALSE}
-... +
-  ...()
-```
-
-###
-
-`geom_density()` is a plotting function that creates a smooth density estimate of a variable.
-
-### Exercise 6
-
-Set `fill` to `party` within the `aes()` function in `ggplot()`. 
-
-```{r geomdensity-6, exercise = TRUE}
-ggplot(aes(x = age,
-           fill = ...))
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geomdensity-6-hint-1, eval = FALSE}
-Recall fill goes inside the aes() argument of ggplot()
-```
-
-Right now, the two plots overlap each other. We will change the transparency so we can see both parties clearly.
-
-### Exercise 7
-
-Within `geom_density()` set the `alpha` argument to 0.5. 
-
-```{r geomdensity-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geomdensity-7-hint-1, eval = FALSE}
-... +
-  geom_density(alpha = ...)
-```
-
-###
-
-`geom_density()` can be combined with other geoms and aesthetics to create complex visualizations.
-
-### Exercise 8
-
-Let's also add an `xlim()` function, to set the range of x values on our plot from 40 to 75. This way, we can see the full distributions.
-
-```{r geomdensity-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geomdensity-8-hint-1, eval = FALSE}
-Make sure you put a comma between 40 and 75 within the xlim() function.
-```
-
-```{r geomdensity-8-hint-2, eval = FALSE}
-... +
-  xlim(..., ...)
-```
-
-###
-
-With `xlim()` we can specify the range of values that will be displayed on the x-axis, excluding any data points outside that range.
-
-### Exercise 9
-
-To finish your plot, use `labs()` to give the graph a title, subtitle, axis labels, and caption of your choosing.
-
-```{r geomdensity-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geomdensity-9-hint-1, eval = FALSE}
-... +
-  labs(..., 
-       fill = "...",
-       ...)
-```
-
-Reminder: This is what our plot should look like.
-
-```{r}
-dens_p
-```
-
-###
-
-You can completely transform the look of your plot by changing its geom, and different geoms can reveal different features of your data. The density graph that we plotted in this example is different from the features presented in the box plot and histogram graph.
-
 ## Facets and Statistical Transformations with `geom_col()`, `facet_wrap()`, and `facet_grid()`
 ### 
 
 Let's make the same plot, using a related function, `geom_col()`. Unlike `geom_bar()`, you have to specify the value for the y-axis when using this function. 
 
 ```{r make-col-p}
-col_p <- trains  |> 
+col_p <- mpg |> 
+  select(drv, fl, class) |>
   summarize(total = n(),
-            .by = c(race, line, treatment)) |> 
-  ggplot(aes(x = race, y = total, fill = line)) +
+            .by = c(drv, fl, class)) |> 
+  ggplot(aes(x = fl, 
+             y = total, 
+             fill = class)) +
     geom_col() +
-    facet_wrap(~ treatment) +
+    facet_wrap(~ drv,
+               labeller = as_labeller(car_names)) +
     theme_classic() +
-    labs(title = "Starting Attitudes Toward Immigration Issue",
-         subtitle = "Higher proportion of minorities among treated participants",
-         x = "Race",
+    labs(title = "The Fuel Type Of Cars Based On Their Class Type",
+         subtitle = "Higher Proportion of 4 Wheel and Front Wheel Drive Participants",
+         x = "Fuel Type",
          y = "Number of Participants",
-         fill = "Line",
-         caption = "Source: Enos (2014)")
+         fill = "Class")
 col_p
 ```
 
 ### Exercise 1
 
-Start a pipe with `trains`. Select the columns `race`, `treatment` and `line`. 
+Start a pipe with `mpg`. Select the columns `drv`, `fl` and `class`. 
 
 ```{r facets-statistical-transformations-1, exercise = TRUE}
 
 ```
 
 ```{r facets-statistical-transformations-1-hint-1, eval = FALSE}
-trains |> 
+mpg |> 
   select(..., ..., ...)
 ```
 
@@ -1170,7 +997,7 @@ Copy/paste the previous code. Use `summarize()` to create a new table with the c
 
 ### Exercise 3
 
-Add a `.by` argument to `summarize()` with the value set to `race`, `treatment`, and `line`. You need to place these three values with a vector using `c()`. 
+Add a `.by` argument to `summarize()` with the values set to `drv`, `fl`, and `class`. You need to place these three values with a vector using `c()`. 
 
 ```{r facets-statistical-transformations-3, exercise = TRUE}
 
@@ -1183,14 +1010,10 @@ Add a `.by` argument to `summarize()` with the value set to `race`, `treatment`,
   summarize(total = n(),
             .by = c(..., ..., ...))  
 ```
- 
-### 
-
-Note that there are no Blacks or Hispanics from the Franklin Line in the Control Group. 
 
 ### Exercise 4
 
-Continue your pipe with `ggplot()`. Map the variable `race` to the x-axis. Map total to the `y` axis. Add the layer `geom_col()`.
+Continue your pipe with `ggplot()`. Map the variable `fl` to the x-axis. Map `total` to the `y` axis. Add the layer `geom_col()`.
 
 ```{r facets-statistical-transformations-4, exercise = TRUE}
 
@@ -1206,11 +1029,11 @@ ggplot(aes(x = ...,
 
 ### 
 
-`geom_col()` will automatically take the three to four values for each `race` in the `total` column and stack them to form one bar. This behavior is from the fact that the `position` argument for `geom_col()` is set by default to "stack". 
+`geom_col()` will automatically take the three to four values for each `fl` in the `total` column and stack them to form one bar. This behavior is from the fact that the `position` argument for `geom_col()` is set by default to "stack". 
 
 ### Exercise 5
 
-Now, map `line` to `fill`.
+Now, map `class` to `fill`.
 
 ```{r facets-statistical-transformations-5, exercise = TRUE}
 
@@ -1221,13 +1044,14 @@ Now, map `line` to `fill`.
 ```{r facets-statistical-transformations-5-hint-1, eval = FALSE}
 ggplot(data = ... , 
           aes(x = ..., 
+              y = ...,
               fill = ...) +
   geom_col()
 ```
 
 ### Exercise 6
 
-Add the layer `facet_wrap()` and facet by the variable `treatment`. 
+Add the layer `facet_wrap()` and facet by the variable `drv`. 
 
 ```{r facets-statistical-transformations-6, exercise = TRUE}
 
@@ -1246,18 +1070,22 @@ The `facet_wrap()` function arranges the panels in a grid, wrapping them onto mu
 
 ### Exercise 7
 
-We won't be implementing this within our plot grid, however, another way to view our data is through `facet_grid()` through `treatment ~ race`. This will open up a grid which will display each of the variables in their own respective grid. (Make sure to get rid of the `facet_wrap()` from the previous exercise when trying this exercise out, and implement `facet_wrap()` after this exercise again)
+We want to change the labels of the facet_wrap that we just created. We can do this by setting `labeller` to `as_labeller(car_names)`. Note: `car_names` has already been created for you.
 
-```{r facets-statistical-transformations-7, exercise = TRUE}
+```{r facets-and-statistic-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r facets-statistical-transformations-7-hint-1, eval = FALSE}
-... + 
-  facet_grid(treatment ~ ...)
+```{r facets-and-statistic-7-hint, eval = FALSE}
+facet_wrap(~...,
+               ... = as_labeller(car_names)
 ```
+
+###
+
+Through the `as_labeller()` function we are able to change the labels of `facet_wrap()`.
 
 ### Exercise 8
 
@@ -1276,7 +1104,7 @@ Let's add a theme to our graph. Add the layer `theme_classic()` to your code.
 
 ### Exercise 9
 
-To finish your plot, use `labs()` to give the graph a title, subtitle, axes labels, legend labels,  and caption of your choosing.
+To finish your plot, use `labs()` to give the graph a title, subtitle, axes labels, legend labels, and caption of your choosing.
 
 Reminder: This is what your plot should look like.
 
@@ -1307,37 +1135,33 @@ Through this we are able to view our data with a `facet_wrap` which splits a plo
 Let's create this graph using `geom_bar()`.
 
 ```{r}
-bar_p <- ggplot(data = trains, 
-                   mapping = aes(x = station, 
-                                 fill = race)) + 
+bar_p <- ggplot(data = midwest, 
+                   mapping = aes(x = state, 
+                                 fill = category)) + 
   geom_bar(alpha = 1/5, 
            position = "dodge") + 
   theme(axis.text.x = element_text(angle=45, 
                                    hjust=1)) + 
-  labs(title = "Race found at each station",
-       subtitle = "The most popular station with the most common race found within each station",
-       x = "Station",
+  labs(title = "Categories found in each state",
+       subtitle = "The 5 states in the midwest with each category present.",
+       x = "State",
        y = "Count",
-       fill = "Race")
+       fill = "Category")
 
 bar_p
 ```
 
 ### Exercise 1
 
-Skim the `trains` data set. 
+Skim the `midwest` data set. 
 
 ```{r statistical-transfor-1, exercise = TRUE}
 
 ```
 
-### 
-
-Notice that there are no missing values for `station`. This means we do not need to use `drop_na`.  
-
 ### Exercise 2
 
-Add `ggplot()` and map `station` to the x axis of the `trains` data and set `fill` to `race`.
+Add `ggplot()` and map `state` to the x axis of the `midwest` data and set `fill` to `category`.
 
 ```{r statistical-transfor-2, exercise = TRUE}
 
@@ -1351,7 +1175,7 @@ ggplot(data = ...,
 
 ### 
 
-Here we have used `station` data on the x axis and the count on the y axis is automatically implemented. Within a bar graph, we only input the x variable due to the y variable automatically being created usually as count. Through this we can see count within each `station` in the `trains` data.
+Here we have used `state` data on the x axis and the count on the y axis is automatically implemented. Within a bar graph, we only input the x variable due to the y variable automatically being created usually as count. Through this we can see count within each `state` in the `midwest` data.
 
 ### Exercise 3
 
@@ -1389,7 +1213,7 @@ Within `geom_bar()`, set `alpha` to 1/5, `position` to `"dodge"`.
 
 ### Exercise 5
 
-Now we are going to use theme to adjust the labels for station. As you can see they are all bunched up together and we can fix this through an adjustment of how they are positioned. Set `axis.text.x` to `element_text`. Within `element_text` set `angle` to 45 and `hjust` to 1.
+Now we are going to use theme to adjust the labels for station. Set `axis.text.x` to `element_text`. Within `element_text` set `angle` to 45 and `hjust` to 1.
 
 ```{r statistical-transfor-5, exercise = TRUE}
 
@@ -1452,7 +1276,7 @@ library(maps)
 
 ### Exercise 2
 
-Set nz to the map_data of "nz"
+Run `summary()` on `nz` to view its contents.
 
 ```{r coordinate-systems-2, exercise = TRUE}
 
@@ -1464,7 +1288,7 @@ nz <- map_data("nz")
 
 ### Exercise 3
 
-We now want to plot our nz data with `ggplot`
+We now want to plot our `nz` data with `ggplot()`
 
 ```{r coordinate-systems-3, exercise = TRUE}
 
@@ -1547,8 +1371,6 @@ Finally let us use the `coord_quickmap()` which sets the aspect ratio correctly 
 ###
 
 Now you should see the New Zealand data plotted out based on the spatial data. We can visualize more data through `coord_polar()`. Take a look at the use of [`coord_polar()`](https://r4ds.hadley.nz/layers.html#coordinate-systems)
-
-
 
 ## Summary
 ### 
