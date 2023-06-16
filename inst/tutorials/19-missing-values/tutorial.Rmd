@@ -34,6 +34,12 @@ stocks <- tibble(
   price = c(1.88, 0.59, 0.35,   NA, 0.92, 0.17, 2.66)
 )
 
+health <- tibble(
+  name   = c("Ikaia", "Oletta", "Leriah", "Dashay", "Tresaun"),
+  smoker = factor(c("no", "no", "no", "no", "no"), levels = c("yes", "no")),
+  age    = c(34, 88, 75, 47, 56),
+)
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -598,37 +604,39 @@ We can use two `anti_join()`s to reveal that we’re missing information for fou
 
 ### Exercise 1
 
-
+Run this code to assign a tibble to `health`.
 
 ```{r factors-and-empty-gr-1, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r factors-and-empty-gr-1-hint, eval = FALSE}
-
+health <- tibble(
+  name   = c("Ikaia", "Oletta", "Leriah", "Dashay", "Tresaun"),
+  smoker = factor(c("no", "no", "no", "no", "no"), levels = c("yes", "no")),
+  age    = c(34, 88, 75, 47, 56),
+)
 ```
 
 ###
 
+Recall from Chapter 17 that factors are used for categorical variables, variables that have a fixed and known set of possible values.
+
 ### Exercise 2
 
+Type `health` and hit "Run Code" to view the data.
 
 ```{r factors-and-empty-gr-2, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r factors-and-empty-gr-2-hint, eval = FALSE}
-
+health
 ```
 
 ###
 
+A final type of missingness is the empty group, a group that doesn’t contain any observations, which can arise when working with factors.
+
 ### Exercise 3
 
+Let's count the number of smokers by piping `health` to the command `count()` with the argument `smoker`.
 
 ```{r factors-and-empty-gr-3, exercise = TRUE}
 
@@ -637,13 +645,16 @@ We can use two `anti_join()`s to reveal that we’re missing information for fou
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r factors-and-empty-gr-3-hint, eval = FALSE}
-
+health |> count(...)
 ```
 
 ###
 
+This dataset only contains non-smokers, but we know that smokers exist; the group of non-smoker is empty.
+
 ### Exercise 4
 
+Copy the previous code and add the `.drop = FALSE` argument to keep all the groups, even those not seen in the data.
 
 ```{r factors-and-empty-gr-4, exercise = TRUE}
 
@@ -652,28 +663,32 @@ We can use two `anti_join()`s to reveal that we’re missing information for fou
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r factors-and-empty-gr-4-hint, eval = FALSE}
-
+health |> count(smoker, .drop = ...)
 ```
 
 ###
 
+Note how we can now see the `yes` row in the `smoker` column.
+
 ### Exercise 5
 
+Create a plot with `ggplot()` with `health` as the argument.
 
 ```{r factors-and-empty-gr-5, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r factors-and-empty-gr-5-hint, eval = FALSE}
-
+ggplot(...)
 ```
 
 ###
 
+Note the plot is empty and we have not established the axes.
+
 ### Exercise 6
 
+Copy the previous code and add an aesthetic mapping using `aes()`
 
 ```{r factors-and-empty-gr-6, exercise = TRUE}
 
@@ -682,13 +697,16 @@ We can use two `anti_join()`s to reveal that we’re missing information for fou
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r factors-and-empty-gr-6-hint, eval = FALSE}
-
+ggplot(health, ...())
 ```
 
 ###
 
+Note this doesn't do anything. By looking at the help page by typing `?aes()` into the console, we see that it has an `x` and a `y` argument.
+ 
 ### Exercise 7
 
+Copy the previous code and pass in `x = smoker` as an argument to the `aes()` command.
 
 ```{r factors-and-empty-gr-7, exercise = TRUE}
 
@@ -697,13 +715,16 @@ We can use two `anti_join()`s to reveal that we’re missing information for fou
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r factors-and-empty-gr-7-hint, eval = FALSE}
-
+ggplot(health, aes(...))
 ```
 
 ###
 
+As you can see, the x-axis is defined with the `smoker` column from `health`.
+
 ### Exercise 8
 
+Add the command `geom_bar()` to the previous code using a `+`.
 
 ```{r factors-and-empty-gr-8, exercise = TRUE}
 
@@ -712,13 +733,17 @@ We can use two `anti_join()`s to reveal that we’re missing information for fou
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r factors-and-empty-gr-8-hint, eval = FALSE}
-
+ggplot(health, aes(x = smoker)) +
+  ...
 ```
 
 ###
 
+We encounter a similar issue to before as `ggplot2` will also drop levels that don't have any values.
+
 ### Exercise 9
 
+Add the `scale_x_discrete()` command to the plot with a `+`.
 
 ```{r factors-and-empty-gr-9, exercise = TRUE}
 
@@ -727,13 +752,18 @@ We can use two `anti_join()`s to reveal that we’re missing information for fou
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r factors-and-empty-gr-9-hint, eval = FALSE}
-
+ggplot(health, aes(x = smoker)) +
+  geom_bar() + 
+  scale_x_discrete()
 ```
 
 ###
 
+This will not do anything right now, but this command allows us to manipulate the x-axis.
+
 ### Exercise 10
 
+Copy the previous code and pass the `drop` argument into the `scale_x_discrete()` command and assign it to `FALSE`.
 
 ```{r factors-and-empty-gr-10, exercise = TRUE}
 
@@ -742,25 +772,30 @@ We can use two `anti_join()`s to reveal that we’re missing information for fou
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r factors-and-empty-gr-10-hint, eval = FALSE}
-
+ggplot(health, aes(x = smoker)) +
+  geom_bar() + 
+  scale_x_discrete(... = FALSE)
 ```
 
 ###
 
+You can force levels that don't have any values to display by supplying `drop = FALSE` to the appropriate discrete axis.
+
 ### Exercise 11
 
+Type `health` and hit "Run Code" to re-familiarize yourself with the tibble.
 
 ```{r factors-and-empty-gr-11, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r factors-and-empty-gr-11-hint, eval = FALSE}
-
+health.
 ```
 
 ###
+
+
 
 ### Exercise 12
 
