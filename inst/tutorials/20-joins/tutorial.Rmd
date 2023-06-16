@@ -668,17 +668,47 @@ If it doesn’t match anything, it’s dropped.
 If it matches 1 row in y, it’s preserved.
 If it matches more than 1 row in y, it’s duplicated once for each match.
 
-### Exercise 8
+### Exercise 9
 
-So far we’ve explored what happens if a row in x matches zero or one rows in y. What happens if it matches more than one row?
+In practice when there are two records connecting to same record, there are no issue but there is, however, one particularly dangerous case which can cause a combination explosion of rows. Imagine joining the following two tables:
 
-The image below is shows how two records in Y tibble connect to the same record in X tibble.
+Create two variables `df1` and `df2` on different lines. Assign `tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))` to `df1` and assign `tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))` to `df2`.
 
-```{r}
-knitr::include_graphics("images/match-types.png")
+```{r how-do-joins-work-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r how-do-joins-work-9-hint-1, eval = FALSE}
+df1 <-
+df2 <- 
 ```
 
 ### 
+
+As you can see we have two duplicate keys in both tibbeles.
+
+### Exercise 10
+
+Now create a pipe with `df1` to `inner_join()` and pass in `df2` and then join the tibble by `key` using `join_by()`.
+
+```{r how-do-joins-work-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r how-do-joins-work-10-hint-1, eval = FALSE}
+... |> 
+  inner_join(df2, ...(key))
+```
+
+### 
+
+While the first row in df1 only matches one row in df2, the second and third rows both match two rows. This is sometimes called a many-to-many join, and will cause dplyr to emit a warning. If you are doing this deliberately, you can set relationship = "many-to-many", as the warning suggests.
+
+
 
 
 ## Non-equi joins
