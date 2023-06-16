@@ -16,7 +16,6 @@ library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
 library(maps)
-library(skimr)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
@@ -65,7 +64,7 @@ This tutorial covers [Chapter 10: Layers](https://r4ds.hadley.nz/layers.html) fr
 
 ### Exercise 1
 
-View all of the data in `mpg` by using `glimpse()` on it
+Run `glimpse()` on `mpg`.
 
 ```{r aesthetic-mappings-simple-1, exercise = TRUE}
 
@@ -262,6 +261,10 @@ Continue your pipe and add `ggplot()`. Map `price` to the x-axis and `carat` to 
                        y = ...))
 ```
 
+###
+
+If you want to add any themes to your plots check out: [**ggplot2**](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html) contains all aesthetic specifications that are possible for the data. In addition, [**ggplot2: elegant graphics**](https://ggplot2-book.org/) provides all possible aesthetics that any user will use.
+
 ### Exercise 5
 
 Add the `geom_point()` layer. Within `aes()` set `clarity` to `color`.
@@ -352,29 +355,6 @@ Remember: a logarithmic scale means that each increment increases by a factor of
 
 ### Exercise 9
 
-Good! Now to change the theme of the plot, add another layer. This layer should be `theme_few()`.
-
-```{r aesthetic-mappings-advanced-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r aesthetic-mappings-advanced-9-hint-1, eval = FALSE}
-... + 
-  ...()
-```
-
-### 
-
-This theme is in **ggthemes**. Remember, there are some themes that are built into the `tidyverse` package, and some that are not. If you want to use themes that aren't in `tidyverse`, you must load `library(ggthemes)`.
-
-###
-
-Besides the themes that we have used, [**ggplot2**](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html) contains all aesthetic specifications that are possible for the data. In addition, [**ggplot2: elegant graphics**](https://ggplot2-book.org/) provides all possible aesthetics that any user will use.
-
-### Exercise 10
-
 To finish your plot, use `labs()` to give the graph a title, subtitle, axis labels, legend label, and caption of your choosing. To set the legend label, use the argument `color`.
 
 Reminder: This is what your plot should look like.
@@ -383,13 +363,13 @@ Reminder: This is what your plot should look like.
 point_p2
 ```
 
-```{r aesthetic-mappings-advanced-10, exercise = TRUE}
+```{r aesthetic-mappings-advanced-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r aesthetic-mappings-advanced-10-hint-1, eval = FALSE}
+```{r aesthetic-mappings-advanced-9-hint-1, eval = FALSE}
 ... +
   labs(...,
        color = "Clarity",
@@ -419,7 +399,10 @@ biden_p <- ggplot(data = polling_data,
               formula = y ~ s(x, bs = "cs"),
               se = TRUE) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  labs(title = "Biden's Approval Rating From Jan 22 to Jun 30",
+  theme(legend.position="bottom") +
+  labs(x = "Month",
+       y = "Percent",
+       title = "Biden's Approval Rating From Jan 22 to Jun 30",
        subtitle = "While Biden's approval rating has stayed relatively static, his disapproval rating \nhas been rising.",
        color = "",
        caption = "Source: Five Thirty Eight Data")
@@ -643,7 +626,7 @@ With `se` we are able to create a margin of error that makes our data more accur
 
 ### Exercise 12
 
-Since the data comes from the FiveThirtyEight website, we will use the fivethirtyeight theme! Add `theme_fivethirtyeight()` to your plot.
+Next, we want to change the labels on the graph so they are in percentage format. Use scale_y_continuous to do so. Set the `labels` argument to `scales::percent_format(accuracy = 1)`.
 
 ```{r geometric-objects-with-smooth-12, exercise = TRUE}
 
@@ -652,28 +635,6 @@ Since the data comes from the FiveThirtyEight website, we will use the fivethirt
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geometric-objects-with-smooth-12-hint-1, eval = FALSE}
-... + 
-  geom_smooth(method = "gam",
-              formula = y ~ s(x, bs = "cs"),
-              se = TRUE) +
-  ...()
-```
-
-### 
-
-Note: the FiveThirtyEight theme actually comes from the `ggthemes()` package, not the FiveThirtyEight package.
-
-### Exercise 13
-
-Next, we want to change the labels on the graph so they are in percentage format. Use scale_y_continuous to do so. Set the `labels` argument to `scales::percent_format(accuracy = 1)`.
-
-```{r geometric-objects-with-smooth-13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-smooth-13-hint-1, eval = FALSE}
 ...+
   scale_y_continuous(labels = ...)
 ```
@@ -681,6 +642,25 @@ Next, we want to change the labels on the graph so they are in percentage format
 ### 
 
 We use scale_y_continuous when we want to modify the y-axis for continuous data. [This documentation here](https://ggplot2.tidyverse.org/reference/scale_continuous.html) will tell you more, and all the possible arguments you can use with `scale_y_continuous`
+
+### Exercise 13
+
+Currently our legend is to the right of the graph. Let's change the way that we see our legend. Add `theme()` to the pipe and set `legend.position` to "bottom".
+
+```{r geometric-objects-with-smooth-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-with-smooth-13-hint, eval = FALSE}
++ 
+  theme(...="bottom")
+```
+
+###
+
+With the help of `legend.position`. We have the ability to set it to the `left`, `right`, `top`, and `bottom` based on how we would like to see it within our graph.
 
 ### Exercise 14
 
@@ -700,7 +680,9 @@ biden_p
 
 ```{r geometric-objects-with-smooth-14-hint-1, eval = FALSE}
 ... +
-  labs(title = ...,
+  labs(x = ...,
+       y = ...,
+       title = ...,
        subtitle = ...,
        color = ...,
        caption = ...)
@@ -949,7 +931,6 @@ col_p <- mpg |>
     geom_col() +
     facet_wrap(~ drv,
                labeller = as_labeller(car_names)) +
-    theme_classic() +
     labs(title = "The Fuel Type Of Cars Based On Their Class Type",
          subtitle = "Higher Proportion of 4 Wheel and Front Wheel Drive Participants",
          x = "Fuel Type",
@@ -1085,21 +1066,6 @@ Through the `as_labeller()` function we are able to change the labels of `facet_
 
 ### Exercise 8
 
-Let's add a theme to our graph. Add the layer `theme_classic()` to your code. 
-
-```{r facets-statistical-transformations-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facets-statistical-transformations-8-hint-1, eval = FALSE}
-... + 
-  ...()
-```
-
-### Exercise 9
-
 To finish your plot, use `labs()` to give the graph a title, subtitle, axes labels, legend labels, and caption of your choosing.
 
 Reminder: This is what your plot should look like.
@@ -1108,13 +1074,13 @@ Reminder: This is what your plot should look like.
 col_p
 ```
 
-```{r facets-statistical-transformations-9, exercise = TRUE}
+```{r facets-statistical-transformations-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r facets-statistical-transformations-9-hint-1, eval = FALSE}
+```{r facets-statistical-transformations-8-hint-1, eval = FALSE}
 ... +
   labs(..., 
        fill = "...",
@@ -1136,8 +1102,6 @@ bar_p <- ggplot(data = midwest,
                                  fill = category)) + 
   geom_bar(alpha = 1/5, 
            position = "dodge") + 
-  theme(axis.text.x = element_text(angle=45, 
-                                   hjust=1)) + 
   labs(title = "Categories found in each state",
        subtitle = "The 5 states in the midwest with each category present.",
        x = "State",
@@ -1150,7 +1114,7 @@ bar_p
 ### Exercise 1
 
 
-Run `skim()` on the `midwest` data set. 
+Run `glimpse()` on the `midwest` data set. 
 
 ```{r statistical-transfor-1, exercise = TRUE}
 
@@ -1217,7 +1181,7 @@ Within `geom_bar()`, set `alpha` to 1/5, `position` to `"dodge"`.
 
 ### Exercise 5
 
-Now we are going to use theme to adjust the labels for station. Set `axis.text.x` to `element_text`. Within `element_text` set `angle` to 45 and `hjust` to 1.
+Finally, use `labs()` to give the graph a title, subtitle, axis labels, legend labels, and caption of your choosing.
 
 ```{r statistical-transfor-5, exercise = TRUE}
 
@@ -1226,21 +1190,6 @@ Now we are going to use theme to adjust the labels for station. Set `axis.text.x
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r statistical-transfor-5-hint-1, eval = FALSE}
-... + theme(axis.text.x = ...(angle=..., 
-                              hjust=...))
-```
-
-### Exercise 6
-
-Finally, use `labs()` to give the graph a title, subtitle, axis labels, legend labels, and caption of your choosing.
-
-```{r statistical-transfor-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r statistical-transfor-6-hint-1, eval = FALSE}
 ... +
   labs(..., 
        fill = "...",
@@ -1278,7 +1227,9 @@ Load the `maps` package with `library()`.
 library(...)
 ```
 
-<!-- Knowledge! -->
+###
+
+The `maps` package includes the area of each matching region in the map is computed, and regions which match the same element of regions have their areas combined. Each region is assumed planar, with vertices specified by the x and y components of the map object.
 
 ### Exercise 2
 
