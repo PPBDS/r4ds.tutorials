@@ -375,8 +375,8 @@ By the end of this section we will be making a plot that looks like this:
 
 ```{r}
 plots <- flights |> 
-  group_by(hour = sched_dep_time %/% 100) |> 
-  summarize(prop_cancelled = mean(is.na(dep_time)), n = n()) |> 
+  mutate(hour = sched_dep_time %/% 100) |> 
+  summarize(prop_cancelled = mean(is.na(dep_time)), n = n(), .by = hour) |> 
   filter(hour > 1) |> 
   ggplot(aes(x = hour, y = prop_cancelled)) +
   geom_line(color = "grey50") + 
