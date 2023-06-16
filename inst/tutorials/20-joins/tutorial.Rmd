@@ -1,13 +1,13 @@
 ---
-title: "Joins"
+title: Joins
 tutorial:
-  id: "joins"
-output: 
+  id: joins
+output:
   learnr::tutorial:
-    progressive: true
-    allow_skip: true
+    progressive: yes
+    allow_skip: yes
 runtime: shiny_prerendered
-description: "Tutorial for Chapter 20: Joins"
+description: 'Tutorial for Chapter 20: Joins'
 ---
 
 ```{r setup, include = FALSE}
@@ -23,6 +23,20 @@ library(nycflights13)
 flights2 <- flights |> 
   select(year, time_hour, origin, dest, tailnum, carrier)
 flights2
+
+x <- tribble(
+  ~key, ~val_x,
+     1, "x1",
+     2, "x2",
+     3, "x3"
+)
+y <- tribble(
+  ~key, ~val_y,
+     1, "y1",
+     2, "y2",
+     4, "y3"
+)
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -38,8 +52,8 @@ flights2
 <!-- * Review: https://ppbds.github.io/tutorial.helpers/articles/instructions.html -->
 <!-- * Delete this and the other commented instructions below. -->
 
-## Introduction
-###
+y## Introduction
+### 
 
 This tutorial covers [Chapter 20: Strings](https://r4ds.hadley.nz/joins.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
 This chapter will introduce you to two important types of joins:
@@ -51,7 +65,7 @@ You will also learn about basic joins, keys, foreign keys and more which is basi
 
 
 ## Keys
-###
+### 
 
 To understand joins, you need to first understand how two tables can be connected through a pair of keys, within each table. In this section, you’ll learn about the two types of key and see examples of both in the datasets of the ["nycflights13"](https://www.rdocumentation.org/packages/nycflights13/versions/1.0.1) package. You’ll also learn how to check that your keys are valid, and what to do if your table lacks a key.
 
@@ -65,12 +79,11 @@ As a example run `airlines`.
 
 ```
 
-
-```{r keys-1-hint, eval = FALSE}
+```{r keys-1-hint-1, eval = FALSE}
 airlines
 ```
 
-###
+### 
 
 airlines records two pieces of data about each airline: its `carrier` code and its full `name`. You can identify an airline with its two letter carrier code, making carrier the primary key.
 
@@ -82,12 +95,11 @@ Run `airports`.
 
 ```
 
-
-```{r keys-2-hint, eval = FALSE}
+```{r keys-2-hint-1, eval = FALSE}
 airports
 ```
 
-###
+### 
 
 airports records data about each airport. You can identify each airport by its three letter airport code, making `faa` the primary key.
 
@@ -99,12 +111,11 @@ Run `planes`.
 
 ```
 
-
-```{r keys-3-hint, eval = FALSE}
+```{r keys-3-hint-1, eval = FALSE}
 planes
 ```
 
-###
+### 
 
 planes records data about each plane. You can identify a plane by its tail number, making `tailnum` the primary key.
 
@@ -116,12 +127,11 @@ Run `weather`.
 
 ```
 
-
-```{r keys-4-hint, eval = FALSE}
+```{r keys-4-hint-1, eval = FALSE}
 weather
 ```
 
-###
+### 
 
 `weather` records data about the weather at the origin airports. You can identify each observation by the combination of location and time, making `origin` and `time_hour` the compound primary key.
 
@@ -137,12 +147,11 @@ Run `flights$tailnum`.
 
 ```
 
-
-```{r keys-5-hint, eval = FALSE}
+```{r keys-5-hint-1, eval = FALSE}
 flights$tailnum
 ```
 
-###
+### 
 
 `flights$tailnum` is a foreign key that corresponds to the primary key `tailnum` in the `planes` tibble.
 
@@ -154,12 +163,11 @@ Run `flights$carrier`.
 
 ```
 
-
-```{r keys-6-hint, eval = FALSE}
+```{r keys-6-hint-1, eval = FALSE}
 flights$carrier
 ```
 
-###
+### 
 
 `flights$carrier` is a foreign key that corresponds to the primary key `carrier` in the airlines tibble.
 
@@ -171,12 +179,11 @@ Run `flights$origin`.
 
 ```
 
-
-```{r keys-7-hint, eval = FALSE}
+```{r keys-7-hint-1, eval = FALSE}
 flights$origin
 ```
 
-###
+### 
 
 `flights$origin` is a foreign key that corresponds to the primary key `faa` in the `airpors` tibble.
 
@@ -196,14 +203,13 @@ Start a pipe with `planes` to the `count()` function and within count set the ar
 
 ```
 
-
-```{r keys-8-hint, eval = FALSE}
+```{r keys-8-hint-1, eval = FALSE}
 ... |> 
   count(tailnum) |> 
   filter(...)
 ```
 
-###
+### 
 
 We see no observations or records which reveals that `tailnum` is good primary key and the planes tibble  look good to go.
 
@@ -217,13 +223,13 @@ Let's perform a similar check using `weather` data. Please replicate the previou
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r keys-9-hint, eval = FALSE}
+```{r keys-9-hint-1, eval = FALSE}
 ... |> 
   count(time_hour, ...) |> 
   filter(n > 1)
 ```
 
-###
+### 
 
 There are also no records when we run the previous code which verifies that time_hour and origin are good primary keys. But what if there were some missing values with the primary keys?
 
@@ -235,13 +241,12 @@ Start a pipe with `planes` to `filter()` and set `is.na(tailnum)` as the argumen
 
 ```
 
-
-```{r keys-10-hint, eval = FALSE}
+```{r keys-10-hint-1, eval = FALSE}
 planes |> 
   filter(is.na(...))
 ```
 
-###
+### 
 
 We should be getting no records when we run the code since the table has no NULL values, if there were any then `is.na()` would display them.
 
@@ -255,12 +260,12 @@ Let's perform a similar check using `weather` data. Please replicate the previou
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r keys-11-hint, eval = FALSE}
+```{r keys-11-hint-1, eval = FALSE}
 ... |> 
   filter(...(time_hour) | is.na(...))
 ```
 
-###
+### 
 
 So far we haven’t talked about the primary key for `flights`. It’s not super important here, because there are no data frames that use it as a foreign key, but it’s still useful to consider because it’s easier to work with observations if we have some way to describe them to others.
 
@@ -274,19 +279,17 @@ Let's verify if the following variables can be used a primary keys, start a pipe
 
 ```
 
-
-```{r keys-12-hint, eval = FALSE}
+```{r keys-12-hint-1, eval = FALSE}
 ... |> 
   count(time_hour, ..., flight) |> 
   ...
 ```
 
-###
+### 
 
 Does the absence of duplicates automatically make `time_hour`-`carrier`-`flight` a primary key? It’s certainly a good start, but it doesn’t guarantee it. For example, are altitude and latitude a good primary key for airports?
 
 ### Exercise 13
-
 
 ```{r keys-13, exercise = TRUE}
 
@@ -294,15 +297,15 @@ Does the absence of duplicates automatically make `time_hour`-`carrier`-`flight`
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r keys-13-hint, eval = FALSE}
+```{r keys-13-hint-1, eval = FALSE}
 
 ```
 
-###
-
+### 
 
 ## Basic Joins
 ### 
+
 Now that you understand how data frames are connected via keys, we can start using joins to better understand the flights dataset. In this section, you’ll learn how to use one mutating join, `left_join()`, and two filtering joins, `semi_join()` and `anti_join()`.
 
 ### Exercise 1
@@ -315,13 +318,13 @@ Start a pipe with `flights` to `select()` where you will select the following va
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-1-hint, eval = FALSE}
+```{r basic-joins-1-hint-1, eval = FALSE}
 flights2 <- ... |> 
  ...(year, ..., origin, dest, ....,...)
 flights2
 ```
 
-###
+### 
 
 A mutating join allows you to combine variables from two data frames: it first matches observations by their keys, then copies across variables from one data frame to the other. 
 ### Exercise 2
@@ -336,12 +339,12 @@ To add full airline name to the flights2 data, let's start a pipe with `flights2
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-2-hint, eval = FALSE}
+```{r basic-joins-2-hint-1, eval = FALSE}
 ... |>
   left_join(...)
 ```
 
-###
+### 
 
 Like `mutate()`, the join functions add variables to the right, so if your dataset has many variables, you won’t see the new ones as we saw inb the previous code.
 
@@ -357,12 +360,12 @@ Copy the previous code, modify the arguemet for `left_join()` to `weather |> sel
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-3-hint, eval = FALSE}
+```{r basic-joins-3-hint-1, eval = FALSE}
 ... |> 
   ...(weather |> select(origin, time_hour, temp, wind_speed))
 ```
 
-###
+### 
 
 If you want to explore `left_join()` more in depth, check out this [website](https://dplyr.tidyverse.org/reference/mutate-joins.html).
 
@@ -377,12 +380,12 @@ Copy the previous code and modify the arguement in `left_join()` to `planes |> s
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-4-hint, eval = FALSE}
+```{r basic-joins-4-hint-1, eval = FALSE}
 ... |> 
   ...(...)
 ```
 
-###
+### 
 
 What happens when `left_join()` failes to find a match for a row in x?
 
@@ -396,11 +399,11 @@ To demostarte this, start a pipe with `flights2` to `filter()` where you only se
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-5-hint, eval = FALSE}
+```{r basic-joins-5-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 When `left_join()` fails to find a match for a row in x, it fills in the new variables with missing values. For example, there’s no information about the plane with tail number `N3ALAA` so the type, engines, and seats will be missings
 
@@ -418,11 +421,11 @@ To do so, start of by creating pipe with `flights2` to `left_join()` and pass in
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-6-hint, eval = FALSE}
+```{r basic-joins-6-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 We get a lot of missing matches because our join is trying to use tailnum and year as a compound key. Both flights and planes have a year column but they mean different things: `flights$year` is the year the flight occurred and `planes$year` is the year the plane was built.
 
@@ -438,12 +441,12 @@ Copy the previous code and within `left_join()`, add `join_by()` and pass in `ta
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-7-hint, eval = FALSE}
+```{r basic-joins-7-hint-1, eval = FALSE}
 ... |> 
   ...(planes, join_by(...))
 ```
 
-###
+### 
 
 `join_by(tailnum)` is short for `join_by(tailnum == tailnum)`. It’s important to know about this fuller form for two reasons. Firstly, it describes the relationship between the two tables: the keys must be equal. That’s why this type of join is often called an equi join.
 
@@ -459,12 +462,12 @@ Copy the previous code change `planes` to `airports` and in `join_by()` set `des
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-8-hint, eval = FALSE}
+```{r basic-joins-8-hint-1, eval = FALSE}
 ... |> 
   ...(airports, join_by(...))
 ```
 
-###
+### 
 
 Now let's change `join_by()` to change the tables to join by `origin`.
 
@@ -479,16 +482,15 @@ Copy the previous code and change `join_by()` arguement to `origin == faa`.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-9-hint, eval = FALSE}
+```{r basic-joins-9-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 If we compare both the tibbbles we can see the difference in the `name` variable.
 
 ### Exercise 10
-
 
 ```{r basic-joins-10, exercise = TRUE}
 
@@ -496,14 +498,13 @@ If we compare both the tibbbles we can see the difference in the `name` variable
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-10-hint, eval = FALSE}
+```{r basic-joins-10-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 11
-
 
 ```{r basic-joins-11, exercise = TRUE}
 
@@ -511,14 +512,13 @@ If we compare both the tibbbles we can see the difference in the `name` variable
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-11-hint, eval = FALSE}
+```{r basic-joins-11-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 12
-
 
 ```{r basic-joins-12, exercise = TRUE}
 
@@ -526,14 +526,13 @@ If we compare both the tibbbles we can see the difference in the `name` variable
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-12-hint, eval = FALSE}
+```{r basic-joins-12-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 ### Exercise 13
-
 
 ```{r basic-joins-13, exercise = TRUE}
 
@@ -541,23 +540,152 @@ If we compare both the tibbbles we can see the difference in the `name` variable
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-13-hint, eval = FALSE}
+```{r basic-joins-13-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
+## How do joins work?
+### 
+
+### Exercise 1
+
+Now that you’ve used joins a few times it’s time to learn more about how they work, focusing on how each row in x matches rows in y. We’ll begin by introducing a visual representation of joins, using the simple tibbles defined below  In these examples we’ll use a single key called key and a single value column (val_x and val_y), but the ideas all generalize to multiple keys and multiple values.
+
+```{r how-do-joins-work-1}
+x <- tribble(
+  ~key, ~val_x,
+     1, "x1",
+     2, "x2",
+     3, "x3"
+)
+y <- tribble(
+  ~key, ~val_y,
+     1, "y1",
+     2, "y2",
+     4, "y3"
+)
+```
+
+### 
+
+The graphical representation of the `x` and `y` tibble:
+
+```{r}
+knitr::include_graphics("images/photo1.png")
+```
+
+### Exercise 2
+
+To understand how joins work, it’s useful to think of every possible match. Here we show that with a grid of connecting lines.
+
+```{r}
+knitr::include_graphics("images/setup2.png")
+```
+
+### 
+
+The image above depicts the foundation of our visual representation, showing potential matches between x and y as intersecting lines. The output's rows and columns align with the horizontal x table.
+
+### Exercise 3
+
+To describe a join type, we use dots to indicate matches. The matches determine the output rows, which include the key, x values, and y values. Image below displays an inner join, retaining rows only when the keys are equal.
+
+```{r}
+knitr::include_graphics("images/inner.png")
+```
+
+### 
+
+An inner join matches each row in x to the row in y that has the same value of key. Each match becomes a row in the output.We can apply the same principles to explain the outer joins, which keep observations that appear in at least one of the data frames. 
+
+### Exercise 4
+
+Outer joins retain observations that appear in at least one of the data frames, following the same principles. They add a "virtual" observation to each frame with a key that matches when no other key matches, and NA values. There are three types of outer joins.
+
+The image below is a visual representation of the left join where every row in x appears in the output.
+
+```{r}
+knitr::include_graphics("images/left.png")
+```
+
+### 
+
+A left join keeps all observations in x, like in the image below. Every row of x is preserved in the output because it can fall back to matching a row of `NAs` in y.
+
+### Exercise 5
+
+The image below is a visual representation of the right join where every row of y appears in the output.
+
+```{r}
+knitr::include_graphics("images/right.png")
+```
+
+### 
+
+A right join keeps all observations in y, like the image above. Every row of y is preserved in the output because it can fall back to matching a row of `NAs` in x. The output still matches x as much as possible; any extra rows from y are added to the end.
+
+### Exercise 6
+
+The image below is  a visual representation of the full join where every row in x and y appears in the output.
+
+```{r}
+knitr::include_graphics("images/full.png")
+```
+
+### 
+
+A full join keeps all observations that appear in x or y, like the image above. Every row of x and y is included in the output because both x and y have a fall back row of `NAs`. Again, the output starts with all rows from x, followed by the remaining unmatched y rows.
+
+### Exercise 7
+
+The image below is  a visual representation Venn diagrams showing the difference between inner, left, right, and full joins.
+
+```{r}
+knitr::include_graphics("images/venn.png")
+```
+
+### 
+
+The joins shown here are the so-called equi joins, where rows match if the keys are equal. Equi joins are the most common type of join, so we’ll typically omit the equi prefix, and just say “inner join” rather than “equi inner join”.
+
+### Exercise 8
+
+So far we’ve explored what happens if a row in x matches zero or one rows in y. What happens if it matches more than one row?
+
+The image below is shows how two records in Y tibble connect to the same record in X tibble.
+
+```{r}
+knitr::include_graphics("images/match-types.png")
+```
+
+### 
+
+There are three possible outcomes for a row in x:
+
+If it doesn’t match anything, it’s dropped.
+If it matches 1 row in y, it’s preserved.
+If it matches more than 1 row in y, it’s duplicated once for each match.
+
+### Exercise 8
+
+So far we’ve explored what happens if a row in x matches zero or one rows in y. What happens if it matches more than one row?
+
+The image below is shows how two records in Y tibble connect to the same record in X tibble.
+
+```{r}
+knitr::include_graphics("images/match-types.png")
+```
+
+### 
 
 
 ## Non-equi joins
-###
-
-
-
-
+### 
 
 ## Summary
-###
+### 
 
 This tutorial covered [Chapter 20: Strings](https://r4ds.hadley.nz/joins.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
 This chapter introduced you to two important types of joins:
