@@ -15,6 +15,7 @@ library(learnr)
 library(tutorial.helpers)
 library(knitr)
 library(dplyr)
+library(babynames)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
@@ -37,6 +38,16 @@ y <- tribble(
      4, "y3"
 )
 
+parties <- tibble(
+  q = 1:4,
+  party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03"))
+)
+
+employees <- tibble(
+  name = sample(babynames::babynames$name, 100),
+  birthday = ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)
+)
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -52,7 +63,7 @@ y <- tribble(
 <!-- * Review: https://ppbds.github.io/tutorial.helpers/articles/instructions.html -->
 <!-- * Delete this and the other commented instructions below. -->
 
-y## Introduction
+## Introduction
 ### 
 
 This tutorial covers [Chapter 20: Strings](https://r4ds.hadley.nz/joins.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
@@ -547,7 +558,6 @@ If we compare both the tibbbles we can see the difference in the `name` variable
 ### 
 
 ## How do joins work?
-### 
 
 ### Exercise 1
 
@@ -852,6 +862,9 @@ Rolling joins are particularly useful when you have two tables of dates that don
 
 ### Exercise 9
 
+To demonstrate a use case of rolling joins, let imagine that as the party planning commission for your office, you're responsible for organizing quarterly parties due to budget constraints. The rules for determining the party dates are as follows: parties are held on Mondays, the first week of January is skipped, and the first Monday of Q3 2022 falls on July 4, which needs to be postponed by a week. Here are the resulting party days: `2022-01-10`, `2022-04-04`, `2022-07-11`, `2022-10-03`.
+
+Create a tibble `parties` and add columns `q` and pass in `1:4` for it then add another column `party` and pass in `ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03"))`.
 
 ```{r nonequi-joins-9, exercise = TRUE}
 
@@ -860,13 +873,18 @@ Rolling joins are particularly useful when you have two tables of dates that don
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r nonequi-joins-9-hint, eval = FALSE}
-
+parties <- tibble(q = ..., party = ymd(c()))
 ```
 
 ###
 
+Now that we have the party dates, we now have to have employee birthdays.
+
 ### Exercise 10
 
+Let's now create a new tibble `employees` using `tibble()`. The tibble containes two columns `name` and `birthday`.  Pass in `name = sample(babynames::babynames$name, 100)`, which takes sample of 100 babynames, to `name` then pass `ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)` ,which generates birthdays, to `birthday`. 
+
+On a line call employees to have a look at the tibble.
 
 ```{r nonequi-joins-10, exercise = TRUE}
 
@@ -875,13 +893,20 @@ Rolling joins are particularly useful when you have two tables of dates that don
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r nonequi-joins-10-hint, eval = FALSE}
-
+... <- tibble(
+  name = sample(babynames::...$name, 100),
+ ... = ymd(....) + (sample(365, 100, replace = ...) - 1)
+)
+employess
 ```
 
 ###
 
+We generated the `employees` tibble using babynames dataset and also generated their birthdays. Let's now use roller joins to find first party date that comes after their birthday.
+
 ### Exercise 11
 
+To join the employees and parties tables, start a pipe with employees and use `left_join()`. Use `join_by()` to find the closest party dates after the birthday by applying `closest(birthday >= party)`.
 
 ```{r nonequi-joins-11, exercise = TRUE}
 
@@ -890,12 +915,32 @@ Rolling joins are particularly useful when you have two tables of dates that don
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r nonequi-joins-11-hint, eval = FALSE}
-
+... |> 
+  left_join(parties, join_by(...(birthday >= party)))
 ```
 
 ###
 
+There is, however, one problem with this approach: the folks with birthdays before January 10 don’t get a party.
 
+### Exercise 12
+
+Like mentioned previously this approach only looks for birthday sfatter Januaryt 10th and leave out birthdays before January 10th. To demonstarte this, Copy the previous code and change the join from `left_join()` to `right_join()`.
+
+```{r nonequi-joins-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r nonequi-joins-12-hint, eval = FALSE}
+... |> 
+  ...(parties, join_by(...(birthday >= party)))
+```
+
+###
+
+To resolve that issue we’ll need to tackle the problem a different way, with overlap joins: the fourth type of non equi joins.
 
 
 
