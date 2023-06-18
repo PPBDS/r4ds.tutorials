@@ -46,9 +46,8 @@ labels_graphic = ggplot(mpg, aes(x = displ, y = hwy)) +
   )
 
 label_info <- mpg |>
-  group_by(drv) |>
   arrange(desc(displ)) |>
-  slice_head(n = 1) |>
+  slice_head(n = 1, by = drv) |>
   mutate(
     drive_type = case_when(
       drv == "f" ~ "front-wheel drive",
@@ -585,6 +584,11 @@ mpg |>
   )
 ```
 
+### 
+
+This code chunk should have returned an error stating that it *requires the following missing aesthetics: label*. It returns an error because we haven't yet mapped the label argument to a variable in the dataframe.
+
+
 ### Exercise 13
 
 Using your previous code, within your call to `geom_text()`, map `x` to `displ`, `y` to `hwy`, and `label` to `drive_type` using `aes()`.
@@ -821,6 +825,10 @@ mpg |>
   geom_point() +
   geom_text_repel(data = ...)
 ```
+
+### 
+
+This code chunk should have returned an error stating that it *requires the following missing aesthetics: label*. It returns an error because we haven't yet mapped the label argument to a variable in the dataframe. 
 
 ### 
 
@@ -1075,7 +1083,7 @@ mpg |>
 
 ### 
 
-Now let's end the annotation about the trend into the plot.
+This code chunk should have returned an error stating that it *requires the following missing aesthetics: label*. It returns an error because we haven't yet mapped the label argument to a variable in the dataframe. Now let's end the annotation about the trend into the plot while mapping the label argument.
 
 ### Exercise 18
 
@@ -1199,7 +1207,7 @@ We can test this previous statement, by adding those functions at the end of our
 
 ### 
 
-Using your previous code, add the `scale_x_continuous()`, `scale_y_continuous()`, and the `scale_discrete_function()` functions to the pipeline. 
+Using your previous code, add the `scale_x_continuous()`, `scale_y_continuous()`, and the `scale_color_discrete()` functions to the pipeline. 
 
 ```{r scales-4, exercise = TRUE}
 
@@ -1462,11 +1470,11 @@ Type in `presidential` and hit "Run Code".
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-18-hint, eval = FALSE}
+```{r scales-18-hint-1, eval = FALSE}
 presedential
 ```
 
-###
+### 
 
 The dataset, `presidential` gives the names of each president, the start and end date of their term, and their party of 12 US presidents from Eisenhower to Trump. This data is in the public domain.
 
@@ -1480,7 +1488,7 @@ Create a new pipeline and pipe `presidential` to the `mutate()` function. Within
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-19-hint, eval = FALSE}
+```{r scales-19-hint-1, eval = FALSE}
 presidential |> 
   mutate(id = ...)
 ```
@@ -1495,7 +1503,7 @@ Using your previous code, add the `ggplot()` function to the pipeline. Within th
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-20-hint, eval = FALSE}
+```{r scales-20-hint-1, eval = FALSE}
 presidential |> 
   mutate(id = ...) |> 
   ggplot(aes(x = ..., y = ...))
@@ -1511,7 +1519,7 @@ Using your previous code, add the `geom_point()` function to the pipeline.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-21-hint, eval = FALSE}
+```{r scales-21-hint-1, eval = FALSE}
 presidential |> 
   mutate(id = ...) |> 
   ggplot(aes(x = ..., y = ...)) +
@@ -1528,7 +1536,7 @@ Using your previous code, add the `geom_segment()` function. Within this functio
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-22-hint, eval = FALSE}
+```{r scales-22-hint-1, eval = FALSE}
 presidential |> 
   mutate(id = ...) |> 
   ggplot(aes(x = ..., y = ...)) +
@@ -1536,7 +1544,7 @@ presidential |>
   geom_segment(aes(xend = ..., yend = ...))
 ```
 
-###
+### 
 
 Another use of breaks is when you have relatively few data points and want to highlight exactly where the observations occur.
 
@@ -1550,7 +1558,7 @@ Using your previous code, add the `scale_x_date()` function. Within this functio
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-23-hint, eval = FALSE}
+```{r scales-23-hint-1, eval = FALSE}
 presidential |> 
   mutate(id = ...) |> 
   ggplot(aes(x = ..., y = ...)) +
@@ -1561,7 +1569,7 @@ presidential |>
 
 ### Exercise 24
 
-Using your previous code, within your call to the function `scale_x_discrete()`, add the argument `breaks` and set it equal to `presidential$start`.
+Using your previous code, within your call to the function `scale_x_date()`, add the argument `breaks` and set it equal to `presidential$start`.
 
 ```{r scales-24, exercise = TRUE}
 
@@ -1569,7 +1577,7 @@ Using your previous code, within your call to the function `scale_x_discrete()`,
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-24-hint, eval = FALSE}
+```{r scales-24-hint-1, eval = FALSE}
 presidential |> 
   mutate(id = ...) |> 
   ggplot(aes(x = ..., y = ...)) +
@@ -1578,7 +1586,7 @@ presidential |>
   scale_x_date(name = ..., breaks = ...)
 ```
 
-###
+### 
 
 Note that for the breaks argument we pulled out the start variable as a vector with presidential$start because we can’t do an aesthetic mapping for this argument. Also note that the specification of breaks and labels for date and datetime scales is a little different:
 
@@ -1592,16 +1600,16 @@ Using your previous code, within your call to the function `scale_x_date()`, add
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r scales-25-hint, eval = FALSE}
+```{r scales-25-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 The argument `date_labels` takes a format specification, in the same form as `parse_datetime()`. This plot shown here shows when each US president started and ended their term.
 
 ## Legend Layout
-###
+### 
 
 In this section we will learn how to adjust the placement of the legend and how to customize the legend of your plot.
 
@@ -1616,7 +1624,7 @@ base
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r legend-layout-1-hint, eval = FALSE}
+```{r legend-layout-1-hint-1, eval = FALSE}
 base <- mpg
 ```
 
@@ -1631,7 +1639,7 @@ base
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r legend-layout-2-hint, eval = FALSE}
+```{r legend-layout-2-hint-1, eval = FALSE}
 base <- mpg |> 
   ggplot(aes(x = ..., y = ...))
 ```
@@ -1647,13 +1655,13 @@ base
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r legend-layout-3-hint, eval = FALSE}
+```{r legend-layout-3-hint-1, eval = FALSE}
 base <- mpg |> 
   ggplot(aes(x = ..., y = ...)) +
   geom_point(aes(color = ...))
 ```
 
-###
+### 
 
 To control the overall position of the legend, you need to use a theme() setting. The theme setting legend.position controls where the legend is drawn. The default is `legend.position = "right"`. 
 
@@ -1668,14 +1676,14 @@ base
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r legend-layout-4-hint, eval = FALSE}
+```{r legend-layout-4-hint-1, eval = FALSE}
 base <- mpg |> 
   ggplot(aes(x = ..., y = ...)) +
   geom_point(aes(color = ...)) +
   theme(legend.position = "left")
 ```
 
-###
+### 
 
 As you can see, the legend's position is now to the left of the plot.
 
@@ -1690,7 +1698,7 @@ base
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r legend-layout-5-hint, eval = FALSE}
+```{r legend-layout-5-hint-1, eval = FALSE}
 base <- mpg |> 
   ggplot(aes(x = ..., y = ...)) +
   geom_point(aes(color = ...)) +
@@ -1698,7 +1706,7 @@ base <- mpg |>
 base
 ```
 
-###
+### 
 
 We can see that the legend is taking too much space at the top of the plot. So let's adjust the way the legend is displayed.
 
@@ -1713,7 +1721,7 @@ base
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r legend-layout-6-hint, eval = FALSE}
+```{r legend-layout-6-hint-1, eval = FALSE}
 base <- mpg |> 
   ggplot(aes(x = ..., y = ...)) +
   geom_point(aes(color = ...)) +
@@ -1721,7 +1729,7 @@ base <- mpg |>
   guides 
 ```
 
-###
+### 
 
 This fixes our previous problem. If your plot is short and wide, place the legend at the legend at the top or bottom, and if it’s tall and narrow, place the legend at the left or right. You can also use legend.position = "none" to suppress the display of the legend altogether.
 
@@ -2780,10 +2788,10 @@ Let's create this graph
 
 ```{r}
 baby_p <- babynames |>
-  group_by(sex, year) |>
   top_n(n = 10, wt = prop) |>
   filter(! (year == 1887 & name == "Robert")) |>
-  summarise(total = sum(prop), .groups = "drop" ) |>
+  summarise(total = sum(prop), .by = c(sex, year)) |>
+  ungroup() |> 
   ggplot(mapping = aes(x = year, y = total, color = sex)) +
     geom_line() +
     scale_y_continuous(labels = scales::percent) +
@@ -2840,29 +2848,26 @@ babynames
 
 ### 
 
-<!-- Tell me about number of rows. -->
-
+There are about 1,924,655 rows meaning that there are 1,924,655 baby names in the data set. 
 
 ### Exercise 4
 
-Start a pipe with the `babynames` data set and then `group_by` `sex`, and `year`
+Start with a new pipeline to `babynames` and use the `top_n()` function so that we only take the top 10 names of each group that we made. To do this, add the `n` and `wt` argument within the function and set `n` to `10` and `wt` to `prop`.
 
 ```{r babynames-4, exercise = TRUE}
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r babynames-4-hint-1, eval = FALSE}
 ... |>
-  group_by(..., ...)
+  top_n(..., wt = prop)
 ```
-
-### 
-
-If we `view` the `babynames` dataset, we can see how it changed. We used the `group_by()` function so that we could easily split our data into males and females and their respective years. Now our data will be easier to graph our line with.
 
 ### Exercise 5
 
-Use the `top_n()` function so that we only take the top 10 names of each group that we made.
+Continue your pipe with the `summarise()` function. Within this function, create a new variable called `total` and set it to `n()`. Afterwards group by `sex` and `year` using the `.by` argument
 
 ```{r babynames-5, exercise = TRUE}
 
@@ -2871,18 +2876,17 @@ Use the `top_n()` function so that we only take the top 10 names of each group t
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r babynames-5-hint-1, eval = FALSE}
-... |>
-  top_n(..., wt = prop)
+...|>
+  summarise(total = ..., .by = c(sex, year))
 ```
 
 ### 
 
-When we look through the data set now, we can see that they are grouped into respective year and sex.
-
+When we do this, we again see that there isn't the correct amount of rows. Something is wrong with our data. There might be a tie somewhere between the proportion of two names. This would cause there to be an extra row in that group.
 
 ### Exercise 6
 
-Continue your pipe with the `summarise` function to see the total number
+Let's find out which group it is. Use the `arrange` function to see the total row in a descending order.
 
 ```{r babynames-6, exercise = TRUE}
 
@@ -2891,25 +2895,6 @@ Continue your pipe with the `summarise` function to see the total number
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r babynames-6-hint-1, eval = FALSE}
-...|>
-  summarise(total = n())
-```
-
-### 
-
-When we do this, we again see that there isn't the correct amount of rows. Something is wrong with our data. There might be a tie somewhere between the proportion of two names. This would cause there to be an extra row in that group.
-
-### Exercise 7
-
-Let's find out which group it is. Use the `arrange` function to see the total row in a descending order.
-
-```{r babynames-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r babynames-7-hint-1, eval = FALSE}
 ... |>
   arrange(desc(...))
 ```
@@ -2918,17 +2903,16 @@ Let's find out which group it is. Use the `arrange` function to see the total ro
 
 We see that the year 1887 for male names has an extra row somewhere. There's our problem. Let's go back into the data set and look into that group.
 
-### Exercise 8
+### Exercise 7
 
-Start a new pipe with the `babynames` data. `group_by` `sex` and `year` again as well as using `top_n()` to obtain the top 10 names. Then filter out the year 1887 and the male names.
+Start a new pipe with the `babynames` data. Use the `top_n()` function to obtain the top 10 names. (Use the same code from previous exercises) Then filter out the year 1887 and the male names.
 
-```{r babynames-8, exercise = TRUE}
+```{r babynames-7, exercise = TRUE}
 
 ```
 
-```{r babynames-8-hint-1, eval = FALSE}
+```{r babynames-7-hint-1, eval = FALSE}
 ... |>
-  group_by(sex, year) |>
   top_n(10, wt = prop) |>
   filter(... == 1887 & sex == "...")
 ```
@@ -2937,9 +2921,32 @@ Start a new pipe with the `babynames` data. `group_by` `sex` and `year` again as
 
 We now see that Edward and Robert have the same prop at 0.0194. This is what's messing it up. Time to chose the better name. Pick which name you like better.
 
-### Exercise 9
+### Exercise 8
 
 Now continue your pipe with `filter` again; however, we are trying to remove that one piece of data. Go ahead and remove the name you least like.
+
+```{r babynames-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r babynames-8-hint-1, eval = FALSE}
+
+Remember we can use the ! to indicate that we want to remove something
+  
+```
+
+```{r babynames-8-hint-2, eval = FALSE}
+... |>
+  top_n(10, wt = prop) |>
+  filter(... == 1887 & sex == "...") |>
+  filter(! (... == 1887 & name == "..."))
+```
+
+### Exercise 9
+
+Now use `summarise()` to see the total proportion of top 10 names each year
 
 ```{r babynames-9, exercise = TRUE}
 
@@ -2948,22 +2955,17 @@ Now continue your pipe with `filter` again; however, we are trying to remove tha
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r babynames-9-hint-1, eval = FALSE}
-
-Remember we can use the ! to indicate that we want to remove something
-  
-```
-
-```{r babynames-9-hint-2, eval = FALSE}
 ... |>
-  group_by(sex, year) |>
-  top_n(10, wt = prop) |>
-  filter(... == 1887 & sex == "...") |>
-  filter(! (... == 1887 & name == "..."))
+  summarise(total = sum(prop))
 ```
+
+### 
+
+Now we see that we have taken out that one tie and our row count has gone down
 
 ### Exercise 10
 
-Now use `summarise()` to see the total proportion of top 10 names each year
+Using your previous code, within your call to the summarise() function add the `.by` argument so that you can groupn by the variables `sex` and `year`. 
 
 ```{r babynames-10, exercise = TRUE}
 
@@ -2972,13 +2974,9 @@ Now use `summarise()` to see the total proportion of top 10 names each year
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r babynames-10-hint-1, eval = FALSE}
-... |>
-  summarise(total = sum(prop))
+... |> 
+  summarise(total = ..., .by = c(...))
 ```
-
-### 
-
-Now we see that we have taken out that one tie and our row count has gone down
 
 ### Exercise 11
 
