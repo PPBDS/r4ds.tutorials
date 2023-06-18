@@ -317,6 +317,8 @@ Does the absence of duplicates automatically make `time_hour`-`carrier`-`flight`
 
 ### Exercise 13
 
+Let's check if altitude and latitude are good primary keys for airports, so copy the previous code and change the datset to `airports` and change the arguement withint `count()` to `alt , lat`.
+
 ```{r keys-13, exercise = TRUE}
 
 ```
@@ -324,10 +326,37 @@ Does the absence of duplicates automatically make `time_hour`-`carrier`-`flight`
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r keys-13-hint-1, eval = FALSE}
-
+... |> 
+  count(...,...) |> 
+  filter(...)
 ```
 
 ### 
+
+Using altitude and latitude to identify an airport is unreliable, and it's generally not possible to determine from data alone whether a combination of variables can serve as a good primary key. However, for flights, the combination of time_hour, carrier, and flight appears reasonable. Having multiple flights with the same flight number in the air simultaneously would be confusing for both the airline and its customers.
+
+### Exercise 14
+
+That said, we might be better off introducing a simple numeric surrogate key using the row number instead of confusing the airliens and customers by using three columns are primary keys. 
+
+Let's make a new primary key `id` and to add a new column `id` with row numbers to the flights dataset, start a pipe with flights and use mutate() function. Assign row_number() function to the id column and set .before to 1.
+
+```{r keys-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r keys-14-hint, eval = FALSE}
+flights |> 
+  mutate(id = ..., .before = ...)
+```
+
+###
+
+This code adds a new column id with row numbers to the flights dataset, positioning it as the first column. In conclusion, Surrogate keys can be particular useful when communicating to other humans: it’s much easier to tell someone to take a look at flight 2001 than to say look at UA430 which departed 9am 2013-01-03.
+
+
 
 ## Basic Joins
 ### 
@@ -1054,7 +1083,7 @@ Now that we have the dates ready, let's marcg each employee to their party.
 
 ### Exercise 17
 
-Let's join `employees` and `parties` by first create a pipe with `employees` to `inner_join()`. We will be joining them with `between(birthday, start, end)` using `join_by()` and in additoin also add `unmatched = "error"`.
+Let's join `employees` and `parties` by first create a pipe with `employees` to `inner_join()`. We will be joining them with `between(birthday, start, end)` using `join_by()` and in addition also add `unmatched = "error"`.
 
 ```{r nonequi-joins-17, exercise = TRUE}
 
