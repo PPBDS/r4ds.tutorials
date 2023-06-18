@@ -44,8 +44,7 @@ flights_dt <- flights |>
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 18: Dates and Times](https://r4ds.hadley.nz/datetimes.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to use the [**lubridate**](https://www.rdocumentation.org/packages/lubridate/versions/1.9.2) on the [**flights**](https://cran.r-project.org/web/packages/nycflights13/nycflights13.pdf) data and other data. 
-
+This tutorial covers [Chapter 18: Dates and Times](https://r4ds.hadley.nz/datetimes.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to use the [**lubridate**](https://www.rdocumentation.org/packages/lubridate/versions/1.9.2) on the [**flights**](https://cran.r-project.org/web/packages/nycflights13/nycflights13.pdf) data and how to use date and datetimes.
 
 ## Creating date/times through import
 ### 
@@ -220,7 +219,6 @@ ymd_hms(...)
 
 With this we are able to create a datetime that is automatically set to UTC. The UTC timezone known as GMT, or Greenwich Mean Time, doesn't use daylight saving time, making it a bit easier to compute with.
 
-
 ## Creating date/times with individual components
 ### 
 
@@ -300,6 +298,7 @@ Let's add to the `mutate()` and set `sched_dep_time` to `make_datetime(year, mon
 ```
 
 ###
+
 Similar to above, we created a datetime based on the scheduled departure time for each plane.
 
 ### Exercise 4
@@ -339,9 +338,7 @@ Continue the pipe by adding `ggplot()` and in `aes()` set `x` to `sched_dep_time
                y = ...))
 ```
 
-Note nothing will be plotted because we have not used `geom_point()`
-
-###
+Note nothing will be plotted because we have not used `geom_point()`.
 
 ### Exercise 6
 
@@ -380,8 +377,6 @@ We want to add drop any null values from the three columns that we use. Continue
     ...()
 ```
 
-###
-
 ### Exercise 8
 
 In `aes()` set `color` to `dep_delay`.
@@ -399,6 +394,7 @@ ggplot(aes(x = ...,
 ```
 
 ###
+
 When we set `color` to `dep_delay` we are able to see how late flights were regarding departure times.
 
 ### Exercise 9
@@ -473,7 +469,7 @@ By setting the `label = TRUE` we can return the abbreviated name of the day of t
 
 ### Exercise 3
 
-Now let's plot our data using `ggplot()` and within `aes()` set `x` to `wday`
+Now let's plot our data using `ggplot()` and within `aes()` set `x` to `wday`.
 
 ```{r datetime-components-getting-3, exercise = TRUE}
 
@@ -486,8 +482,6 @@ Now let's plot our data using `ggplot()` and within `aes()` set `x` to `wday`
  ... |> 
   ggplot(aes(x = ...))
 ```
-
-### 
 
 ### Exercise 4
 
@@ -548,8 +542,6 @@ Continue the pipe with `ggplot()`. Set `x` to `dep_hour` in `aes()`.
   ggplot(aes(x = ...))
 ```
 
-### 
-
 ### Exercise 3
 
 Add `geom_freqpoly()` to the pipe to view the difference by setting `binwidth` to "60*30" in `geom_freqpoly()`.
@@ -587,8 +579,6 @@ Let's modify this date: "2026-07-08 12:34:56" with the `ymd_hms()` function. Cre
 ```{r datetime-components-modifying-1-hint-1, eval = FALSE}
 (datetime <- ymd_hms("..."))
 ```
-
-### 
 
 ### Exercise 2
 
@@ -784,8 +774,6 @@ Let's create a `ymd()` date set to Jan 1st, 2020 and set it to `date2020`.
 date2020 <- ...("2020-01-01")
 ```
 
-###
-
 ### Exercise 3
 
 Now let's create an `interval` variable and set it to `date2020 %--% date2021`.
@@ -823,11 +811,128 @@ With the `years(1) / days(1)` we get an inaccurate estimate of 365.25 days in a 
 
 Whenever possible we attempt to use duration, periods, and interval respectively based on the situation because of the accuracy it provides us.
 
+## Time Zones
+###
+
+Time zones are an enormously complicated topic because of their interaction with geopolitical entities. Fortunately we don’t need to dig into all the details as they’re not all important for data analysis, but there are a few challenges we’ll need to tackle head on.
+
+### Exercise 1
+
+Type `Sys.timezone()` and run in the code chunk below.
+
+```{r time-zones-1, exercise = TRUE}
+Sys.timezone()
+```
+
+```{r time-zones-1-hint, eval = FALSE}
+...()
+```
+
+###
+
+We can find out what R thinks our current time zone is with `Sys.timezone()`.
+
+### Exercise 2
+
+Set `newyorkdate` to `ymd_hms()` for the date of Jun 20, 2023 12:00:00 in the "America/New_York" timezone.
+
+```{r time-zones-2, exercise = TRUE}
+
+```
+
+```{r time-zones-2-hint-1, eval = FALSE}
+newyorkdate <- ymd_hms(...)
+```
+
+```{r time-zones-2-hint-2, eval = FALSE}
+... <- ymd_hms("2023-06-20 12:00:00", tz = ...)
+```
+
+###
+
+We are probably familiar with EST, or Eastern Standard Time. However, both Australia and Canada also have EST! To avoid confusion, R uses the international standard IANA time zones. These use a consistent naming scheme {area}/{location}, typically in the form {continent}/{city} or {ocean}/{city}.
+
+### Exercise 3
+
+Set `parisdate` to `ymd_hms()` for the date of Jun 20, 2023 18:00:00 in the "Europe/Paris" timezone.
+
+```{r time-zones-3, exercise = TRUE}
+
+```
+
+```{r time-zones-3-hint, eval = FALSE}
+... <- ymd_hms("2023-06-20 18:00:00", tz = ...)
+```
+
+### Exercise 4
+
+Subtract `newdate` from `parisdate`.
+
+```{r time-zones-4, exercise = TRUE}
+
+```
+
+```{r time-zones-4-hint, eval = FALSE}
+parisdate - ...
+```
+
+###
+
+We can verify that these are both in the same time zone by subtracting them. You might wonder why the time zone uses a city, when typically you think of time zones as associated with a country or region within a country. This is because the IANA database has to record decades worth of time zone rules. Read more about [**IANA**](https://www.iana.org/time-zones).
+
+### Exercise 5
+
+We can combine datetimes, as well with different timezones. Set `combined` to `c()`. Within `c()` include `parisdate` and `newdate`. Run `combined` after to see the result.
+
+```{r time-zones-5, exercise = TRUE}
+
+```
+
+```{r time-zones-5-hint, eval = FALSE}
+combined <- c(..., ...)
+```
+
+###
+
+Operations that combine date-times, like `c()`, will often drop the time zone. In that case, the date-times will display in the time zone of the first element. Let's fix this issue in the next exercises.
+
+### Exercise 6
+
+We can change the timezone through `with_tz()`. In `with_tz()` use `combined` and set `tzone` to "Pacific/Auckland".
+
+
+```{r time-zones-6, exercise = TRUE}
+
+```
+
+```{r time-zones-6-hint, eval = FALSE}
+...(combined, tzone = ...)
+```
+
+###
+
+We use `with_tz()` when we want to keep the instant in time the same, and change how it’s displayed. Use this when the instant is correct, but want a more natural display.
+
+### Exercise 7
+
+We can also change the timezone through `force_tz()`. In `force_tz()` use `combined` and set `tzone` to "Pacific/Auckland".
+
+```{r time-zones-7, exercise = TRUE}
+
+```
+
+```{r time-zones-7-hint, eval = FALSE}
+force_tz(..., tzone = "Pacific/Auckland")
+```
+
+###
+
+When we want to change the underlying instant in time we use `force_tz()`. Use this when you have an instant that has been labelled with the incorrect time zone, and need to fix it.
 
 ## Summary
 ### 
 
-This tutorial covered [Chapter 18: Dates and times](https://r4ds.hadley.nz/datetimes.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You learned how to use the [**lubridate**](https://www.rdocumentation.org/packages/lubridate/versions/1.9.2) on the [**flights**](https://cran.r-project.org/web/packages/nycflights13/nycflights13.pdf) data and other data.
+This tutorial covered [Chapter 18: Dates and times](https://r4ds.hadley.nz/datetimes.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You learned how to use the [**lubridate**](https://www.rdocumentation.org/packages/lubridate/versions/1.9.2) on the [**flights**](https://cran.r-project.org/web/packages/nycflights13/nycflights13.pdf) data and how to use date and datetimes.
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
