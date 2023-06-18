@@ -49,6 +49,20 @@ employees <- tibble(
   birthday = ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)
 )
 
+parties2 <- tibble(
+  q = 1:4,
+  party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
+  start = ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03")),
+  end = ymd(c("2022-04-03", "2022-07-11", "2022-10-02", "2022-12-31"))
+)
+
+parties3 <- tibble(
+  q = 1:4,
+  party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
+  start = ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03")),
+  end = ymd(c("2022-04-03", "2022-07-10", "2022-10-02", "2022-12-31"))
+)
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -303,6 +317,8 @@ Does the absence of duplicates automatically make `time_hour`-`carrier`-`flight`
 
 ### Exercise 13
 
+Let's check if altitude and latitude are good primary keys for airports, so copy the previous code and change the datset to `airports` and change the arguement withint `count()` to `alt , lat`.
+
 ```{r keys-13, exercise = TRUE}
 
 ```
@@ -310,10 +326,37 @@ Does the absence of duplicates automatically make `time_hour`-`carrier`-`flight`
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r keys-13-hint-1, eval = FALSE}
-
+... |> 
+  count(...,...) |> 
+  filter(...)
 ```
 
 ### 
+
+Using altitude and latitude to identify an airport is unreliable, and it's generally not possible to determine from data alone whether a combination of variables can serve as a good primary key. However, for flights, the combination of time_hour, carrier, and flight appears reasonable. Having multiple flights with the same flight number in the air simultaneously would be confusing for both the airline and its customers.
+
+### Exercise 14
+
+That said, we might be better off introducing a simple numeric surrogate key using the row number instead of confusing the airliens and customers by using three columns are primary keys. 
+
+Let's make a new primary key `id` and to add a new column `id` with row numbers to the flights dataset, start a pipe with flights and use mutate() function. Assign row_number() function to the id column and set .before to 1.
+
+```{r keys-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r keys-14-hint, eval = FALSE}
+flights |> 
+  mutate(id = ..., .before = ...)
+```
+
+###
+
+This code adds a new column id with row numbers to the flights dataset, positioning it as the first column. In conclusion, Surrogate keys can be particular useful when communicating to other humans: it’s much easier to tell someone to take a look at flight 2001 than to say look at UA430 which departed 9am 2013-01-03.
+
+
 
 ## Basic Joins
 ### 
@@ -504,6 +547,8 @@ If we compare both the tibbbles we can see the difference in the `name` variable
 
 ### Exercise 10
 
+As you might guess the primary action of a filtering join is to filter the rows. There are two types: semi-joins and anti-joins. Semi-joins keep all rows in x that have a match in y. For example, we could use a semi-join to filter the airports dataset to show just the origin airports.
+
 ```{r basic-joins-10, exercise = TRUE}
 
 ```
@@ -511,7 +556,8 @@ If we compare both the tibbbles we can see the difference in the `name` variable
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r basic-joins-10-hint-1, eval = FALSE}
-
+... |> 
+  ...(flights2, join_by(faa == ...))
 ```
 
 ### 
@@ -525,13 +571,18 @@ If we compare both the tibbbles we can see the difference in the `name` variable
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r basic-joins-11-hint-1, eval = FALSE}
-
+... |> 
+  ...(flights2, join_by(faa == ...))
 ```
 
 ### 
 
+Compared to `semi_join()` , Anti joins are the opposite: they return all rows in x that don’t have a match in y.
+
 ### Exercise 12
 
+ Let's find rows that are missing from airports by looking for flights that don’t have a matching destination airport usign `anti_join()`.
+ 
 ```{r basic-joins-12, exercise = TRUE}
 
 ```
@@ -539,12 +590,15 @@ If we compare both the tibbbles we can see the difference in the `name` variable
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r basic-joins-12-hint-1, eval = FALSE}
-
+... |> 
+  ...(airports, join_by(... == faa)) |> 
+  distinct(...)
 ```
 
 ### 
 
 ### Exercise 13
+Let's now find which `tailnums` are missing from planes. Copy the previous code, change the the table we will join from `airports` to `planes` and then modify `join_by()` and `distinct()` arguements to `tailnum`.
 
 ```{r basic-joins-13, exercise = TRUE}
 
@@ -553,10 +607,14 @@ If we compare both the tibbbles we can see the difference in the `name` variable
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r basic-joins-13-hint-1, eval = FALSE}
-
+... |>
+  anti_join(..., join_by(tailnum)) |> 
+  ...(tailnum)
 ```
 
-### 
+###
+
+Good Work! You now have the knowledge of basic joins that you will maybe need in the future for your final project.
 
 ## How do joins work?
 
@@ -942,6 +1000,121 @@ Like mentioned previously this approach only looks for birthday sfatter Januaryt
 ###
 
 To resolve that issue we’ll need to tackle the problem a different way, with overlap joins: the fourth type of non equi joins.
+
+### Exercise 13
+
+Let’s continue the birthday example to see how you might use them. There’s one problem with the strategy we used above: there’s no party preceding the birthdays Jan 1-9. So it might be better to be explicit about the date ranges that each party spans, and make a special case for those early birthdays.
+
+Make a new tibble `parties2` using `tibble()` and define three columns: party, start, and end. Set the key as `q` and assign `1:4` to it. For the party column, pass in `ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03"))`. For the start column, pass in `ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03"))`. For the end column, pass in `ymd(c("2022-04-03", "2022-07-11", "2022-10-02", "2022-12-31"))`. On a new line call `parties2` to check the new tibble.
+
+```{r nonequi-joins-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r nonequi-joins-13-hint, eval = FALSE}
+parties2 <- tibble(
+  q = ...,
+  ... = ymd(c(..., "2022-04-04", "2022-07-11", "2022-10-03")),
+  ... = ymd(c("2022-01-01", "2022-04-04",..., "2022-10-03")),
+  end = ymd(c("2022-04-03", "2022-07-11", "2022-10-02", ...))
+)
+parties2
+```
+
+###
+
+Overlap joins provide three helpers that use inequality joins to make it easier to work with intervals:
+
+`between(x, y_lower, y_upper)` is short for x >= y_lower, x <= y_upper.
+`within(x_lower, x_upper, y_lower, y_upper)` is short for x_lower >= y_lower, x_upper <= y_upper.
+`overlaps(x_lower, x_upper, y_lower, y_upper)` is short for x_lower <= y_upper, x_upper >= y_lower.
+
+
+### Exercise 14
+
+Hadley is hopelessly bad at data entry so he also wanted to check that the party periods don’t overlap. One way to do this is by using a self-join to check if any start-end interval overlap with another.
+
+Start a pipe with `parties2` to `inner_join()`, we will join `parties2` to itself and we will join them by `overlaps(start, end, start, end), q < q`.
+
+```{r nonequi-joins-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r nonequi-joins-14-hint, eval = FALSE}
+parties2 |> 
+  inner_join(parties2, join_by(...(start, end, start, end), ...))
+```
+
+###
+
+If you want to explore move about overlap joins, check out [dplyr](https://dplyr.tidyverse.org/reference/join_by.html#overlap-joins).
+
+### Exercise 15
+
+When we ran the previous code, we see other info which we dont need, so let's remove those using `select()`. So copy the previous code and continue the pipe from `inner_join()` to `select()` and only select the `start.x, end.x, start.y, end.y`.
+
+```{r nonequi-joins-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r nonequi-joins-15-hint, eval = FALSE}
+... |> 
+  inner_join(parties2,...(overlaps(..., end, start, ...), q < q)) |> 
+  select(..., end.x, start.y, end.y)
+```
+
+###
+
+Ooops, there is an overlap, so let’s fix that problem and continue:
+
+### Exercise 16
+
+Go back to exercise 13 and copy your answer from there and paste it here, change the name of the tibbel to`parties3` and change the 2nd data in `end` to `"2022-07-10"`.
+
+```{r nonequi-joins-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r nonequi-joins-16-hint, eval = FALSE}
+... <- tibble(
+  ...,
+  party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
+  ... = ymd(c("2022-01-01", "2022-04-04", ..., "2022-10-03")),
+  end = ymd(c(..., "2022-07-10", ..., "2022-12-31"))
+)
+```
+
+###
+
+Now that we have the dates ready, let's marcg each employee to their party.
+
+### Exercise 17
+
+Let's join `employees` and `parties` by first create a pipe with `employees` to `inner_join()`. We will be joining them with `between(birthday, start, end)` using `join_by()` and in addition also add `unmatched = "error"`.
+
+```{r nonequi-joins-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r nonequi-joins-17-hint, eval = FALSE}
+... |> 
+      inner_join(parties3, ...(between(birthday, start, end)), unmatched = "...")
+```
+
+###
+
+The reason we added `unmatched = "error"` is because we want to quickly find out if any employees didn’t get assigned a party.
+
 
 
 
