@@ -49,6 +49,20 @@ employees <- tibble(
   birthday = ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)
 )
 
+parties2 <- tibble(
+  q = 1:4,
+  party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
+  start = ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03")),
+  end = ymd(c("2022-04-03", "2022-07-11", "2022-10-02", "2022-12-31"))
+)
+
+parties3 <- tibble(
+  q = 1:4,
+  party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
+  start = ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03")),
+  end = ymd(c("2022-04-03", "2022-07-10", "2022-10-02", "2022-12-31"))
+)
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -942,6 +956,121 @@ Like mentioned previously this approach only looks for birthday sfatter Januaryt
 ###
 
 To resolve that issue we’ll need to tackle the problem a different way, with overlap joins: the fourth type of non equi joins.
+
+### Exercise 13
+
+Let’s continue the birthday example to see how you might use them. There’s one problem with the strategy we used above: there’s no party preceding the birthdays Jan 1-9. So it might be better to be explicit about the date ranges that each party spans, and make a special case for those early birthdays.
+
+Make a new tibble `parties2` using `tibble()` and define three columns: party, start, and end. Set the key as `q` and assign `1:4` to it. For the party column, pass in `ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03"))`. For the start column, pass in `ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03"))`. For the end column, pass in `ymd(c("2022-04-03", "2022-07-11", "2022-10-02", "2022-12-31"))`. On a new line call `parties2` to check the new tibble.
+
+```{r nonequi-joins-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r nonequi-joins-13-hint, eval = FALSE}
+parties2 <- tibble(
+  q = ...,
+  ... = ymd(c(..., "2022-04-04", "2022-07-11", "2022-10-03")),
+  ... = ymd(c("2022-01-01", "2022-04-04",..., "2022-10-03")),
+  end = ymd(c("2022-04-03", "2022-07-11", "2022-10-02", ...))
+)
+parties2
+```
+
+###
+
+Overlap joins provide three helpers that use inequality joins to make it easier to work with intervals:
+
+`between(x, y_lower, y_upper)` is short for x >= y_lower, x <= y_upper.
+`within(x_lower, x_upper, y_lower, y_upper)` is short for x_lower >= y_lower, x_upper <= y_upper.
+`overlaps(x_lower, x_upper, y_lower, y_upper)` is short for x_lower <= y_upper, x_upper >= y_lower.
+
+
+### Exercise 14
+
+Hadley is hopelessly bad at data entry so he also wanted to check that the party periods don’t overlap. One way to do this is by using a self-join to check if any start-end interval overlap with another.
+
+Start a pipe with `parties2` to `inner_join()`, we will join `parties2` to itself and we will join them by `overlaps(start, end, start, end), q < q`.
+
+```{r nonequi-joins-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r nonequi-joins-14-hint, eval = FALSE}
+parties2 |> 
+  inner_join(parties2, join_by(...(start, end, start, end), ...))
+```
+
+###
+
+If you want to explore move about overlap joins, check out [dplyr](https://dplyr.tidyverse.org/reference/join_by.html#overlap-joins).
+
+### Exercise 15
+
+When we ran the previous code, we see other info which we dont need, so let's remove those using `select()`. So copy the previous code and continue the pipe from `inner_join()` to `select()` and only select the `start.x, end.x, start.y, end.y`.
+
+```{r nonequi-joins-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r nonequi-joins-15-hint, eval = FALSE}
+... |> 
+  inner_join(parties2,...(overlaps(..., end, start, ...), q < q)) |> 
+  select(..., end.x, start.y, end.y)
+```
+
+###
+
+Ooops, there is an overlap, so let’s fix that problem and continue:
+
+### Exercise 16
+
+Go back to exercise 13 and copy your answer from there and paste it here, change the name of the tibbel to`parties3` and change the 2nd data in `end` to `"2022-07-10"`.
+
+```{r nonequi-joins-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r nonequi-joins-16-hint, eval = FALSE}
+... <- tibble(
+  ...,
+  party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
+  ... = ymd(c("2022-01-01", "2022-04-04", ..., "2022-10-03")),
+  end = ymd(c(..., "2022-07-10", ..., "2022-12-31"))
+)
+```
+
+###
+
+Now that we have the dates ready, let's marcg each employee to their party.
+
+### Exercise 17
+
+Let's join `employees` and `parties` by first create a pipe with `employees` to `inner_join()`. We will be joining them with `between(birthday, start, end)` using `join_by()` and in additoin also add `unmatched = "error"`.
+
+```{r nonequi-joins-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r nonequi-joins-17-hint, eval = FALSE}
+... |> 
+      inner_join(parties3, ...(between(birthday, start, end)), unmatched = "...")
+```
+
+###
+
+The reason we added `unmatched = "error"` is because we want to quickly find out if any employees didn’t get assigned a party.
+
 
 
 
