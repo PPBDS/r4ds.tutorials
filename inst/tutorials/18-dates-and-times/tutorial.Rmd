@@ -584,8 +584,6 @@ Let's modify this date: "2026-07-08 12:34:56" with the `ymd_hms()` function. Cre
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r datetime-components-modifying-1-hint-1, eval = FALSE}
 (datetime <- ymd_hms("..."))
 ```
@@ -600,8 +598,6 @@ Let's modify the date by setting year to 2030 in `datetime`. Type `datetime` aft
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r datetime-components-modifying-2-hint-1, eval = FALSE}
 year(...) <- 2030
 datetime
@@ -614,6 +610,219 @@ With the `ymd_hms()` functions we can automatically assign the Universal Coordin
 ###
 
 Alternatively, rather than modifying an existing variable, you can create a new date-time with update(). Check out [**update()**](https://rdrr.io/r/stats/update.html) for more information.
+
+## Time Spans with Duration
+###
+
+You’ll learn how arithmetic with dates works, including subtraction, addition, and division.
+
+### Exercise 1
+
+Set `today() - ymd("2000-8-30")` to the `age` variable.
+
+```{r time-spans-dura-1, exercise = TRUE}
+
+```
+
+```{r time-spans-dura-1-hint, eval = FALSE}
+... <- today() - ymd("2000-8-30")
+```
+
+###
+
+As we covered in the previous exercises, we use `ymd()` to create dates. 
+
+### Exercise 2
+
+Now type `age` and run it.
+
+```{r time-spans-with-dura-2, exercise = TRUE}
+
+```
+
+```{r time-spans-with-dura-2-hint, eval = FALSE}
+age
+```
+
+###
+
+Here we subtracted two dates to get a `difftime` object to get the time difference. A `difftime` class object records a time span of seconds, minutes, hours, days, or weeks. This ambiguity can make `difftimes` a little painful to work with, so lubridate provides an alternative which always uses seconds: the duration.
+
+### Exercise 3
+
+
+```{r time-spans-with-dura-3, exercise = TRUE}
+
+```
+
+```{r time-spans-with-dura-3-hint, eval = FALSE}
+as.duration(...)
+```
+
+###
+
+With `as.duration()` we are able to get the time difference in seconds and years through the help of the lubridate alternative. Durations always record the time span in seconds.
+
+### Exercise 4
+
+Multiply the `as.duration()` from above by `2` and add `dweeks(12)`.
+
+```{r time-spans-with-dura-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r time-spans-with-dura-4-hint, eval = FALSE}
+... * 2 + dweeks(...)
+```
+
+###
+
+With durations, we can add, divide, subtract, and multiply with other functions to get a new desired output. With duration we can use `dseconds()` (seconds), `dminutes()` (minutes), `dhours()` (hours), `ddays()` (days), `dweeks()` (weeks), `dyears()` (years). Check out all of the other functions here: [**Duration**](https://lubridate.tidyverse.org/reference/duration.html)
+
+## Time Spans with Periods
+###
+
+Periods are time spans but don’t have a fixed length in seconds, instead they work with “human” times, like days and months.
+
+### Exercise 1
+
+Set `ymd_hms("2026-03-08 01:00:00", tz = "America/New_York")` to the `time` variable and run the variable to see the datetime.
+
+```{r time-spans-with-peri-1, exercise = TRUE}
+
+```
+
+```{r time-spans-with-peri-1-hint, eval = FALSE}
+time <- ymd_hms("2026-03-08 01:00:00", tz = "America/New_York")
+time
+```
+
+###
+
+Unlike above where we specified `tz` as "EST" or "UTC". We can use "America/New_York" to specify that we are working in "EST".
+
+### Exercise 2
+
+Let's add `dweeks(3)` to `time`.
+
+```{r time-spans-with-peri-2, exercise = TRUE}
+
+```
+
+```{r time-spans-with-peri-2-hint, eval = FALSE}
+time + ...
+```
+
+###
+
+Here we can see that our time zone changed and it changed into "EDT". To solve this problem, lubridate provides periods. 
+
+### Exercise 3
+
+Let's add 10 to `time`, multiply by `hours(20)` and subtract `months(5)`.
+
+```{r time-spans-with-peri-3, exercise = TRUE}
+
+```
+
+
+```{r time-spans-with-peri-3-hint, eval = FALSE}
+time + ... * ... - ...
+```
+
+###
+
+Similar to durations, we can use periods to multiply, divide, subtract, and add dates together. However, with periods are more likely to do what you expect.
+
+### Exercise 4
+
+Add `dyears(2)` to `time`. On a separate line add `years(2)` to `time`.
+
+```{r time-spans-with-peri-4, exercise = TRUE}
+
+```
+
+```{r time-spans-with-peri-4-hint, eval = FALSE}
+... + dyears(...)
+... + years(...)
+```
+
+###
+
+We can see here that `dyears()` failed to keep the same timezone. However, with `years()` we were able to keep the same timezone. With the help of periods, we can use time spans more accurately.
+
+## Time Spans with Intervals
+###
+
+An interval is a pair of starting and ending date times, or you can think of it as a duration with a starting point.
+
+### Exercise 1
+
+Let's create a `ymd()` date set to Jan 1st, 2021 and set it to `date2021`.
+
+```{r time-spans-with-inte-1, exercise = TRUE}
+
+```
+
+```{r time-spans-with-inte-1-hint, eval = FALSE}
+... <- ymd("2021-01-01")
+```
+
+###
+
+### Exercise 2
+
+Let's create a `ymd()` date set to Jan 1st, 2020 and set it to `date2020`.
+
+```{r time-spans-with-inte-2, exercise = TRUE}
+
+```
+
+```{r time-spans-with-inte-2-hint, eval = FALSE}
+date2020 <- ...("2020-01-01")
+```
+
+###
+
+### Exercise 3
+
+Now let's create an `interval` variable and set it to `date2020 %--% date2021`.
+
+```{r time-spans-with-inte-3, exercise = TRUE}
+
+```
+
+```{r time-spans-with-inte-3-hint, eval = FALSE}
+... <- date2020 %--% date2021
+```
+
+###
+
+We use the `%--%` to create a more accurate measurement, through the use of an interval. We have created an interval of a year specifically a leap year.
+
+### Exercise 4
+
+Divide the `interval` by `days(1)` and divide `years(1)` by `days(1)` on a separate line.
+
+```{r time-spans-with-inte-4, exercise = TRUE}
+
+```
+
+```{r time-spans-with-inte-4-hint, eval = FALSE}
+... / days(1)
+years(1) / ...
+```
+
+###
+
+With the `years(1) / days(1)` we get an inaccurate estimate of 365.25 days in a year. With the use of an interval we are able to get an accurate estimate of the year.
+
+###
+
+Whenever possible we attempt to use duration, periods, and interval respectively based on the situation because of the accuracy it provides us.
+
 
 
 <!-- ## Older material
