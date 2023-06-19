@@ -111,7 +111,7 @@ airlines
 
 ### 
 
-airlines records two pieces of data about each airline: its `carrier` code and its full `name`. You can identify an airline with its two letter carrier code, making carrier the primary key.
+`airlines` records two pieces of data about each airline: its `carrier` code and its full `name`. You can identify an airline with its two letter carrier code, making carrier the primary key.
 
 ### Exercise 2
 
@@ -127,7 +127,7 @@ airports
 
 ### 
 
-airports records data about each airport. You can identify each airport by its three letter airport code, making `faa` the primary key.
+`airports` records data about each airport. You can identify each airport by its three letter airport code, making `faa` the primary key.
 
 ### Exercise 3
 
@@ -143,7 +143,7 @@ planes
 
 ### 
 
-planes records data about each plane. You can identify a plane by its tail number, making `tailnum` the primary key.
+`planes` records data about each plane. You can identify a plane by its tail number, making `tailnum` the primary key.
 
 ### Exercise 4
 
@@ -221,7 +221,7 @@ knitr::include_graphics("images/relational.png")
 
 ### Exercise 8
 
-Now that that we’ve identified the primary keys in each table, it’s good practice to verify that they do indeed uniquely identify each observation. One way to do that is to count() the primary keys and look for entries where n is greater than one.
+Now that that we’ve identified the primary keys in each table, it’s good practice to verify that they do indeed uniquely identify each observation. One way to do that is to `count()` the primary keys and look for entries where `n` is greater than one.
 
 Start a pipe with `planes` to the `count()` function and within count set the argument as `tailnum`. Start a pipe  from `count()` to filter and Apply the `filter()` function to `n > 1`. This will filter out any elements where the count (n) is not greater than 1.
 
@@ -317,7 +317,7 @@ Does the absence of duplicates automatically make `time_hour`-`carrier`-`flight`
 
 ### Exercise 13
 
-Let's check if altitude and latitude are good primary keys for airports, so copy the previous code and change the datset to `airports` and change the arguement withint `count()` to `alt , lat`.
+Let's check if altitude and latitude are good primary keys for airports, so copy the previous code and change the dataset to `airports` and change the argument within `count()` to `alt , lat`.
 
 ```{r keys-13, exercise = TRUE}
 
@@ -337,9 +337,9 @@ Using altitude and latitude to identify an airport is unreliable, and it's gener
 
 ### Exercise 14
 
-That said, we might be better off introducing a simple numeric surrogate key using the row number instead of confusing the airliens and customers by using three columns are primary keys. 
+That said, we might be better off introducing a simple numeric surrogate key using the row number instead of confusing the airlines and customers by using three columns are primary keys. 
 
-Let's make a new primary key `id` and to add a new column `id` with row numbers to the flights dataset, start a pipe with flights and use mutate() function. Assign row_number() function to the id column and set .before to 1.
+Let's make a new primary key `id` and to add a new column `id` with row numbers to the flights dataset, start a pipe with `flights` and use `mutate()` function. Within `mutate()` assign `row_number()` function to the `id` column and set `.before` to 1.
 
 ```{r keys-14, exercise = TRUE}
 
@@ -354,7 +354,7 @@ flights |>
 
 ###
 
-This code adds a new column id with row numbers to the flights dataset, positioning it as the first column. In conclusion, Surrogate keys can be particular useful when communicating to other humans: it’s much easier to tell someone to take a look at flight 2001 than to say look at UA430 which departed 9am 2013-01-03.
+This code adds a new column id with row numbers to the `flights` dataset, positioning it as the first column. In conclusion, Surrogate keys can be particular useful when communicating to other humans: it’s much easier to tell someone to take a look at flight 2001 than to say look at UA430 which departed 9am 2013-01-03.
 
 
 
@@ -382,6 +382,7 @@ flights2
 ### 
 
 A mutating join allows you to combine variables from two data frames: it first matches observations by their keys, then copies across variables from one data frame to the other. 
+
 ### Exercise 2
 
 There are four types of mutating join, but there’s one that you’ll use almost all of the time: `left_join()`. It’s special because the output will always have the same rows as x. The primary use of `left_join()` is to add in additional metadata. 
@@ -488,7 +489,7 @@ We get a lot of missing matches because our join is trying to use tailnum and ye
 
 We only want to join on `tailnum` so we need to provide an explicit specification with `join_by()`.
 
-Copy the previous code and within `left_join()`, add `join_by()` and pass in `tailnum` as the arguement.
+Copy the previous code and within `left_join()`, add `join_by()` and pass in `tailnum` as the argument.
 
 ```{r basic-joins-7, exercise = TRUE}
 
@@ -507,7 +508,7 @@ Copy the previous code and within `left_join()`, add `join_by()` and pass in `ta
 
 ### Exercise 8
 
-As we saw `join_by()` gives us the flexibilty to join  based on the variables we want. For example we know that we can join `flights2` and `airports` by `dest` or `origin`.
+As we saw `join_by()` gives us the flexibility to join  based on the variables we want. For example we know that we can join `flights2` and `airports` by `dest` or `origin`.
 
 Copy the previous code change `planes` to `airports` and in `join_by()` set `dest == faa`.
 
@@ -564,7 +565,7 @@ As you might guess the primary action of a filtering join is to filter the rows.
 
 ### Exercise 11
 
-Let's now use `anti_join()`, so copy the previous code and the 
+Let's now do the same with destinations, copy the previous code and change the `join_by()` arguement to `faa == dest`.
 
 ```{r basic-joins-11, exercise = TRUE}
 
@@ -579,11 +580,11 @@ Let's now use `anti_join()`, so copy the previous code and the
 
 ### 
 
-Compared to `semi_join()` , Anti joins are the opposite: they return all rows in x that don’t have a match in y.
+Compared to `semi_join()` , Anti joins are the opposite: they return all rows in x that don’t have a match in y. In next few excises we will talk about anti joins which are opposite of semi joins.
 
 ### Exercise 12
 
- Let's find rows that are missing from airports by looking for flights that don’t have a matching destination airport usign `anti_join()`. First start a pipe with `flights2` to `anti_join()` which takes in `airports` as the joining tibble and we will tell it to join by `dest == faa`.
+ Let's find rows that are missing from airports by looking for flights that don’t have a matching destination airport using `anti_join()`. First start a pipe with `flights2` to `anti_join()` which takes in `airports` as the joining tibble and we will tell it to join by `dest == faa`.
  
 ```{r basic-joins-12, exercise = TRUE}
 
@@ -602,6 +603,7 @@ Compared to `semi_join()` , Anti joins are the opposite: they return all rows in
 We found four rows that are missing from `airports` but not in `flights`.
 
 ### Exercise 13
+
 Let's now find which `tailnums` are missing from planes. Copy the previous code, change the the table we will join from `airports` to `planes` and then modify `join_by()` and `distinct()` arguements to `tailnum`.
 
 ```{r basic-joins-13, exercise = TRUE}
@@ -878,7 +880,6 @@ Since we’re joining df to itself, this is sometimes called a self-join. Cross 
 
 Next up we will talk about the second type of non-equi join that dplyr has which is inequality joins.
 
-
 ### Exercise 6
 
 Inequality joins use `<, <=, >=, or >` to restrict the set of possible matches. Below is what it looks like visually.
@@ -1120,9 +1121,6 @@ Let's join `employees` and `parties` by first create a pipe with `employees` to 
 ###
 
 The reason we added `unmatched = "error"` is because we want to quickly find out if any employees didn’t get assigned a party.
-
-
-
 
 ## Summary
 ### 
