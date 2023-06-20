@@ -15,15 +15,10 @@ description: 'Tutorial for Chapter 12: Communication'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
-library(primer.data)
-library(ggthemes)
-library(plotly)
-library(ggdist)
 library(babynames)
-library(scales)
 library(ggrepel)
 library(patchwork)
-library(skimr)
+
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
@@ -2128,1049 +2123,6 @@ Using your previous code, add the `labs()` function to the pipeline. Within this
 
 Note that all color scales come in two varieties: scale_color_*() and scale_fill_*() for the color and fill aesthetics respectively (the color scales are available in both UK and US spellings).
 
-
-
-
-
-<!-- DK: Comments from old material, which was Wrangling: More Plots from all.primer.tutorials. May no longer apply. -->
-
-<!-- Commented out More Babynames. It was producing a hard to fix error. Also, it is a bit sloppy. I would like to add it back since I want to show students things like ggplotly() and animation. -->
-
-<!-- Difficult to understand what a geom_density shows, especially the meaning of the y-axis. Maybe we should have a section which walks students through the concepts of a distribution, ending with a smooth probability distribution. First, start with a geom_histogram example, but which looks like a standard plot. Or, maybe just use facet_wrap, stack them on top of each other. Raw counts of things are important. Second, use the same data, turns it into percentages using the after_stat() trickery. Third plot, use the same data, does this with geom_density(). Just an easier way of showing those shapes. Fourth plot, same data, use stat_slab().  BL: Is this already done? -->
-
-
-<!-- Five examples, each of which needs to use pivot_longer (if needed) to put things in the same column and which then creates a "standard" plot with different levels on the y-axis. Those levels sometimes already exist in the data, like trains$party, and sometimes need to be created, like turning trains$income into 5 categories. [two use pivot_longer, somewhat unecessarily in shaming?. Those that do not use pivot_longer use mutate
-to make groups and (one) to transform these group into factors as their "hard" wrangling technique.] -->
-
-<!-- Use stuff other than stat_slab() for variety sake. Use geom_density in the first plot, maybe. And then geom_histogram() in the second plot, maybe with the same data! [see comment 4]  -->
-
-<!-- Drop knuggets of wisdom about what these densities mean. Sometimes they are scaled and sometimes not. [see comment 3] -->
-
-<!-- Example with trains which needs to get att_end and att_start in the same column so that you can plot them together with fill or whatever. [This may have been a better use of pivot_longer...] -->
-
-<!-- Example with trains which transform income into a set of categories, as in class. [not done with trains, but see comment 6]  -->
-
-<!-- Change phrasing of ggplot geom exercises -->
-
-<!-- Is shaming too big since it makes it a 10 second step everytime you run the pipe? -->
-
-## National Health and Nutrition Survey
-### 
-
-`nhanes` includes data from the "National Health and Nutrition Examination Survey," which contains the personal and physical information of 10,000 Americans from two surveys in 2009 and 2011.
-
-### 
-
-Let's create the following plot.
-
-```{r}
-nhanes_p1 <- nhanes |> 
-  select(bmi, gender, depressed) |> 
-  drop_na(depressed, bmi) |> 
-  ggplot(aes(x = bmi, fill = gender)) +
-  geom_histogram(alpha = .5, bins = 100, position = "identity") +
-  facet_wrap(~ depressed) +
-  coord_cartesian(xlim = c(16, 60)) +
-  labs(title = "BMI and Days Depressed",
-       subtitle = "Most participants reported not feeling depressed at all", 
-       x = "BMI", 
-       y = "Depression", 
-       fill = "Sex",
-       caption = "National Health and Nutrition Examination Survey") +
-  theme_classic() 
-
-nhanes_p1
-```
-
-### Exercise 1
-
-Look at the help page for `nhanes`.
-
-```{r national-health-and--1, exercise = TRUE}
-
-```
-
-```{r national-health-and--1-hint-1, eval = FALSE}
-?nhanes
-```
-
-### 
-
-The 10,000 units (people) in the tibble are the equivalent of a random sample of 10,000 US residents.
-
-
-### Exercise 2
-
-Use the function `skim()` on the `nhanes` data set.
-
-```{r national-health-and--2, exercise = TRUE}
-
-```
-
-```{r national-health-and--2-hint-1, eval = FALSE}
-skim(...)
-```
-
-### 
-
-Note that `depressed` is a factor. 
-
-### Exercise 3
-
-Start a pipe with the `nhanes` data set and `select()` the `gender`, `depressed`, and `bmi` columns.
-
-```{r national-health-and--3, exercise = TRUE}
-
-```
-
-```{r national-health-and--3-hint-1, eval = FALSE}
-... |>
-  select(..., ..., ...)
-```
-
-### Exercise 4
-
-We can see that there are some NA values in `nhanes`. Ideally, we want to get rid of NA values. Start a pipe with `nhanes`. `select()` the three columns. Then use the function `drop_na()` to remove all NA values with the columns as the argument.
-
-```{r national-health-and--4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-
-```{r national-health-and--4-hint-1, eval = FALSE}
-... |>
-  drop_na(..., ...)
-```
-
-### 
-
-If we had not selected relevant columns before we dropped na values, observations with NA values in columns we don't care about would also be dropped, causing uncessary loss of data.
-
-### Exercise 5
-
-Now it's time to graph it. Continue piping your code with `ggplot()`. Inside `aes()`, map `bmi` to the x-axis, and `gender` to `fill`. Finally, add the layer `geom_histogram()`.
-
-```{r national-health-and--5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r national-health-and--5-hint-1, eval = FALSE}
-... |> 
-  ggplot(mapping = aes(x = ..., 
-                        fill = ...)) +
-  geom_histogram()
-```
-
-### 
-
-Remember that histogram has a default `y` which are the counts it tabulates for each bin from our data. 
-
-### Exercise 6
-
-Within `geom_histogram()`, set the argument `position` equal to "identity", set the argument `alpha` = `0.5`, and set the argument `bins` = 100. 
-
-```{r national-health-and--6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r national-health-and--6-hint-1, eval = FALSE}
-... |> 
-  geom_histogram(position = "...", alpha =  ..., 
-                        bins = ...)) 
-```
-
-### 
-
-For histogram and bar plots, `position` is by default "stacked", which stacks different colors of the same x value on top of one another. `position` being equal to "identity", makes it so that different colors overlap, which can be seen when the opacity of the colors is increased. 
-
-### Exercise 7
-
-Add the layer `facet_wrap()` to facet the histogram by `depressed`. 
-
-```{r national-health-and--7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-
-```{r national-health-and--7-hint-1, eval = FALSE}
-Within facet_wrap(), remember to put a ~ before the variable you want to facet by.
-```
-
-```{r national-health-and--7-hint-2, eval = FALSE}
-... + 
-  facet_wrap(~...) 
-```
-
-### 
-
-Facet wrapping keeps the same y axis scale, which allows us to compare the sizes of data we have for each level of Depressed
-
-### Exercise 8
-
-Using the code you created above, add the layer `coord_cartesian()` and  set the argument `xlim` equal to the vector `c(16, 60)`, which limits the x-axis domain to a minimum of 16 and a maximum of 60. 
-
-
-```{r national-health-and--8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-
-```{r national-health-and--8-hint-1, eval = FALSE}
-... +
-  coord_cartesian(xlim = c(...,...))
-```
-
-### Exercise 9
-
-Let's clean the graph up by adding the theme `theme_classic() `.
-
-```{r national-health-and--9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-
-```{r national-health-and--9-hint-1, eval = FALSE}
-Recall that when you add a theme, you add a layer! 
-Use the + operator.
-```
-
-```{r national-health-and--9-hint-2, eval = FALSE}
-... +
-  theme_classic() 
-```
-
-### Exercise 10
-
-To finish your plot, add the layer `labs()` to give the graph a title, subtitle, axis labels, legend heading, and caption. To change the legend heading from the name of the tibble column, use the argument `fill`. 
-
-```{r national-health-and--10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r national-health-and--10-hint-1, eval = FALSE}
-... +
-  labs(title = "..." ,
-      subtitle = "...",
-      x = "...",
-      y = "..."
-     fill = "...",
-     caption = "...")
-```
-
-Reminder: This is what your plot should look like.
-
-```{r nhanes9-answer}
-nhanes_p1
-```
-
-### Exercise 11
-
-The histogram plots the actual counts for each BMI bin, and the categories of Depressed with more data are taller. Other functions can plot probabilities for each bin, i.e. the count for each bin divided by the sum of the counts in all a graph's bin.
-
-### 
-
-Let's make the following plot.
-
-```{r national-health-and--11}
-nhanes_p2 <- nhanes |> 
-  select(bmi, gender, depressed) |> 
-  drop_na(depressed, bmi) |> 
-  ggplot(aes(x = bmi, fill = gender)) +
-  geom_density(alpha = .5)  +
-  facet_wrap(~ depressed) +
-  coord_cartesian(xlim = c(16, 60)) +
-  labs(title = "BMI and Days Depressed",
-       subtitle = "Depressed females who answered 'Most' are heavier than depressed males who answered 'Most'", 
-       x = "BMI", 
-       y = "Density", 
-       fill = "Sex",
-       caption = "National Health and Nutrition Examination Survey") +
-  theme_classic() 
-
-nhanes_p2
-```
-
-### 
-
-We have provided you with the beginning of code for the last plot. Continue your pipe by adding `ggplot()`. Map `bmi` to the x-axis, and `gender` to `fill`. Add the layer `geom_density()`.  Within `geom_density()`, set `alpha` = .5.
-
-```{r nhanes10, exercise = TRUE}
- nhanes |> 
-  select(bmi, gender, depressed) |> 
-  drop_na(depressed, bmi)
-```
-
-```{r national-health-and--11-hint-1, eval = FALSE}
-... |> 
-ggplot(mapping = aes(..., fill = ...)) +
-  geom_density(alpha = ...) 
-```
-
-### 
-
-In addition to plotting probabilities instead of counts, `geom_density()` smooths out the histogram. 
-
-### Exercise 12
-
-Using the code above, add the layer `facet_wrap()` to facet the histogram by `depressed`. 
-
-```{r national-health-and--12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r national-health-and--12-hint-1, eval = FALSE}
-Within facet_wrap(), remember to put a ~ before the variable you want to facet by.
-```
-
-```{r national-health-and--12-hint-2, eval = FALSE}
-... + 
-  facet_wrap(~...) 
-```
-
-### 
-
-Facet wrapping keeps the same y axis scale, which allows us to compare the sizes of data we have for each level of Depressed
-
-### Exercise 13
-
-Add the layer `coord_cartesian` and  set the argument `xlim` equal to the vector `c(16, 60)`, which limits the x-axis domain to a minimum of 16 and a maximum of 60. 
-
-```{r national-health-and--13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r national-health-and--13-hint-1, eval = FALSE}
-... +
-  coord_cartesian(xlim = c(...,...))
-```
-
-### Exercise 14
-
-Add the layer `theme_classic() ` to adjust the feel of your plot. Finally, add labels to your graph. Pay particular attention to how the y-axis label and subtitle should change compared to the previous plot. 
-
-```{r national-health-and--14, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r national-health-and--14-hint-1, eval = FALSE}
-... +
-  theme_classic()  +
-  labs(title = "..." ,
-       subtitle = "...",
-       x = "...",
-       y = "...",
-     fill = "...",
-     caption = "...")
-
-```
-
-Reminder: This is what your plot should look like.
-
-```{r nhanes13-answer}
-nhanes_p2
-```
-
-### Exercise 15
-
-In the exercises above, we facet wrapped the graphs for the three Depressed categories using a Density curve. However, our curves were vertical. Density curves and their distribution are so much easier to look at when compared along the x-axis. Let's do that.
-
-
-### 
-
-Let's make the following plot.
-
-```{r national-health-and--15}
-nhanes_p3 <- nhanes |> 
-  select(bmi, gender, depressed) |> 
-  drop_na(depressed, bmi) |> 
-  ggplot(aes(x = bmi, y = depressed, fill = gender)) +
-  stat_slab(alpha = .5)  +
-  coord_cartesian(xlim = c(16, 50)) +
-  scale_y_discrete(labels = c("No Days", "Several Days", "Most Days")) +
-  labs(title = "BMI and Days Depressed",
-       subtitle = "Most often depressed females have highest BMI among both sexes", 
-       x = "BMI", 
-       y = "Days Depressed", 
-       fill = "Sex",
-       caption = "National Health and Nutrition Examination Survey") +
-  theme_classic() 
-
-nhanes_p3
-```
-
-### 
-
-We have provided you with the beginning of code for the last plot. Continue your pipe with `ggplot()`. Map `bmi` to the x-axis, `depressed` to the y-axis, and `gender` to `fill`. Add the layer `stat_slab()`.  Within `stat_slab()`, set `alpha` = .5. 
-
-```{r nhanes14, exercise = TRUE}
- nhanes |> 
-  select(bmi, gender, depressed) |> 
-  drop_na(depressed, bmi) 
-```
-
-```{r national-health-and--15-hint-1, eval = FALSE}
-... |> 
-ggplot(aes(x = , y = , fill = ...)) +
-  stat_slab(alpha = ...) 
-```
-
-### 
-
-Notice that adding `depressed` to the y-axis has done something similar to what faceting did in our previous graphs. Stacking in this method can be done with `stat_slab()` which is part of the package `ggdist`. 
-
-### Exercise 16
-
-Add the layer `coord_cartesian`. Let's alter our maximum to 50 so that we get a better focus on the peaks of the graph. Set `xlim` equal to the vector `c(16, 50)`, which limits the x-axis domain to a minimum of 16 and a maximum of 50. 
-
-```{r national-health-and--16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r national-health-and--16-hint-1, eval = FALSE}
-... +
-  coord_cartesian(xlim = c(...,...))
-```
-
-### Exercise 17
-
-Add the layer `scale_y_discrete()`. Set the argument `labels` equal to a vector of strings `c("No Days", " Several Days", "Most Days")`. 
-
-```{r national-health-and--17, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r national-health-and--17-hint-1, eval = FALSE}
-  ... +
-  scale_y_discrete(labels = ...) +
-  ... +
-```
-
-```{r national-health-and--17-hint-2, eval = FALSE}
-  ... +
-  scale_y_discrete(labels = c("No Days", "Several Days", "Most Days")) +
-  ... +
-```
-
-### 
-
-The vector renames the y-axis breaks from bottom to top based on the respective names given in the vector.
-
-We use discrete because the y-axis measures discrete, as opposed to continuous or binned, variables.
-
-### Exercise 18
-
-Let's clean the graph up by adding the layer `theme_classic() `. Now add the `labs()` layer. As you set the labels, pay particular attention to how the y-axis label and subtitle should change compared to the previous plot. 
-
-```{r national-health-and--18, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-
-```{r national-health-and--18-hint-1, eval = FALSE}
-... +
-  theme_classic() +
-  labs(title = "...",
-       subtitle = "...", 
-       x = "...", 
-       y = "...", 
-       fill = "...",
-       caption = "...")
-
-```
-
-Reminder: This is what your plot should look like.
-
-```{r nhanes17-answer}
-nhanes_p3
-```
-
-## Kenya voter registration experiment
-### 
-
-The `kenya` contains data from a study in which poll stations in Kenya were assigned to either the control group or a group in which one or more methods (an SMS reminder, canvassing, etc.) were used to encourage voter registration. 
-
-### 
-
-Let's create the following plot.
-
-```{r make-kenya1}
-kenya_p1 <- kenya |> 
-  mutate(poverty_groups = case_when(poverty >= .18 & poverty < .35 ~ "1",
-            poverty >= .35 &  poverty < .43  ~ "2",
-            poverty >= .43 & poverty < .49 ~ "3",
-            poverty >= .49 ~ "4")) |> 
-  mutate(poverty_groups = factor(poverty_groups, 
-                                    levels = c("1", "2", 
-                                    "3", "4"), 
-                                    labels = c("1st Quartile (Least Poverty)", "2nd Quartile", 
-                                    "3rd Quartile", "4th Quartile (Most Poverty)"))) |> 
-  mutate(age_groups = case_when(mean_age < 41.5  ~ "1",
-                                mean_age >= 41.5  ~ "2")) |> 
-  select(reg_byrv13, poverty_groups, age_groups) |> 
-  drop_na() |>
-  ggplot(aes(reg_byrv13, fill = age_groups)) +
-  geom_histogram(bins = 500, position = "stack") +
-  facet_wrap(~ poverty_groups) +
-  coord_cartesian(xlim = c(.005, .15), ylim = c(0, 160)) +
-  scale_x_continuous(labels = scales::percent_format()) +
-  scale_fill_manual(values = c("#F8766D", "#00BFC4"), labels = c("Below 50th Percentile", "Above 50th Percentile")) +
-  theme_classic() +
-  labs(title = "Distribution of New Registered Voters by Poverty and Age Groups",
-       subtitle = "The poorest districts have fewer zero and near-zero percent \n increases and more districts of unusually high increase",
-       x = "Percent of New Registered Voters", 
-       y = "Count", 
-       fill = "Mean Age in District",
-       caption = "Harris, Kamindo, Van der Windt (2020)") 
-
-kenya_p1
-```
-
-### 
-
-### Exercise 1
-
-Run `c(min(kenya$poverty), mean(kenya$poverty), max(kenya$poverty))` to produce a vector with the minimum, mean, and maximum poverty rate in this data. Run the equivalent function for `mean_age`.
-
-```{r kenya-voter-registra-1, exercise = TRUE}
-
-```
-
-### Exercise 2
-
-Based on the quartiles above, let's create a column that groups the classes into four different groups based on enrollment size. Start a new pipe from `kenya`. Use `mutate()` to create a new column called `poverty_groups`. Set `poverty_groups` equal to the function `case_when()`, which can take multiple arguments of the syntax `poverty >= .18 & poverty < .35 ~ "1st Quartile"`.The part left of the `~` is the condition, and the part right of the `~` is the result when the condition is met. Using this example as the first, create four groups, named "1", "2", "3", and "4". 
-
-```{r kenya-voter-registra-2, exercise = TRUE}
-
-```
-
-```{r kenya-voter-registra-2-hint-1, eval = FALSE}
-... |> 
-mutate(poverty_groups = case_when(poverty >= .18 & poverty < .35 ~ "1",
-            ...)
-```
-
-```{r kenya-voter-registra-2-hint-2, eval = FALSE}
-... |> 
-  mutate(poverty_groups = case_when(poverty >= .18 & poverty < .35 ~ "1",
-            poverty >= .35 &  poverty < .43  ~ "2",
-            poverty >= .43 & poverty < .66 ~ "3",
-            poverty >= .66 ~ "4")
-```
-
-### 
-
-If you  forget the `=` in `>=` you may accidentally exclude data.
-
-
-### Exercise 3
-
-Recall how in our final plot with the NHANES data, we used `scale_y_discrete()` to change the `labels`, which changed the label on the graph into something clearer without changing the corresponding values in the data. Recall also how we have used `scale_color_manual` to change legend options to appear differently than they do within our data set. There is no equivalent function when we `facet_wrap()`. Instead, we treat the variable we want to facet by into a `factor` and change the label of this `factor`. 
-
-### 
-
-Let's do that. Use `mutate` to change the column `poverty_groups` into a column of the same name, but with factor variables. Set `poverty_groups` equal to `factor()`. Within `factor()`, the first argument should be the column we want to make a factor. The second argument is `levels` which should be set equal to the four different enrollment group names in the order in which we want them to appear, `c("1", "2", "3", "4")`. The third argument is `labels` which should be set equal to the names we want the respective levels to have on the graph, `c("1st Quartile (Least Poverty)", "2nd Quartile", "3 Quartile", "4th Quartile (Most Poverty)")`
-
-```{r kenya-voter-registra-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-3-hint-1, eval = FALSE}
-... |> 
- mutate(poverty_groups = factor(...,
-                                   levels = ..., 
-                                   labels = ...))
-```
-
-```{r kenya-voter-registra-3-hint-2, eval = FALSE}
-... |> 
-   mutate(poverty_groups = factor(poverty_groups, 
-                                    levels = c("1", "2", 
-                                    "3", "4"), 
-                                    labels = c("1st Quartile (Least Poverty)", "2nd Quartile", 
-                                    "3rd Quartile", "4th Quartile (Most Poverty)")))
-```
-
-### 
-
-By default in `factor()`, `labels` is set equal to `levels`. 
-
-
-### Exercise 4
-
-Based on the 50th percentile for `mean_age`, use `mutate()` and `case_when()` to create a new column called `age_groups`, which has a value of `"1"` when the value of `mean_age` is  below the 50th percentile and a `"2"` when the value of `mean_age` is above the 50th percentile. 
-
-```{r kenya-voter-registra-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-4-hint-1, eval = FALSE}
-... |> 
-  mutate(... = case_when(.... < ...  ~ "1",
-                         ...  >= ... ~ "2")
-```
-
-```{r kenya-voter-registra-4-hint-2, eval = FALSE}
-... |> 
-  mutate(age_groups = case_when( ... < 41.5  ~ "1",
-                                 ... >= 41.5  ~ "2")) 
-```
-
-### Exercise 5
-
-`select` the columns relevant for our plot `reg_byrv13`, `poverty_groups`, and `age_groups`. 
-
-```{r kenya-voter-registra-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-5-hint-1, eval = FALSE}
-... |> 
-select(..., ..., ...)
-```
-
-### Exercise 6
-
-Let's graph it. Continue your pipe with `ggplot()`. Map `reg_byrv13` to the x-axis, and `age_groups` to `fill`. Add the layer `geom_histogram()`.
-
-```{r kenya-voter-registra-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-6-hint-1, eval = FALSE}
-... |> 
-  ggplot(mapping = aes(x = ..., 
-                        fill = ...)) +
-  geom_histogram()
-```
-
-### 
-
-Remember that histogram has a default `y` which are the counts it tabulates for each bin from our data. 
-
-### Exercise 7
-
-Within `geom_histogram()`, set the argument `position` equal to `"stack"` and set the argument `bins` equal to 500. 
-
-```{r kenya-voter-registra-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-7-hint-1, eval = FALSE}
-... |> 
-  geom_histogram(position = "stacked", bins = ...)) 
-```
-
-### 
-
-For histogram and bar plots, `position` is by default "stacked" for `geom_histogram()`, so including it is unnecessary. Stacked position lets us see the total count for each bin more easily. Because we are not dealing with overlap, there is no need for alpha here. 
-
-
-
-### Exercise 8
-
-Now let's make it into the graph we saw in the beginning. Add the layer `facet_wrap()` to facet the histogram by `poverty_groups`. 
-
-```{r kenya-voter-registra-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-8-hint-1, eval = FALSE}
-Within facet_wrap(), remember to put a ~ before the variable you want to facet by.
-```
-
-```{r kenya-voter-registra-8-hint-2, eval = FALSE}
-... + 
-  facet_wrap(~...) |>  
-```
-
-### Exercise 9
-
-Add the layer `coord_cartesian` and use the argument `xlim` to limit the x-axis domain to a minimum of 0 and a maximum of .15. Use the argument `ylim` to limit the y-axis range to a minimum of 0 and a maximum of 160. 
-
-```{r kenya-voter-registra-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-9-hint-1, eval = FALSE}
-... +
-  coord_cartesian(xlim = c(...,...), ylim = c(...,...))
-```
-
-### Exercise 10
-
-First copy paste the code above. Because our x-axis measures percent increase, add the layer `scale_x_continuous` and set the argument `labels` equal to `scales::percent_format()`. 
-
-```{r kenya-voter-registra-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-10-hint-1, eval = FALSE}
-... +
-  scale_x_continuous(labels = scale::percent_format())
-```
-
-### Exercise 11
-
-Add the layer `scale_fill_manual` to change the legend options from `1` and `2` to `"Below 50th Percentile"` and `"Above 50th Percentile"`. The first argument is `values` which determines the fill colors, set this equal to `c("#F8766D", "#00BFC4")`, the default red and blue in ggplot. Set the second argument `labels` equal to a vector of our new names. (Below 50th Percentile and Above 50th Percentile)
-
-```{r kenya-voter-registra-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-11-hint-1, eval = FALSE}
-... +
-  scale_fill_manual(values = c("...", "..."), labels = c("...", "..."))
-```
-
-### Exercise 12
-
-Adjust the feel of the graph by adding the theme `theme_classic()`. To finish your plot, use `labs()` to give the graph a title, subtitle, axis labels, legend heading, and caption.
-
-```{r kenya-voter-registra-12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-Reminder: This is what your plot should look like.
-
-```{r kenya-answer}
-kenya_p1
-```
-
-### Exercise 13
-
-Let's create the following plot, using density plots to visualize the same data. 
-
-```{r kenya-voter-registra-13}
-kenya_p2 <- kenya |> 
-  drop_na(mean_age) |> 
-  mutate(poverty_groups = 
-           case_when(poverty >= .18 & 
-                     poverty < .35 ~ "1",
-                     poverty >= .35 & poverty < .43 ~ "2",
-                    poverty >= .43 & poverty < .49 ~ "3",
-poverty >= .49 & poverty < .90 ~ "4" )) |> 
-mutate(poverty_groups=factor(poverty_groups, levels=c("1","2","3","4"),
-labels=c("1st Quartile (Least Poverty)", "2nd Quartile", "3 Quartile", "4th Quartile (Most Poverty)"))) |> 
-mutate(age_groups=case_when(mean_age > 41.58 ~ "2",
-mean_age < 41.58 ~ "1"))  |> 
-select(reg_byrv13, poverty_groups, age_groups) |> 
-  ggplot(mapping=aes(x=reg_byrv13, fill=age_groups)) + 
-  geom_density(alpha=.5, color=NA) +
-  facet_wrap(~poverty_groups) +
-  coord_cartesian(xlim=c(0, .25)) +
-  scale_x_continuous(labels=scales::percent_format()) + 
-  scale_fill_manual(values=c("#F8766D", "#00BFC4"), labels=c("Below 50th Percentile", "Above 50th Percentile")) +
-  theme_classic() +
-  labs(title="Distribution of New Registered Voters by Age Group",
-  subtitle="Younger districts tend to have more zero and near-zero percent increases",
-  x="Percent of New Registered Voters",
-  y="Density",
-  fill="Mean Age",
-  caption="Harris, Kamindo, Van der Windt (2020)")
-
-kenya_p2
-```
-
-### 
-
-We have provided you with the beginning of code for the last plot. Continue your pipe with `ggplot()`. Add the layer `geom_density()`. Map `reg_byrv13` to the x-axis, and `age_groups` to `fill`. Within `geom_density()`, set `alpha` equal to 0.5 **and** set `color` = `NA`.
-
-```{r kenya13, exercise = TRUE}
-  kenya |> 
-  mutate(poverty_groups = case_when(poverty >= .18 & poverty < .35 ~ "1",
-            poverty >= .35 &  poverty < .43  ~ "2",
-            poverty >= .43 & poverty < .49 ~ "3",
-            poverty >= .49 ~ "4")) |> 
-  mutate(poverty_groups = factor(poverty_groups, 
-                                    levels = c("1", "2","3", "4"), 
-                                    labels = c("1st Quartile (Richest)", "2nd Quartile", 
-                                    "3rd Quartile", "4th Quartile (Poorest)"))) |> 
-  mutate(age_groups = case_when(mean_age < 41.5  ~ "1",
-                                     mean_age >= 41.5  ~ "2")) |> 
-  select(reg_byrv13, treatment, poverty_groups, age_groups) |> 
-  drop_na()
-```
-
-```{r kenya-voter-registra-13-hint-1, eval = FALSE}
-... |> 
-  ggplot(aes(..., fill = ...)) +
-  geom_density(alpha = ..., color = NA) 
-```
-
-### 
-
-`NA` should be written without quotes. By setting color equal to `NA` we will produce density plots without the outline. This will make our graph easier to read as we will not have to differentiate between the black of the x-axis and the black outline, which is a problem for values very close to 0. 
-
-### Exercise 14
-
-Now add the layer `facet_wrap()` to facet the histogram by `poverty_groups`. Add the layer `coord_cartesian` and use the argument `xlim` to limit the x-axis domain to a minimum of 0 and a maximum of .25. 
-
-```{r kenya-voter-registra-14, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-14-hint-1, eval = FALSE}
-Within facet_wrap(), remember to put a ~ before the variable you want to facet by.
-```
-
-```{r kenya-voter-registra-14-hint-2, eval = FALSE}
-... +
-  coord_cartesian(xlim = c(0, .25))
-```
-
-### Exercise 15
-
-Copy paste the code above. Add the layer `scale_x_continuous` and set the argument `labels` equal to `scales::percent_format()`. Then, add the layer `scale_fill_manual`. Set `values` equal to `c("#F8766D", "#00BFC4")`, the default red and blue in ggplot and set `labels` equal to a vector of the new names, `"Below 50th Percentile"` and `"Above 50th Percentile"`.
-
-```{r kenya-voter-registra-15, exercise = TRUE}
-
-```
-
-```{r kenya-voter-registra-15-hint-1, eval = FALSE}
-... +
-  scale_x_continuous(labels = scales::percent_format()) +
-  scale_fill_manual(values = c("...", "..."), labels = c("...", "..."))
-```
-
-### 
-
-Make sure to pay attention to order whenever you are setting `labels` with vectors. The position of the label in the vector should correspond to the current position of what you want to change on the graph. 
-
-
-### Exercise 16
-
-Adjust the feel of the graph by adding the theme `theme_classic()`. To finish your plot, use `labs()` to give the graph a title, subtitle, axis labels, legend heading, and caption.
-
-```{r kenya-voter-registra-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-Reminder: This is what your plot should look like.
-
-```{r kenya16-answer}
-kenya_p2
-```
-
-### Exercise 17
-
-Let's create the following plot.
-
-```{r kenya-voter-registra-17}
-kenya_p3 <- kenya |> 
-  mutate(poverty_groups = case_when(poverty >= .18 & poverty < .35 ~ "1",
-            poverty >= .35 &  poverty < .43  ~ "2",
-            poverty >= .43 & poverty < .49 ~ "3",
-            poverty >= .49 ~ "4")) |> 
-  mutate(age_groups = case_when(mean_age < 41.5  ~ "1",
-                                     mean_age >= 41.5  ~ "2")) |> 
-  select(reg_byrv13, poverty_groups, age_groups) |> 
-  drop_na() |>
-  ggplot(aes(reg_byrv13, fill = poverty_groups, y = age_groups)) +
-  stat_slab(position = "dodge") +
-  coord_cartesian(xlim = c(0, .25)) +
-  scale_x_continuous(labels = scales::percent_format()) +
-  scale_fill_manual(values = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF"),
-                    limits = c("4", "3", "2", "1"),
-                    labels = c("4th Quartile (Most Poverty)", "3rd Quartile",
-                                                 "2nd Quartile", "1st Quartile (Least Poverty)")) +
-  scale_y_discrete(limits = c("2", "1"), 
-                   labels = c("Above 50th Percentile", "Below 50th Percentile")) +
-  labs(title = "Distribution of New Registered Voters by Poverty and Age Groups",
-       subtitle = "Poorer districts have a greater proportion of higher increases \n both in younger districts and in older districts",
-       x = "Percent of New Registered Voters", 
-       y = "", 
-       fill = "Poverty",
-       caption="Harris, Kamindo, Van der Windt (2020)") +
-  theme_classic()
-
-kenya_p3
-```
-
-### 
-
-We have provided you with the beginning of code for the last plot. However, because we are no longer faceting, we have removed the lines where we mutated `poverty_groups` into a factor. 
-
-### 
-
-Continue your pipe with `ggplot()`. Map `reg_byrv13` to the x-axis, `age_groups` to the y-axis and `poverty_groups` to `fill`. Add the layer `stat_slab()`.  Within `stat_slab()`, set `position` to "dodge".
-
-```{r kenya17, exercise = TRUE}
-kenya |> 
-  mutate(poverty_groups = case_when(poverty >= .18 & poverty < .35 ~ "1",
-            poverty >= .35 &  poverty < .43  ~ "2",
-            poverty >= .43 & poverty < .49 ~ "3",
-            poverty >= .49 ~ "4")) |> 
-  mutate(age_groups = case_when(mean_age < 41.5  ~ "1",
-                                     mean_age >= 41.5  ~ "2")) |>
-  select(reg_byrv13, poverty_groups, age_groups) |> 
-  drop_na()
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-17-hint-1, eval = FALSE}
-... |> 
-  ggplot(mapping = aes(..., fill = ...)) +
-  stat_slab(position=...) 
-```
-
-### 
-
-### Exercise 18
-
-Add the layer `coord_cartesian` and use the argument `xlim` to limit the x-axis domain to a minimum of 0 and a maximum of .25. 
-
-```{r kenya-voter-registra-18, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-18-hint-1, eval = FALSE}
-... +
-  coord_cartesian(xlim = c(0, .25))
-```
-
-### Exercise 19
-
-Now add the layer `scale_x_continuous` and set the argument `labels` equal to `scales::percent_format()`. 
-
-```{r kenya-voter-registra-19, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-19-hint-1, eval = FALSE}
-... +
-  scale_x_continuous(... = scales::percent_format()) +
-```
-
-### 
-
-Make sure to pay attention to order whenever you are setting `labels` with vectors. The position of the label in the vector should correspond to the current position of what you want to change on the graph. 
-
-
-### Exercise 20
-
-Although the factor labels we had previously would have worked, since you are not facet wrapping you do not have to change them that way. To change axis or legend `labels` you use `scale...()` functions, as you have done several times before. In addition to changing the legend labels, let us experiment by reversing the legend order using the `limits` argument. 
-
-### 
-
-Add the layer `scale_fill_manual`. Set the argument `values` equal to `c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")` which are the hex codes for the default red, green, blue, and purple, respectively in the legend. Set `limits` equal to the current legend options (which are identical to those in our data frame) in the order you want, `c("4", "3", "2", "1")`. Finally, set `labels` equal to a vector of the names which you want to appear in the legend, corresponding to the **new** order specified in limits. 
-
-```{r kenya-voter-registra-20, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-20-hint-1, eval = FALSE}
-... +
-scale_fill_manual(values = c("...", "...", "...", "..."),
-                    limits = c("...", "...", "...", "..."),
-                    labels = c("...", "...", "...", "..."))
-```
-
-```{r kenya-voter-registra-20-hint-2, eval = FALSE}
-... +
-scale_fill_manual(... = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF"),
-                    limits = c("4", "3", "2", "1"),
-                    ... = c("4th Quartile (Most Poverty)", "3rd Quartile",
-                                                 "2nd Quartile", "1st Quartile (Least Poverty)"))
-```
-
-### Exercise 21
-
-Add the layer `scale_y_discrete()`. Set the first argument to `limits` and set it equal to `c("2", "1")`. See how we reversed the order. Then set the second argument to `labels` and set it equal to `c("Above 50th Percentile", "Below 50th Percentile")`. 
-
-With this, we are changing the legend items from `1` and `2` to "Above/Below 50th Percentile". The syntax is identical to the previous exercise, except that `scale_y_discrete()` does not require the `values` argument. 
-
-
-```{r kenya-voter-registra-21, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r kenya-voter-registra-21-hint-1, eval = FALSE}
-... +
-scale_y_discrete(... = c("2", "1"), 
-                   ... = c("Above 50th Percentile", "Below 50th Percentile")
-```
-
-```{r kenya-voter-registra-21-hint-2, eval = FALSE}
-... +
-scale_y_discrete(limits = c("2", "1"), 
-                   ... = c("Above 50th Percentile", "Below 50th Percentile")
-```
-
-### Exercise 22
-
-Adjust the feel of the graph by adding the theme `theme_classic()`. To finish your plot, use `labs()` to give the graph a title, subtitle, axis labels, legend heading, and caption.
-
-```{r kenya-voter-registra-22, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-Reminder: This is what your plot should look like.
-
-```{r kenya22-answer}
-kenya_p3
-```
-
 ## Babynames
 ### 
 
@@ -3178,90 +2130,98 @@ The `babynames` data set comes from the SSA (Social Security Administration). Af
 
 ### 
 
-Let's create this graph
+Let's create this graph:
 
-```{r}
+<!-- DK: Change sex to Sex in legend title; change F/M to Female and Male in legend body; place Male on top. A couple of steps should be separated out into separate questions. Deal with "## Selecting by prop" message. -->
+
+```{r, message=FALSE}
 baby_p <- babynames |>
-  top_n(n = 10, wt = prop) |>
-  filter(! (year == 1887 & name == "Robert")) |>
-  summarise(total = sum(prop), .by = c(sex, year)) |>
+  group_by(year, sex) |> 
+  top_n(n = 10) |>
   ungroup() |> 
+  summarise(total = sum(prop), .by = c(sex, year)) |>
   ggplot(mapping = aes(x = year, y = total, color = sex)) +
-    geom_line() +
+    geom_point() +
     scale_y_continuous(labels = scales::percent) +
-    labs(title = "Total popularity of top 10 names each year, by sex",
+    labs(title = "Total Popularity of Top 10 Names",
+         subtitle = "The most popular names are beccoming much less popular",
          x = "Year",
-         y = "Percentage of top 10 names of all names") +
-  theme_classic()
+         y = "Top 10 Names as Percentage of All Names") 
 
 baby_p
 ```
 
 ### Exercise 1
 
-Look at the help page for `babynames`
+Use `library()` to load the **babynames** package.
 
 ```{r babynames-1, exercise = TRUE}
 
 ```
 
 ```{r babynames-1-hint-1, eval = FALSE}
-?babynames
+library(...)
 ```
 
 ### 
+
+Learn more about the package from its [website](http://hadley.github.io/babynames/).
 
 ### Exercise 2
 
-`skim` the `babynames` dataset
+Recall that your Console and the exercise code chunks for this tutorial use different R sessions. The fact that you loaded **babynames** in an exercise code chunk does not mean that it is loaded in your Console.
 
-```{r babynames-2, exercise = TRUE}
+In your Console, after loading the **babynames** package, look up the help page for the `babynames` tibble with `?babynames`. Copy/paste the "Format" paragraph.
 
-```
-
-```{r babynames-2-hint-1, eval = FALSE}
-
-skim(...)
+```{r babynames-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
 ```
 
 ### 
 
-Note that we have no missing values.
+The variable `prop` is more subtle than it might, at first, appear. It is the proportion, **within a given `year` and `sex`**, of the total number of babies who have that given name. 
+
 
 ### Exercise 3
 
-Print out `babynames`
+Run `summary()` on the `babynames` tibble.
 
 ```{r babynames-3, exercise = TRUE}
 
 ```
 
 ```{r babynames-3-hint-1, eval = FALSE}
-babynames
+summary(...)
 ```
 
 ### 
 
-There are about 1,924,655 rows meaning that there are 1,924,655 baby names in the data set. 
+Note that we have no missing values.
 
 ### Exercise 4
 
-Start with a new pipeline to `babynames` and use the `top_n()` function so that we only take the top 10 names of each group that we made. To do this, add the `n` and `wt` argument within the function and set `n` to `10` and `wt` to `prop`.
+Print out `babynames`
 
 ```{r babynames-4, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r babynames-4-hint-1, eval = FALSE}
-... |>
-  top_n(..., wt = prop)
+babynames
 ```
+
+### 
+
+There are almost 2 million observations.
 
 ### Exercise 5
 
-Continue your pipe with the `summarise()` function. Within this function, create a new variable called `total` and set it to `n()`. Afterwards group by `sex` and `year` using the `.by` argument
+Pipe `babynames` to `group_by(year, sex)`. This will lead future commands in the pipe to do all calculations on a per year/sex basis, at least until we `ungroup()` the data.
 
 ```{r babynames-5, exercise = TRUE}
 
@@ -3270,17 +2230,18 @@ Continue your pipe with the `summarise()` function. Within this function, create
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r babynames-5-hint-1, eval = FALSE}
-...|>
-  summarise(total = ..., .by = c(sex, year))
+babynames |> 
+  group_by(year, sex) 
 ```
 
 ### 
 
-When we do this, we again see that there isn't the correct amount of rows. Something is wrong with our data. There might be a tie somewhere between the proportion of two names. This would cause there to be an extra row in that group.
+Modern R code rarely uses `group_by()` anymore, prefering to `.by`/`by` arguments to *Tidyverse* functions like `summarise()`. 
+
 
 ### Exercise 6
 
-Let's find out which group it is. Use the `arrange` function to see the total row in a descending order.
+Continue the pipe with `top_n(n = 10)`.
 
 ```{r babynames-6, exercise = TRUE}
 
@@ -3289,35 +2250,39 @@ Let's find out which group it is. Use the `arrange` function to see the total ro
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r babynames-6-hint-1, eval = FALSE}
-... |>
-  arrange(desc(...))
+... |> 
+  top_n(n = 10)
 ```
 
 ### 
 
-We see that the year 1887 for male names has an extra row somewhere. There's our problem. Let's go back into the data set and look into that group.
+This pulls out the 10 most popular names, for each year and, within each year, for each sex.
+
+Note that there should be 2,760 rows in the resulting tibble: 138 years times 10 names times 2 sexes. Instead we have 2,761 rows. Can you figure out why? Does it mess up our plot?
 
 ### Exercise 7
 
-Start a new pipe with the `babynames` data. Use the `top_n()` function to obtain the top 10 names. (Use the same code from previous exercises) Then filter out the year 1887 and the male names.
+Continue the pipe with `ungroup()`.
 
 ```{r babynames-7, exercise = TRUE}
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r babynames-7-hint-1, eval = FALSE}
-... |>
-  top_n(10, wt = prop) |>
-  filter(... == 1887 & sex == "...")
+... |> 
+  ungroup()
 ```
 
 ### 
 
-We now see that Edward and Robert have the same prop at 0.0194. This is what's messing it up. Time to chose the better name. Pick which name you like better.
+One reason that `group_by()` is being phased out is that, unless you remember to `ungroup()` in the pipe, you will get weird results and/or errors. `ungroup()` removes the grouping variables which you had placed on the tibble previously.
+
 
 ### Exercise 8
 
-Now continue your pipe with `filter` again; however, we are trying to remove that one piece of data. Go ahead and remove the name you least like.
+Continue the pipe with `summarise()`, using the argument `total = sum(prop)`.
 
 ```{r babynames-8, exercise = TRUE}
 
@@ -3326,21 +2291,17 @@ Now continue your pipe with `filter` again; however, we are trying to remove tha
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r babynames-8-hint-1, eval = FALSE}
-
-Remember we can use the ! to indicate that we want to remove something
-  
-```
-
-```{r babynames-8-hint-2, eval = FALSE}
 ... |>
-  top_n(10, wt = prop) |>
-  filter(... == 1887 & sex == "...") |>
-  filter(! (... == 1887 & name == "..."))
+  summarise(total = sum(prop))
 ```
+
+### 
+
+This produces a somewhat nonsense result. The sum of all the values of `prop` for all these years and both sexes does not really mean anything.
 
 ### Exercise 9
 
-Now use `summarise()` to see the total proportion of top 10 names each year
+Edit the call to the `summarise()` by adding `.by` argument with value `c(sex`, `year`). 
 
 ```{r babynames-9, exercise = TRUE}
 
@@ -3349,17 +2310,17 @@ Now use `summarise()` to see the total proportion of top 10 names each year
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r babynames-9-hint-1, eval = FALSE}
-... |>
-  summarise(total = sum(prop))
+... |> 
+  summarise(total = sum(prop), .by = c(...))
 ```
 
 ### 
 
-Now we see that we have taken out that one tie and our row count has gone down
+This generates the data which we want to plot.
 
 ### Exercise 10
 
-Using your previous code, within your call to the summarise() function add the `.by` argument so that you can groupn by the variables `sex` and `year`. 
+Continue your pipe with `ggplot()`. Within `aes()`, map `year` to the x-axis, `total` to the y-axis, and `sex` to color. Also add `geom_point()`.
 
 ```{r babynames-10, exercise = TRUE}
 
@@ -3368,13 +2329,14 @@ Using your previous code, within your call to the summarise() function add the `
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r babynames-10-hint-1, eval = FALSE}
-... |> 
-  summarise(total = ..., .by = c(...))
+...|>
+  ggplot(mapping = aes(x = ..., y = ..., color = ...)) +
+    geom_point()
 ```
 
 ### Exercise 11
 
-Time to graph it. But we don't only want to graph the year 1887, so remove the first `filter` function which should be the one without the !. Continue your pipe with `ggplot`. Map `year` to the x-axis, `total` to the y-axis, and `sex` to color. Since we want it to be a line graph, use `geom_line()`.
+To finish your plot, use `labs()` to give the graph a title, subtitle, and axis labels. 
 
 ```{r babynames-11, exercise = TRUE}
 
@@ -3383,25 +2345,7 @@ Time to graph it. But we don't only want to graph the year 1887, so remove the f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r babynames-11-hint-1, eval = FALSE}
-...|>
-  ggplot(mapping = aes(x = ..., y = ..., color = ...)) +
-  geom_line()
-```
-
-### Exercise 12
-
-To finish your plot, use `labs()` to give the graph a title, subtitle, and axis labels. Add `theme_classic()` to adjust the feel of the graph.
-
-```{r babynames-12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r babynames-12-hint-1, eval = FALSE}
-... 
-ggplot(mapping = aes(x = ..., y = ..., color = ...)) +
-  geom_line() +
+... +
   labs(...)
 ```
 
@@ -3413,9 +2357,7 @@ baby_p
 
 ### 
 
-After looking at all the graphs info, we can see that the overall trend of this data goes down over time as the years increase. This makes sense. As society has grown overtime, the idea and concept of freedom, expression of creativity, and not following the crowd has become a bigger part. I mean, think about it. You have Cardi B naming her child Kulture, Kim K naming her daughter North. A literal direction. Her sister Chloe with her daughter named True. And last but not least, Elon Musks's son called X Æ A-12 or "Ash". Nice one Elon. I better not see you naming your child, if you choose to have them, Febreeze or something.
-
-
+Can you see where that extra row we ignored earlier in the analysis messes things up for one point in the male set in the 1880s?
 
 
 ## Summary
