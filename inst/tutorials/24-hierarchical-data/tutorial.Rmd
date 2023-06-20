@@ -15,12 +15,15 @@ description: 'Tutorial for Chapter 24: Hierarchical data'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
-
+library(tidyverse)
+library(repurrrsive)
+library(jsonlite)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
-
-
+x1 <- list(1:4, "a", TRUE)
+x2 <- list(a = 1:2, b = 1:3, c = 1:4)
+x5 <- list(1, list(2, list(3, list(4, list(5)))))
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -38,190 +41,149 @@ This tutorial covers [Chapter 24: Hierarchical data](https://r4ds.hadley.nz/rect
 ## Lists
 ###
 
-A list is the object which contains various data types such as logicals, integers, characters, and even another list!
-
+So far you’ve worked with data frames that contain simple vectors like integers, numbers, characters, date-times, and factors. These vectors are simple because they’re homogeneous: every element is of the same data type.If you want to store elements of different types in the same vector, you’ll need a list, which you create with `list()`.
 
 ### Exercise 1
 
-Create a list with three items `a`, `b`, and `c`. Have `a` take on the values 1, 2, and 3. Have `b` take on the values 4, 5, and 6. Have `c` take on the values  7, 8, and 9. Assign your list to an object named `my_list`. 
-
+To create our first list, let's create a variable x1 and assign the list() function to it. We will pass in three different data types within list(): the range of integers 1:4 to generate four integers, the string "a", and the Boolean value TRUE. On a new line, we'll call the variable x1. 
 
 ```{r lists-1, exercise = TRUE}
 
 ```
 
-```{r lists-1-hint-1, eval = FALSE}
-Use the c() function to create the individual vectors for a, b, and c. Use the list() function to create a list with objects a, b, and c.
+
+```{r lists-1-hint, eval = FALSE}
+x1 <- list(...,"a",...)
+x1
 ```
 
-```{r lists-1-hint-2, eval = FALSE}
-list(a = c(...), b = c(...), c = c(...))
-```
+###
+
+When you run x1, you will get all the data types that were passed in, along with their corresponding indices. If you want to access a specific data type by its index, such as finding the element in the first index of x1, you can use the square brackets notation: x1[1]. This will return the integers. 
 
 ### Exercise 2
 
-Now, use `str()` with the argument `my_list`. 
+It's indeed convenient to name the components, or children, of a list. To accomplish this, let's create a new variable `x2` and assign the `list()` function to it. Within `list()`, we'll define three columns named `a`, `b`, and `c`. We'll assign `1:2` to `a`, `1:3` to `b`, and `1:4` to `c`. On a new line call `x2`.
 
 ```{r lists-2, exercise = TRUE}
-my_list <- list(a = c(1, 2, 3), b = c(4, 5, 6), c = c(7, 8, 9))
 
 ```
+
+
+```{r lists-2-hint, eval = FALSE}
+... <- list(a = ..., b = ...,... = 1:4)
+x2
+```
+
+###
+
+When you run `x2`, you will see that each column contains different values. To access individual columns of the list, you can use the `$` operator since we have named the columns. For example, to access the column a from `x2`, you can use `x2$a`. 
 
 ### Exercise 3
 
-Let's now extract a single component `a` from `my_list` using `[ ]`. The code for the creation of `my_list` has been included for you. 
+Even for these very simple lists, printing takes up quite a lot of space. A useful alternative is `str()`, which generates a compact display of the structure, de-emphasizing the contents.
+
+Run `str()` and pass in `x1` and on a new line run `str()` again and pass in `x2`.
 
 ```{r lists-3, exercise = TRUE}
-my_list <- list(a = c(1, 2, 3), b = c(4, 5, 6), c = c(7, 8, 9))
 
 ```
 
-```{r lists-3-hint-1, eval = FALSE}
-You need to use quotation marks because a is a character.
+
+```{r lists-3-hint, eval = FALSE}
+str(...)
+str(...)
 ```
 
-```{r lists-3-hint-2, eval = FALSE}
-str(my_list[" "])
-```
+###
+
+As you can see, str() displays each child of the list on its own line. It displays the name, if present, then an abbreviation of the type, then the first few values.
 
 ### Exercise 4
 
-Now, extract the number 5 from `my_list` using `[[]]` and `[ ]`.
+Lists can contain any type of object, including other lists. This makes them suitable for representing hierarchical (tree-like) structures.
+
+To create a representation of hierarchical structures, let's create a variable `x3` and assign `list()` to it. Within `list()`, we will pass in `list(1,2)` and `list(3,4)`. This means we will have two lists nested inside a single list. Then on a new line run `str()` and pass in `x3`.
 
 ```{r lists-4, exercise = TRUE}
-my_list <- list(a = c(1, 2, 3), b = c(4, 5, 6), c = c(7, 8, 9))
 
 ```
 
-```{r lists-4-hint-1, eval = FALSE}
-Refer to the name of the list item in the double 
-brackets, and the position in that item in the single 
-brackets.
+
+```{r lists-4-hint, eval = FALSE}
+... <- list(list(...), ...(3, 4))
+str(...)
 ```
 
-```{r lists-4-hint-2, eval = FALSE}
-my_list <- list(a = c(1, 2, 3), b = c(4, 5, 6), c = c(7, 8, 9))
-my_list[["b"]][...]
-```
+###
 
-## JSON files 
-### 
+This is notably different to `c()`, which generates a flat vector like when we run `c(c(1, 2), c(3, 4))`, we get `#> [1] 1 2 3 4` which is flat.
 
-An increasingly common format for sharing data is JavaScript Object Notation or JSON. 
+### Exercise 5
 
-JSON is a standard text-based format for representing structured data based on JavaScript object syntax.
+Now what if we pass in two list in a vector, will we get a heirichal vector or a flat vector?
 
-### Exercise 1
+To find out, create a new variable `x4` and assign it to vector function `c()`. Within `c()` pass in `list(1,2)` and pass in `list(3,4)`. On a new line, run `str()` and pass in `x4`.
 
-Consider the contents of the file `test_1.json`:
-
-```{r}
-cat(readLines("data/test_1.json"), sep = "\n")
-```
-
-### 
-
-Write code for reading this JSON file into R as a tibble. Use the `fromJSON()` function from the [**jsonlite**](https://cran.r-project.org/web/packages/jsonlite/vignettes/json-aaquickstart.html) package.
-
-```{r json-files-1, exercise = TRUE}
+```{r lists-5, exercise = TRUE}
 
 ```
 
-```{r json-files-1-hint-1, eval = FALSE}
-fromJSON("data/test_1.json")
+
+```{r lists-5-hint, eval = FALSE}
+... <- c(list(...), ...(3, ...))
+str(...)
 ```
 
-### 
+###
 
-If there are "null" values in the file, you can specify how to encode those values with the `null` argument in `fromJSON`.
+Even when we pass in lists, we get no hierarchical data and just get the numbers in row like order.
 
+### Exercise 6
 
-### Exercise 2
+As lists get more complex, `str()` gets more useful, as it lets you see the hierarchy at a glance.
 
-Consider the following tibble, which is saved in the environment as an object called `example_1`.
+Run `x5` which is very complex list.
 
-```{r}
-tibble(name= c("Miguel", "Sofia", "Aya", "Cheng"), 
-                student_id = 1:4, exam_1 = c(85, 94, 87, 90), 
-                exam_2 = c(86, 93, 88, 91))
-```
-
-### 
-
-Write code to convert the following tibble into JSON format. Use the `toJSON()` function from the **jsonlite** package.
-
-```{r json-files-2, exercise = TRUE}
+```{r lists-6, exercise = TRUE}
 
 ```
 
-```{r json-files-2-hint-1, eval = FALSE}
-toJSON(example_1)
+
+```{r lists-6-hint, eval = FALSE}
+x5
 ```
 
-### 
+###
 
-`toJSON()` actually has the same arguments as `fromJSON()`, meaning that you can use `null`, `na`, `pretty` and many more arguments to customize the results.
+when we ran `x5` we get some many duplicate numbers in brackets and it's all confusing and complex. This is where `str()` comes to shine.
 
-### Exercise 3
+### Exercise 7
 
-After converting from a tibble to the JSON format, it is hard to read the JSON format. To fix this, use the previous code and set the second argument `pretty` equal to `TRUE`.
+Now run `str(x5)`.
 
-```{r json-files-3, exercise = TRUE}
+```{r lists-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r json-files-3-hint-1, eval = FALSE}
-toJSON(example_1, pretty = ...)
+```{r lists-7-hint, eval = FALSE}
+str(x5)
 ```
 
-### 
+###
 
-The `pretty` argument comes from the [**prettify**](https://www.rdocumentation.org/packages/papeR/versions/1.0-5/topics/prettify) package, run `??prettify` to learn more about it.
+Now this dosen't mean in you should always use `str()` to visualize because as lists get even larger and more complex, `str()` eventually starts to fail, and you’ll need to switch to `View()`.
 
+## Unnesting
+###
 
-### Exercise 4
+## Case Studies
+###
 
-Try reading from the `json` object which has already been loaded with JSON array data. Use `fromJSON()` to display the data in a tibble.
-
-```{r json-files-4, exercise = TRUE}
-
-```
-
-```{r json-files-4-hint-1, eval = FALSE}
-fromJSON(json)
-```
-
-### 
-
-As you can see, `fromJSON()` can display arrays as well, which can be useful for datasets that include matrices. You can do math operations with them as well! 
-
-### Exercise 5
-
-You can also write information like arrays or matrices to a JSON format using `toJSON()`. 
-
-Display a 3x3 array in JSON format by creating 3 arrays structured like `[1, 2, 3]`, containing them in a larger array, and then passing them into `toJSON()`.
-
-```{r json-files-5, exercise = TRUE}
-
-```
-
-```{r json-files-5-hint-1, eval = FALSE}
-json2 <- '[[..., ..., ...], [..., ..., ...], [..., ..., ...]]'
-
-```
-
-```{r json-files-5-hint-2, eval = FALSE}
-json2 <- '[[..., ..., ...], [..., ..., ...], [..., ..., ...]]'
-toJSON(json2)
-```
-
-### 
-
-Because JSON files can so easily store complex matrix data, they're often used in APIs and websites. This makes `fromJSON()` invaluable when you're pulling data off the Internet, as the data will often come in a JSON file. 
-
-Vice versa, `toJSON()` is useful for when you want to send data across the Internet due to its light weight (there's very little extra formatting included in the file and it's mostly data).
+## JSON
+###
 
 
 ## Summary
