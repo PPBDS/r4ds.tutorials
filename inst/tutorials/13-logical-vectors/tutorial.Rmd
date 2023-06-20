@@ -690,7 +690,7 @@ The following sections describe some useful techniques for summarizing logical v
 
 ### Exercise 1
 
-Start a pipe with `flights`. Pipe it into `group_by`. Within `group_by`, add `year, month, day`. This will group the data in order by year, month, and day.
+Start a pipe with `flights`. Pipe it into `summarize()`. Within `summarize()`, add `all_delayed = all(dep_delay <= 60)`. This will make a new column named `all_delayed` that is `TRUE` when `dep_delay` is less than or equal to `60` minutes
 
 ```{r summaries-1, exercise = TRUE}
 
@@ -700,7 +700,7 @@ Start a pipe with `flights`. Pipe it into `group_by`. Within `group_by`, add `ye
 
 ```{r summaries-1-hint, eval = FALSE}
 flights|>
-  group_by(...)
+  summarize(... = all(...))
 ```
 
 ###
@@ -709,7 +709,7 @@ There are two main logical summaries: `any()` and `all()`. `any(x)` is the equiv
 
 ### Exercise 2
 
-Copy previous code and pipe it into `summarize()`. Within `summarize()`, add `all_delayed = all(dep_delay <= 60)`. This will make a new column named `all_delayed` that is `TRUE` when `dep_delay` is less than or equal to `60` minutes
+Copy previous code. Within `all()`, add `na.rm = TRUE` separated with a `,`. When `na.rm` is set to `TRUE`, it removes all `NA` values. `na.rm` is short for `na.remove`.
 
 ```{r summaries-2, exercise = TRUE}
 
@@ -718,9 +718,9 @@ Copy previous code and pipe it into `summarize()`. Within `summarize()`, add `al
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-2-hint, eval = FALSE}
-flights|>
-  group_by(year, month, day)|>
-  summarize(... = all(...))
+flights |> 
+  summarize(
+    all_delayed = all(dep_delay <= 60,...)
 ```
 
 ###
@@ -729,7 +729,7 @@ For example, we could use `all()` and `any()` to find out if every flight was de
 
 ### Exercise 3
 
-Copy previous code. Within `all()`, add `na.rm = TRUE` separated with a `,`. When `na.rm` is set to `TRUE`, it removes all `NA` values. `na.rm` is short for `na.remove`.
+Copy previous code. Within `summarize()`, add `any_long_delay = any(arr_delay >= 300, na.rm = TRUE)`. This will make a new column named `any_long_delay` that is `TRUE` when `arr_delay` is greater than or equal to `300` minutes. It will also remove all `NA` values.
 
 ```{r summaries-3, exercise = TRUE}
 
@@ -738,7 +738,10 @@ Copy previous code. Within `all()`, add `na.rm = TRUE` separated with a `,`. Whe
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-3-hint, eval = FALSE}
-
+flights |> 
+  summarize(
+    all_delayed = all(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = any(...)
 ```
 
 ###
@@ -747,7 +750,7 @@ Like all summary functions, `any()` and `all()` will return `NA` if there are an
 
 ### Exercise 4
 
-Copy previous code. Within `summarize()`, add `any_long_delay = any(arr_delay >= 300, na.rm = TRUE)`. This will make a new column named `any_long_delay` that is `TRUE` when `arr_delay` is greater than or equal to `300` minutes. It will also remove all `NA` values.
+Copy previous code. Add `.groups = "drop"` to the `summarize()` function. Also add `.by = year, month`. Make sure to separate these arguments with commas. `.by = year, month` will make the tibble have one row for each variation of `month` and `year`
 
 ```{r summaries-4, exercise = TRUE}
 
@@ -756,20 +759,21 @@ Copy previous code. Within `summarize()`, add `any_long_delay = any(arr_delay >=
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-4-hint, eval = FALSE}
-flights |> 
-  group_by(year, month, day) |> 
+flights |>
   summarize(
     all_delayed = all(dep_delay <= 60, na.rm = TRUE),
-    any_long_delay = any(...)
+    any_long_delay = any(arr_delay >= 300, na.rm = TRUE),
+    .groups = "...",
+    .by = ...)
 ```
 
 ###
 
-This should output 365 rows and 5 columns. The reason there is 365 rows is because the `group_by()` argument groups it by year, month, and day, so all the flights are grouped into their separate days and there are 365 days in a year.
+In most cases, however, `any()` and `all()` are a little too crude, and it would be nice to be able to get a little more detail about how many values are `TRUE` or `FALSE`. That leads us to the numeric summaries.
 
 ### Exercise 5
 
-Copy previous code. Add `.groups = "drop"` to the `summarize()` function.
+Add `day` as a new argument in `.by()`. Make sure to separate the arguments with commas.
 
 ```{r summaries-5, exercise = TRUE}
 
@@ -778,17 +782,17 @@ Copy previous code. Add `.groups = "drop"` to the `summarize()` function.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-5-hint, eval = FALSE}
-flights |> 
-  group_by(year, month, day) |> 
+flights |>
   summarize(
     all_delayed = all(dep_delay <= 60, na.rm = TRUE),
     any_long_delay = any(arr_delay >= 300, na.rm = TRUE),
-    .groups = "...")
+    .groups = "drop",
+    .by = year, month, ...)
 ```
 
 ###
 
-In most cases, however, `any()` and `all()` are a little too crude, and it would be nice to be able to get a little more detail about how many values are `TRUE` or `FALSE`. That leads us to the numeric summaries.
+This will make the resulting tibble have one row for each variation of `year, month, day`. Basically one row for each day of the year.
 
 ### Exercise 6
 
@@ -801,12 +805,12 @@ Copy previous code. Switch `all()` for `mean()`, and `any()` for `sum()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-6-hint, eval = FALSE}
-flights |> 
-  group_by(year, month, day) |> 
+flights |>  
   summarize(
     all_delayed = ...(dep_delay <= 60, na.rm = TRUE),
     any_long_delay = ...(arr_delay >= 300, na.rm = TRUE),
-    .groups = "drop")
+    .groups = "drop",
+    .by = year, month, day)
 ```
 
 ###
@@ -817,18 +821,17 @@ This allows for us to see the proportion of flights that were delayed on departu
 
 ### Exercise 7
 
-Start a new pipe with `flights`. Pipe it into `filter`. Within `filter()`, add `arr_delay > 0` as the argument. Continue the pipe into `group_by` with the argument `year, month, day`.
+Start a new pipe with `flights`. Pipe it into `filter`. Within `filter()`, add `arr_delay > 0` as the argument.
 
 ```{r summaries-7, exercise = TRUE}
-flights |>
-  filter(arr_delay > 0)|>
-  group_by(year, month, day)
+
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-7-hint, eval = FALSE}
-
+flights |>
+  filter(arr_delay > 0)
 ```
 
 ###
@@ -848,7 +851,6 @@ Continue the pipe with `summarize()`. Within `summarize()`, add the argument `be
 ```{r summaries-8-hint, eval = FALSE}
 flights |>
   filter(arr_delay > 0)|>
-  group_by(year, month, day)|>
   summarize(...)
 ```
 
@@ -858,7 +860,7 @@ This will look at the average delay just for flights that were actually delayed.
 
 ### Exercise 9
 
-Add `.groups = "drop` into the `summarize()`
+Add `.groups = "drop` into the `summarize()`. Also add `.by = year, month, day` to have one row for each day of the year.
 
 ```{r summaries-9, exercise = TRUE}
 
@@ -869,10 +871,10 @@ Add `.groups = "drop` into the `summarize()`
 ```{r summaries-9-hint, eval = FALSE}
 flights |>
   filter(arr_delay > 0)|>
-  group_by(year, month, day)|>
   summarize(behind = mean(arr_delay),
             n = n(),
-            ...)
+            .groups = "...",
+            .by = ...)
 ```
 
 ###
