@@ -15,10 +15,21 @@ description: 'Tutorial for Chapter 22: Databases'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
+library(tibble)
+library(DBI)
+library(dbplyr)
+library(RSQLite)
+library(RPostgres)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
+con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "duckdb")
+mpg_sql <- "
+  SELECT manufacturer, model, year, displ, class 
+  FROM mpg 
+  WHERE displ > 1.8
+"
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -30,16 +41,193 @@ options(tutorial.exercise.timelimit = 60,
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 22: Databases](https://r4ds.hadley.nz/databases.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
+This tutorial covers [Chapter 22: Databases](https://r4ds.hadley.nz/databases.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to use [**DBI**](https://dbi.r-dbi.org/) and the [**dbplyr**](https://dbplyr.tidyverse.org/) to connect to databases and execute SQL.
 
-<!-- Add libraries and all of the variables in the setup code chunk before using them. -->
+## Connecting to a database
+###
+
+To first start working a database we need to connect to one. You’ll always use `DBI` (database interface) because it provides a set of generic functions that connect to the database, upload data, run SQL queries, etc. You’ll also use a package tailored for the `DBMS` you’re connecting to. This package translates the generic `DBI` commands into the specifics needed for a given `DBMS`. There’s usually one package for each `DBMS`, e.g. `RPostgres` for PostgreSQL and `RMariaDB` for MySQL.
+
+### Exercise 1
+
+Let's run the `library()` on `tidyverse`, `DBI`, and `tibble`.
+
+```{r connecting-to-a-data-1, exercise = TRUE}
+
+```
+
+```{r connecting-to-a-data-1-hint, eval = FALSE}
+library(...)
+...(DBI)
+library(...)
+```
+
+###
+
+At the simplest level, you can think about a database as a collection of data frames, called tables in database terminology. Like a data frame, a database table is a collection of named columns, where every value in the column is the same type. Databases are run by database management systems (DBMS’s for short), which come in three basic forms: Client-server, Cloud, and In-process.
+
+### Exercise 2
+
+Set `DBI::dbConnect(duckdb::duckdb())` to the `con` variable.
+
+```{r connecting-to-a-data-2, exercise = TRUE}
+
+```
+
+```{r connecting-to-a-data-2-hint, eval = FALSE}
+... <- DBI::dbConnect(duckdb::duckdb())
+```
+
+###
+
+`duckdb` is a high-performance database that’s designed very much for the needs of a data scientist. We use it here because it’s very easy to get started with, but it’s also capable of handling gigabytes of data with great speed. 
+
+### Exercise 3
+
+Copy the code from above. Now within the `con` variable, add `dbdir` and set it to "duckdb".
+
+```{r connecting-to-a-data-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r connecting-to-a-data-3-hint, eval = FALSE}
+... <- DBI::dbConnect(..., dbdir = "duckdb")
+```
+
+###
+
+We want to use `duckdb` for a real data analysis project, so we need to use the `dbdir` argument to make a persistent database and tell `duckdb` where to save it.
+
+### Exercise 4
+
+Let's write the `mpg` data to the database we just created. Use `dbWriteTable()` and within it put the arguments `con`, "mpg", and `ggplot2::mpg`.
+
+```{r connecting-to-a-data-4, exercise = TRUE}
+
+```
+
+```{r connecting-to-a-data-4-hint, eval = FALSE}
+dbWriteTable(..., "mpg", ...)
+```
+
+###
+
+When we use `dbWriteTable()` we need to supply three arguments: a database connection, the name of the table to create in the database, and a data frame of data.
+
+### Exercise 5
+
+Let's write the `diamonds` data to the database we just created. Use `dbWriteTable()` and within it put the arguments `con`, "diamonds", and `ggplot2::diamonds`.
+
+```{r connecting-to-a-data-5, exercise = TRUE}
+
+```
+
+```{r connecting-to-a-data-5-hint, eval = FALSE}
+...(con, ..., ggplot2::diamonds)
+```
+
+###
+
+With the `duckdb` database we are using we are using in-process DBMS’s, like `SQLite`, which are run entirely on your computer. They’re great for working with large datasets where you’re the primary user.
+
+### Exercise 6
+
+Run `dbListTables()` on `con`.
+
+```{r connecting-to-a-data-6, exercise = TRUE}
+
+```
+
+```{r connecting-to-a-data-6-hint, eval = FALSE}
+dbListTables(...)
+```
+
+###
+
+You can check that the data is loaded correctly by using the `dbListTables()` function that lists all tables in the database.
+
+### Exercise 7
+
+Let's use another DBI function: `dbReadTable()`. Start a pipe with `con` and use `dbReadTable()` on "mpg".
+
+```{r connecting-to-a-data-7, exercise = TRUE}
+
+```
+
+```{r connecting-to-a-data-7-hint, eval = FALSE}
+con |>
+  dbReadTable(...)
+```
+
+###
+
+`dbReadTable()` returns a `data.frame`. 
+
+### Exercise 8
+
+Continue the pipe with `as_tibble()` which will return our data in a nice tibble format.
+
+```{r connecting-to-a-data-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r connecting-to-a-data-8-hint, eval = FALSE}
+... |>
+  as_tibble()
+```
+
+###
+
+To convert data into a tibble we use `as_tibble()` which allows it t print nicely.
+
+### Exercise 9
+
+Now let's use `SQL` to select specific variables from the database. Create a `mpg_sql` variable and set it equal to 
+"
+  SELECT manufacturer, model, year, displ, class 
+  FROM mpg 
+  WHERE displ > 1.8
+"
+
+```{r connecting-to-a-data-9, exercise = TRUE}
+```
+
+```{r connecting-to-a-data-9-hint, eval = FALSE}
+... <- "
+  SELECT manufacturer, model, year, displ, class 
+  FROM mpg 
+  WHERE displ > 1.8
+"
+```
+
+###
+
+With the above variable, we want to select 5 specific variables, from the mpg dataset, with only values with `displ` > 1.8.
+
+### Exercise 10
+
+Use `as_tibble()` and within use `dbGetQuery()` and set two arguments con, `mpg_sql` within `dbGetQuery()`.
+
+```{r connecting-to-a-data-10, exercise = TRUE}
+
+```
+
+```{r connecting-to-a-data-10-hint, eval = FALSE}
+...(dbGetQuery(con, mpg_sql))
+```
+
+###
+
+You can use `dbGetQuery()` to get the results of running a query on the database with `as_tibble()` we get the results in tibble format.
 
 ## Summary
 ### 
 
 This tutorial covered [Chapter 22: Databases](https://r4ds.hadley.nz/databases.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
-
-
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
