@@ -65,6 +65,11 @@ trend_text <- "Larger engine sizes tend to have lower fuel economy." |>
 
 base <- ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point(aes(color = class))
+
+random_vals <- tibble(
+  x = rnorm(10000),
+  y = rnorm(10000)
+)
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -1733,6 +1738,395 @@ base <- mpg |>
 
 This fixes our previous problem. If your plot is short and wide, place the legend at the legend at the top or bottom, and if it’s tall and narrow, place the legend at the left or right. You can also use legend.position = "none" to suppress the display of the legend altogether.
 
+## Replacing a Scale
+###
+
+In this section, we will learn about switching out a scale for a new one. The scales that you would wanna switch out are the continuous position scales and the color scales.
+
+### Exercise 1
+
+We will be working with a dataset called `diamonds`. Type in `diamonds` and hit "Run Code".
+
+```{r replacing-a-scale-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-1-hint, eval = FALSE}
+
+```
+
+###
+
+The dataset `diamonds` us a dataset containing the prices and other attributes of almost 54,000 diamonds. The variables are as follows:
+
+### Exercise 2
+
+Create a new pipeline. Pipe `diamonds` to the `ggplot()` function. Within this function map `x` to `carat` and `y` to `price`.
+
+```{r replacing-a-scale-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-2-hint, eval = FALSE}
+diamonds |> 
+  ggplot(aes(x = ..., y = ...))
+```
+
+### Exercise 3
+
+Using your previous code, add the `geom_bin2d()` function to the pipeline.
+
+```{r replacing-a-scale-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-3-hint, eval = FALSE}
+... +
+  geom_bin2d()
+```
+
+###
+
+It’s very useful to plot transformations of your variable. For example, it’s easier to see the precise relationship between carat and price if we log transform them.
+
+### Exercise 4
+
+Using your previous code, within the `ggplot()` function, add the `log10()` function to `carat` and `price`. 
+
+```{r replacing-a-scale-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-4-hint, eval = FALSE}
+diamonds |> 
+  ggplot(aes(x = log10(...), y = ...)) +
+  geom_bin2d()
+```
+
+###
+
+However, the disadvantage of this transformation is that the axes are now labelled with the transformed values, making it hard to interpret the plot. Instead of doing the transformation in the aesthetic mapping, we can instead do it with the scale. 
+
+### Exercise 5
+
+Using your previous code, within the `ggplot()` function remove the `log10()` around `carat` and `price`. Then add the function `scale_x_log10()` to the pipeline. 
+
+```{r replacing-a-scale-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-5-hint, eval = FALSE}
+diamonds |> 
+  ggplot(aes(x = ..., y = ...)) +
+  geom_bin2d() +
+  scale_x_log10()
+```
+
+### Exercise 6
+
+Using your previous code, add the `scale_y_log10()` function to the pipeline.
+
+```{r replacing-a-scale-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-6-hint, eval = FALSE}
+... + 
+  scale_y_log10()
+```
+
+###
+
+This plot is much easier on the eyes due to the axes being much more organized than the previous plot.
+
+### Exercise 7
+
+Create a new pipeline. Pipe `mpg` to the `ggplot()` function. Within this function map `x` to `displ` and `y` to `hwy`.
+
+```{r replacing-a-scale-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-7-hint, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...))
+```
+
+### Exercise 8
+
+Using your previous code, add the `geom_point()` function to the pipeline. Within this function, map `color` to `drv`.
+
+```{r replacing-a-scale-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-8-hint, eval = FALSE}
+,,, +
+  geom_point(aes(color = ...))
+```
+
+###
+
+Another scale that is frequently customized is color. The default categorical scale picks colors that are evenly spaced around the color wheel. Useful alternatives are the ColorBrewer scales which have been hand tuned to work better for people with common types of color blindness.
+
+### Exercise 9
+
+Using your previous code, add a scale function, `scale_color_brewer()` to the pipeline. Within this function, add the argument `palette` and set it equal to `"Set1"`. 
+
+```{r replacing-a-scale-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-9-hint, eval = FALSE}
+... +
+  scale_color_brewer(palette = ...)
+```
+
+###
+
+Don’t forget simpler techniques for improving accessibility. If there are just a few colors, you can add a redundant shape mapping. This will also help ensure your plot is interpretable in black and white.
+
+### Exercise 10
+
+Using your previous code, within your call to the `geom_point()` function, add to your map, by mapping `shape` to `drv`. 
+
+```{r replacing-a-scale-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-10-hint, eval = FALSE}
+... +
+  geom_point(aes(color = ..., shape = ...)) +
+  ....
+```
+
+###
+
+The ColorBrewer scales are documented online at https://colorbrewer2.org/ and made available in R via the RColorBrewer package, by Erich Neuwirth.
+
+### Exercise 11
+
+Create a new pipeline and pipe the dataset `presidential` to the `mutate()` function. Within the `mutate()` function, create a new variable called `id` and set it equal to `33` plus `row_number()`.
+
+```{r replacing-a-scale-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-11-hint, eval = FALSE}
+presidential |> 
+  mutate(id = ...)
+```
+
+###
+
+### Exercise 12
+
+Using your previous code, add the `ggplot()` function to the pipeline and map `x` to `start`, `y` to `id`, and `color` to `party`.
+
+```{r replacing-a-scale-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-12-hint, eval = FALSE}
+... + 
+  ggplot(aes(x = ..., y = ..., color = ...))
+```
+
+### Exercise 13
+
+Using your previous code, add the `geom_point()` function to the pipeline. 
+
+```{r replacing-a-scale-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-13-hint, eval = FALSE}
+... +
+  geom_point()
+```
+
+### Exercise 14
+
+Using your previous code, add the `geom_segment()` function. Within this function, map `xend` to `end` and `yend` to `id`.
+
+```{r replacing-a-scale-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-14-hint, eval = FALSE}
+... +
+  geom_segment(aes(xend = ..., yend = ...))
+```
+
+### Exercise 15
+
+Using your previous code, add the `scale_color_manual()` function to the pipeline. Within this function add the argument `values` and set it to equal `c(Republican = "#E81B23", Democratic = "#00AEF3")`. 
+
+```{r replacing-a-scale-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-15-hint, eval = FALSE}
+... +
+  scale_color_manual(values = ...)
+```
+
+###
+
+If we wanted to map presidential party to color, we want to use the standard mapping of red for Republicans and blue for Democrats. One approach for assigning these colors is using hex color codes as shown above. 
+
+### Exercise 16
+
+For our next plot, we will create a plot with the dataset `random_vals`. Type in `random_vals` and hit "Run Code".
+
+```{r replacing-a-scale-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-16-hint, eval = FALSE}
+random_vals
+```
+
+### Exercise 17
+
+Create a new pipeline. Pipe `random_vals` to the `ggplot()` function. Within this function, map `x` to `x` and `y` to `y`. 
+
+```{r replacing-a-scale-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-17-hint, eval = FALSE}
+random_vals |> 
+  ggplot(aes(x, y))
+```
+
+###
+
+For continuous color, you can use the built-in scale_color_gradient() or scale_fill_gradient(). If you have a diverging scale, you can use scale_color_gradient2(). That allows you to give, for example, positive and negative values different colors.
+
+### Exercise 18
+
+Using your previous code, add the `geom_hex()` function to the pipeline.
+
+```{r replacing-a-scale-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-18-hint, eval = FALSE}
+... +
+  geom_hex()
+```
+
+### Exercise 19
+
+Using your previous code, add the `coord_fixed()` function to the pipeline.
+
+```{r replacing-a-scale-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-19-hint, eval = FALSE}
+... +
+  coord_fixed()
+```
+
+###
+
+Another option is to use the viridis color scales. The designers, Nathaniel Smith and Stéfan van der Walt, carefully tailored continuous color schemes that are perceptible to people with various forms of color blindness as well as perceptually uniform in both color and black and white. These scales are available as continuous (c), discrete (d), and binned (b) palettes in **ggplot2**.
+
+### Exercise 20
+
+Using your previous code, add the `scale_color_viridis_c()` function to the pipeline. 
+
+```{r replacing-a-scale-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-20-hint, eval = FALSE}
+... +
+  scale_fill_viridis_c()
+```
+
+###
+
+This is the plot that shows a continuous plot in the viridis color scale.
+
+### Exercise 21
+
+Using your previous code, change the `scale_fill_viridis_c()` to `scale_fill_viridis_b()`.
+
+```{r replacing-a-scale-21, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-21-hint, eval = FALSE}
+... +
+  scale_fill_viridis_b()
+```
+
+###
+
+As you can see the color gradient looks chunky and unlike the continuous plot before. This is because it is a binned plot on the viridis color scale. 
+
+### Exercise 22
+
+Using your previous code, add the `labs()` function to the pipeline. Within this function, add a title, an x axis title, and a y axis title to the plot.
+
+```{r replacing-a-scale-22, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r replacing-a-scale-22-hint, eval = FALSE}
+
+```
+
+###
+
+Note that all color scales come in two varieties: scale_color_*() and scale_fill_*() for the color and fill aesthetics respectively (the color scales are available in both UK and US spellings).
 
 
 
