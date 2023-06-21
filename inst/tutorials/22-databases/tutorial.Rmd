@@ -38,6 +38,12 @@ diamonds_db <- tbl(con, "diamonds")
 dbplyr::copy_nycflights13(con)
 flights_db <- tbl(con, "flights")
 planes_db <- tbl(con, "planes")
+
+mutate_query <- function(df, ...) {
+  df |> 
+    mutate(..., .keep = "none") |> 
+    show_query()
+}
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -769,13 +775,127 @@ The main thing to notice here is the syntax: `SQL` joins use sub-clauses of the 
 
 **dbplyr** also translates other verbs like `distinct()`, `slice_*()`, and `intersect()`, and a growing selection of **tidyr** functions like `pivot_longer()` and `pivot_wider()`. Visit [**dbplyr**](https://dbplyr.tidyverse.org/reference/) to view other verbs.
 
+## Function Translations
+###
+
+So far we’ve focused on the big picture of how **dplyr** verbs are translated to the clauses of a query. Now we’re going to zoom in a little and talk about the translation of the R functions that work with individual columns. To help see what’s going on, we’ll use a couple of little helper functions that run a `summarize()` or `mutate()` and show the generated `SQL`.
+
+### Exercise 1
+
+We are going to create a function that will be used throughout this entire section of the tutorial. Create a `mutate_query` variable and set it to `function(df, ...) {}`.
+
+```{r function-translation-1, exercise = TRUE}
+
+```
+
+```{r function-translation-1-hint, eval = FALSE}
+... <- function(df, ...) {}
+```
+
+### Exercise 2
+
+Within the function, start a pipe with `df` and use `mutate(..., .keep = "none")`.
+
+```{r function-translation-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r function-translation-2-hint, eval = FALSE}
+mutate_query <- function(df, ...) {
+  df |> 
+    mutate(..., .keep = "none")
+}
+```
+
+### Exercise 3
+
+Finish the pipe in the function by adding `show_query()`.
+
+```{r function-translation-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r function-translation-3-hint, eval = FALSE}
+mutate_query <- function(df, ...) {
+  df |> 
+    mutate(..., .keep = "none") |> 
+    show_query()
+}
+```
+
+###
+
+The translation of summary functions becomes more complicated when you use them inside a `mutate()` because they have to turn into so-called window functions. In `SQL`, you turn an ordinary aggregation function into a window function by adding `OVER` after it.
+
+### Exercise 4
+
+Start a pipe with `flights_db` and use the `mutate_query()` variable we used from above.
+
+```{r function-translation-4, exercise = TRUE}
+
+```
+
+```{r function-translation-4-hint, eval = FALSE}
+... |> 
+  mutate_query()
+```
+
+### Exercise 5
+
+Within `mutate_query()` set description to `case_when()`, within `case_when()` use `arr_delay < -5 ~ "early"`, 
+                  `arr_delay < 5 ~ "on-time"`,
+                  `arr_delay >= 5 ~ "late"`
+
+```{r function-translation-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r function-translation-5-hint, eval = FALSE}
+... |> 
+  ...(
+    description = 
+      case_when(
+        arr_delay < -5 ~ "early", 
+        arr_delay < 5 ~ "on-time",
+        arr_delay >= 5 ~ "late"
+      )
+  )
+```
+
+###
+
+Another important `SQL` function is `CASE WHEN`. It’s used as the translation of `if_else()` and `case_when()`, the **dplyr** function that it directly inspired.
+
+### Exercise 6
+
+Finish the pipe by adding `show_query()`.
+
+```{r function-translation-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r function-translation-6-hint, eval = FALSE}
+... |> 
+  ...(...) |>
+  show_query()
+```
+
+###
+
+**dbplyr** also translates common string and date-time manipulation functions, which you can learn about in `vignette("translation-function", package = "dbplyr")`. **dbplyr**’s translations are certainly not perfect, and there are many R functions that aren’t translated yet, but **dbplyr** does a surprisingly good job covering the functions that you’ll use most of the time.
+
 ## Summary
 ### 
 
-This tutorial covered [Chapter 22: Databases](https://r4ds.hadley.nz/databases.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You learned how to use [**DBI**](https://dbi.r-dbi.org/) and used the [**dbplyr**](https://dbplyr.tidyverse.org/) packages to connect to databases and execute SQL.
-
-
-<!-- DK: Best thing to read next? -->
+This tutorial covered [Chapter 22: Databases](https://r4ds.hadley.nz/databases.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You learned how to use [**DBI**](https://dbi.r-dbi.org/) and used the [**dbplyr**](https://dbplyr.tidyverse.org/) packages to connect to databases and execute SQL. To check out further reading take a look at [**Writing SQL with dbplyr**](https://dbplyr.tidyverse.org/articles/sql.html), [**Practical SQL: A Beginner's Guide to Storytelling with Data**](https://www.practicalsql.com/), and [**SQL For Data Scientists**](https://sqlfordatascientists.com/).
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
