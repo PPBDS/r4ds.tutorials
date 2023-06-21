@@ -503,12 +503,6 @@ df |>
   )
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r boolean-algebra-1-hint, eval = FALSE}
-
-```
-
 ###
 
 To understand what’s going on, think about `NA | TRUE` (`NA` or `TRUE`). A missing value in a logical vector means that the value could either be `TRUE` or `FALSE`. `TRUE | TRUE` and `FALSE | TRUE` are both `TRUE` because at least one of them is `TRUE`. `NA | TRUE` must also be `TRUE` because `NA` can either be `TRUE` or `FALSE`. However, `NA | FALSE` is `NA` because we don’t know if `NA` is `TRUE` or `FALSE`. Similar reasoning applies with `NA & FALSE`.
@@ -520,8 +514,6 @@ Start a new pipe with `flights`. Pipe `flights` into `filter()`. Within `filter(
 ```{r boolean-algebra-2, exercise = TRUE}
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r boolean-algebra-2-hint, eval = FALSE}
 flights|>
@@ -559,8 +551,6 @@ Start a new pipe with `flights`. Pipe `flights` into the `mutate()` function. Wi
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r boolean-algebra-4-hint, eval = FALSE}
 flights|>
   mutate(...)
@@ -597,8 +587,6 @@ flights|>
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r boolean-algebra-6-hint, eval = FALSE}
 ... %in% c(...)
 ```
@@ -615,8 +603,6 @@ So to find all of the flights in November and December start a new pipe with `fl
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r boolean-algebra-7-hint, eval = FALSE}
 flights|>
   filter(...)
@@ -628,13 +614,12 @@ Note that `%in%` obeys different rules for `NA` to `==`, as `NA %in% NA` is `TRU
 
 ### Exercise 8
 
-Type a code to check if each element of the vector `c(1, 2, NA)` is equal to `NA` using `==`.
+Type `c(1, 2, NA) == NA`. It should say `NA` for all 3. 
 
 ```{r boolean-algebra-8, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r boolean-algebra-8-hint, eval = FALSE}
 c(...) == NA
@@ -670,8 +655,6 @@ Start a new pipe with `flights`. Pipe `flights` into `filter()`. Within `filter(
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r boolean-algebra-10-hint, eval = FALSE}
 flights |> 
   filter(... %in% c(...))
@@ -694,7 +677,6 @@ Start a pipe with `flights`. Pipe it into `summarize()`. Within `summarize()`, a
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-1-hint, eval = FALSE}
 flights|>
@@ -792,31 +774,25 @@ This will make the resulting tibble have one row for each variation of `year, mo
 
 ### Exercise 6
 
-Copy previous code. Switch `all()` for `mean()`, and `any()` for `sum()`.
+Make a new pipe with `flights`. Pipe `flights` into `summarize()`. Within `summarize()`, add `all_delayed = mean(dep_delay <= 60, na.rm = TRUE)`. This will create a column called `all_delayed` that is the mean of the rows where `dep_delay` is less than `60`. 
 
 ```{r summaries-6, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r summaries-6-hint, eval = FALSE}
 flights |>  
   summarize(
-    all_delayed = ...(dep_delay <= 60, na.rm = TRUE),
-    any_long_delay = ...(arr_delay >= 300, na.rm = TRUE),
-    .by = c(year, month, day))
+    all_delayed = ...(dep_delay <= 60, na.rm = TRUE))
 ```
 
 ###
 
-When you use a logical vector in a numeric context, `TRUE` becomes `1` and `FALSE` becomes `0`. This makes `sum()` and `mean()` very useful with logical vectors because `sum(x)` gives the number of `TRUE`s and `mean(x)` gives the proportion of `TRUE`s (because `mean()` is just `sum()` divided by `length()`.
-
-This allows for us to see the proportion of flights that were delayed on departure by at most 1 hour (`60` minutes) and the number of flights that were delayed on arrival by 5 hours (`300` minutes) or more
+This will create a column called `all_delayed` that is the mean of the rows where `dep_delay` is less than `60`
 
 ### Exercise 7
 
-Start a new pipe with `flights`. Pipe it into `filter`. Within `filter()`, add `arr_delay > 0` as the argument.
+Copy precious code and add `any_long_delay = sum(arr_delay >= 300, na.rm = TRUE)`, and `.by = c(year, month)` in the `summarize()` function. Make sure to separate the arguments with commas.
 
 ```{r summaries-7, exercise = TRUE}
 
@@ -825,17 +801,20 @@ Start a new pipe with `flights`. Pipe it into `filter`. Within `filter()`, add `
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-7-hint, eval = FALSE}
-flights |>
-  filter(arr_delay > 0)
+flights |>  
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = ...(arr_delay >= 300, na.rm = TRUE),
+    .by = c(...))
 ```
 
 ###
 
-There’s one final use for logical vectors in summaries: you can use a logical vector to filter a single variable to a subset of interest. This makes use of the base `[` (pronounced subset) operator, which you’ll learn more about in Section 28.2.
+When you use a logical vector in a numeric context, `TRUE` becomes `1` and `FALSE` becomes `0`. This makes `sum()` and `mean()` very useful with logical vectors because `sum(x)` gives the number of `TRUE`s and `mean(x)` gives the proportion of `TRUE`s (because `mean()` is just `sum()` divided by `length()`.
 
 ### Exercise 8
 
-Continue the pipe with `summarize()`. Within `summarize()`, add the argument `behind = mean(arr_delay)` and `n = n()`. Make sure to separate arguments within a function with comma's.
+Copy previous code and add `day` to the `.by()` argument within `summarize()` to get rows for every single day of the year. Make sure to separate the arguments with commas.
 
 ```{r summaries-8, exercise = TRUE}
 
@@ -844,6 +823,45 @@ Continue the pipe with `summarize()`. Within `summarize()`, add the argument `be
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-8-hint, eval = FALSE}
+flights |>  
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = sum(arr_delay >= 300, na.rm = TRUE),
+    .by = c(year, month, ...))
+```
+
+###
+
+This allows for us to see the proportion of flights that were delayed on departure by at most 1 hour (`60` minutes) and the number of flights that were delayed on arrival by 5 hours (`300` minutes) or more
+
+### Exercise 9
+
+Start a new pipe with `flights`. Pipe it into `filter`. Within `filter()`, add `arr_delay > 0` as the argument.
+
+```{r summaries-9, exercise = TRUE}
+
+```
+
+```{r summaries-9-hint, eval = FALSE}
+flights |>
+  filter(... > 0)
+```
+
+###
+
+There’s one final use for logical vectors in summaries: you can use a logical vector to filter a single variable to a subset of interest. This makes use of the base `[` (pronounced subset) operator, which you’ll learn more about in Section 28.2.
+
+### Exercise 10
+
+Continue the pipe with `summarize()`. Within `summarize()`, add the argument `behind = mean(arr_delay)` and `n = n()`. Make sure to separate arguments within a function with comma's.
+
+```{r summaries-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-10-hint, eval = FALSE}
 flights |>
   filter(arr_delay > 0)|>
   summarize(...)
@@ -853,48 +871,45 @@ flights |>
 
 This will look at the average delay just for flights that were actually delayed. We did this by first filtering the flights, then calculating the average delay.
 
-### Exercise 9
+### Exercise 11
 
-Add `.groups = "drop` into the `summarize()`. Also add `.by = year, month, day` to have one row for each day of the year.
+Add `.by = year, month, day` to have one row for each day of the year.
 
-```{r summaries-9, exercise = TRUE}
+```{r summaries-11, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r summaries-9-hint, eval = FALSE}
+```{r summaries-11-hint, eval = FALSE}
 flights |>
   filter(arr_delay > 0)|>
   summarize(behind = mean(arr_delay),
             n = n(),
-            .groups = "...",
-            .by = ...)
+            .by = c(...))
 ```
 
 ###
 
 This works, but what if we wanted to also compute the average delay for flights that arrived early? We’d need to perform a separate filter step, and then figure out how to combine the two data frames together. Instead you could use `[` to perform an inline filtering: `arr_delay[arr_delay > 0]` will yield only the positive arrival delays.
 
-### Exercise 10
+### Exercise 12
 
 Press "Run Code". 
 
-```{r summaries-10, exercise = TRUE}
-flights |> 
-  group_by(year, month, day) |> 
+```{r summaries-12, exercise = TRUE}
+flights|> 
   summarize(
     behind = mean(arr_delay[arr_delay > 0], na.rm = TRUE),
     ahead = mean(arr_delay[arr_delay < 0], na.rm = TRUE),
     n = n(),
-    .groups = "drop"
+    .by = c(year, month, day)
   )
 ```
 
 ###
 
 Also note the difference in the group size: in the first chunk `n()` gives the number of delayed flights per day; in the second, `n()` gives the total number of flights.
-
 
 ## Conditional transformations
 ### 
