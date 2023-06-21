@@ -62,9 +62,12 @@ base <- ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point(aes(color = class))
 
 random_vals <- tibble(
-  x = rnorm(10000),
-  y = rnorm(10000)
+  random_x = rnorm(10000),
+  random_y = rnorm(10000)
 )
+
+suv <- mpg |> filter(class == "suv")
+compact <- mpg |> filter(class == "compact")
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -79,8 +82,6 @@ random_vals <- tibble(
 <!--   new_code(this) -->
 
 <!-- DK: Delete most uses of "Use your previous code". Raises the question, what is the CP/CR equivalent of "Continue the pipe"? -->
-
-<!-- DK: random_vals should not use x and y. -->
 
 <!-- DK: Only "dot out" items that are specific to the current question. No ... for things which were part of previous questions. -->
 
@@ -560,7 +561,6 @@ mpg |>
   ggplot(aes(x = ..., y = ..., color = ...)) |> 
   geom_point(alpha = ...)
 ```
-
 
 <!-- DK: Drop knowledge. -->
 
@@ -2033,21 +2033,20 @@ random_vals
 
 ### Exercise 17
 
-Pipe `random_vals` to `ggplot()`. Within `ggplot()`, map `x` to `x` and `y` to `y`. 
+Pipe `random_vals` to `ggplot()`. Within `ggplot()`, map `x` to `random_x` and `y` to `random_y`. 
 
 ```{r replacing-a-scale-17, exercise = TRUE}
 
 ```
 
-
 ```{r replacing-a-scale-17-hint-1, eval = FALSE}
 random_vals |> 
-  ggplot(aes(x, y))
+  ggplot(aes(x = ..., y = ...))
 ```
 
 ### 
 
-For continuous color, you can use the built-in scale_color_gradient() or scale_fill_gradient(). If you have a diverging scale, you can use scale_color_gradient2(). That allows you to give, for example, positive and negative values different colors.
+For continuous color, you can use the built-in `scale_color_gradient()` or `scale_fill_gradient()`. If you have a diverging scale, you can use `scale_color_gradient2()`. That allows you to give, for example, positive and negative values different colors.
 
 ### Exercise 18
 
@@ -2141,6 +2140,754 @@ Using your previous code, add the `labs()` function to the pipeline. Within this
 ### 
 
 Note that all color scales come in two varieties: scale_color_*() and scale_fill_*() for the color and fill aesthetics respectively (the color scales are available in both UK and US spellings).
+
+## Zooming
+### 
+
+In this section we will learn about the three ways to control the plot limits.
+
+### Exercise 1
+
+Pipe `mpg` to `ggplot()`.
+
+```{r zooming-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-1-hint-1, eval = FALSE}
+mpg |> 
+  ggplot()
+```
+
+### Exercise 2
+
+Within ur call to `ggplot()`, using `aes()`, map `x` to `displ`.
+
+```{r zooming-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-2-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ...))
+```
+
+### Exercise 3
+
+Within ur call to `ggplot()`, within `aes()`, map `y` to `hwy`.
+
+```{r zooming-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-3-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = ...))
+```
+
+### 
+
+There are three ways to control the plot limits:
+
+1. Adjusting what data are plotted.
+2. Setting the limits in each scale.
+3. Setting xlim and ylim in coord_cartesian().
+
+
+### Exercise 4
+
+Using the same pipe as above, add `geom_point()` to the pipeline.
+
+```{r zooming-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-4-hint-1, eval = FALSE}
+... +
+  geom_point()
+```
+
+### Exercise 5
+
+Within your call to `geom_point()`, using `aes()`, map `color` to `drv`.
+
+```{r zooming-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-5-hint-1, eval = FALSE}
+... +
+  geom_point(aes(...))
+```
+
+### Exercise 6
+
+Add `geom_smooth()` to the pipeline.
+
+```{r zooming-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-6-hint-1, eval = FALSE}
+... +
+  geom_smooth()
+```
+
+### 
+
+This plot shows the relationship between engine size (`displ`) and fuel efficiency (`hwy`), colored by type of drive train (`drv`).
+
+### Exercise 7
+
+Using the same pipe, add `filter()` to the pipe in between the beginning of the pipe and your call to `ggplot()`. Within filter, let's filter out `displ` greater than or equal to `5` "and" `displ` less than or equal to `6`.
+
+```{r zooming-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-7-hint-1, eval = FALSE}
+mpg |> 
+  filter(displ >= ... & displ <= ...) |> 
+  ...
+```
+
+### Exercise 8
+
+Within your call to `filter()`, add `&` and filter out `hwy` greater than or equal to `10` "and" hwy being less than or equal to `25`.
+
+```{r zooming-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-8-hint-1, eval = FALSE}
+mpg |> 
+  filter(displ >= ... & displ <= ... & hwy >= ... & hwy <= ...) |> 
+  ...
+```
+
+### 
+
+This plot shows the same variables, but subsets the data that are plotted. Subsetting the data has affected the `x` and `y` scales as well as the smooth curve.
+
+### Exercise 9
+
+With a new pipeline, pipe `mpg` to `ggplot()`.
+
+```{r zooming-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-9-hint-1, eval = FALSE}
+mpg |> 
+  ggplot()
+```
+
+### Exercise 10
+
+Within your call to `ggplot()`, using `aes()`, map `x` to `displ`.
+
+```{r zooming-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-10-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ...))
+```
+
+### Exercise 11
+
+Within your call to `ggplot()`, within `aes()`, map `y` to `hwy`. 
+
+```{r zooming-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-11-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = ...))
+```
+
+### Exercise 12
+
+Add `geom_point()` to the pipeline.
+
+```{r zooming-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-12-hint-1, eval = FALSE}
+... +
+  geom_point()
+```
+
+### Exercise 13
+
+Within your call to `geom_point()`, using `aes()`, map `color` to `drv`. 
+
+```{r zooming-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-13-hint-1, eval = FALSE}
+... +
+  geom_point(aes(color = ...))
+```
+
+### Exercise 14
+
+Add `geom_smooth()` to the pipeline.
+
+```{r zooming-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-14-hint-1, eval = FALSE}
+... +
+  geom_smooth()
+```
+
+### 
+
+There exists a `limits` argument on individual scales like `scale_x_continuous()` and `scale_y_continuous()`. Reducing the limits is equivalent to subsetting the data.
+
+### Exercise 15
+
+Add `scale_x_continuous()` to the pipeline.
+
+```{r zooming-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-15-hint-1, eval = FALSE}
+... +
+  scale_x_continuous()
+```
+
+### Exercise 16
+
+Within your call to `scale_x_continuous()`, set the `limits` argument to `c(5, 6)`. 
+
+```{r zooming-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-16-hint-1, eval = FALSE}
+... +
+  scale_x_continuous(limits = ...)
+```
+
+### Exercise 17
+
+Add `scale_y_continuous()` to the pipeline.
+
+```{r zooming-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-17-hint-1, eval = FALSE}
+... +
+  scale_y_continuous()
+```
+
+### Exercise 18
+
+Within your call to `scale_y_continuous()`, set the `limits` argument to `c(10, 25)`.
+
+```{r zooming-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-18-hint-1, eval = FALSE}
+... +
+  scale_y_continuous(limits = ...)
+```
+
+### 
+
+As you can see, this is another way we can control plot limits which is by setting the limits in each scale. Let's use another way which is setting `xlim` and `ylim` in `coord_coortesian()`.  
+
+### Exercise 19
+
+Using your previous pipeline, delete `scale_x_continuous()` and `scale_y_continuous()`. Continue the pipeline by adding `coord_cartesian()`. 
+
+```{r zooming-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-19-hint-1, eval = FALSE}
+
+```
+
+### 
+
+Now, we need to add the `xlim` and `ylim` arguments so that we can zoom in on a region of the plot.
+
+### Exercise 20
+
+Within your call to `coord_cartesian()`, set the `xlim` argument to `c(5, 6)`.
+
+```{r zooming-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-20-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 21
+
+Within your call to `coord_cartesian()`, set the `ylim` argument to `c(10, 25)`. 
+
+```{r zooming-21, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-21-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 22
+
+Add a title, x axis title, and a y axis title using `labs()`.
+
+```{r zooming-22, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r zooming-22-hint-1, eval = FALSE}
+... +
+  labs(title = ...,
+       x = ..., 
+       y = ...)
+```
+
+## More Zooming
+### 
+
+In this section we will go over more ways to zoom in your plots.
+
+### Exercise 1
+
+Create a new variable called `suv` and set it equal to `mpg`.
+
+```{r more-zooming-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-1-hint-1, eval = FALSE}
+suv <- mpg
+```
+
+### Exercise 2
+
+Using your previous code, pipe `mpg` to `filter()`. Filter out all the instances when `class` equals `"suv"`. 
+
+```{r more-zooming-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-2-hint-1, eval = FALSE}
+suv <- mpg |> filter(class == ...)
+```
+
+### Exercise 3
+
+Create a new variable called `compact` and set it equal to `mpg`.
+
+```{r more-zooming-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-3-hint-1, eval = FALSE}
+
+```
+
+### Exercise 4
+
+Using your previous code, pipe `mpg` to `filter()`. Filter out all the instances when `class` equals `"compact"`. 
+
+```{r more-zooming-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-4-hint-1, eval = FALSE}
+compact <- mpg |> filter(class == ...)
+```
+
+### 
+
+Let's try to compare these two dataframes by creating plots for them.
+
+### Exercise 5
+
+Pipe `suv` to `ggplot()`.
+
+```{r more-zooming-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-5-hint-1, eval = FALSE}
+suv |> ggplot()
+```
+
+### Exercise 6
+
+Within your call to `ggplot()`, using `aes()`, map `x` to `displ`.
+
+```{r more-zooming-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-6-hint-1, eval = FALSE}
+suv |> 
+  ggplot(aes(x = ...))
+```
+
+### Exercise 7
+
+Within your call to `ggplot()`, within `aes()`, map `y` to `hwy`.
+
+```{r more-zooming-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-7-hint-1, eval = FALSE}
+suv |> 
+  ggplot(aes(x = ..., y = ...))
+```
+
+### Exercise 8
+
+Within your call to `ggplot()`, within `aes()`, map `color` to `drv`.
+
+```{r more-zooming-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-8-hint-1, eval = FALSE}
+suv |> 
+  ggplot(aes(x = ..., y = ..., color = ...))
+```
+
+### Exercise 9
+
+Add `geom_point()` to the pipeline.
+
+```{r more-zooming-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-9-hint-1, eval = FALSE}
+... + 
+  geom_point()
+```
+
+### 
+
+This is the plot with just the suv class of cars, let's try to compare this plot with just the compact class of cars.
+
+### Exercise 10
+
+Copy your previous code and change the beginning of the pipeline from `suv` to `compact` and hit "Run Code".
+
+```{r more-zooming-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-10-hint-1, eval = FALSE}
+compact |> 
+  ...
+```
+
+### 
+
+This is the plot for the compact class of car and comparing fuel efficiency with engine size. But, since we extracted two classes of cars and plotted them separately, it’s difficult to compare the plots because all three scales (the x-axis, the y-axis, and the color aesthetic) have different ranges. Let's create variables that will make sure both plots will have the same range.
+
+### Exercise 11
+
+Create a new variable `x_scale` and set it equal to `scale_x_continuous(limits = range(mpg$displ))`.
+
+```{r more-zooming-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-11-hint-1, eval = FALSE}
+x_scale = ...
+```
+
+### 
+
+The function `scale_x_continuous()` is used to set the scale of the x-axis. The function `range(mpg$displ)` computes the minimum and maximum of the `displ` column of the `mpg` dataset. The `limits` argument sets the minimum and maximum limit of the x-axis in the plot. 
+
+### Exercise 12
+
+Create a new variable `y_scale` and set it equal to `scale_y_continuous(limits = range(mpg$hwy))`.
+
+```{r more-zooming-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-12-hint-1, eval = FALSE}
+y_scale = ...
+```
+
+### 
+
+The function `scale_y_continuous()` is used to set the scale of the y-axis. The function `range(mpg$hwy)` computes the minimum and maximim of the `displ` column of the `mpg` dataset. The `limits` argument sets the minimum and maximum limit of the x-axis in the plot. 
+
+### Exercise 13
+
+Create a new variable `col_scale` and set it equal to `scale_color_discrete(limits = unique(mpg$drv))`. 
+
+```{r more-zooming-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-13-hint-1, eval = FALSE}
+col_scale = ...
+```
+
+### 
+
+The function `scale_color_discrete()` is used to map discrete variables to a set of discrete colors. The function `unique(mpg$drv)` is used to compute the unique values of the `drv` column of the `mpg` dataset. The `limits` argument is used to set the levels i.e. the different categories that should have different colors.
+
+### Exercise 14
+
+Now, let's create the plots using the `mpg` dataset using these three scales. Pipe `suv` to `ggplot()`. 
+
+```{r more-zooming-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-14-hint-1, eval = FALSE}
+suv |> 
+  ggplot()
+```
+
+### Exercise 15
+
+Within your call to `ggplot()`, using `aes()`, map `x` to `displ`. 
+
+```{r more-zooming-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-15-hint-1, eval = FALSE}
+suv |> 
+  ggplot(aes(x = ...))
+```
+
+### Exercise 16
+
+Within your call to `ggplot()`, within `aes()`, map `y` to `hwy`.
+
+```{r more-zooming-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-16-hint-1, eval = FALSE}
+suv |> 
+  ggplot(aes(x = displ, y = ...))
+```
+
+### Exercise 17
+
+Within your call to `ggplot()`, within `aes()`, map `color` to `drv`.
+
+```{r more-zooming-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-17-hint-1, eval = FALSE}
+suv |> 
+  ggplot(aes(x = displ, y = hwy, color = ...))
+```
+
+### Exercise 18
+
+Add `geom_point()` to the pipeline.
+
+```{r more-zooming-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-18-hint-1, eval = FALSE}
+... +
+  geom_point().
+```
+
+### Exercise 19
+
+Add the `x_scale` variable to the pipeline.
+
+```{r more-zooming-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-19-hint-1, eval = FALSE}
+... + 
+  x_scale
+```
+
+### 
+
+As we can see, the x axis looks a little different than to what it looked like before.
+
+### Exercise 20
+
+Add the `y_scale` variable to the pipeline.
+
+```{r more-zooming-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-20-hint-1, eval = FALSE}
+... +
+  y_scale
+```
+
+### Exercise 21
+
+Add the `col_scale` variable to the pipeline. 
+
+```{r more-zooming-21, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-21-hint-1, eval = FALSE}
+... +
+  col_scale
+```
+
+### Exercise 22
+
+Add a `title`, `x` axis title, `y` axis title, and a legend title (`color`) using `labs()`. 
+
+```{r more-zooming-22, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-22-hint-1, eval = FALSE}
+... + labs()
+```
+
+### Exercise 23
+
+Change the beginning of the pipe from `suv` to `compact` and change the `labs()` accordingly. 
+
+```{r more-zooming-23, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r more-zooming-23-hint-1, eval = FALSE}
+compact |> 
+  ... +
+  labs(title = ...,
+       subtitle = ..., 
+       x = ..., 
+       y = ...,
+       color = ...)
+```
+
+### 
+
+We overcame our scales problem by sharing scales across multiple plots, training the scales with the limits of the full data. In this particular case, you could have simply used faceting, but this technique is useful more generally, if for instance, you want to spread plots over multiple pages of a report.
+
 
 ## Babynames
 ### 
