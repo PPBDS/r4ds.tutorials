@@ -29,6 +29,24 @@ df <- tibble(
   y = c("a", "b"),
   z = list(list(1, 2), list(3, 4, 5))
 )
+df1 <- tribble(
+  ~x, ~y,
+  1, list(a = 11, b = 12),
+  2, list(a = 21, b = 22),
+  3, list(a = 31, b = 32)
+)
+df2 <- tribble(
+  ~x, ~y,
+  1, list(11, 12, 13),
+  2, list(21),
+  3, list(31, 32)
+)
+df6 <- tribble(
+  ~x, ~y,
+  "a", list(1, 2),
+  "b", list(3),
+  "c", list()
+)
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -267,11 +285,176 @@ Good Work on finishing this section, next up , we'll be focusing on unnesting li
 ## Unnesting
 ###
 
+Now that you’ve learned the basics of lists and list-columns, let’s explore how you can turn them back into regular rows and columns. Here we’ll use very simple sample data so you can get the basic idea; in the next section we’ll switch to real data.
+
+### Exercise 1
+
+To generate simple sample data for this section, let's create a variable named `df1` and assign `tribble()` to it. Within `tribble()`, we will define the columns `~x` and `~y`. Now, to arrange the data in a specific order, follow these steps:
+
+Set the value as 1 for `~x` and the list as list(a = 11, b = 12) for `~y`.
+Repeat the above steps as needed for the rest.
+Set the value as 2 and the list as list(a = 21, b = 22).
+Set the value as 3 and the list as list(a = 31, b = 32).
+
+```{r unnesting-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unnesting-1-hint, eval = FALSE}
+... <- tribble(
+  ~x, ~y,
+  1, ...,
+  ..., list(a = 21,...),
+  3, list(..., b = 32),
+)
+```
+
+###
+
+List-columns tend to come in two basic forms: named and unnamed. When the children are named, they tend to have the same names in every row. For example, in `df1`, every element of list-column y has two elements named a and b. Named list-columns naturally unnest into columns: each named element becomes a new named column.
+
+### Exercise 2
+
+Let's now create our second simple dataset. Copy the previous code and chnage the variable name to `df2` and the other thing we will change is `~y`. Remove all the old ones and insert the follwoing values:
+`list(11, 12, 13)`, 
+`list(21)`, and 
+`list(31, 32)`.
+
+```{r unnesting-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unnesting-2-hint, eval = FALSE}
+df2 <- tribble(
+  ~x, ...,
+  ..., list(..., 12, 13),
+  2, list(...),
+  ..., list(31, ...),
+)
+```
+
+###
+
+When the children are unnamed, the number of elements tends to vary from row-to-row. For example, in `df2`, the elements of list-column y are unnamed and vary in length from one to three. Now tidyr provides two functions for these two cases: `unnest_wider()` and `unnest_longer()`, which will help us explore the two sample data sets which we created.
+
+### Exercise 3
+
+Let's explore what `unnest_wider()` does, so start a pipe with `df1` to `unnest_wider()` and pass in the column `y` as the argument.
+
+```{r unnesting-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unnesting-3-hint, eval = FALSE}
+df1 |> 
+  unnest_wider(...)
+```
+
+###
+
+When each row has the same number of elements with the same names, like `df1`, it’s natural to put each component into its own column with `unnest_wider()`.
+
+### Exercise 4
+
+By default, the names of the new columns come exclusively from the names of the list elements, but you can use the `names_sep` argument to request that they combine the column name and the element name. Copy the previous code and within `unnest_wider()` add `names_sep` and set it equal to `"_"`
+
+```{r unnesting-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unnesting-4-hint, eval = FALSE}
+... |> 
+  unnest_wider(y, ... = "_")
+```
+
+###
+
+Compared to just passing in `y` in `unnest_wider()`, we can see the column name plus with the element name and that is how `unnest_wider()` works, now we will move into `unnest_longer()` which is more useful for data sample with different amount of data for record.
+
+### Exercise 5
+
+Start a pipe with `df2` to `unnest_longer()` and pass in `y` as the argument.
+
+```{r unnesting-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unnesting-5-hint, eval = FALSE}
+... |> 
+  unnest_longer(y)
+```
+
+###
+
+When each row contains an unnamed list, it’s most natural to put each element into its own row with `unnest_longer()` which is what happend in the code above. Also note how `x` is duplicated for each element inside of `y`: we get one row of output for each element inside the list-column.
+
+### Exercise 6
+
+But what happens if one of the elements is empty? To see what happens, let's first create another sample of data, so create a new variable `df6` and assign it to `tribble()`. Within `tribble()`, we will define the columns `~x` and `~y`. Now, to arrange the data in a specific order, follow these steps:
+
+Set the value as `"a"` for `~x` and the list as list(1,2) for `~y`.
+Repeat the above steps as needed for the rest.
+Set the value as `"b"` and the list as list(3).
+Set the value as `"c"` and the list as list().
+
+```{r unnesting-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unnesting-6-hint, eval = FALSE}
+... <- tribble(
+  ~x, ~y,
+  "...", list(..., 2),
+  "b", list(3),
+  ..., ...
+)
+```
+
+###
+
+As you can see we have a empty list for record `"c"`, next up we use `unnest_longer()` to test it out.
+
+
+### Exercise 7
+
+Start a pipe with `df6` to `unnest_longer()` and pass in the `y` column as the arguemnt for `unnest_longer()`.
+
+```{r unnesting-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unnesting-7-hint, eval = FALSE}
+... |> 
+  unnest_longer(y)
+```
+
+###
+
+We get zero rows in the output, so the row effectively disappears. If you want to preserve that row, adding NA in y, set `keep_empty = TRUE`.
+
+Good Work finishing unnesting section.
+
+
 ## Case Studies
 ###
 
 ## JSON
 ###
+
 
 
 ## Summary
