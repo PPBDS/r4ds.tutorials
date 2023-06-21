@@ -49,6 +49,21 @@ df6 <- tribble(
 )
 
 gh_users2 <- read_json(gh_users_json())
+
+json <- '[
+  {"name": "John", "age": 34},
+  {"name": "Susan", "age": 27}
+]'
+json1 <- '{
+  "status": "OK", 
+  "results": [
+    {"name": "John", "age": 34},
+    {"name": "Susan", "age": 27}
+ ]
+}
+'
+df3 <- tibble(json = parse_json(json))
+df4 <- tibble(json1 = list(parse_json(json1)))
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -572,6 +587,9 @@ Jsonlite has another important function called `fromJSON()`. We don’t use it h
 
 ### Exercise 7
 
+In most cases, JSON files contain a single top-level array, because they’re designed to provide data about multiple “things”, e.g., multiple pages, or multiple records, or multiple results. In this case, you’ll start your rectangling with `tibble(json)` so that each element becomes a row.
+
+Run `json` to have a quick look at the dat abefore we dive in to parseing it and unnesting it.
 
 ```{r json-7, exercise = TRUE}
 
@@ -580,11 +598,81 @@ Jsonlite has another important function called `fromJSON()`. We don’t use it h
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r json-7-hint, eval = FALSE}
-
+json
 ```
 
 ###
 
+### Exercise 8
+
+Now, let's transform the JSON to a list and store it within a tibble(). Create a variable called `df3` and assign it a `tibble()`. Within the `tibble()`, we will have a json column where `parse_json(json)` is set equal to `json`.
+
+```{r json-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r json-8-hint, eval = FALSE}
+df3 <- tibble(... = parse_json(...))
+```
+
+###
+
+Yes , we have the data in tibble but we want to see the actual values instead of just seeing the amount of data in list being shown.
+
+### Exercise 9
+
+To make the names and age visible, we will start a pipe with `df3` to `unnest_wider()` and pass in `json` as the argument.
+
+```{r json-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r json-9-hint, eval = FALSE}
+df3 |> 
+  unnest_...(json)
+```
+
+###
+
+In rarer cases, the JSON file consists of a single top-level JSON object, but what do we do to explore the data if we have many top level objects?
+
+### Exercise 10
+
+Run `json1` to explore the dataset.
+
+```{r json-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r json-10-hint, eval = FALSE}
+json1
+```
+
+###
+
+Compared to the json file we explored previously, we have two levels: `status` and `results`.
+
+
+### Exercise 11
+
+
+```{r json-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r json-11-hint, eval = FALSE}
+
+```
+
+###
 
 
 
