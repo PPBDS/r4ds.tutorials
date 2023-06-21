@@ -25,7 +25,7 @@ knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
-con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "duckdb")
+con <- dbConnect(RSQLite::SQLite(), dbname = "myDB.sqlite") 
 dbWriteTable(con, "mpg", ggplot2::mpg, overwrite = TRUE)
 dbWriteTable(con, "diamonds", ggplot2::diamonds, overwrite = TRUE)
 mpg_sql <- "
@@ -64,7 +64,7 @@ To first start working a database we need to connect to one. You’ll always use
 
 ### Exercise 1
 
-Let's run the `library()` on `tidyverse`, `DBI`, and `tibble`.
+Install and run the `library()` on `tidyverse`, `DBI`, and `tibble`.
 
 ```{r connecting-to-a-data-1, exercise = TRUE}
 
@@ -82,23 +82,23 @@ At the simplest level, you can think about a database as a collection of data fr
 
 ### Exercise 2
 
-Set `DBI::dbConnect(duckdb::duckdb())` to the `con` variable.
+Set `dbConnect(RSQLite::SQLite())` to the `con` variable.
 
 ```{r connecting-to-a-data-2, exercise = TRUE}
 
 ```
 
 ```{r connecting-to-a-data-2-hint, eval = FALSE}
-... <- DBI::dbConnect(duckdb::duckdb())
+... <- dbConnect(RSQLite::SQLite()) 
 ```
 
 ###
 
-`duckdb` is a high-performance database that’s designed very much for the needs of a data scientist. We use it here because it’s very easy to get started with, but it’s also capable of handling gigabytes of data with great speed. 
+`RSQLite` is a high-performance database that’s designed very much for the needs of a data scientist. We use it here because it’s very easy to get started with, but it’s also capable of handling gigabytes of data with great speed. 
 
 ### Exercise 3
 
-Copy the code from above. Now within the `con` variable, add `dbdir` and set it to "duckdb".
+Copy the code from above. Now within the `con` variable, add `dbname` and set it to "myDB.sqlite".
 
 ```{r connecting-to-a-data-3, exercise = TRUE}
 
@@ -107,12 +107,12 @@ Copy the code from above. Now within the `con` variable, add `dbdir` and set it 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r connecting-to-a-data-3-hint, eval = FALSE}
-... <- DBI::dbConnect(..., dbdir = "duckdb")
+... <- dbConnect(..., dbname = "myDB.sqlite") 
 ```
 
 ###
 
-We want to use `duckdb` for a real data analysis project, so we need to use the `dbdir` argument to make a persistent database and tell `duckdb` where to save it.
+We want to use a **Client-server** DBMS’s because they run on a powerful central server, which you connect from your computer (the client). They are great for sharing data with multiple people in an organization. Popular client-server DBMS’s include `PostgreSQL`, `MariaDB`, `SQL Server`, and `Oracle`.
 
 ### Exercise 4
 
@@ -144,7 +144,7 @@ Let's write the `diamonds` data to the database we just created. Use `dbWriteTab
 
 ###
 
-With the `duckdb` database we are using we are using in-process DBMS’s, like `SQLite`, which are run entirely on your computer. They’re great for working with large datasets where you’re the primary user.
+We use the packages tailored for the **DBMS** we’re connecting to. This package translates the generic DBI commands into the specifics needed for a given **DBMS**. There’s usually one package for each **DBMS**, e.g. `RPostgres` for PostgreSQL and `RMariaDB` for MySQL.
 
 ### Exercise 6
 
