@@ -25,14 +25,18 @@ options(tutorial.exercise.timelimit = 60,
         tutorial.storage = "local") 
 
 con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "duckdb")
-dbWriteTable(con, "mpg", ggplot2::mpg)
-dbWriteTable(con, "diamonds", ggplot2::diamonds)
+dbWriteTable(con, "mpg", ggplot2::mpg, overwrite = TRUE)
+dbWriteTable(con, "diamonds", ggplot2::diamonds, overwrite = TRUE)
 mpg_sql <- "
   SELECT manufacturer, model, year, displ, class 
   FROM mpg 
   WHERE displ > 1.8
 "
 mpg_db <- tbl(con, "mpg")
+diamonds_db <- tbl(con, "diamonds")
+dbplyr::copy_nycflights13(con)
+flights_db <- tbl(con, "flights")
+planes_db <- tbl(con, "planes")
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -321,6 +325,206 @@ Take the pipe from above and remove `show_query()` and instead add `collect()` t
 ###
 
 To get all the data back into R, you call `collect()`. Behind the scenes, this generates the `SQL`, calls `dbGetQuery()` to get the data, then turns the result into a tibble.
+
+## SQL basics
+###
+
+The rest of the chapter will teach you a little `SQL` through the lens of `dbplyr`. It’s a rather non-traditional introduction to `SQL` but we hope it will get you quickly up to speed with the basics. Luckily, if you understand `dplyr` you’re in a great place to quickly pick up `SQL` because so many of the concepts are the same.
+
+### Exercise 1
+
+Run `dbplyr::copy_nycflights13()` on `con`.
+
+```{r sql-1, exercise = TRUE}
+
+```
+
+```{r sql-1-hint, eval = FALSE}
+...(con)
+```
+
+###
+
+Here we are exploring the relationship between `dplyr` and `SQL` using the `nycflights13` package: flights and planes.
+
+### Exercise 2
+
+Let's create the `flights_db` variable and set it to `tbl()`, within `tbl()` use the `con`, "flights" arguments. Let's create the `planes_db` variable and set it to `tbl()`, within `tbl()` use the `con`, "planes" arguments.
+
+```{r sql-2, exercise = TRUE}
+
+```
+
+```{r sql-2-hint, eval = FALSE}
+flights_db <- tbl(..., ...)
+... <- ...(con, "planes")
+```
+
+###
+
+These datasets are easy to get into our learning database because `dbplyr` comes with a function that copies the tables from `nycflights13` to our database.
+
+### Exercise 3
+
+Start a pipe with `planes_db` and `filter()` based on the `manufacturer` to only include "AIRBUS INDUSTRIE".
+
+```{r sql-3, exercise = TRUE}
+
+```
+
+```{r sql-3-hint, eval = FALSE}
+... |> 
+  filter(... == "AIRBUS INDUSTRIE")
+```
+
+###
+
+The top-level components of `SQL` are called **statements**. Common statements include `CREATE` for defining new tables, `INSERT` for adding data, and `SELECT` for retrieving data.
+
+### Exercise 4
+
+Continue the pipe to `arrange()` by `year`.
+
+```{r sql-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r sql-4-hint, eval = FALSE}
+... |> 
+  arrange(...)
+```
+
+###
+
+We like using `SELECT` statements, also called **queries**, because they are almost exclusively what you’ll use as a data scientist.
+
+### Exercise 5
+
+Continue the pipe to include `show_query()`.
+
+```{r sql-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r sql-5-hint, eval = FALSE}
+... |>
+  ...()
+```
+
+###
+
+A query is made up of **clauses**. There are five important clauses: `SELECT`, `FROM`, `WHERE`, `ORDER BY`, and `GROUP BY`. Every query must have the `SELECT` and `FROM` clauses and the simplest query is `SELECT * FROM` table, which selects all columns from the specified table.
+
+## SQL `SELECT`, `FROM`, `GROUP BY`
+###
+
+In `SQL`, order matters: you must always write the clauses in the order `SELECT`, `FROM`, `WHERE`, `GROUP BY`, `ORDER BY`. Confusingly, this order doesn’t match how the clauses actually evaluated which is first `FROM`, then `WHERE`, `GROUP BY`, `SELECT`, and `ORDER BY`.
+
+### Exercise 1
+
+Let's use the `flights_db` variable from above. Create a pipe with `flights_db` to `select()` `carrier`, `flightnum`, `origin`, `distance`, and `year`.
+
+```{r sql-select-from-grou-1, exercise = TRUE}
+
+```
+
+```{r sql-select-from-grou-1-hint, eval = FALSE}
+flights_db |>
+  select(carrier, ..., origin, ..., year)
+```
+
+###
+
+`select()` has very direct translations to `SELECT` as they just affect where a column appears (if at all) along with its name.
+
+### Exercise 2
+
+Continue the pipe and use `rename()` and set `year_built` to `year`.
+
+```{r sql-select-from-grou-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r sql-select-from-grou-2-hint, eval = FALSE}
+... |>
+  rename(year_built = ...)
+```
+
+###
+
+The `SELECT` clause is the workhorse of queries and performs the same job as `rename()`.
+
+### Exercise 3
+
+Continue the pipe and run `show_query()`.
+
+```{r sql-select-from-grou-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r sql-select-from-grou-3-hint, eval = FALSE}
+... |>
+  show_query()
+```
+
+###
+
+This example also shows you how `SQL` does renaming. In `SQL` terminology renaming is called **aliasing** and is done with `AS`.
+
+### Exercise 4
+
+Create a pipe with the `mpg_db` use `group_by()` on `displ`.
+
+```{r sql-select-from-grou-4, exercise = TRUE}
+
+```
+
+```{r sql-select-from-grou-4-hint, eval = FALSE}
+... |>
+  group_by(...)
+```
+
+### Exercise 5
+
+Continue the pipe with `summarize()` and set `avg_hwy` to the `mean()` of `hwy` and `na.rm = TRUE`.
+
+```{r sql-select-from-grou-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r sql-select-from-grou-5-hint, eval = FALSE}
+... |>
+  summarize(... = mean(hwy, na.rm = TRUE))
+```
+
+###
+
+`group_by()` is translated to the `GROUP BY` clause and `summarize()` is translated to the `SELECT` clause.
+
+### Exercise 6
+
+Finish the pipe by adding `show_query()`.
+
+```{r sql-select-from-grou-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r sql-select-from-grou-6-hint, eval = FALSE}
+... |>
+  show_query()
+```
 
 ## Summary
 ### 
