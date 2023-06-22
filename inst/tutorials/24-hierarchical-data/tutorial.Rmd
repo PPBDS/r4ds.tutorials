@@ -505,6 +505,8 @@ At first glance, it might seem like we haven’t improved the situation: while w
 
 ### Exercise 3
 
+There’s an important difference in the result of the code: now each element is a named list so we can use `unnest_wider()` to put each element into its own column: Continue the pipe from `unnest_longer()` in previous exercise to `unnest_wider()` and pass in `json` as the arguement.
+
 ```{r case-studies-3, exercise = TRUE}
 
 ```
@@ -512,12 +514,19 @@ At first glance, it might seem like we haven’t improved the situation: while w
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-3-hint-1, eval = FALSE}
-
+... |>
+  ...(json)|>
+  unnest_wider(...)
+  
 ```
 
-### 
+###
+
+This has worked but the result is a little overwhelming: there are so many columns that tibble doesn’t even print all of them!
 
 ### Exercise 4
+
+To print all the column names, continue the pipe from `unnest_wider()` to `names()`. To obtain only the first 10 names, further extend the pipe from `names()` to `head()` and provide the argument 10.
 
 ```{r case-studies-4, exercise = TRUE}
 
@@ -526,12 +535,18 @@ At first glance, it might seem like we haven’t improved the situation: while w
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-4-hint-1, eval = FALSE}
-
+... |>
+  ...()|>
+  head(...)
 ```
 
 ### 
 
+We have so many columns but let’s pull out a few that look interesting.
+
 ### Exercise 5
+
+Delete the `names()` and `head()` functions and instead extend the pipe to `select()` where we will pass in : `id`, `full_name`, `owner`, `description` which are the columns we will explore.
 
 ```{r case-studies-5, exercise = TRUE}
 
@@ -540,12 +555,19 @@ At first glance, it might seem like we haven’t improved the situation: while w
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-5-hint-1, eval = FALSE}
-
+... |> 
+  unnest_longer(...) |> 
+  ...(json) |> 
+  select(..., full_name, ..., ...)
 ```
 
 ### 
 
+You can use this to work back to understand how `gh_repos` was structured: each child was a GitHub user containing a list of up to 30 GitHub repositories that they created.
+
 ### Exercise 6
+
+owner is another list-column, and since it contains a named list, we can use `unnest_wider()` to get at the values: Extend pipe from `select()` to `unnest_wider()` and pass in `owner`. Just remidning that it is possible to get errors so just move on.
 
 ```{r case-studies-6, exercise = TRUE}
 
@@ -554,12 +576,20 @@ At first glance, it might seem like we haven’t improved the situation: while w
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-6-hint-1, eval = FALSE}
-
+... |> 
+  unnest_longer(...) |> 
+  ...(json) |> 
+  select(..., full_name, ..., ...) |>
+  unnest_wider(...)
 ```
 
 ### 
 
+Uh oh, this list column also contains an id column and we can’t have two id columns in the same data frame. 
+
 ### Exercise 7
+
+As suggested by Rstudio, lets use `names_sep` to resolve the problem, so within `unnest_wider()` add `names_sep = "_"`.
 
 ```{r case-studies-7, exercise = TRUE}
 
@@ -568,10 +598,16 @@ At first glance, it might seem like we haven’t improved the situation: while w
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-7-hint-1, eval = FALSE}
-
+... |> 
+  unnest_longer(...) |> 
+  ...(json) |> 
+  select(..., full_name, ..., ...) |>
+  unnest_wider(..., ... = "_")
 ```
 
 ### 
+
+This gives another wide dataset, but you can get the sense that owner appears to contain a lot of additional data about the person who “owns” the repository. Next up, we will move onto relational data and unnesting it.
 
 ### Exercise 8
 
