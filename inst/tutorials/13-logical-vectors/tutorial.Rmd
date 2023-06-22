@@ -709,7 +709,7 @@ For example, we could use `all()` and `any()` to find out if every flight was de
 
 ### Exercise 3
 
-Copy previous code. Within `summarize()`, add `any_long_delay = any(arr_delay >= 300, na.rm = TRUE)`. This will make a new column named `any_long_delay` that is `TRUE` when `arr_delay` is greater than or equal to `300` minutes. It will also remove all `NA` values.
+Copy previous code. Within `summarize()`, add `any_long_delay = any(arr_delay >= 300)`. This will make a new column named `any_long_delay` that is `TRUE` when `arr_delay` is greater than or equal to `300` minutes.
 
 ```{r summaries-3, exercise = TRUE}
 
@@ -730,7 +730,7 @@ Like all summary functions, `any()` and `all()` will return `NA` if there are an
 
 ### Exercise 4
 
-Copy previous code. To the `summarize()` function, add `.by = c(year, month)`. Make sure to separate these arguments with commas. `.by = c(year, month)` will make the tibble have one row for each variation of `month` and `year`
+Copy previous code. Add the `na.rm = TRUE` argument in `any()`.
 
 ```{r summaries-4, exercise = TRUE}
 
@@ -739,20 +739,19 @@ Copy previous code. To the `summarize()` function, add `.by = c(year, month)`. M
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-4-hint, eval = FALSE}
-flights |>
+flights |> 
   summarize(
     all_delayed = all(dep_delay <= 60, na.rm = TRUE),
-    any_long_delay = any(arr_delay >= 300, na.rm = TRUE),
-    .by = c(..., ...))
+    any_long_delay = any(arr_delay >= 300),...)
 ```
 
 ###
 
-In most cases, however, `any()` and `all()` are a little too crude, and it would be nice to be able to get a little more detail about how many values are `TRUE` or `FALSE`. That leads us to the numeric summaries.
+`>=` is used when you want to find a variable that that is greater than or equal to a number. You could also use `<=` to find a variable that that is less than or equal to a number and `==` to find a variable that is exactly equal to a number.
 
 ### Exercise 5
 
-Add `day` as a new argument in `.by()`. Make sure to separate the arguments with commas.
+Copy previous code. To the `summarize()` function, add `.by = c(year, month)`. Make sure to separate these arguments with commas. `.by = c(year, month)` will make the tibble have one row for each variation of `month` and `year`
 
 ```{r summaries-5, exercise = TRUE}
 
@@ -765,56 +764,55 @@ flights |>
   summarize(
     all_delayed = all(dep_delay <= 60, na.rm = TRUE),
     any_long_delay = any(arr_delay >= 300, na.rm = TRUE),
-    .by = c(year, month, ...))
+    .by = c(..., ...))
 ```
 
 ###
 
-This will make the resulting tibble have one row for each combination of `year`, `month`, and `day`. Basically one row for each day of the year.
+In most cases, however, `any()` and `all()` are a little too crude, and it would be nice to be able to get a little more detail about how many values are `TRUE` or `FALSE`. That leads us to the numeric summaries.
 
 ### Exercise 6
 
-Make a new pipe with `flights`. Pipe `flights` into `summarize()`. Within `summarize()`, add `all_delayed = mean(dep_delay <= 60, na.rm = TRUE)`. This will create a column called `all_delayed` that is the mean of the rows where `dep_delay` is less than `60`. 
+Add `day` as a new argument in `.by()`. Make sure to separate the arguments with commas.
 
 ```{r summaries-6, exercise = TRUE}
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r summaries-6-hint, eval = FALSE}
-flights |>  
+flights |>
   summarize(
-    all_delayed = ...(dep_delay <= 60, na.rm = TRUE))
+    all_delayed = all(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = any(arr_delay >= 300, na.rm = TRUE),
+    .by = c(year, month,...))
 ```
 
 ###
 
-This will create a column called `all_delayed` that is the mean of the rows where `dep_delay` is less than `60`
+This allows us to find out if every flight was delayed on departure by at most an hour and the number of flights that were delayed on arrival by five hours or more. This will make the resulting tibble have one row for each combination of `year`, `month`, and `day`. Basically one row for each day of the year.
 
 ### Exercise 7
 
-Copy precious code and add `any_long_delay = sum(arr_delay >= 300, na.rm = TRUE)`, and `.by = c(year, month)` in the `summarize()` function. Make sure to separate the arguments with commas.
+Make a new pipe with `flights`. Pipe `flights` into `summarize()`. Within `summarize()`, add `all_delayed = dep_delay <= 60`.
 
 ```{r summaries-7, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r summaries-7-hint, eval = FALSE}
-flights |>  
-  summarize(
-    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
-    any_long_delay = ...(arr_delay >= 300, na.rm = TRUE),
-    .by = c(...))
+flights|>
+  summarize(all_delayed = ...)
 ```
 
 ###
 
-When you use a logical vector in a numeric context, `TRUE` becomes `1` and `FALSE` becomes `0`. This makes `sum()` and `mean()` very useful with logical vectors because `sum(x)` gives the number of `TRUE`s and `mean(x)` gives the proportion of `TRUE`s (because `mean()` is just `sum()` divided by `length()`.
+This should create a column called `all_delayed` that is `TRUE` when `dep_delay` is less than or equal to `60`.
 
 ### Exercise 8
 
-Copy previous code and add `day` to the `.by()` argument within `summarize()` to get rows for every single day of the year. Make sure to separate the arguments with commas.
+Copy previous code. Put `dep_delay <= 60` within `mean()`.
 
 ```{r summaries-8, exercise = TRUE}
 
@@ -823,6 +821,125 @@ Copy previous code and add `day` to the `.by()` argument within `summarize()` to
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-8-hint, eval = FALSE}
+flights|>
+  summarize(all_delayed = ...(dep_delay <= 60))
+```
+
+###
+
+This should create a column called `all_delayed` that is the mean of the rows where `dep_delay` is less than `60`
+
+### Exercise 9
+
+Copy previous code. Add `na.rm = TRUE` within `mean()`
+
+```{r summaries-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-9-hint, eval = FALSE}
+flights|>
+  summarize(all_delayed = mean(dep_delay <= 60,...))
+```
+
+###
+
+Setting `na.rm` equal to `TRUE` removes all `NA` values.
+
+### Exercise 10
+
+Copy previous code. Add `any_long_delay = arr_delay >= 300` as a new argument in `summarize()`. Make sure to separate the arguments with commas.
+
+```{r summaries-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-10-hint, eval = FALSE}
+flights|>
+  summarize(all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+            any_long_delay = ...)
+```
+
+###
+
+The `mean()` function gives the proportion of `TRUE`'s of whatever is inside it.
+
+### Exercise 11
+
+Copy previous code. Put `arr_delay >= 300` within `sum()`
+
+```{r summaries-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-11-hint, eval = FALSE}
+flights|>
+  summarize(all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+            any_long_delay = ...(arr_delay >= 300))
+```
+
+###
+
+The `sum()` function gives the number of `TRUE`'s of whatever is inside it.
+
+### Exercise 12
+
+Copy previous code. Add `na.rm = TRUE` within `sum()`
+
+```{r summaries-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-12-hint, eval = FALSE}
+flights|>
+  summarize(all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+            any_long_delay = sum(arr_delay >= 300, ...))
+```
+
+###
+
+When you use a logical vector in a numeric context, `TRUE` becomes `1` and `FALSE` becomes `0`. This makes `sum()` and `mean()` very useful with logical vectors because `sum(x)` gives the number of `TRUE`s and `mean(x)` gives the proportion of `TRUE`s (because `mean()` is just `sum()` divided by `length()`.
+
+### Exercise 13
+
+Copy previous code. Add `.by = c(year, month)` as a new argument within `summarize()`
+
+```{r summaries-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-13-hint, eval = FALSE}
+flights|>
+  summarize(all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+            any_long_delay = sum(arr_delay >= 300, na.rm = TRUE),
+            .by = c(...))
+```
+
+###
+
+Make sure to put lists of values within `c()`, otherwise the code will result in an error
+
+### Exercise 14
+
+Copy previous code and add `day` to the `.by()` argument within `summarize()` to get rows for every single day of the year. Make sure to separate the arguments with commas.
+
+```{r summaries-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-14-hint, eval = FALSE}
 flights |>  
   summarize(
     all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
@@ -834,15 +951,15 @@ flights |>
 
 This allows for us to see the proportion of flights that were delayed on departure by at most 1 hour (`60` minutes) and the number of flights that were delayed on arrival by 5 hours (`300` minutes) or more
 
-### Exercise 9
+### Exercise 15
 
 Start a new pipe with `flights`. Pipe it into `filter`. Within `filter()`, add `arr_delay > 0` as the argument.
 
-```{r summaries-9, exercise = TRUE}
+```{r summaries-15, exercise = TRUE}
 
 ```
 
-```{r summaries-9-hint, eval = FALSE}
+```{r summaries-15-hint, eval = FALSE}
 flights |>
   filter(... > 0)
 ```
@@ -851,17 +968,17 @@ flights |>
 
 There’s one final use for logical vectors in summaries: you can use a logical vector to filter a single variable to a subset of interest. This makes use of the base `[` (pronounced subset) operator, which you’ll learn more about in Section 28.2.
 
-### Exercise 10
+### Exercise 16
 
-Continue the pipe with `summarize()`. Within `summarize()`, add the argument `behind = mean(arr_delay)` and `n = n()`. Make sure to separate arguments within a function with comma's.
+Continue the pipe with `summarize()`. Within `summarize()`, add the argument `behind = mean(arr_delay)`.
 
-```{r summaries-10, exercise = TRUE}
+```{r summaries-16, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r summaries-10-hint, eval = FALSE}
+```{r summaries-16-hint, eval = FALSE}
 flights |>
   filter(arr_delay > 0)|>
   summarize(...)
@@ -871,17 +988,38 @@ flights |>
 
 This will look at the average delay just for flights that were actually delayed. We did this by first filtering the flights, then calculating the average delay.
 
-### Exercise 11
+### Exercise 17
 
-Add `.by = c(year, month, day)` to have one row for each day of the year.
+Copy previous code. Add the argument `n = n()` within `summarize()`. Make sure to separate arguments within a function with comma's.
 
-```{r summaries-11, exercise = TRUE}
+```{r summaries-17, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r summaries-11-hint, eval = FALSE}
+```{r summaries-17-hint, eval = FALSE}
+flights |>
+  filter(arr_delay > 0)|>
+  summarize(behind = mean(arr_delay),
+            n = ...)
+```
+
+###
+
+`n = n()` is used to calculate the count of observations where `arr_delay` is greater than `0`.
+
+### Exercise 18
+
+Add `.by = c(year, month, day)` to have one row for each day of the year.
+
+```{r summaries-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r summaries-18-hint, eval = FALSE}
 flights |>
   filter(arr_delay > 0)|>
   summarize(behind = mean(arr_delay),
@@ -891,13 +1029,15 @@ flights |>
 
 ###
 
+This looks at the average delay just for flights that were actually delayed. We did this by first filtering the flights and then calculating the average delay:
+
 This works, but what if we wanted to also compute the average delay for flights that arrived early? We’d need to perform a separate filter step, and then figure out how to combine the two data frames together. Instead you could use `[` to perform an inline filtering: `arr_delay[arr_delay > 0]` will yield only the positive arrival delays.
 
-### Exercise 12
+### Exercise 19
 
 Press "Run Code". 
 
-```{r summaries-12, exercise = TRUE}
+```{r summaries-19, exercise = TRUE}
 flights|> 
   summarize(
     behind = mean(arr_delay[arr_delay > 0], na.rm = TRUE),
