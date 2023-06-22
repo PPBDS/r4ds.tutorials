@@ -478,7 +478,7 @@ All of the case studies in the previous section were sourced from wild-caught JS
 
 ### Exercise 1
 
-To convert JSON into R data structures, we recommend the jsonlite package, by Jeroen Ooms. We’ll use only two jsonlite functions: `read_json()` and `parse_json()`. The repurrsive package also provides the source for `gh_user` as a JSON file and you can read it with `read_json()`.
+To convert JSON into R data structures, we recommend the "jsonlite" package, by Jeroen Ooms. We’ll use only two jsonlite functions: `read_json()` and `parse_json()`. The "repurrsive" package also provides the source for `gh_user` as a JSON file and you can read it with `read_json()`.
 
 Run `gh_users_json()` which gives you the path to the json file.
 
@@ -498,7 +498,7 @@ Next up we will read the json file.
 
 ### Exercise 2
 
-Create a new variable `gh_user2` and assign it to `read_json()` function and pass in the `gh_users_json()` function as arguement.
+Create a new variable `gh_user2` and assign it to `read_json()` function and pass in the `gh_users_json()` function as argument.
 
 ```{r json-2, exercise = TRUE}
 
@@ -511,6 +511,12 @@ gh_users2 <- read_json(...)
 ```
 
 ###
+
+JSON is a simple format designed to be easily read and written by machines, not humans. It has six key data types. Four of them are scalars:
+1.Null Type : plays the same role as NA in R.
+2.String :  much like a string in R, but must always use double quotes.
+3.Number : similar to R’s numbers: they can use integer (e.g., 123), decimal (e.g., 123.45), or scientific (e.g., 1.23e3) notation. JSON doesn’t support `Inf`, `-Inf`, or `NaN`
+4.Boolean: similar to R’s `TRUE` and `FALSE`, but uses lowercase `true` and `false`.
 
 
 ### Exercise 3
@@ -583,13 +589,14 @@ Copy the previous code, and within `parse_join()` change the arguemnt to a strin
 
 ###
 
-Jsonlite has another important function called `fromJSON()`. We don’t use it here because it performs automatic simplification `(simplifyVector = TRUE)`. This often works well, particularly in simple cases, but we think you’re better off doing the rectangling yourself so you know exactly what’s happening and can more easily handle the most complicated nested structures.
+JSON’s strings, numbers, and booleans are pretty similar to R’s character, numeric, and logical vectors. The main difference is that JSON’s scalars can only represent a single value. To represent multiple values you need to use one of the two remaining types: arrays and objects.
+
 
 ### Exercise 7
 
 In most cases, JSON files contain a single top-level array, because they’re designed to provide data about multiple “things”, e.g., multiple pages, or multiple records, or multiple results. In this case, you’ll start your rectangling with `tibble(json)` so that each element becomes a row.
 
-Run `json` to have a quick look at the dat abefore we dive in to parseing it and unnesting it.
+Run `json` to have a quick look at the data before we dive in to parsing it and unnesting it.
 
 ```{r json-7, exercise = TRUE}
 
@@ -602,6 +609,8 @@ json
 ```
 
 ###
+
+Jsonlite has another important function called `fromJSON()`. We don’t use it here because it performs automatic simplification `(simplifyVector = TRUE)`. This often works well, particularly in simple cases, but we think you’re better off doing the rectangling yourself so you know exactly what’s happening and can more easily handle the most complicated nested structures.
 
 ### Exercise 8
 
@@ -675,9 +684,11 @@ df4 <- ...(json ... list(parse_json(...)))
 
 ###
 
+Both arrays and objects are similar to lists in R; the difference is whether or not they’re named. An array is like an unnamed list, and is written with []. For example [1, 2, 3] is an array containing 3 numbers, and [null, 1, "string", false] is an array that contains a null, a number, a string, and a boolean.
+
 ### Exercise 12
 
-Start a pipe with `df4` to `unnest_wider()` and pass in `json` as the arguement which will unnest the top level objects `status` and `results`. 
+Start a pipe with `df4` to `unnest_wider()` and pass in `json` as the argument which will unnest the top level objects `status` and `results`. 
 
 ```{r json-12, exercise = TRUE}
 
@@ -691,6 +702,8 @@ Start a pipe with `df4` to `unnest_wider()` and pass in `json` as the arguement 
 ```
 
 ###
+
+An object is like a named list, and is written with `{}`. The names (keys in JSON terminology) are strings, so must be surrounded by quotes. For example, `{"x": 1, "y": 2}` is an object that maps `x to 1` and `y to 2`.
 
 ### Exercise 13
 
@@ -709,6 +722,8 @@ Copy the previous code and continue the pipe from `unnest_wider()` to `unnest_lo
 ```
 
 ###
+
+If you want to explore more about "jsonlite" check out their [website](https://cran.r-project.org/web/packages/jsonlite/vignettes/json-aaquickstart.html).
 
 ### Exercise 14
 
