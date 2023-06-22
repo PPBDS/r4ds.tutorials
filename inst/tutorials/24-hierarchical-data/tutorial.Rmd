@@ -740,6 +740,10 @@ Good work unnestign relational data. Next up we will unnest deeply nested data.
 
 ### Exercise 14
 
+We’ll finish off these case studies with a list-column that’s very deeply nested and requires repeated rounds of `unnest_wider()` and `unnest_longer()` to unravel: gmaps_cities. This is a two column tibble containing five city names and the results of using Google’s geocoding API to determine their location:
+
+Run `gmaps_cities`.
+
 ```{r case-studies-14, exercise = TRUE}
 
 ```
@@ -747,12 +751,16 @@ Good work unnestign relational data. Next up we will unnest deeply nested data.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-14-hint-1, eval = FALSE}
-
+gmaps_cities
 ```
 
 ### 
 
+`json` is a list-column with internal names, so we start exploring `json` with  `unnest_wider()`.
+
 ### Exercise 15
+
+Start a pipe with `gmaps_cities` to `unnest_wider()` and pass in `json`.
 
 ```{r case-studies-15, exercise = TRUE}
 
@@ -761,12 +769,18 @@ Good work unnestign relational data. Next up we will unnest deeply nested data.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-15-hint-1, eval = FALSE}
-
+gmaps_cities |>
+  unnest_wider(...)
 ```
 
 ### 
 
+This gives us the status and the results. We’ll drop the status column since they’re all OK; in a real analysis, you’d also want to capture all the rows where `status != "OK"` and figure out what went wrong. results is an unnamed list, with either one or two elements (we’ll see why shortly).
+
+
 ### Exercise 16
+
+Extend the pipe to `select()` and pass in `-status` to remove `status` column and then extend the pipe from `select()` to `unnest_longer()`. Within `unnest_longer()` pass in `results`.
 
 ```{r case-studies-16, exercise = TRUE}
 
@@ -775,12 +789,19 @@ Good work unnestign relational data. Next up we will unnest deeply nested data.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-16-hint-1, eval = FALSE}
-
+... |> 
+  ...(json) |> 
+  select(-...) |> 
+  unnest_longer(...)
 ```
 
 ### 
 
+Now results is a named list, so we’ll use `unnest_wider()`.
+
 ### Exercise 17
+
+Extend the pipe to `unnest_wider()` and pass in `results`,assign the whole code to `locations` using `<-` and call `locations` on a new line.
 
 ```{r case-studies-17, exercise = TRUE}
 
@@ -789,10 +810,106 @@ Good work unnestign relational data. Next up we will unnest deeply nested data.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-17-hint-1, eval = FALSE}
-
+location <- ... |> 
+  ...(json) |> 
+  select(-...) |> 
+  unnest_longer(...) |>
+  unnest_wider(json)
 ```
 
 ### 
+
+Now we can see why two cities got two results: Washington matched both Washington state and Washington, DC, and Arlington matched Arlington, Virginia and Arlington, Texas.
+
+### Exercise 18
+
+
+```{r case-studies-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r case-studies-18-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 19
+
+
+```{r case-studies-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r case-studies-19-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 20
+
+
+```{r case-studies-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r case-studies-20-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 21
+
+
+```{r case-studies-21, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r case-studies-21-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 22
+
+
+```{r case-studies-22, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r case-studies-22-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 23
+
+
+```{r case-studies-23, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r case-studies-23-hint, eval = FALSE}
+
+```
+
+###
 
 
 
