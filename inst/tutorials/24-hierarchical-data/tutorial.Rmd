@@ -64,6 +64,8 @@ json1 <- '{
 '
 df3 <- tibble(json = parse_json(json))
 df4 <- tibble(json1 = list(parse_json(json1)))
+repos <- tibble(json = gh_repos)
+chars <- tibble(json = got_chars)
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -611,6 +613,10 @@ This gives another wide dataset, but you can get the sense that owner appears to
 
 ### Exercise 8
 
+Nested data is sometimes used to represent data that we’d usually spread across multiple data frames. For example, take `got_chars` which contains data about characters that appear in the Game of Thrones books and TV series. Like `gh_repos` it’s a list, so we start by turning it into a list-column of a tibble:
+
+Create variable `chars` and assign it to `tibble()`. within `tibble()`, set the column name to `json` and set `json` equal to `got_chars`. On a new line call `chars`.
+
 ```{r case-studies-8, exercise = TRUE}
 
 ```
@@ -618,12 +624,17 @@ This gives another wide dataset, but you can get the sense that owner appears to
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-8-hint-1, eval = FALSE}
-
+... <- ...(json = ...)
+chars
 ```
 
 ### 
 
+The json column contains named elements, so we’ll start by widening it.
+
 ### Exercise 9
+
+Start a pipe with `chars` to `unnest_wider()` and pass in `json`.
 
 ```{r case-studies-9, exercise = TRUE}
 
@@ -632,12 +643,17 @@ This gives another wide dataset, but you can get the sense that owner appears to
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-9-hint-1, eval = FALSE}
-
+... |> 
+  unnest_wider(...)
 ```
 
 ### 
 
+We have 18 columns and not all of them are releveant so let's only select few coloumns next up.
+
 ### Exercise 10
+
+Extend the pipe from `unnest_wider()` to `select()` and pass in the following columns to select: `id, name, gender, culture, born, died, alive`.
 
 ```{r case-studies-10, exercise = TRUE}
 
@@ -646,12 +662,18 @@ This gives another wide dataset, but you can get the sense that owner appears to
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-10-hint-1, eval = FALSE}
-
+... |> 
+  ..._wider(json) |> 
+  select(..., name, ..., culture, born, ..., alive)
 ```
 
 ### 
 
+This dataset contains also many list-columns, so let's now select columns where there are records which include lists.
+
 ### Exercise 11
+
+Modify `select()` to select `id` only and select `id` only when `where(is.list)`.
 
 ```{r case-studies-11, exercise = TRUE}
 
@@ -660,12 +682,18 @@ This gives another wide dataset, but you can get the sense that owner appears to
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-11-hint-1, eval = FALSE}
-
+... |> 
+  ..._wider(json) |> 
+  select(id, where(...))
 ```
 
 ### 
 
+Let’s explore the titles column. It’s an unnamed list-column, so we’ll unnest it into rows.
+
 ### Exercise 12
+
+Modify `select()` to only select `id` and `titles`. Then extend the pipe to `unnest_longer()` and pass in `titles` to unnest the titles.
 
 ```{r case-studies-12, exercise = TRUE}
 
@@ -674,12 +702,19 @@ This gives another wide dataset, but you can get the sense that owner appears to
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-12-hint-1, eval = FALSE}
-
+... |> 
+  ..._wider(json) |> 
+  select(id, ...)|>
+  unnest_...(titles)
 ```
 
 ### 
 
+You might expect to see this data in its own table because it would be easy to join to the characters data as needed.Let’s do that, which requires little cleaning.
+
 ### Exercise 13
+
+Let's make the data to be in its own table so assign the whole code we wrote to `titles` using `<-`. Adding let's clean the data so extend the pipe to `filter()` and pass in `titles != ""` which filters out all the missing values and then extend the pipe the to `rename()` and pass in `title = titles`. On a new line call the whole table using `titles`.
 
 ```{r case-studies-13, exercise = TRUE}
 
@@ -688,10 +723,20 @@ This gives another wide dataset, but you can get the sense that owner appears to
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-13-hint-1, eval = FALSE}
-
+... <- chars |> 
+  unnest_wider(...) |> 
+  select(..., titles) |> 
+  ...(titles) |> 
+  filter(titles != ...) |> 
+  ...(title = ...)
+titles
 ```
 
 ### 
+
+You could imagine creating a table like this for each of the list-columns, then using joins to combine them with the character data as you need it.
+
+Good work unnestign relational data. Next up we will unnest deeply nested data.
 
 ### Exercise 14
 
