@@ -66,6 +66,11 @@ df3 <- tibble(json = parse_json(json))
 df4 <- tibble(json1 = list(parse_json(json1)))
 repos <- tibble(json = gh_repos)
 chars <- tibble(json = got_chars)
+locations <- gmaps_cities |> 
+  unnest_wider(json) |> 
+  select(-status) |> 
+  unnest_longer(results) |> 
+  unnest_wider(results)
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -810,11 +815,12 @@ Extend the pipe to `unnest_wider()` and pass in `results`,assign the whole code 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-17-hint-1, eval = FALSE}
-location <- ... |> 
+locations <- ... |> 
   ...(json) |> 
   select(-...) |> 
   unnest_longer(...) |>
   unnest_wider(json)
+locations
 ```
 
 ### 
@@ -823,6 +829,7 @@ Now we can see why two cities got two results: Washington matched both Washingto
 
 ### Exercise 18
 
+There are a few different places we could go from here. We might want to determine the exact location of the match, which is stored in the geometry list-column. Start a new pipe with `locations` to `select()` and we will select the following: `city`, `formatted_address`, and `geometry`. Then we will extend the pipe to `unnest_wider()` and pass in `geometry` to extend the list.
 
 ```{r case-studies-18, exercise = TRUE}
 
@@ -831,13 +838,18 @@ Now we can see why two cities got two results: Washington matched both Washingto
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-18-hint, eval = FALSE}
-
+... |> 
+  ...(city, formatted_address, geometry) |> 
+  unnest_wider(...)
 ```
 
 ###
 
+After unnesting `geometry` it gives us new bounds (a rectangular region) and location (a point). We can unnest location to see the latitude (lat) and longitude (lng).
+
 ### Exercise 19
 
+Continue the pipe and extend it from` unnest_wider()` to `unnest_wider()` again and pass in `location` to unnest `location`.
 
 ```{r case-studies-19, exercise = TRUE}
 
@@ -846,13 +858,19 @@ Now we can see why two cities got two results: Washington matched both Washingto
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-19-hint, eval = FALSE}
-
+... |> 
+  ...(city, formatted_address, geometry) |> 
+  unnest_wider(...)|>
+  unnest_...(...)
 ```
 
 ###
 
+Now we got he `lat` and `lng` of the location. Next we will extract the `bounds`.
+
 ### Exercise 20
 
+To unnest the `bounds`, we first need to select the columns which we need, so after `unnest_wider(geometry)` start a pipe with `select()` and pass in `!location:viewport` which dosent select the columns from location to viewport. Then modify the `unnest_wider()` which was on the last line of code to have `bounds` as the arguement.
 
 ```{r case-studies-20, exercise = TRUE}
 
@@ -861,13 +879,22 @@ Now we can see why two cities got two results: Washington matched both Washingto
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-20-hint, eval = FALSE}
-
+... |> 
+  ...(city, formatted_address, geometry) |> 
+  unnest_wider(...)|>
+  select(!...:...)|>
+  unnest_...(...)
 ```
 
 ###
 
+Now we get two columns called `northeast` and `southwest`.
+
 ### Exercise 21
 
+We then rename southwest and northeast (the corners of the rectangle) so we can use `names_sep` to create short but evocative names when unnesting them.
+
+Extend the pipe from `unnest_wider(bounds)` to `rename()`and pass in `ne = northeast` and `sw = southwest`. Then extend the pipe again to `unnest_wider()` and pass in a vector `c(ne, sw)` and also pass in `names_sep = "_"`.
 
 ```{r case-studies-21, exercise = TRUE}
 
@@ -881,8 +908,18 @@ Now we can see why two cities got two results: Washington matched both Washingto
 
 ###
 
+Note how we unnest two columns simultaneously by supplying a vector of variable names to `unnest_wider()`.
+
 ### Exercise 22
 
+Now that you’ve discovered the path to get to the components you’re interested in, you can extract them directly using another tidyr function, `hoist()`:
+
+Start a new pipe with `locations` to `select()` and select the following: `city` , `formatted_address` and `geometry`, then continue the pipe from `select()` to `hoist()` and pass in the following:
+`geometry`,
+`ne_lat = c("bounds", "northeast", "lat")`,
+`sw_lat = c("bounds", "southwest", "lat")`,
+`ne_lng = c("bounds", "northeast", "lng")`,
+`sw_lng = c("bounds", "southwest", "lng")`,`
 
 ```{r case-studies-22, exercise = TRUE}
 
@@ -891,26 +928,20 @@ Now we can see why two cities got two results: Washington matched both Washingto
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r case-studies-22-hint, eval = FALSE}
-
+... |> 
+  select(city, ..., geometry) |> 
+  ...(
+    geometry,
+    ne_lat = c("bounds", "northeast", "lat"),
+    sw_lat = c("bounds", "southwest", "..."),
+    ne_lng = c("bounds", "northeast", "lng"),
+    sw_lng = c("bounds", "southwest", "lng"),
+  )
 ```
 
 ###
 
-### Exercise 23
-
-
-```{r case-studies-23, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r case-studies-23-hint, eval = FALSE}
-
-```
-
-###
-
+If these case studies have whetted your appetite for more real-life rectangling, you can see a few more examples in `vignette("rectangling", package = "tidyr")`.
 
 
 ## JSON
