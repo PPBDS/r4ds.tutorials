@@ -250,23 +250,36 @@ Create a variable `df` and assign `tibble()` to it. We will have 4 columns: `a`,
 ## Plot Functions
 ###
 
+Instead of returning a data frame, you might want to return a plot. Fortunately, you can use the same techniques with ggplot2, because `aes()` is a data-masking function. For example, imagine that you’re making a lot of histograms like the following:
+
+```{r}
+knitr::include_graphics("images/img.png")
+```
+
+Wouldn’t it be nice if you could wrap this up into a histogram function?
+
 ### Exercise 1
 
+Creating a plot function becomes effortless once you understand that `aes()` serves as a data-masking function. Let's name the function `histogram` and assign it to `function()`. The function will require three variables: `df` for the dataset, `var` for the variable, and `binwidth`, which is set to `NULL` and determines the size of each bar when left empty.
 
 ```{r plot-functions-1, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r plot-functions-1-hint, eval = FALSE}
-
+histogram <- ...(...,var,binwidth = ...){
+  
+}
 ```
 
 ###
 
+The reason we set `binwidth` to `NULL` is because the `binwidth` is a optional variable that you can modify when using the function.  
+
 ### Exercise 2
 
+Copying the previous code, within the curly braces of `function()`, start a new pipe with `df` to `ggplot()`. Within `aes()` in `ggplot()`, set `x` to `{{x}}`. Then add the `geom_histogram()` layer using `+` and set `binwidth = binwidth`.
 
 ```{r plot-functions-2, exercise = TRUE}
 
@@ -275,28 +288,37 @@ Create a variable `df` and assign `tibble()` to it. We will have 4 columns: `a`,
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r plot-functions-2-hint, eval = FALSE}
-
+.... <- ...(...,var,binwidth = ...){
+  df |>
+    ggplot(aes(... = ...))+
+    geom_...(binwidth =...)
+}
 ```
 
 ###
 
+Now that we have the function ready and good to get, let's use it on datsets.
+
 ### Exercise 3
 
+Start a pipe with `diamonds` data set to `histogram()` and set the first argument to `carat` and second to `.1`.
 
 ```{r plot-functions-3, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r plot-functions-3-hint, eval = FALSE}
-
+diamonds |> histogram(..., 0.1)
 ```
 
 ###
 
+To clarify and clear up some confusion, we already set `df` to `diamonds` with the pipe and setting the rest values within the function call.
+
 ### Exercise 4
 
+Note that `histogram()` returns a ggplot2 plot, allowing you to add additional components as desired. To enhance the graph, let's incorporate `labs()`. Copy the previous code and add `labs()` using `+`, setting `x` to `"Size (in carats)"`, and `y` to `"Number of diamonds"`.
 
 ```{r plot-functions-4, exercise = TRUE}
 
@@ -305,10 +327,14 @@ Create a variable `df` and assign `tibble()` to it. We will have 4 columns: `a`,
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r plot-functions-4-hint, eval = FALSE}
-
+... |> 
+  histogram(..., 0.1) +
+  labs(... = "Size (in carats)", y = "...")
 ```
 
 ###
+
+Next up, we will talk about adding more variable to the function.
 
 ### Exercise 5
 
