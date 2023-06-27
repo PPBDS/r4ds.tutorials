@@ -19,6 +19,18 @@ library(nycflights13)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
+
+rescale01 <- function(x) {
+  (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+}
+
+df <- tibble(
+  a = rnorm(5),
+  b = rnorm(5),
+  c = rnorm(5),
+  d = rnorm(5),
+)
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -98,7 +110,7 @@ Now that we have the name and the arguements set, let set up the body of the fun
 
 ### Exercise 4
 
-
+Copy the previous code, and inside the curly braces pass in `(a - min(a, na.rm = TRUE)) / (max(a, na.rm = TRUE) - min(a, na.rm = TRUE))`, but make sure to change the `a` and `b` to `x`. 
 
 ```{r vector-functions-4, exercise = TRUE}
 
@@ -107,12 +119,18 @@ Now that we have the name and the arguements set, let set up the body of the fun
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r vector-functions-4-hint-1, eval = FALSE}
-
+... <- function(...) {
+  (... - min(x, na.rm = TRUE)) / (max(..., na.rm = TRUE) - min(x, na.rm = ...))
+}
 ```
 
 ### 
 
+At this point you might test with a few simple inputs to make sure you’ve captured the logic correctly.
+
 ### Exercise 5
+
+Type `rescale01()` and pass in the vector: `c(-10,0,10)`.
 
 ```{r vector-functions-5, exercise = TRUE}
 
@@ -121,10 +139,70 @@ Now that we have the name and the arguements set, let set up the body of the fun
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r vector-functions-5-hint-1, eval = FALSE}
-
+scaler01(...)
 ```
 
 ### 
+
+Let's now use this on a tibble.
+
+### Exercise 6
+
+Run `df` to have a look at the dataset.
+
+```{r vector-functions-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r vector-functions-6-hint, eval = FALSE}
+df
+```
+
+###
+
+These numbers are generated from `rnorm()` which generates random numbers from a normal (Gaussian) distribution.
+
+### Exercise 7
+
+Start a pipe with `df` to `mutate()`, within `mutate()`, set all column names equal to `rscale01()` and pass in the name of the column as the argument. For example, `a = rescale01(a)`.
+
+```{r vector-functions-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r vector-functions-7-hint, eval = FALSE}
+df |> ...(
+  a = rescale01(a),
+  b = rescale01(...),
+  ... = rescale01(c),
+  d = ...(d),
+)
+```
+
+###
+
+You might notice that the `rescale01()` function does some work way too many times instead of just once so let's improve the function and optimize it.
+
+### Exercise 8
+
+
+```{r vector-functions-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r vector-functions-8-hint, eval = FALSE}
+
+```
+
+###
+
+
 
 ## Data Frame Functions
 ### 
