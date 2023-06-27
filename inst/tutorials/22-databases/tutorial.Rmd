@@ -98,7 +98,7 @@ Set `dbConnect(RSQLite::SQLite())` to the `con` variable.
 
 ### Exercise 3
 
-Copy the code from above. Now within the `con` variable, add `dbname` and set it to "myDB.sqlite".
+Copy the code from above. Now within the `con` variable, add `dbname` and set it to `"myDB.sqlite"`.
 
 ```{r connecting-to-a-data-3, exercise = TRUE}
 
@@ -107,7 +107,7 @@ Copy the code from above. Now within the `con` variable, add `dbname` and set it
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r connecting-to-a-data-3-hint, eval = FALSE}
-... <- dbConnect(..., dbname = "myDB.sqlite") 
+... <- dbConnect(RSQLite::SQLite(), dbname = "...") 
 ```
 
 ###
@@ -116,7 +116,7 @@ We want to use a **Client-server** DBMS’s because they run on a powerful centr
 
 ### Exercise 4
 
-Let's write the `mpg` data to the database we just created. Use `dbWriteTable()` and within it put the arguments `con`, "mpg", and `ggplot2::mpg`.
+Let's write the `mpg` data to the database we just created. Use `dbWriteTable()` and within it put the arguments `con`, `"mpg"`, and `ggplot2::mpg`. This should not result in a tibble.
 
 ```{r connecting-to-a-data-4, exercise = TRUE}
 
@@ -132,14 +132,14 @@ When we use `dbWriteTable()` we need to supply three arguments: a database conne
 
 ### Exercise 5
 
-Let's write the `diamonds` data to the database we just created. Use `dbWriteTable()` and within it put the arguments `con`, "diamonds", and `ggplot2::diamonds`.
+Let's write the `diamonds` data to the database we just created. Use `dbWriteTable()` and within it put the arguments `con`, `"diamonds"`, and `ggplot2::diamonds`. This should not result in a tibble.
 
 ```{r connecting-to-a-data-5, exercise = TRUE}
 
 ```
 
 ```{r connecting-to-a-data-5-hint, eval = FALSE}
-...(con, ..., ggplot2::diamonds)
+...(con, "...", ggplot2::diamonds)
 ```
 
 ###
@@ -164,7 +164,7 @@ You can check that the data is loaded correctly by using the `dbListTables()` fu
 
 ### Exercise 7
 
-Let's use another DBI function: `dbReadTable()`. Start a pipe with `con` and use `dbReadTable()` on "mpg".
+Let's use another DBI function: `dbReadTable()`. Start a pipe with `con` and use `dbReadTable()` on `"mpg"`.
 
 ```{r connecting-to-a-data-7, exercise = TRUE}
 
@@ -190,22 +190,19 @@ Continue the pipe with `as_tibble()` which will return our data in a nice tibble
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r connecting-to-a-data-8-hint, eval = FALSE}
-... |>
-  as_tibble()
+con |>
+  dbReadTable("mpg")|>
+  ...
 ```
 
 ###
 
-To convert data into a tibble we use `as_tibble()` which allows it t print nicely.
+To convert data into a tibble we use `as_tibble()` which allows it to print nicely.
 
 ### Exercise 9
 
 Now let's use `SQL` to select specific variables from the database. Create a `mpg_sql` variable and set it equal to 
-"
-  SELECT manufacturer, model, year, displ, class 
-  FROM mpg 
-  WHERE displ > 1.8
-"
+`"SELECT manufacturer, model, year, displ, class FROM mpg WHERE displ > 1.8"`
 
 ```{r connecting-to-a-data-9, exercise = TRUE}
 ```
@@ -220,18 +217,18 @@ Now let's use `SQL` to select specific variables from the database. Create a `mp
 
 ###
 
-With the above variable, we want to select 5 specific variables, from the mpg dataset, with only values with `displ` > 1.8.
+With the above variable, we want to select 5 specific variables, from the `mpg` dataset, with only values with `displ > 1.8`.
 
 ### Exercise 10
 
-Use `as_tibble()` and within use `dbGetQuery()` and set two arguments con, `mpg_sql` within `dbGetQuery()`.
+Type `as_tibble()`. Within `as_tibble()`, add`dbGetQuery()` with the arguments `con` and `mpg_sql`
 
 ```{r connecting-to-a-data-10, exercise = TRUE}
 
 ```
 
 ```{r connecting-to-a-data-10-hint, eval = FALSE}
-...(dbGetQuery(con, mpg_sql))
+as_tibble(dbGetQuery(...))
 ```
 
 ###
@@ -245,14 +242,14 @@ Now that we’ve connected to a database and loaded up some data, we can start t
 
 ### Exercise 1
 
-Create a variable `mpg_db` and set that to `tbl()` on the two arguments: `con` and "mpg".
+Create a variable `mpg_db` and set that to `tbl()` on the two arguments: `con` and `"mpg"`.
 
 ```{r dbplyr-basics-1, exercise = TRUE}
 
 ```
 
 ```{r dbplyr-basics-1-hint, eval = FALSE}
-mpg_db <- ...(con, "mpg")
+mpg_db <- tbl(...)
 ```
 
 ###
@@ -261,7 +258,7 @@ We use `tbl()` To create an object that represents a database table.
 
 ### Exercise 2
 
-Start a pipe with `mpg_db` that we created from above and `filter()` all the value with `displ` > 1.8.
+Start a new pipe with `mpg_db`. Pipe that into `filter()`. Within `filter()`, add the argument `displ > 1.8`.
 
 ```{r dbplyr-basics-2, exercise = TRUE}
 
@@ -287,8 +284,9 @@ Select the `manufacturer`, `model`, `displ`, and `year` through `drv` variables.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r dbplyr-basics-3-hint, eval = FALSE}
-... |>
-  select(manufacturer, model, displ, year:drv)
+mpg_db |>
+  filter(displ > 1.8)|>
+  select(..., year:drv)
 ```
 
 ###
@@ -306,8 +304,10 @@ Continue the pipe by adding `show_query()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r dbplyr-basics-4-hint, eval = FALSE}
-... |>
-  show_query()
+mpg_db |>
+  filter(displ > 1.8)|>
+  select(manufacturer, model, displ, year:drv)|>
+  ...
 ```
 
 ###
@@ -325,8 +325,10 @@ Take the pipe from above and remove `show_query()` and instead add `collect()` t
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r dbplyr-basics-5-hint, eval = FALSE}
-... |>
-  collect()
+mpg_db |>
+  filter(displ > 1.8)|>
+  select(manufacturer, model, displ, year:drv)|>
+  ...
 ```
 
 ###
@@ -340,14 +342,14 @@ The rest of the chapter will teach you a little `SQL` through the lens of **dbpl
 
 ### Exercise 1
 
-Run `dbplyr::copy_nycflights13()` on `con`.
+Run `dbplyr::copy_nycflights13()` with `con` as the argument.
 
 ```{r sql-1, exercise = TRUE}
 
 ```
 
 ```{r sql-1-hint, eval = FALSE}
-...(con)
+dbplyr::copy_nycflights13(...)
 ```
 
 ###
@@ -356,7 +358,7 @@ Here we are exploring the relationship between **dplyr** and `SQL` using the `ny
 
 ### Exercise 2
 
-Let's create the `flights_db` variable and set it to `tbl()`, within `tbl()` use the `con`, "flights" arguments. Let's create the `planes_db` variable and set it to `tbl()`, within `tbl()` use the `con`, "planes" arguments.
+Type `flights_db` set it to `tbl()`. Within `tbl()` use the `con`, `"flights"` arguments. On the next line type `planes_db` and set it to `tbl()`. Within `tbl()` use the `con` and `"planes"` arguments.
 
 ```{r sql-2, exercise = TRUE}
 
@@ -373,7 +375,7 @@ These datasets are easy to get into our learning database because **dbplyr** com
 
 ### Exercise 3
 
-Start a pipe with `planes_db` and `filter()` based on the `manufacturer` to only include "AIRBUS INDUSTRIE".
+Start a pipe with `planes_db` and pipe it into `filter()`. Within `filter()`, add `manufacturer == "AIRBUS INDUSTRIE"` to only include the rows where the `manufacturer` is `"AIRBUS INDUSTRIE"`.
 
 ```{r sql-3, exercise = TRUE}
 
@@ -390,7 +392,7 @@ The top-level components of `SQL` are called **statements**. Common statements i
 
 ### Exercise 4
 
-Continue the pipe to `arrange()` by `year`.
+Continue the pipe with `arrange()`. Within `arrange()`, add `year`.
 
 ```{r sql-4, exercise = TRUE}
 
@@ -399,7 +401,8 @@ Continue the pipe to `arrange()` by `year`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r sql-4-hint, eval = FALSE}
-... |> 
+planes_db |> 
+  filter(manufacturer == "AIRBUS INDUSTRIE")|> 
   arrange(...)
 ```
 
@@ -409,7 +412,7 @@ We like using `SELECT` statements, also called **queries**, because they are alm
 
 ### Exercise 5
 
-Continue the pipe to include `show_query()`.
+Continue the pipe with `show_query()`.
 
 ```{r sql-5, exercise = TRUE}
 
@@ -418,7 +421,9 @@ Continue the pipe to include `show_query()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r sql-5-hint, eval = FALSE}
-... |>
+planes_db |> 
+  filter(manufacturer == "AIRBUS INDUSTRIE")|> 
+  arrange(year)|>
   ...()
 ```
 
@@ -433,7 +438,7 @@ In `SQL`, order matters: you must always write the clauses in the order `SELECT`
 
 ### Exercise 1
 
-Let's use the `flights_db` variable from above. Create a pipe with `flights_db` to `select()` `carrier`, `tailnum`, `origin`, `distance`, and `year`.
+Let's use the `flights_db` variable from above. Create a pipe with `flights_db`. Pipe it into the `select()` function. Within `select()`, add the arguments `carrier`, `tailnum`, `origin`, `distance`, and `year`. Make sure to separate these arguments with commas.
 
 ```{r sql-select-from-grou-1, exercise = TRUE}
 
@@ -450,7 +455,7 @@ flights_db |>
 
 ### Exercise 2
 
-Continue the pipe and use `rename()` and set `year_built` to `year`.
+Continue the pipe with `rename()`. Within `rename()` set `year_built` to `year` using a `=`
 
 ```{r sql-select-from-grou-2, exercise = TRUE}
 
@@ -459,7 +464,8 @@ Continue the pipe and use `rename()` and set `year_built` to `year`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r sql-select-from-grou-2-hint, eval = FALSE}
-... |>
+flights_db |>
+  select(carrier, tailnum, origin, distance, year)|>
   rename(year_built = ...)
 ```
 
@@ -469,7 +475,7 @@ The `SELECT` clause is the workhorse of queries and performs the same job as `re
 
 ### Exercise 3
 
-Continue the pipe and run `show_query()`.
+Continue the pipe with `show_query()`.
 
 ```{r sql-select-from-grou-3, exercise = TRUE}
 
@@ -478,7 +484,9 @@ Continue the pipe and run `show_query()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r sql-select-from-grou-3-hint, eval = FALSE}
-... |>
+flights_db |>
+  select(carrier, tailnum, origin, distance, year)|>
+  rename(year_built = year)
   show_query()
 ```
 
@@ -488,7 +496,7 @@ This example also shows you how `SQL` does renaming. In `SQL` terminology renami
 
 ### Exercise 4
 
-Start a pipe with `mpg` to `summarize()` and set `avg_hwy` to the `mean()` of `hwy` and `na.rm = TRUE`.
+Start a new pipe with `mpg`. Pipe it into `summarize()` and set `avg_hwy` to the `mean()` of `hwy` and `na.rm = TRUE` using the code `avg_hwy = mean(hwy, na.rm= TRUE)`.
 
 ```{r sql-select-from-grou-4, exercise = TRUE}
 
@@ -497,8 +505,11 @@ Start a pipe with `mpg` to `summarize()` and set `avg_hwy` to the `mean()` of `h
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r sql-select-from-grou-4-hint, eval = FALSE}
-... |>
-  summarize(... = mean(hwy, na.rm = TRUE))
+flights_db |>
+  select(carrier, tailnum, origin, distance, year)|>
+  rename(year_built = year)
+  show_query()|>
+  summarize(... = mean(..., na.rm = TRUE))
 ```
 
 ###
@@ -507,7 +518,7 @@ Start a pipe with `mpg` to `summarize()` and set `avg_hwy` to the `mean()` of `h
 
 ### Exercise 5
 
-Add on to `summarize()` with a `.by` set to `displ`.
+Within `summarize()`, add on `.by = displ`.
 
 ```{r sql-select-from-grou-5, exercise = TRUE}
 
@@ -516,8 +527,11 @@ Add on to `summarize()` with a `.by` set to `displ`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r sql-select-from-grou-5-hint, eval = FALSE}
-... |>
-  summarize(... = mean(hwy, na.rm = TRUE),
+flights_db |>
+  select(carrier, tailnum, origin, distance, year)|>
+  rename(year_built = year)
+  show_query()|>
+  summarize(avg_hwy = mean(hwy, na.rm = TRUE),
             .by = ...)
 ```
 
@@ -528,7 +542,7 @@ Add on to `summarize()` with a `.by` set to `displ`.
 
 ### Exercise 1
 
-Start a pipe with `flights_db`. Let's `filter()` our data to include `dest` for "IAH" or "HOU".
+Start a pipe with `flights_db`. Pipe it into `filter()`. Within `filter()`, add `dest = "IAH"` and `dest = "HOU` separated with a `|`.
 
 ```{r sql-with-where-order-1, exercise = TRUE}
 
@@ -536,7 +550,7 @@ Start a pipe with `flights_db`. Let's `filter()` our data to include `dest` for 
 
 ```{r sql-with-where-order-1-hint, eval = FALSE}
 ... |> 
-  ...(dest == "IAH" | dest == "HOU")
+  ...(dest == "..." | ... == "HOU")
 ```
 
 ###
@@ -545,7 +559,7 @@ In `SQL`, `|` becomes `OR` and `&` becomes `AND`. `SQL` uses `=` for comparison,
 
 ### Exercise 2
 
-Continue the pipe to `filter()` to only have `arr_delay` > 0 and `arr_delay` < 20.
+Continue the pipe with `filter()` with the arguments `arr_delay > 0` and `arr_delay < 20`. Make sure to separate these arguments with commas.
 
 ```{r sql-with-where-order-2, exercise = TRUE}
 
@@ -554,8 +568,9 @@ Continue the pipe to `filter()` to only have `arr_delay` > 0 and `arr_delay` < 2
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r sql-with-where-order-2-hint, eval = FALSE}
-... |> 
-  filter(... > 0 & ... < 20)
+flights_db|>
+filter(dest == "IAH"| dest == "HOU")|>
+filter(... > 0 , ... < 20)
 ```
 
 ### Exercise 3
@@ -569,8 +584,10 @@ Finish the pipe by adding `show_query()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r sql-with-where-order-3-hint, eval = FALSE}
-... |> 
-  ...()
+flights_db|>
+filter(dest == "IAH"| dest == "HOU")|>
+filter(arr_delay > 0, arr_delay < 20)|>
+...()
 ```
 
 ### Exercise 4
@@ -601,7 +618,8 @@ Finish the pipe by adding `show_query()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r sql-with-where-order-5-hint, eval = FALSE}
-... |>
+flights_db|> 
+  filter(!is.na(dep_delay))|>
   ...()
 ```
 
@@ -611,7 +629,7 @@ This `SQL` query illustrates one of the drawbacks of **dbplyr**: while the `SQL`
 
 ### Exercise 6
 
-Let's start another new pipe with `planes_db`. Let's `arrange()` our data to include `year`, `engines`, `seats`, `desc(speed)`.
+Let's start another new pipe with `planes_db`. Pipe it into `arrange()` and within `arrange()` add the arguments `year`, `engines`, `seats`, and `desc(speed)`.
 
 ```{r sql-with-where-order-6, exercise = TRUE}
 
@@ -637,8 +655,9 @@ Finish the pipe by adding `show_query()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r sql-with-where-order-7-hint, eval = FALSE}
-... |> 
-  show_query()
+planes_db|>
+arrange(year, engines, desc(seats), desc(speed))|>
+...()
 ```
 
 ###
@@ -647,7 +666,7 @@ Notice how `desc()` is translated to `DESC`: this is one of the many **dplyr** f
 
 ### Exercise 8
 
-Let's start another new pipe with `flights_db`. Let's `mutate()` our data to set `year1` to `year + 1`.
+Let's start another new pipe with `flights_db`. Pipe it into `mutate()`and within `mutate()`, set `year1` to `year + 1`.
 
 ```{r sql-with-where-order-8, exercise = TRUE}
 
@@ -664,7 +683,7 @@ Sometimes it’s not possible to translate a **dplyr** pipeline into a single `S
 
 ### Exercise 9
 
-Continue the pipe to `filter()` `year1` equal to `2014`.
+Continue the pipe with `filter()`. Within `filter()` set `year1` equal to `2014`.
 
 ```{r sql-with-where-order-9, exercise = TRUE}
 
@@ -673,8 +692,9 @@ Continue the pipe to `filter()` `year1` equal to `2014`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r sql-with-where-order-9-hint, eval = FALSE}
-... |> 
-  filter(year1 == 2014)
+flights_db|>
+mutate(year1 = year + 1)|>
+  filter(year1 == ...)
 ```
 
 ###
@@ -692,8 +712,10 @@ Finish the pipe by adding `show_query()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r sql-with-where-order-10-hint, eval = FALSE}
-... |> 
-  show_query()
+flights_db|>
+mutate(year1 = year + 1)|>
+filter(year1 == 2014)|>
+show_query()
 ```
 
 ###
@@ -707,7 +729,7 @@ You’re likely to need many joins when working with data from a database. That�
 
 ### Exercise 1
 
-Start a pipe with `flights_db`. Let's use `left_join()` and set `rename(year_built = year)` to `planes_db` in `left_join()`.
+Start a pipe with `flights_db`. Pipe it into `left_join()` and add `planes|> rename(year_built = year)`
 
 ```{r sql-with-joins--othe-1, exercise = TRUE}
 
@@ -720,7 +742,7 @@ Start a pipe with `flights_db`. Let's use `left_join()` and set `rename(year_bui
 
 ### Exercise 2
 
-Continue the pipe and add `by` and set it to "tailnum".
+Within `left_join` add `by` and set it to `"tailnum"`.
 
 ```{r sql-with-joins--othe-2, exercise = TRUE}
 
@@ -729,8 +751,10 @@ Continue the pipe and add `by` and set it to "tailnum".
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r sql-with-joins--othe-2-hint, eval = FALSE}
-... |> 
-  left_join(..., by = ...)
+flights_db|>
+left_join(planes_db|>
+          rename(year_built = year),
+          by = "..."
 ```
 
 ###
@@ -748,7 +772,10 @@ Finish the pipe by adding `show_query()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r sql-with-joins--othe-3-hint, eval = FALSE}
-... |> 
+flights_db|>
+left_join(planes_db|>
+          rename(year_built = year),
+          by = "tailnum"|>
   show_query()
 ```
 
@@ -779,7 +806,7 @@ We are going to create a function that will be used throughout this entire secti
 
 ### Exercise 2
 
-Within the function, start a pipe with `df` and use `mutate(..., .keep = "none")`.
+Copy previous code. Within `{}`, start a pipe with `df` and pipe it into `mutate(..., .keep = "none")`.
 
 ```{r function-translation-2, exercise = TRUE}
 
@@ -796,7 +823,7 @@ mutate_query <- function(df, ...) {
 
 ### Exercise 3
 
-Finish the pipe in the function by adding `show_query()`.
+Finish the pipe in the brackets by adding `show_query()`.
 
 ```{r function-translation-3, exercise = TRUE}
 
@@ -818,7 +845,7 @@ The translation of summary functions becomes more complicated when you use them 
 
 ### Exercise 4
 
-Start a pipe with `flights_db` and use the `mutate_query()` variable we used from above.
+Start a pipe with `flights_db` and pipe it into the `mutate_query()` variable we used from above.
 
 ```{r function-translation-4, exercise = TRUE}
 
