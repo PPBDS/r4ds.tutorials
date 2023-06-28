@@ -31,6 +31,12 @@ df <- tibble(
   d = rnorm(5),
 )
 
+grouped_mean <- function(df, group_var, mean_var) {
+  df |> 
+    group_by(group_var) |> 
+    summarize(mean(mean_var))
+}
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -210,7 +216,13 @@ You might notice that the `rescale01()` function does some work way too many tim
 
 Vector functions are useful for reducing code repetition within dplyr verbs. However, when you find yourself duplicating multiple verbs multiple times in a large pipeline, it's a good indication to write a data frame function. Data frame functions, like dplyr verbs, take a data frame as the first argument, additional arguments to specify the operations, and return a data frame or vector.
 
+To let you write a function that uses dplyr verbs, we’ll first introduce you to the challenge of indirection and how you can overcome it with embracing, `{{ }}`. With this theory under your belt, we’ll then show you a bunch of examples to illustrate what you might do with it.
+
 ### Exercise 1
+
+When you start writing functions that use dplyr verbs you rapidly hit the problem of indirection. Let’s illustrate the problem with a very simple function: `grouped_mean()`. The goal of this function is to compute the mean of `mean_var` grouped by `group_var`.
+
+Type `grouped_mean` and assign it to `function(df, group_var, mean_var)`, then add curly braces.
 
 ```{r data-frame-functions-1, exercise = TRUE}
 
@@ -219,12 +231,18 @@ Vector functions are useful for reducing code repetition within dplyr verbs. How
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r data-frame-functions-1-hint-1, eval = FALSE}
-
+grouped_mean <- function(...){
+  
+}
 ```
 
 ### 
 
+Tidy evaluation is incredibly useful in most cases, as it simplifies data analyses by eliminating the need to explicitly specify the data frame a variable belongs to - it is inferred from the context. However, when we aim to encapsulate repetitive tidyverse code into a function, the challenge arises.
+
 ### Exercise 2
+
+Within the curly braces, start a pipe with `df` to `group_by()` and pass in `group_var`, then extend the pipe to `summarize()` and pass in`mean(mean_var)`.
 
 ```{r data-frame-functions-2, exercise = TRUE}
 
@@ -233,38 +251,49 @@ Vector functions are useful for reducing code repetition within dplyr verbs. How
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r data-frame-functions-2-hint-1, eval = FALSE}
-
+... <- function(...){
+  df |>
+    group_by(...)|>
+    summarize(...(mean_var))
+}
 ```
 
 ### 
 
+Now that we the function, ready, let's implement the functions on the diamonds dataset.
+
 ### Exercise 3
+
+Start a pipe with `diamonds` to `grouped_mean()` and pass in `cut` and `carat`.
 
 ```{r data-frame-functions-3, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r data-frame-functions-3-hint-1, eval = FALSE}
-
+diamonds |> grouped_mean(...,...)
 ```
 
 ### 
 
+When encountering an error stating that the group by variables should be found in the diamonds data set, it may not be directly related to the cut variable itself. The issue might be that dplyr interprets group_var as a column instead of recognizing it as a variable.
+
 ### Exercise 4
+
+To make this clear, let's start a pipe with `df1` to `grouped_mean()` and pass in `group` and `x` and to clarify, this data set has a column named `group_var`
 
 ```{r data-frame-functions-4, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r data-frame-functions-4-hint-1, eval = FALSE}
-
+df1 |> grouped_mean(group, x)
 ```
 
 ### 
+
+This time the code actually ran and returned `group_var` instead of `group` column. This is a what is called `indirenction`. Now to fix this ,we need a mechanism to instruct `grouped_mean()` to interpret `group_var` and `mean_var` as containers holding the desired variables, rather than treating them as variable names themselves.
 
 ### Exercise 5
 
