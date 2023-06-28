@@ -35,6 +35,10 @@ df2 <- tibble(
   d = rnorm(10)
 )
 
+rnorm_na <- function(n, n_na, mean = 0, sd = 1) {
+  sample(c(rnorm(n - n_na, mean = mean, sd = sd), rep(NA, n_na)))
+}
+
 df_miss <- tibble(
   a = rnorm_na(5, 1),
   b = rnorm_na(5, 1),
@@ -49,9 +53,10 @@ df_miss <- tibble(
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- Read chapter 26. -->
 
 <!-- Avoid group_by() if possible. .by/by in the next function should work. -->
+
+<!-- Don't use the same variable name for the input and output columns! Use `med_b` for the median of the variable `b`. -->
 
 ## Introduction
 ### 
@@ -82,7 +87,7 @@ library(...)
 
 ### 
 
-In this chapter, we’ll focus on tools provided by dplyr and purrr, both core members of the tidyverse. purrr is new to you, it’s a great package to explore as you improve your programming skills.
+In this chapter, we’ll focus on tools provided by **dplyr** and **purrr**, both core members of the tidyverse. **purrr** is new to you, it’s a great package to explore as you improve your programming skills.
 
 ### Exercise 2
 
@@ -148,11 +153,11 @@ df |>
 
 ### 
 
-Recall that this adds a new column of a variable named n that represents the number of observations.
+Recall that this adds a new column of a variable named `n` that represents the number of observations.
 
 ### Exercise 6
 
-Add `a = median(a), b = median(b)` to the previous code.
+Add `a = median(a), b = median(b)` to the call to `summarize()`.
 
 ```{r modifying-multiple-c-6, exercise = TRUE}
 
@@ -161,9 +166,10 @@ Add `a = median(a), b = median(b)` to the previous code.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r modifying-multiple-c-6-hint-1, eval = FALSE}
-df |> ...
-  a = median(a),
-  b = ...(b))
+df |> 
+  summarise(n = n(),
+            a = median(a),
+            b = median(b))
 ```
 
 ### 
@@ -207,13 +213,13 @@ Solution? `across()` is here to make our lifes easier.
 Run the code below.
 
 ```{r modifying-multiple-c-8, exercise = TRUE}
-df |> summarize(
-  n = n())
+df |> 
+  summarize(n = n())
 ```
 
 ### Exercise 9
 
-Now, add `across(a:d, median)` to your previous code. Hit run, see what happens.
+Now, add `across(a:d, median)` to your previous code. Hit "Run Code," see what happens.
 
 ```{r modifying-multiple-c-9, exercise = TRUE}
 
@@ -222,8 +228,9 @@ Now, add `across(a:d, median)` to your previous code. Hit run, see what happens.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r modifying-multiple-c-9-hint-1, eval = FALSE}
-df |> ...
-  across(a:d, median))
+df |> 
+  summarize(n = n(),
+            ...(a:d, median))
 ```
 
 ### 
@@ -353,6 +360,7 @@ Let's consider a more complex case. What happens if we have some missing values 
 ### Exercise 13
 
 Run the following code.
+
 ```{r modifying-multiple-c-13, exercise = TRUE}
 df_miss <- tibble(
   a = rnorm_na(5, 1),

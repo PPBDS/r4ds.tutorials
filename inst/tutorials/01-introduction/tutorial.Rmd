@@ -28,6 +28,8 @@ options(tutorial.exercise.timelimit = 60,
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- DK: Could do more throughout, but this is not bad. -->
+
 ## Introduction
 ### 
 
@@ -246,7 +248,7 @@ The previous description of the tools of data science is organized roughly accor
 
 Instead, we’ll start with visualization and transformation of data that’s already been imported and tidied. 
 
-###
+### 
 
 Let's create the following scatterplot from the `mpg` dataset, which provides measurements of attributes from various car models.
 
@@ -268,11 +270,11 @@ scat_p
 
 First, let's `glimpse()` the data set used above called `mpg`. Looking at the axis titles, can you determine what the names are for the two variables we will use?
 
-```{r what-you-wont-learn-1, exercise = TRUE}
+```{r how-this-book-is-org-1, exercise = TRUE}
 
 ```
 
-```{r what-you-wont-learn-1-hint-1, eval = FALSE}
+```{r how-this-book-is-org-1-hint-1, eval = FALSE}
 glimpse(...)
 ```
 
@@ -286,62 +288,75 @@ We are going to use `displ` and `hwy` to create this plot.
 
 Within `ggplot()`, set `data` to `mpg`.
 
-```{r what-you-wont-learn-2, exercise = TRUE}
+```{r how-this-book-is-org-2, exercise = TRUE}
 
 ```
 
-```{r what-you-wont-learn-2-hint-1, eval = FALSE}
+```{r how-this-book-is-org-2-hint-1, eval = FALSE}
 ggplot(data = ...)
 ```
 
-<!-- Maybe mention default arguments here or somewhere else in the tutorial -->
-
-### 
-
 `ggplot()` initializes a ggplot object. Your output should be an empty canvas.
+
 
 ### Exercise 3
 
-<!-- DK: This step goes to fast. Don't forget, this is the first plot that students have ever made. Go slower! -->
+The first argument to `ggplot()` is `data`, as above. The second argument is `mapping`. Set the `mapping` to equal `aes()`, which is the "aesthetics" function for plotting.
 
-Now, map `displ` to the x-axis and `hwy` to the y-axis.
+```{r how-this-book-is-org-3, exercise = TRUE}
 
-```{r what-you-wont-learn-3, exercise = TRUE}
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r how-this-book-is-org-3-hint-1, eval = FALSE}
+
+```
+
+This produces the same blank canvas as above. We need to specify some arguments to `aes()` in order to generate the plot.
+
+### Exercise 4
+
+The two most important arguments in `aes()` are `x` and `y`. Set `x` equal to `displ`. Set `y` equal to `hwy`.
+
+
+```{r how-this-book-is-org-4, exercise = TRUE}
 
 ```
 
 <button onclick="transfer_code(this)">Copy previous code</button>
 
-```{r what-you-wont-learn-3-hint-1, eval = FALSE}
-ggplot(data = ..., 
-       mapping = aes(
-         x = ...,
-         y = ...))
+```{r how-this-book-is-org-4-hint-1, eval = FALSE}
+ggplot(data = mpg, 
+       mapping = aes(x = ...,
+                     y = ...))
 ```
 
 ### 
 
-Anything included in `aes()` brings some information from the data in our tibble onto the graph. Elsewhere in `ggplot()` and its layers, we change the appearance of the graph without using information from our data.
+Anything included in `aes()` brings some information from the data in our tibble onto the graph. In this case, R knows that `displ` (a measure of the size of a car's engine) goes on the x axis and `hwy` (miles per gallon for highway driving) goes in the y-axis. 
 
-### Exercise 4
+R can also see the range of values in `mpg` for both `displ` and `hwy`, thereby determining the range of values which the axes should cover.
 
-Let's now add the layer `geom_point()`.
+### Exercise 5
 
-```{r what-you-wont-learn-4, exercise = TRUE}
+Let's now add the layer `geom_point()`. Recall that steps within a series of plotting commands are separated by plus signs (`+`) not by pipes (`|>`).
+
+```{r how-this-book-is-org-5, exercise = TRUE}
 
 ```
 
 <button onclick="transfer_code(this)">Copy previous code</button>
 
-```{r what-you-wont-learn-4-hint-1, eval = FALSE}
+```{r how-this-book-is-org-5-hint-1, eval = FALSE}
 Remember when you add a layer you use +. 
 ```
 
-```{r what-you-wont-learn-4-hint-2, eval = FALSE}
-ggplot(data = ..., 
+```{r how-this-book-is-org-5-hint-2, eval = FALSE}
+ggplot(data = mpg, 
        mapping = aes(
-         x = ...,
-         y = ...)) +
+         x = displ,
+         y = hwy)) +
   geom_point()
 ```
 
@@ -349,19 +364,19 @@ ggplot(data = ...,
 
 `geom_*` functions (such as `geom_point()`) add ggplot objects aadditional layers to the base ggplot. This allows us to create a graphic piece-by-piece.
 
-### Exercise 5
+### Exercise 6
 
 The following code uses the `mpg` tibble to create a scatterplot that displays 126 points, however, it visualizes a data set that contains 234 points. Because many points share similar values, this causes individual data points to be hidden behind other points. This is also known as **overplotting.**
 
-One method to fight overplotting is to make each point **semi-transparent**. The code chunk below provides the code used to create the graph above. Change the transparency of the points by setting `alpha` equal to 0.5 within `geom_point()`.
+One method to fight overplotting is to make each point **semi-transparent**. The code chunk below provides the code used to create the graph above. Change the transparency of the points by setting `alpha` equal to `0.5` within `geom_point()`.
 
-```{r what-you-wont-learn-5, exercise = TRUE}
+```{r how-this-book-is-org-6, exercise = TRUE}
 
 ```
 
 <button onclick="transfer_code(this)">Copy previous code</button>
 
-```{r what-you-wont-learn-5-hint-1, eval = FALSE}
+```{r how-this-book-is-org-6-hint-1, eval = FALSE}
 ggplot(data = mpg, 
        mapping = aes(x = displ, y = hwy)) +
   geom_point(alpha = ...)
@@ -369,21 +384,22 @@ ggplot(data = mpg,
 
 ### 
 
-`alpha` only changes the appearance of the graph and does not add new information from the data. Thus, this argument is within the `geom` and is not nested within an `aes`.
+`alpha` only changes the appearance of the graph and does not add new information from the data. Thus, this argument is within the `geom` and is not nested within a call to `aes()`.
 
-### Exercise 6
+### Exercise 7
 
 Now, also within `geom_point()`, set `color` equal to `"steelblue"`.
 
-```{r what-you-wont-learn-6, exercise = TRUE}
+```{r how-this-book-is-org-7, exercise = TRUE}
 
 ```
 
 <button onclick="transfer_code(this)">Copy previous code</button>
 
-```{r what-you-wont-learn-6-hint-1, eval = FALSE}
+```{r how-this-book-is-org-7-hint-1, eval = FALSE}
 ggplot(data = mpg, 
-       mapping = aes(x = displ, y = hwy)) +
+       mapping = aes(x = displ, 
+                     y = hwy)) +
   geom_point(alpha = ..., color = "...")
 ```
 
@@ -391,23 +407,23 @@ ggplot(data = mpg,
 
 R has 657 (built in color names)[https://www.nceas.ucsb.edu/sites/default/files/2020-04/colorPaletteCheatsheet.pdf?page=3]. Like `alpha`, `color` is not changing the data so the argument is within `geom`.
 
-### Exercise 7
+### Exercise 8
 
 Now, use `labs()` to add labeling to the graph. Set the `title` to `"Measurements for Engine Displacement and Highway Fuel Efficiency of Select Car Models"` and the `subtitle` to `"Cars with greater enginer displacement are less fuel efficient"`. To label the axes, set `x` to `"Engine Displacement (L)"` and `y` to `"Highway Efficiency (mpg)"`. Set the `caption` to `"EPA (2008)"`.
 
 The caption is generally used to credit a project's sources.
 
-```{r what-you-wont-learn-7, exercise = TRUE }
+```{r how-this-book-is-org-8, exercise = TRUE }
 
 ```
 
 <button onclick="transfer_code(this)">Copy previous code</button>
 
-```{r what-you-wont-learn-7-hint-1, eval = FALSE}
+```{r how-this-book-is-org-8-hint-1, eval = FALSE}
 Remember to add a layer with the function labs()
 ```
 
-```{r what-you-wont-learn-7-hint-2, eval = FALSE}
+```{r how-this-book-is-org-8-hint-2, eval = FALSE}
 ... +
   labs(title = "...",
        subtitle = "...",
@@ -422,11 +438,6 @@ Reminder: This is what our graph should look like.
 scat_p
 ```
 
-### 
-
-Related geoms to `geom_point()` include `geom_count()` and `geom_bin2d()`.
-
-
 
 ## What you won’t learn
 ### 
@@ -437,270 +448,132 @@ Related geoms to `geom_point()` include `geom_count()` and `geom_bin2d()`.
 ## Prerequisites
 ### 
 
+If you are running this tutorial, then you probably already know about R and RStudio. If, for some reason you don't, this [Getting Started chapter](https://ppbds.github.io/primer/00-getting-started.html) is the best place to start.
 
+If you plan to do several of the tutorials in this package, you may find it useful to install all the necessary packages. Simple copy/paste this code to Console.
+
+
+```
+install.packages(
+  c("arrow", "babynames", "curl", "duckdb", "gapminder", 
+    "ggrepel", "ggridges", "ggthemes", "hexbin", "janitor", "Lahman", 
+    "leaflet", "maps", "nycflights13", "openxlsx", "palmerpenguins", 
+    "repurrrsive", "tidymodels", "writexl")
+  )
+```
+
+<!-- DK: Is the above really all the packages? What about the database ones? Or jsonlite? -->
 
 ## Running R code
 ### 
 
-Although the Tidyverse includes hundreds of commands, the most important are `filter()`, `select()`, `arrange()`, `mutate()`, and `summarize()`. Whenever you face a new problem, try to think about which one of these commands might be a good way to start.
+Although the *Tidyverse* includes hundreds of commands, the most important are `filter()`, `select()`, `arrange()`, `mutate()`, and `summarize()`. Whenever you face a new problem, try to think about which one of these commands might be a good way to start.
+
 
 ### Exercise 1
 
-We will be working more with the `diamonds` tibble. Start with the `diamonds` tibble and then pipe it to `filter(color == "D")`.
+Let's warm up by examining the `gss_cat` tibble from the **forcats** package. Since **forcats** is a core **tidyverse** package, you have already loaded it. Type `gss_cat` and hit "Run Code."
 
 ```{r running-r-code-1, exercise = TRUE}
 
 ```
 
 ```{r running-r-code-1-hint-1, eval = FALSE}
-diamonds |> 
-  filter(color == "D")
+gss_cat
 ```
 
 ### 
 
-Most of the questions in this section will follow this example. You will create a "pipeline" --- a sequence of R commands, separated by the pipe symbol: `|>`. Each command takes a tibble as input and, almost always, produces a tibble as output, which is fed to the next command in the pipeline.
+Whenever we print a tibble, the number of rows and columns is displayed at the top:
 
+```
+# A tibble: 21,483 × 9
+```
+
+You can also see the variable type under each of the column names.
 
 ### Exercise 2
 
-Start a pipeline with `diamonds`, `filter()` to only keep rows in which `gender` is "Female", `party` is "Republican", and `age` is less than 40.
+Run `?forcats::gss_cat` at the Console. This should work even if you have not loaded the **forcats** package. The double colon --- `::` --- notation allows us to access the inside of a package even if we have not loaded it.
 
-```{r running-r-code-2, exercise = TRUE}
+Copy/paste the Description.
 
-```
-
-```{r running-r-code-2-hint-1, eval = FALSE}
-diamonds |> 
-  ...(gender == "Female" & 
-      ... == "Republican" &
-      age < ...)
+```{r running-r-code-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
 ```
 
 ### 
 
-Instead of creating a single criterion with many parts, like with an `&` as above, you can just separate the parts with a comma. See *The Primer* for details.
+Throughout these tutorials, we use a consistent set of conventions to refer to code:
+
+Functions are displayed in a code font and followed by parentheses, like `sum()` or `mean()`.
+
+Other R objects (such as data or function arguments) are in a code font, without parentheses, like `flights` or `x`.
+
+Sometimes, to make it clear which package an object comes from, we’ll use the package name followed by two colons, like `dplyr::mutate()` or `nycflights13::flights`. This is also valid R code.
 
 ### Exercise 3
 
-Start with the pipeline we created above. (Note you can use the "Copy previous code" button to insert the code from the previous exercise.) `select()` two variables: `treatment` and `race`.
-
+Pipe `ggs_cat` to `filter()` with the argument `age > 88`.
 
 ```{r running-r-code-3, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r running-r-code-3-hint-1, eval = FALSE}
-diamonds |> 
-  filter(gender == "Female" & 
-         party == "Republican" &
-         age < 40) |> 
-  select(gender, treatment)
+```{r running-r-code-3-hint, eval = FALSE}
+gss_cat |> 
+  filter(age > 88)
 ```
 
 ### 
 
-The columns are ordered, not by how they appear in the `diamonds` tibble --- where `treatment` comes first --- but as they are ordered in the call to `select()`.
+This workflow --- in which we pipe a tibble to a function, which then outputs another tibble, which we can then pipe to another function, and so on --- is very common in R programming.
 
+The resulting tibble has the same number of columns --- `filter()` only affects the rows --- as `gss_cat` but many fewer rows, because there are only 150 people in the data older than 88.
 
 ### Exercise 4
 
-Start a new pipeline with the `diamonds` tibble. Select all the columns except for `gender`, `liberal`, `party`, and `age`.
+Continue the pipe with `select()`, using the argument `age, marital, race, relig, tvhours`.
 
 
 ```{r running-r-code-4, exercise = TRUE}
 
 ```
 
-```{r running-r-code-4-hint-1, eval = FALSE}
-diamonds |> 
-  select(-gender, .., ..., ...)
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r running-r-code-4-hint, eval = FALSE}
+... |> 
+  select(age, marital, race, relig, tvhours)
 ```
 
 ### 
 
-Using a minus sign is the easiest way to exclude variables when using `select()`. But you could also have just selected the variables that you wanted to keep.
+Note how the Hint only gives the most recent line of the pipe. Because `select()` does not affect the rows, we have the same number as after `filter()`. But we only have 5 columns now, consistent with what we told `select()` to do.
 
 ### Exercise 5
 
-Starting with `diamonds`, `select()` all the variables which appear between `gender` and `age`, inclusive. 
+Use the "Copy previous code" button to place a copy of the pipe from the last question into the Exercise Code Block. Extend the pipe with `arrange()`, using `desc(tvhours)` as the argument.
 
 ```{r running-r-code-5, exercise = TRUE}
 
 ```
 
-```{r running-r-code-5-hint-1, eval = FALSE}
-diamonds |> 
-  select(...:..)
-```
-
-### 
-
-Use a `:` to select a range. Of course, this is only helpful if all the variables you want are grouped together.
-
-
-### Exercise 6
-
-Pipe `diamonds` to `select()`, keeping the variables, `treatment`, `gender`, and then everything else. Using the `everything()` function to capture the remaining variables.
-
-```{r running-r-code-6, exercise = TRUE}
-
-```
-
-```{r running-r-code-6-hint-1, eval = FALSE}
-diamonds |> 
-  select(..., ..., everything())
-```
-
-### 
-
-Note how we use "pipe" as a verb in the instructions above. You "pipe" a tibble "into" a function. This works as long as the function follows the Tidyverse conventions. Not all functions do.
-
-
-### Exercise 7
-
-Pipe `diamonds` to `select()` and keep only those variables which start with the letter "a".
-
-```{r running-r-code-7, exercise = TRUE}
-
-```
-
-```{r running-r-code-7-hint-1, eval = FALSE}
-diamonds |> 
-  select(starts_with("..."))
-```
-
-### 
-
-The `select()` function is a core part of the Tidyverse, so there are many "tricks" for keeping just the variables we want, in the order in which we want them.
-
-Note the distinction between **tidyverse**, the actual R package, and "Tidyverse", the conceptual universe of related packages, all of which use a similar approach for data science, centered around the use of the `|>`.
-
-
-
-### Exercise 8
-
-Pipe `diamonds` into `select()`, keeping just `treatment`, `gender` and `age`. Continue the pipeline into the `arrange()` function, sorting the tibble so that the youngest participants appear at the top.
-
-```{r running-r-code-8, exercise = TRUE}
-
-```
-
-```{r running-r-code-8-hint-1, eval = FALSE}
-diamonds |> 
-  ...(treatment, gender, age) |> 
-  arrange(...)
-```
-
-### 
-
-We could reverse the order by using `arrange(desc(age))`.
-
-### Exercise 9
-
-The `mutate()` function makes it easy to create new variables.
-
-```{r running-r-code-9, exercise = TRUE}
-
-```
-
-```{r running-r-code-9-hint-1, eval = FALSE}
-diamonds |> 
-  select(gender, ...) |> 
-  ...(income_in_thousands = income / 1000)
-```
-
-### 
-
-### Exercise 10
-
-The `if_else()` function is often used within a call to `mutate()`. Pipe `diamonds` to `select()`, keeping only one varable: `age`. Then, use mutate to create a new variable, `old`, which is TRUE if `age` > 50 and FALSE otherwise.
-
-```{r running-r-code-10, exercise = TRUE}
-
-```
-
-```{r running-r-code-10-hint-1, eval = FALSE}
-diamonds |> 
-  ...(age) |> 
-  mutate(old = ...(age > ..., TRUE, ...))
-```
-
-### 
-
-The `if_else()` function is part of the Tidyverse, coming from the **dplyr** package. The `ifelse()` function is part of "base" R. We recommend always using `if_else()`.
-
-### Exercise 11
-
-Pipe `diamonds` to `summarize()`. Create two new variables --- `mn_age` and `sd_age` --- which are the `mean()` and `sd()` of `age`, respectively.
-
-```{r running-r-code-11, exercise = TRUE}
-
-```
-
-```{r running-r-code-11-hint-1, eval = FALSE}
-diamonds |> 
-  ...(mn_age = ...(age), 
-      ... = sd(age))
-```
-
-### 
-
-We also could have calculated these values "directly," e.g., `mean(diamonds$age)`. But doing calculations within a pipe is often more convenient.
-
-### Exercise 12
-
-Use `quantile()` to calculate the the 20% and 80% quantiles of `age` from the `diamonds` tibble.
-
-```{r running-r-code-12, exercise = TRUE}
-
-```
-
-```{r running-r-code-12-hint-1, eval = FALSE}
-quantile(diamonds$..., c(..., 0.8))
-```
-
-### 
-
-We can also do this calculation within a pipe, but things get trickier because, unlike with `mean()` or `sd()`, quantile returns a vector of length two.
-
-
-### Exercise 13
-
-Above, we calculated the average `age` for the entire `diamonds` tibble. Now, let's do the same calculation for men and women separately. 
-
-Start the pipe with `diamonds`. Pipe the result to `summarize()` and create a new variable, `avg`, which is the mean age. Set `.by` to `gender`.
-
-```{r running-r-code-13, exercise = TRUE}
-
-```
-
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r running-r-code-13-hint-1, eval = FALSE}
-diamonds |> 
-  ...(avg = mean(...),
-      .by = ...)
-```
-
-### Exercise 14
-
-Pipe `diamonds` to `slice_sample()` and select 4 rows at random.
-
-```{r running-r-code-14, exercise = TRUE}
-
-```
-
-```{r running-r-code-14-hint-1, eval = FALSE}
-diamonds |> 
-  ...(... = 4)
+```{r running-r-code-5-hint, eval = FALSE}
+... |> 
+  arrange(desc(tvhours))
 ```
 
 ### 
 
-`slice()` filters the row numbers which you specify. `slice_sample()` gets random rows, but you need to provide the `n` argument. When confronting a new tibble, it is always a good idea to look at some rows at random. The top of a tibble often looks very different from the rest of it!
+Got to respect someone who watches TV 18 hours a day!
 
 
 
