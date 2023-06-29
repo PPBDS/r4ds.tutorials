@@ -43,6 +43,23 @@ grouped_mean1 <- function(df, group_var, mean_var) {
     summarize(mean({{ mean_var }}))
 }
 
+summary6 <- function(data, var) {
+  data |> summarize(
+    min = min({{ var }}, na.rm = TRUE),
+    mean = mean({{ var }}, na.rm = TRUE),
+    median = median({{ var }}, na.rm = TRUE),
+    max = max({{ var }}, na.rm = TRUE),
+    n = n(),
+    n_miss = sum(is.na({{ var }})),
+    .groups = "drop"
+  )
+}
+
+count_prop <- function(df, var, sort = FALSE) {
+  df |>
+    count({{ var }}, sort = sort) |>
+    mutate(prop = n / sum(n))
+}
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -344,77 +361,138 @@ Success! But the key challenge in writing data frame functions is figuring out w
 
 ### Exercise 7
 
-```{r data-frame-functions-7, exercise = TRUE}
+So, when writing data frame functions, a key challenge is determining which arguments need to be embraced. Fortunately, this task is made easy because you can find the relevant information in the documentation 😄. In the documentation, there are two terms you should look for that correspond to the two most common sub-types of tidy evaluation:
 
-```
+Data-masking: This is used in functions like `arrange()`, `filter()`, and `summarize()` that perform computations with variables.
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+Tidy-selection: This is used in functions like `select()`, `relocate()`, and `rename()` that involve selecting variables.
 
-```{r data-frame-functions-7-hint-1, eval = FALSE}
+For many common functions, your intuition about which arguments use tidy evaluation should be sufficient—just consider whether you need to perform computations (e.g., x + 1) or select variables (e.g., a:x).
 
-```
 
 ### 
 
+In the coming exercises, we will explore the types of useful functions you can write once you understand how to embrace tidy evaluation.
+
 ### Exercise 8
 
+Let's explore some use cases for functions: If you commonly perform the same set of summaries when doing initial data exploration, you might consider wrapping them up in a helper function like below.
 
-```{r data-frame-functions-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r data-frame-functions-8-hint, eval = FALSE}
-
+```{r}
+knitr::include_graphics("images/img6.jpg")
 ```
 
 ###
 
+Based on the image, it'll calculate the min, mean, median, max, count and null values. This makes it easier to get the shape of the data set.
+
 ### Exercise 9
 
+Let's start a pipe with `diamonds` to `summary6()` and pass in `carat` as the arguement.
 
 ```{r data-frame-functions-9, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r data-frame-functions-9-hint, eval = FALSE}
-
+diamonds |> summary6(...)
 ```
 
 ###
 
+Note how the name is very purposeful, as the function gives us a summary of the data as well as giving you 6 different columns. Also Whenever you wrap summarize() in a helper, we think it’s good practice to set .groups = "drop" to both avoid the message and leave the data in an ungrouped state.
+
 ### Exercise 10
 
+The nice thing about `summary6()` is, because it wraps `summarize()`, you can use it on grouped data. Start a pipe with `diamonds` to `group_by()` and pass in `cut`. Then extend the pipe to `summary6()` and pass in `carat`.
 
 ```{r data-frame-functions-10, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r data-frame-functions-10-hint, eval = FALSE}
-
+diamonds |>
+  ...(cut)|>
+  summary6(...)
 ```
 
 ###
 
+Furthermore, since the arguments to summarize are data-masking also means that the var argument to `summary6()` is data-masking. That means you can also summarize computed variables for example using `summary6(log10(carat))`.
+
 ### Exercise 11
 
+Another simple use case of making functions is making a helper `count()` function. Our name of the function will be `count_prop`, so type that and assign it to `function()`. Pass in `df`, `var`, and `sort = FALSE` for `function()`. Then close the function with curly braces.
 
 ```{r data-frame-functions-11, exercise = TRUE}
 
 ```
 
+```{r data-frame-functions-11-hint, eval = FALSE}
+... <- function(df, var, ...= FALSE){
+  
+}
+```
+
+###
+
+Note how the name of function is purposeful so others can understand easily.
+
+### Exercise 12
+
+Copying the previous code, within the curly braces, start a pipe with df to `count()` and include `var` with `sort = sort`. Remember to enclose `var` in the body using `{{}}`. Then, extend the pipe to `mutate()` and pass in `prop = n/sum(n)`.
+
+```{r data-frame-functions-12, exercise = TRUE}
+
+```
+
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r data-frame-functions-11-hint, eval = FALSE}
+```{r data-frame-functions-12-hint, eval = FALSE}
+... <- function(df, var, sort = FALSE) {
+  df |>
+    count({{ ... }}, sort = ...) |>
+    ...(prop = n / sum(...))
+}
+```
+
+###
+
+This function has three arguments: `df`, `var`, and `sort`, and only var needs to be embraced because it’s passed to `count()` which uses data-masking for all variables. 
+
+### Exercise 13
+
+Start a pipe with `dimaonds` to `count_prop()` and pass in `clarity` as the arguement.
+
+```{r data-frame-functions-13, exercise = TRUE}
+
+```
+
+```{r data-frame-functions-13-hint, eval = FALSE}
+dimaonds |>
+  count_prop(...)
+```
+
+###
+
+Note that we use a default value for sort so that if the user doesn’t supply their own value it will default to FALSE.
+
+### Exercise 14
+
+
+```{r data-frame-functions-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r data-frame-functions-14-hint, eval = FALSE}
 
 ```
 
 ###
+
 
 
 
