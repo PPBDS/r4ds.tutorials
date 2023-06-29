@@ -35,7 +35,16 @@ df2 <- tibble(
   d = rnorm(10)
 )
 
+rnorm_na <- function(n, n_na, mean = 0, sd = 1) {
+  sample(c(rnorm(n - n_na, mean = mean, sd = sd), rep(NA, n_na)))
+}
 
+df_miss <- tibble(
+  a = rnorm_na(5, 1),
+  b = rnorm_na(5, 1),
+  c = rnorm_na(5, 2),
+  d = rnorm(5)
+)
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -44,15 +53,22 @@ df2 <- tibble(
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- Read chapter 26. -->
 
 <!-- Avoid group_by() if possible. .by/by in the next function should work. -->
+
+<!-- Don't use the same variable name for the input and output columns! Use `med_b` for the median of the variable `b`. -->
 
 ## Introduction
 ### 
 
 This tutorial covers [Chapter 27: Iteration](https://r4ds.hadley.nz/iteration.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
 
+Recall that we have already learnt a number of tools that perform the same action for multiple “things”:
+`facet_wrap()` and `facet_grid()` draws a plot for each subset.
+`group_by()` plus `summarize()` computes summary statistics for each subset.
+`unnest_wider()` and `unnest_longer()` create new rows and columns for each element of a list-column.
+
+In this chapter, we’ll focus on three common tasks: modifying multiple columns, reading multiple files, and saving multiple objects.
 
 ## Modifying multiple columns
 ### 
@@ -71,7 +87,7 @@ library(...)
 
 ### 
 
-<!-- DK: Drop some knowledge. -->
+In this chapter, we’ll focus on tools provided by **dplyr** and **purrr**, both core members of the tidyverse. **purrr** is new to you, it’s a great package to explore as you improve your programming skills.
 
 ### Exercise 2
 
@@ -88,8 +104,7 @@ df <- tibble(
 
 ### 
 
-<!-- DK: Drop some knowledge. -->
-
+This is a simple tibble, now you wish to count the number of observations and compute the median of every column.
 
 ### Exercise 3
 
@@ -102,10 +117,6 @@ Type `df` and hit "Run Code".
 ```{r modifying-multiple-c-3-hint-1, eval = FALSE}
 df
 ```
-
-### 
-
-<!-- DK: Drop some knowledge. -->
 
 ### Exercise 4
 
@@ -123,10 +134,6 @@ df |>
 ```
 
 Note that this creates a tibble with one row and zero columns.
-
-### 
-
-<!-- DK: Drop some knowledge. -->
 
 
 ### Exercise 5
@@ -146,7 +153,319 @@ df |>
 
 ### 
 
-<!-- Knowledge -->
+Recall that this adds a new column of a variable named `n` that represents the number of observations.
+
+### Exercise 6
+
+Add `a = median(a), b = median(b)` to the call to `summarize()`.
+
+```{r modifying-multiple-c-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-6-hint-1, eval = FALSE}
+df |> 
+  summarise(n = n(),
+            a = median(a),
+            b = median(b))
+```
+
+### 
+
+Now you have a table of 3 columns (vairbale n, a, b) and their corresponding median. Next, we will add variable `c` and `d` to complete the code.
+
+
+### Exercise 7
+
+Add `c = median(c), d = median(d)` to the previous code.
+
+```{r modifying-multiple-c-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-7-hint-1, eval = FALSE}
+df |> ...
+  a = ...,
+  b = ...,
+  c = median(c),
+  d = ...,
+)
+```
+
+### 
+
+Now we've completed the code. You should see a table of 5 columns (vairbale n, a, b, c, d) and their corresponding median.
+
+### 
+
+You may find the above process repetitive- we were simply copy-pasted `a = median(a)` 4 times- which, violates our rule of thumb to never copy and paste more than twice. This will get even more tedious if you have tens or even hundreds of columns!
+
+### 
+
+Solution? `across()` is here to make our lifes easier.
+
+### Exercise 8
+
+Run the code below.
+
+```{r modifying-multiple-c-8, exercise = TRUE}
+df |> 
+  summarize(n = n())
+```
+
+### Exercise 9
+
+Now, add `across(a:d, median)` to your previous code. Hit "Run Code," see what happens.
+
+```{r modifying-multiple-c-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-9-hint-1, eval = FALSE}
+df |> 
+  summarize(n = n(),
+            ...(a:d, median))
+```
+
+### 
+
+You should get the exact same table as in Exercise 7. 
+
+### 
+
+We will discuss 3 important arguments of `across()` in the following sections. The first two are used every time you use `across()`.
+
+
+`.cols` specifies which columns you want to iterate over
+
+`.fns` specifies what to do with each column
+
+`.names` is used when you need additional control over the names of output columns, which is particularly important when you use `across()` with `mutate()`. 
+
+### 
+
+We’ll also discuss two important variations, `if_any()` and `if_all()`, which work with `filter()`.
+
+### 
+
+Up next, we will learn how to select columns with `.cols`.
+
+It uses the same specifications as `select()`, so you can use functions like `starts_with()` and `ends_with()` to select columns based on their name.
+
+### Exercise 10
+
+Let's start by running the typed-in code. 
+
+```{r modifying-multiple-c-10, exercise = TRUE}
+df2 <- tibble(
+  grp = sample(2, 10, replace = TRUE),
+  a = rnorm(10),
+  b = rnorm(10),
+  c = rnorm(10),
+  d = rnorm(10)
+)
+```
+
+### Exercise 11
+
+ Pipe `df2` into `.by (grp)`.
+
+```{r modifying-multiple-c-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-11-hint-1, eval = FALSE}
+df2 |> 
+  .by(grp)
+```
+
+### 
+
+Remember that when it comes to grouping, we always prefer `.by` instead of `group_by` where possible.
+
+### Exercise 12
+
+Pipe the code above into `summarize(across(everything(), median)`
+```{r modifying-multiple-c-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-12-hint-1, eval = FALSE}
+df2 |> 
+  ...
+  summarize(across(everything(), median))
+```
+
+### 
+
+You will get a 2 x 5 table.
+
+Note grouping columns (`grp` here) are not included in across(), because they’re automatically preserved by summarize().
+
+###
+
+There are 2 additional selection techniques that are particularly useful for `across()`: `everything()` and `where()`.
+
+###
+
+We have explored `everything()` in practice 12, it selects every (non-grouping) column.
+
+###
+
+`where()` is a bit more complicated. It allows you to select columns based on their type:
+
+`where(is.numeric)` selects all numeric columns.
+
+`where(is.character)` selects all string columns.
+
+`where(is.Date)` selects all date columns.
+
+`where(is.POSIXct)` selects all date-time columns.
+
+`where(is.logical)` selects all logical columns.
+
+###
+
+You can combine these with Boolean algebra. For example:
+
+`!where(is.numeric)` selects all non-numeric columns
+`starts_with("a") & where(is.logical)` selects all logical columns whose name starts with “a”.
+
+### 
+
+We will now explore `.fns`, the second argument of `across()`.
+
+Recall that this argument defines how each column will be transformed. 
+
+###
+
+It’s important to note that we’re passing this function to across(), so across() can call it; we’re not calling it ourselves. That means the function name should never be followed by (). 
+
+If you forget, you’ll get an error
+
+###
+
+Let's consider a more complex case. What happens if we have some missing values in our data? We will use the exercises below to explore.
+
+### Exercise 13
+
+Run the following code.
+
+```{r modifying-multiple-c-13, exercise = TRUE}
+df_miss <- tibble(
+  a = rnorm_na(5, 1),
+  b = rnorm_na(5, 1),
+  c = rnorm_na(5, 2),
+  d = rnorm(5)
+)
+```
+
+
+### Exercise 14
+
+Pipe `df_miss` into  `summarize(across(a:d, median), n = n())`
+```{r modifying-multiple-c-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-14-hint, eval = FALSE}
+df_miss |> 
+  summarize(
+    ...
+  )
+```
+
+###
+
+You should get a 1 x 5 table with N/A as median for variables a, b, and c.
+
+This is because `median()` propagates those missing values, giving us a suboptimal output (ie. N/A as median).
+
+###
+
+Solution? 
+
+Recall we learnt that `na. rm = TRUE` can remove the NA values. Therefore, it would be nice if we could pass along `na.rm = TRUE` to `median()`.
+
+### Exercise 15
+
+Pipe `df_miss` into  `summarize(across(a:d, function(x) median(x, na.rm = TRUE)), n = n())`
+```{r modifying-multiple-c-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-15-hint, eval = FALSE}
+df_miss |> 
+  summarize(
+    across(a:d, function(x) median(x, na.rm = TRUE)),
+    n = n()
+  )
+```
+
+###
+
+Now you should get a 1 x 5 table with all medians as numerical numbers. 
+
+Notice here, instead of calling `median()` directly, we created a new function, `function(x)` that calls `median()` with the desired arguments.
+
+
+### Exercise 16
+
+Use the previous code, but replace `function` with `\`
+```{r modifying-multiple-c-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-16-hint, eval = FALSE}
+df_miss |> 
+  ...
+    across(..., \(x) median(x, na.rm = TRUE)),
+    ...
+  )
+```
+
+###
+
+The above is a less verbose way: for this sort of throw away, or anonymous, you can replace `function` with `\`.
+
+###
+
+To know how many values were removed from the median(), 2 other functions can be supplied to across(): one to compute the median, the other to count the missing values. You supply multiple functions by using a named list to .fns
+
+### Exercise 17
+
+Pipe `df_miss` into `summarize()`
+
+```{r modifying-multiple-c-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-17-hint, eval = FALSE}
+df_miss |> 
+  summarize()
+```
+
+###
+
+
 
 ## Summary
 ### 
