@@ -1,6 +1,6 @@
 ---
 title: Arrow
-author: David Kane
+author: David Kane and Zayan Farooq
 tutorial:
   id: arrow
 output:
@@ -53,6 +53,926 @@ library(...)
 
 ### 
 
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 2
+
+Load the **arrow** library.
+
+```{r getting-the-data-2, exercise = TRUE}
+
+```
+
+```{r getting-the-data-2-hint, eval = FALSE}
+library(...)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 3
+
+Load the **duckdb** library
+
+```{r getting-the-data-3, exercise = TRUE}
+
+```
+
+```{r getting-the-data-3-hint, eval = FALSE}
+library(...)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 4
+
+Load the **dbplyr** library with `warn.conflicts = FALSE`
+
+```{r getting-the-data-4, exercise = TRUE}
+
+```
+
+```{r getting-the-data-4-hint, eval = FALSE}
+library(..., warn.conflicts = FALSE)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 5
+
+Press `"Run Code"`. This will download a 9 GB CSV file which will take about 5 minutes to download.
+
+```{r getting-the-data-5, exercise = TRUE}
+dir.create("data", showWarnings = FALSE)
+
+curl::multi_download(
+  "https://r4ds.s3.us-west-2.amazonaws.com/seattle-library-checkouts.csv",
+  "data/seattle-library-checkouts.csv",
+  resume = TRUE
+)
+```
+
+###
+
+This dataset contains 41,389,465 rows that tell you how many times each book was checked out each month from April 2005 to October 2022.
+ 
+## Opening a dataset
+###
+
+Let’s start by taking a look at the data. At 9 GB, this file is large enough that we probably don’t want to load the whole thing into memory. A good rule of thumb is that you usually want at least twice as much memory as the size of the data, and many laptops top out at 16 GB. This means we want to avoid `read_csv()` and instead use the `arrow::open_dataset()`.
+
+### Exercise 1
+
+Set `seattle_csv` to `open_dataset()`. Within `open_dataset()`, add the argument `sources = "data/seattle-library-checkouts.csv"`
+
+```{r opening-a-dataset-1, exercise = TRUE}
+
+```
+
+```{r opening-a-dataset-1-hint, eval = FALSE}
+... <- open_dataset(
+  sources = "...")
+)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 2
+
+Copy previous code and add the argument `format = "csv"` to `open_dataset()`
+
+```{r opening-a-dataset-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r opening-a-dataset-2-hint, eval = FALSE}
+seattle_csv <- open_dataset(
+  sources = "data/seattle-library-checkouts.csv", 
+  format = "..."
+)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 3
+
+Type `seattle_csv` and run code.
+
+```{r opening-a-dataset-3, exercise = TRUE}
+
+```
+
+```{r opening-a-dataset-3-hint, eval = FALSE}
+seattle_csv
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 4
+
+Copy previous code and pipe it into `glimpse()`
+
+```{r opening-a-dataset-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r opening-a-dataset-4-hint, eval = FALSE}
+seattle_csv|>
+  ...()
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 5
+
+Start a new pipe with `seattle_csv`.
+
+```{r opening-a-dataset-5, exercise = TRUE}
+
+```
+
+```{r opening-a-dataset-5-hint, eval = FALSE}
+seattle_csv
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 6
+
+Continue the pipe with `count()`. Within `count()`, add the arguments `CheckoutYear` and `wt = Checkouts`. Make sure to separate the arguments with commas.
+
+```{r opening-a-dataset-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r opening-a-dataset-6-hint, eval = FALSE}
+seattle_csv |> 
+  count(..., wt = ...)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 7
+
+Continue the pipe with `arrange()`, Within `arrange()`, add the argument `CheckoutYear`.
+
+```{r opening-a-dataset-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r opening-a-dataset-7-hint, eval = FALSE}
+seattle_csv |> 
+  count(CheckoutYear, wt = Checkouts) |> 
+  arrange(...)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 8
+
+Finish off the pipe with `collect()`.
+
+```{r opening-a-dataset-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r opening-a-dataset-8-hint, eval = FALSE}
+seattle_csv |> 
+  count(CheckoutYear, wt = Checkouts) |> 
+  arrange(CheckoutYear) |> 
+  collect()
+```
+
+###
+
+Thanks to arrow, this code will work regardless of how large the underlying dataset is. But it’s currently rather slow: on Hadley’s computer, it took ~10s to run. That’s not terrible given how much data we have, but we can make it much faster by switching to a better format.
+
+## The parquet format
+##
+
+To make this data easier to work with, lets switch to the parquet file format and split it up into multiple files. The following sections will first introduce you to parquet and partitioning, and then apply what we learned to the Seattle library data.
+
+### Exercise 1
+
+Set `pq_path` to `"data/seattle-library-checkouts"`
+
+```{r the-parquet-format-1, exercise = TRUE}
+
+```
+
+```{r the-parquet-format-1-hint, eval = FALSE}
+pq_path <- "..."
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 2
+
+Start a pipe with `seattle_csv`.
+
+```{r the-parquet-format-2, exercise = TRUE}
+
+```
+
+```{r the-parquet-format-2-hint, eval = FALSE}
+seattle_csv
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 3
+
+Continue the pipe with `group_by()`. Within `group_by()`, add the argument `CheckoutYear`.
+
+```{r the-parquet-format-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-parquet-format-3-hint, eval = FALSE}
+seattle_csv|>
+  group_by(...)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 4
+
+Continue the pipe with `write_dataset()`. Within `write_dataset()` add the argument `path = pq_path`.
+
+```{r the-parquet-format-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-parquet-format-4-hint, eval = FALSE}
+seattle_csv |>
+  group_by(CheckoutYear) |>
+  write_dataset(...)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 5
+
+Copy previous code and add the argument `format = "parquet"` in `write_dataset()`. Make sure to separate the arguments with commas.
+
+```{r the-parquet-format-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-parquet-format-5-hint, eval = FALSE}
+seattle_csv |>
+  group_by(CheckoutYear) |>
+  write_dataset(path = pq_path, format = "...")
+```
+
+###
+
+This takes about a minute to run; as we’ll see shortly this is an initial investment that pays off by making future operations much much faster.
+
+Let’s take a look at what we just produced:
+
+### Exercise 6
+
+Let’s take a look at what we just produced. Press "Run Code"
+
+```{r the-parquet-format-6, exercise = TRUE}
+tibble(
+  files = list.files(pq_path, recursive = TRUE),
+  size_MB = file.size(file.path(pq_path, files)) / 1024^2
+)
+```
+
+###
+
+Our single 9 GB CSV file has been rewritten into 18 parquet files. The file names use a “self-describing” convention used by the Apache Hive project. Hive-style partitions name folders with a “key=value” convention, so as you might guess, the `CheckoutYear=2005` directory contains all the data where `CheckoutYear` is `2005`. Each file is between 100 and 300 MB and the total size is now around 4 GB, a little over half the size of the original CSV file. This is as we expect since parquet is a much more efficient format.
+
+## Using dplyr with arrow
+###
+
+### Exercise 1
+
+Set `seattle_pq` to `open_dataset()` with the argument `pq_path` inside.
+
+```{r using-dplyr-with-arr-1, exercise = TRUE}
+
+```
+
+```{r using-dplyr-with-arr-1-hint, eval = FALSE}
+... <- open_dataset(...)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 2
+
+Start a pipe with `seattle_pq`
+
+```{r using-dplyr-with-arr-2, exercise = TRUE}
+
+```
+
+```{r using-dplyr-with-arr-2-hint, eval = FALSE}
+seattle_pq
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 3
+
+Continue the pipe with `filter()`. Within `filter()`, add the argument `CheckoutYear >= 2018`.
+
+```{r using-dplyr-with-arr-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-3-hint, eval = FALSE}
+seattle_pq |> 
+  filter(CheckoutYear >= ...) 
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 4
+
+Copy previous code and add the argument `MaterialType == "BOOK"` within `filter()`. Make sure to separate the arguments with commas.
+
+
+```{r using-dplyr-with-arr-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-4-hint, eval = FALSE}
+seattle_pq |> 
+  filter(CheckoutYear >= 2018, MaterialType == "...")
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 5
+
+Continue the pipe with `group_by()`. Within `group_by()`, add the argument `CheckoutYear`.
+
+```{r using-dplyr-with-arr-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-5-hint, eval = FALSE}
+seattle_pq |> 
+  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
+  group_by(...)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 6
+
+Copy previous code and add the argument `CheckoutMonth` to `group_by()`.
+
+```{r using-dplyr-with-arr-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-6-hint, eval = FALSE}
+seattle_pq |> 
+  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
+  group_by(CheckoutYear, ...)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 7
+
+Continue the pipe with `summarize()`. Within `summarize()`, add `TotalCheckouts = sum(Checkouts)`
+
+```{r using-dplyr-with-arr-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-7-hint, eval = FALSE}
+seattle_pq |> 
+  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
+  group_by(CheckoutYear, CheckoutMonth) |>
+  summarize(... = sum(...))
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 8
+
+Continue the pipe with `arrange()`. Within `arrange()`, add the argument `CheckoutYear`.
+
+```{r using-dplyr-with-arr-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-8-hint, eval = FALSE}
+seattle_pq |> 
+  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
+  group_by(CheckoutYear, CheckoutMonth) |>
+  summarize(TotalCheckouts = sum(Checkouts)) |>
+  arrange(...)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 9
+
+Copy previous code and add the argument `CheckoutMonth` to `arrange()`. Make sure to separate the arguments with commas.
+
+```{r using-dplyr-with-arr-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-9-hint, eval = FALSE}
+seattle_pq |> 
+  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
+  group_by(CheckoutYear, CheckoutMonth) |>
+  summarize(TotalCheckouts = sum(Checkouts)) |>
+  arrange(CheckoutYear, ...)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 10
+
+Set this whole code chunk to `query`
+
+```{r using-dplyr-with-arr-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-10-hint, eval = FALSE}
+query <- seattle_pq |> 
+  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
+  group_by(CheckoutYear, CheckoutMonth) |>
+  summarize(TotalCheckouts = sum(Checkouts)) |>
+  arrange(CheckoutYear, CheckoutMonth)
+```
+
+###
+
+Writing dplyr code for arrow data is conceptually similar to **dbplyr**, Chapter 22: you write **dbplyr** code, which is automatically transformed into a query that the Apache Arrow C++ library understands, which is then executed when you call `collect()`. If we print out the query object we can see a little information about what we expect Arrow to return when the execution takes place.
+
+### Exercise 11
+
+Type `query` and hit "Run Code".
+
+```{r using-dplyr-with-arr-11, exercise = TRUE}
+
+```
+
+```{r using-dplyr-with-arr-11-hint, eval = FALSE}
+query
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 12
+
+Copy previous code and pipe it into `collect()`.
+
+```{r using-dplyr-with-arr-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-12-hint, eval = FALSE}
+query|>
+  ...()
+```
+
+###
+
+Like **dbplyr**, arrow only understands some R expressions, so you may not be able to write exactly the same code you usually would. However, the list of operations and functions supported is fairly extensive and continues to grow; find a complete list of currently supported functions in `?acero`.
+
+### Exercise 13
+
+Start a pipe with `seattle_csv`
+
+```{r using-dplyr-with-arr-13, exercise = TRUE}
+
+```
+
+```{r using-dplyr-with-arr-13-hint, eval = FALSE}
+seattle_csv
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 14
+
+Continue the pipe with `filter()`. Within `filter()`, add the argument `CheckoutYear == 2021`
+
+```{r using-dplyr-with-arr-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-14-hint, eval = FALSE}
+seattle_csv |> 
+  filter(CheckoutYear == 2021)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 15
+
+Copy previous code and add the argument `MaterialType = "BOOK"` to `filter()`
+
+```{r using-dplyr-with-arr-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-15-hint, eval = FALSE}
+seattle_csv |> 
+  filter(CheckoutYear == 2021, MaterialType == "...")
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 16
+
+Continue the pipe with `group_by()`. Within `group_by()`, add the argument `CheckoutMonth`
+
+```{r using-dplyr-with-arr-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-16-hint, eval = FALSE}
+seattle_csv |> 
+  filter(CheckoutYear == 2021, MaterialType == "BOOK") |>
+  group_by(...)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 17
+
+Continue the pipe with `summarize()`. Within `summarize()`, add `TotalCheckouts = sum(Checkouts)`
+
+```{r using-dplyr-with-arr-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-17-hint, eval = FALSE}
+seattle_csv |> 
+  filter(CheckoutYear == 2021, MaterialType == "BOOK") |>
+  group_by(CheckoutMonth) |>
+  summarize(... = sum(...))
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 18
+
+Continue the pipe with `arrange()`. Within `arrange()`, add the argument `CheckoutMonth`.
+
+```{r using-dplyr-with-arr-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-18-hint, eval = FALSE}
+seattle_csv |> 
+  filter(CheckoutYear == 2021, MaterialType == "BOOK") |>
+  group_by(CheckoutMonth) |>
+  summarize(TotalCheckouts = sum(Checkouts)) |>
+  arrange(...)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 19
+
+Copy previous code and put `CheckoutMonth` within `desc()` within `arrange()`
+
+```{r using-dplyr-with-arr-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-19-hint, eval = FALSE}
+seattle_csv |> 
+  filter(CheckoutYear == 2021, MaterialType == "BOOK") |>
+  group_by(CheckoutMonth) |>
+  summarize(TotalCheckouts = sum(Checkouts)) |>
+  arrange(...(CheckoutMonth))
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 20
+
+Continue the pipe with `collect()`
+
+```{r using-dplyr-with-arr-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-20-hint, eval = FALSE}
+seattle_csv |> 
+  filter(CheckoutYear == 2021, MaterialType == "BOOK") |>
+  group_by(CheckoutMonth) |>
+  summarize(TotalCheckouts = sum(Checkouts)) |>
+  arrange(desc(CheckoutMonth)) |>
+  ...()
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 21
+
+Continue the pipe with `system.time()`
+
+```{r using-dplyr-with-arr-21, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-21-hint, eval = FALSE}
+seattle_csv |> 
+  filter(CheckoutYear == 2021, MaterialType == "BOOK") |>
+  group_by(CheckoutMonth) |>
+  summarize(TotalCheckouts = sum(Checkouts)) |>
+  arrange(desc(CheckoutMonth)) |>
+  collect() |> 
+  ...()
+```
+
+###
+
+Now let’s use our new version of the dataset in which the Seattle library checkout data has been partitioned into 18 smaller parquet files.
+
+### Exercise 22
+
+Copy previous code and switch `seattle_csv` for `seattle_pq`
+
+```{r using-dplyr-with-arr-22, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-22-hint, eval = FALSE}
+
+```
+
+###
+
+<!-- DK: Knowledge Drop. Say something about how the seattle csv and pq differ -->
+
+### Exercise 23
+
+Start a new pipe with `seattle_pq`
+
+```{r using-dplyr-with-arr-23, exercise = TRUE}
+
+```
+
+```{r using-dplyr-with-arr-23-hint, eval = FALSE}
+seattle_pq
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 24
+
+Continue the pipe with `to_duckdb()`
+
+```{r using-dplyr-with-arr-24, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-24-hint, eval = FALSE}
+seattle_pq |> 
+  ...()
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 25
+
+Continue the pipe with `filter()`. Within `filter()`, add the arguments `CheckoutYear >= 2018` and `MaterialType == "BOOK"`. Make sure to separate the arguments with commas.
+
+```{r using-dplyr-with-arr-25, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-25-hint, eval = FALSE}
+seattle_pq |> 
+  to_duckdb() |>
+  filter(... >= 2018, MaterialType == "...")
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 26
+
+Continue the pipe with `group_by()`. Within `group_by()`, add the argument `CheckoutYear`.
+
+```{r using-dplyr-with-arr-26, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-26-hint, eval = FALSE}
+seattle_pq |> 
+  to_duckdb() |>
+  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
+  group_by(...)
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 27
+
+Continue the pipe with `summarize()`. Within `summarize()`, add `TotalCheckouts = sum(Checkouts)`
+
+```{r using-dplyr-with-arr-27, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-27-hint, eval = FALSE}
+seattle_pq |> 
+  to_duckdb() |>
+  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
+  group_by(CheckoutYear) |>
+  summarize(... = sum(...))
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 28
+
+Continue the pipe with `arrange()`. Within `arrange()`, add the argument `desc(CheckoutYear)`.
+
+```{r using-dplyr-with-arr-28, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-28-hint, eval = FALSE}
+seattle_pq |> 
+  to_duckdb() |>
+  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
+  group_by(CheckoutYear) |>
+  summarize(TotalCheckouts = sum(Checkouts)) |>
+  ...(desc(...))
+```
+
+###
+
+<!-- DK: Knowledge Drop. -->
+
+### Exercise 29
+
+Continue the pipe with `collect()`.
+
+```{r using-dplyr-with-arr-29, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r using-dplyr-with-arr-29-hint, eval = FALSE}
+seattle_pq |> 
+  to_duckdb() |>
+  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
+  group_by(CheckoutYear) |>
+  summarize(TotalCheckouts = sum(Checkouts)) |>
+  arrange(desc(CheckoutYear)) |>
+  collect()
+```
+
+###
+
+The neat thing about `to_duckdb()` is that the transfer doesn’t involve any memory copying, and speaks to the goals of the arrow ecosystem: enabling seamless transitions from one computing environment to another.
 
 ## Summary
 ### 
