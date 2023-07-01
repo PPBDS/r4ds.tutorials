@@ -45,6 +45,27 @@ df_miss <- tibble(
   c = rnorm_na(5, 2),
   d = rnorm(5)
 )
+
+expand_dates <- function(df) {
+  df |> 
+    mutate(
+      across(where(is.Date), list(year = year, month = month, day = mday))
+    )
+}
+
+df_date <- tibble(
+  name = c("Amy", "Bob"),
+  date = ymd(c("2009-08-03", "2010-01-16"))
+)
+
+summarize_means <- function(df, summary_vars = where(is.numeric)) {
+  df |> 
+    summarize(
+      across({{ summary_vars }}, \(x) mean(x, na.rm = TRUE)),
+      n = n()
+    )
+}
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -780,7 +801,106 @@ df_miss |>
 
 You will get a 0 x 4 table!
 
+### Exercise 34
+
+Hit `Run Code`.
+
+```{r modifying-multiple-c-34, exercise = TRUE}
+expand_dates <- function(df) {
+  df |> 
+    mutate(
+      across(where(is.Date), list(year = year, month = month, day = mday))
+    )
+}
+
+df_date <- tibble(
+  name = c("Amy", "Bob"),
+  date = ymd(c("2009-08-03", "2010-01-16"))
+)
+```
+
+
 ###
+
+`across()` is particularly useful to program with because it allows you to operate on multiple columns. This is an example of using lubridate functions to expand all date columns into year, month, and day columns.
+
+### Exercise 35
+
+Pipe `df_date` into `expand_dates()`.
+
+```{r modifying-multiple-c-35, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-35-hint, eval = FALSE}
+df_date |> 
+  expand_dates()
+```
+
+###
+
+This should give you a 2 x 5 table with `date_year`, `date_month`, and `date_day` broken down. 
+
+### Exercise 36
+
+Hit `Run Code` to run the following function.
+
+```{r modifying-multiple-c-36, exercise = TRUE}
+summarize_means <- function(df, summary_vars = where(is.numeric)) {
+  df |> 
+    summarize(
+      across({{ summary_vars }}, \(x) mean(x, na.rm = TRUE)),
+      n = n()
+    )
+}
+```
+
+###
+
+`across()` makes it easy to supply multiple columns in a single argument.
+
+### Exercise 37
+
+<!-- Question: can I use grou_by here? or how to use .by instead? -->
+<!-- diamonds |>  -->
+<!--   group_by(cut) |>  -->
+<!--   summarize_means() -->
+
+Pipe `diamonds` into `group_by(cut)`, then pipe into `summarize_means()`.
+
+```{r modifying-multiple-c-37, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-37-hint, eval = FALSE}
+diamonds |> 
+  group_by(cut) |> 
+  summarize_means()
+```
+
+
+### Exercise 38
+
+Now, add argument `c(carat, x:z)` to the function `summarize_means()`.
+
+```{r modifying-multiple-c-38, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-38-hint, eval = FALSE}
+diamonds |> 
+  group_by(cut) |> 
+  summarize_means(c(carat, x:z))
+```
+
+###
+
 
 
 
