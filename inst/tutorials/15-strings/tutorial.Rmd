@@ -26,9 +26,6 @@ x <- "n"
 x1 <- c("one\ntwo", "one\ttwo", "\u00b5", "\U0001f604")
 
 set.seed(9)
-police <- read_csv("data/philly-clean.csv",
-                   col_types = cols()) |>
-  slice_sample(n = 4000)
 
 df <- tibble(name = c("Flora", "David", "Terra", NA))
 
@@ -61,6 +58,8 @@ u <- c("\u00fc", "u\u0308")
 ```
 
 <!-- Do we really need all the objects created above? Probably less error prone to just create these objects in the exercise code chunk in which they will be used. -->
+
+<!-- DK: Non-English text is missing because we could not get it to work. Figure that out and add it. -->
 
 
 ## Introduction
@@ -1322,6 +1321,8 @@ In addition to creating the `first` column , let's add the `last` column. Within
 When we ran the code, we see two new columns `first` and `last` which show the first and last letters of a name.
 
 ## Last letter of boy names
+###
+
 <!-- DK: Some code here seems too hard. Or maybe it just needs a clearer explanation. -->
 
 The **[babynames](http://hadley.github.io/babynames/)** package contains data about baby names through the years. 
@@ -1639,220 +1640,6 @@ boys_p
   labs(...)
 ```
 
-## Mutating Strings 
-### 
-
-A string is one or more characters that are enclosed inside a pair of matching 'single' or "double quotes." We will now use various functions to manipulate strings.
-
-### Exercise 1
-
-Let's start with a small subset of data about police complaints in Philadelphia. Run `police` in the code chunk below to view this data.
-
-```{r mutating-strings-1, exercise = TRUE}
-police
-```
-
-### 
-
-As wide as this data is, we will not be using most of the columns.
-
-
-### Exercise 2
-
-Start a new pipe with our data by typing `police` followed by the `|>` operator. On a new line,`select()` the `summary` column,`po_race`, `district_occurrence`, and `investigative_findings`. We will first focus on the `summary` column, but will use the other columns later in this section. 
-
-```{r mutating-strings-2, exercise = TRUE}
-
-```
-
-```{r mutating-strings-2-hint-1, eval = FALSE}
-police |> 
-  select(...)
-```
-
-### 
-
-Use the buttons in the bottom right corner to navigate through all the rows.
-
-### Exercise 3
-
-Use `mutate()` and `str_detect()` to create a new column called `race`. Each observation will either be `TRUE` or `FALSE` depending on whether or not the adjacent `summary` observation contains the string `"rac"`.
-
-```{r mutating-strings-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-
-```{r mutating-strings-3-hint-1, eval = FALSE}
-The first argument in string detect is the column in 
-which you want to detect a string, the second argument 
-is the quoted string you want to detect.
-```
-
-```{r mutating-strings-3-hint-2, eval = FALSE}
-... |> 
-  mutate(race = str_detect(..., "..."))
-```
-
-### 
-
-You may need to use the arrow key in the top right corner of the table to view the `race` column.
-
-### 
-
-This new column in `police` tells us if a complaint involved someone's race. We had to specifically look for the string `"rac"` to account for words like "race" and "racial".
-
-### Exercise 4
-
-Filter your pipe so that you keep rows only where the column `race` has value `TRUE`. 
-
-```{r mutating-strings-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r mutating-strings-4-hint-1, eval = FALSE}
-Use the function filter() with the == evaluator
-```
-
-```{r mutating-strings-4-hint-2, eval = FALSE}
-... |> 
-  filter(race == ...) 
-```
-
-### 
-
-There should be 180 rows in which the `race` column has value `TRUE`.
-
-### Exercise 5
-
-In your pipe, use `mutate()` and `str_detect()` to create a new column called `physical` with value `TRUE` when the column `summary` contains the string `"physical"` and `FALSE` if it does not. Then filter so that you keep rows only when the column `physical` has value `TRUE`. 
-
-```{r mutating-strings-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r mutating-strings-5-hint-1, eval = FALSE}
-... |> 
-  mutate(... = str_detect(..., "...")) |> 
-  filter(... == ...)
-```
-
-```{r mutating-strings-5-hint-2, eval = FALSE}
-police |> 
-  select(summary, po_race, district_occurrence, investigative_findings) |>
-  mutate(race = str_detect(summary, "rac")) |>
-  mutate(physical = str_detect(..., "...")) |>
-  filter(race == TRUE & physical == ...)
-```
-
-### 
-
-This gives us a table with all of the complaints that involved someone's race and some kind of physical altercation. There should be 43 rows in which both the race and the physical columns have value `TRUE`. 
-
-### Exercise 6
-
-Copy-paste your pipe from the previous exercise and use `mutate()` and `str_sub()` to change the column `po_race` so that it only contains the first two letters of each row. The second argument should be the character position from where you want to start, and the third argument should be the character position where you want to end.
-
-```{r mutating-strings-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r mutating-strings-6-hint-1, eval = FALSE}
-... 
-  mutate(po_race = str_sub(..., ..., ...))
-```
-
-```{r mutating-strings-6-hint-2, eval = FALSE}
-... |> 
-  mutate(po_race = str_sub(po_race, 1, ...))
-```
-
-### 
-
-The "sub" in `str_sub()` stands for `substrings`. This function extracts "substrings" (parts of a string) based on the `start` and `end` arguments.
-
-### Exercise 7
-
-Copy-paste your pipe from the previous exercise and use `mutate()` and `str_c()` to add the string `"PA-"` in front of every string in the column `district_occurrence`. `str_c` **c**ombines two strings and its syntax is similar to `c()`. The first argument is what you want to appear first in the combined string, `"PA-"`. The second argument should be the name of the column, `district_occurrence`. 
-
-```{r mutating-strings-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r mutating-strings-7-hint-1, eval = FALSE}
-... |> 
-  mutate(... = str_c("PA-", ...))
-```
-
-```{r mutating-strings-7-hint-2, eval = FALSE}
-... |> 
-  mutate(... = str_c("PA-", district_occurrence))
-```
-
-### 
-
-A useful context for this operation might be if we were going to add analogous data from another state into this tibble, which might have overlapping district numbers. 
-
-### 
-
-Note that R assigned this column to a character variable. If this were a numeric variable, the command would still work. R would coerce the edited column from a numeric variable to a character variable. 
-
-
-### Exercise 8
-
-Copy-paste your pipe from the previous exercise. Use `mutate()` and `str_replace()` to replace the pattern `"Sustained "` with `"S"` in the column `investigative_findings`.  Note that we have included a space after the word "Sustained". Set the second argument to the pattern in the current vector which you want to change. Set the third argument to the replacement which you want to replace the pattern with. 
-
-```{r mutating-strings-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r mutating-strings-8-hint-1, eval = FALSE}
-x |> 
-  select(po_race, district_occurrence, investigative_findings, summary) |> 
-  mutate(race = str_detect(summary, "rac")) |> 
-  filter(race == TRUE) |> 
-  mutate(physical = str_detect(summary, "physical")) |> 
-  filter(physical  == TRUE) |> 
-  mutate(po_race = str_sub(po_race, 1, 2)) |> 
-  mutate(... = str_c("PA-", district_occurrence)) |> 
-  mutate(investigative_findings = str_replace(investigative_findings, "... ", "..."))
-```
-
-### Exercise 9
-
-Copy-paste your pipe from the previous exercise. Use `mutate()` and `str_replace()` to replace the pattern `"Finding"` with `"F"` in the column `investigative_findings`. 
-
-```{r mutating-strings-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r mutating-strings-9-hint-1, eval = FALSE}
-x |> 
-  select(po_race, district_occurrence, investigative_findings, summary) |> 
-  mutate(race = str_detect(summary, "rac")) |> 
-  filter(race == TRUE) |> 
-  mutate(physical = str_detect(summary, "physical")) |> 
-  filter(physical  == TRUE) |> 
-  mutate(po_race = str_sub(po_race, 1, 2)) |> 
-  mutate(... = str_c("PA-", district_occurrence)) |> 
-  mutate(investigative_findings = str_replace(investigative_findings, "Sustained ", "S")) |> 
-  mutate(... = str_replace(..., "...", "..."))
-
-```
 
 ## Summary
 ### 
