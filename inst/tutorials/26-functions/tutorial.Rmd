@@ -43,6 +43,39 @@ grouped_mean1 <- function(df, group_var, mean_var) {
     summarize(mean({{ mean_var }}))
 }
 
+summary6 <- function(data, var) {
+  data |> summarize(
+    min = min({{ var }}, na.rm = TRUE),
+    mean = mean({{ var }}, na.rm = TRUE),
+    median = median({{ var }}, na.rm = TRUE),
+    max = max({{ var }}, na.rm = TRUE),
+    n = n(),
+    n_miss = sum(is.na({{ var }})),
+    .groups = "drop"
+  )
+}
+
+count_prop <- function(df, var, sort = FALSE) {
+  df |>
+    count({{ var }}, sort = sort) |>
+    mutate(prop = n / sum(n))
+}
+
+histogram <- function(df, var, binwidth = NULL) {
+  df |> 
+    ggplot(aes(x = {{ var }})) + 
+    geom_histogram(binwidth = binwidth)
+}
+
+histogram1 <- function(df, var, binwidth) {
+  label <- rlang::englue("A histogram of {{var}} with binwidth {binwidth}")
+  
+  df |> 
+    ggplot(aes(x = {{ var }})) + 
+    geom_histogram(binwidth = binwidth) + 
+    labs(title = label)
+}
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -168,11 +201,11 @@ Run `df` to have a look at the dataset.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r vector-functions-6-hint, eval = FALSE}
+```{r vector-functions-6-hint-1, eval = FALSE}
 df
 ```
 
-###
+### 
 
 These numbers are generated from `rnorm()` which generates random numbers from a normal (Gaussian) distribution.
 
@@ -186,7 +219,7 @@ Start a pipe with `df` to `mutate()`, within `mutate()`, set all column names eq
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r vector-functions-7-hint, eval = FALSE}
+```{r vector-functions-7-hint-1, eval = FALSE}
 df |> ...(
   a = rescale01(a),
   b = rescale01(...),
@@ -195,13 +228,13 @@ df |> ...(
 )
 ```
 
-###
+### 
 
 You might notice that the `rescale01()` function does some work way too many times instead of just once so let's improve the function and optimize it.
 
 ### Exercise 8
 
-
+To avoid computing `min()` twice and `max()` once, we can use `range()` to calculate both the minimum and maximum values in a single step. Create a new function called `rscale02` by assigning `function(x)` to it. Insert the curly braces and, for the body, create a variable `rng` and set it to `range(x, na.rm = TRUE)`. Then, on a new line, calculate `(x - rng[1]) / (rng[2] - rng[1])`.
 
 ```{r vector-functions-8, exercise = TRUE}
 
@@ -209,13 +242,58 @@ You might notice that the `rescale01()` function does some work way too many tim
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r vector-functions-8-hint, eval = FALSE}
+```{r vector-functions-8-hint-1, eval = FALSE}
+rescale02 <- function(...) {
+  rng <- range(x, ... = TRUE)
+  (...) / (rng[2] - ....[1])
+}
+```
+
+### 
+
+<!-- AB:should i add the infinite or finite values, feel likei t waste of time  -->
+
+### Exercise 9
+
+```{r vector-functions-9, exercise = TRUE}
 
 ```
 
-###
+<button onclick = "transfer_code(this)">Copy previous code</button>
 
+```{r vector-functions-9-hint-1, eval = FALSE}
 
+```
+
+### 
+
+### Exercise 10
+
+```{r vector-functions-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r vector-functions-10-hint-1, eval = FALSE}
+
+```
+
+### 
+
+### Exercise 11
+
+```{r vector-functions-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r vector-functions-11-hint-1, eval = FALSE}
+
+```
+
+### 
 
 ## Data Frame Functions
 ### 
@@ -276,7 +354,6 @@ Start a pipe with `diamonds` to `grouped_mean()` and pass in `cut` and `carat`.
 
 ```
 
-
 ```{r data-frame-functions-3-hint-1, eval = FALSE}
 diamonds |> grouped_mean(...,...)
 ```
@@ -307,10 +384,10 @@ Tidy evaluation includes a solution to this problem called embracing 🤗. Embra
 
 Copy the code for `grouped_mean` and rename the function to `grouped_mean1`. Modify the arguments within `group_by()`` and `summarize()` to be enclosed with `{{}}`.
 
+
 ```{r data-frame-functions-5, exercise = TRUE}
 
 ```
-
 
 ```{r data-frame-functions-5-hint-1, eval = FALSE}
 ... <- function(df, group_var, ...) {
@@ -344,79 +421,136 @@ Success! But the key challenge in writing data frame functions is figuring out w
 
 ### Exercise 7
 
-```{r data-frame-functions-7, exercise = TRUE}
+So, when writing data frame functions, a key challenge is determining which arguments need to be embraced. Fortunately, this task is made easy because you can find the relevant information in the documentation 😄. In the documentation, there are two terms you should look for that correspond to the two most common sub-types of tidy evaluation:
 
-```
+Data-masking: This is used in functions like `arrange()`, `filter()`, and `summarize()` that perform computations with variables.
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+Tidy-selection: This is used in functions like `select()`, `relocate()`, and `rename()` that involve selecting variables.
 
-```{r data-frame-functions-7-hint-1, eval = FALSE}
+For many common functions, your intuition about which arguments use tidy evaluation should be sufficient—just consider whether you need to perform computations (e.g., x + 1) or select variables (e.g., a:x).
 
+
+
+### 
+
+In the coming exercises, we will explore the types of useful functions you can write once you understand how to embrace tidy evaluation.
+
+### Exercise 8
+
+Let's explore some use cases for functions: If you commonly perform the same set of summaries when doing initial data exploration, you might consider wrapping them up in a helper function like below.
+
+```{r}
+knitr::include_graphics("images/img6.jpg")
 ```
 
 ### 
 
-### Exercise 8
-
-
-```{r data-frame-functions-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r data-frame-functions-8-hint, eval = FALSE}
-
-```
-
-###
+Based on the image, it'll calculate the min, mean, median, max, count and null values. This makes it easier to get the shape of the data set.
 
 ### Exercise 9
 
+Let's start a pipe with `diamonds` to `summary6()` and pass in `carat` as the arguement.
 
 ```{r data-frame-functions-9, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r data-frame-functions-9-hint, eval = FALSE}
-
+```{r data-frame-functions-9-hint-1, eval = FALSE}
+diamonds |> summary6(...)
 ```
 
-###
+### 
+
+Note how the name is very purposeful, as the function gives us a summary of the data as well as giving you 6 different columns. Also Whenever you wrap summarize() in a helper, we think it’s good practice to set .groups = "drop" to both avoid the message and leave the data in an ungrouped state.
 
 ### Exercise 10
 
+The nice thing about `summary6()` is, because it wraps `summarize()`, you can use it on grouped data. Start a pipe with `diamonds` to `group_by()` and pass in `cut`. Then extend the pipe to `summary6()` and pass in `carat`.
 
 ```{r data-frame-functions-10, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r data-frame-functions-10-hint, eval = FALSE}
-
+```{r data-frame-functions-10-hint-1, eval = FALSE}
+diamonds |>
+  ...(cut)|>
+  summary6(...)
 ```
 
-###
+### 
+
+Furthermore, since the arguments to summarize are data-masking also means that the var argument to `summary6()` is data-masking. That means you can also summarize computed variables for example using `summary6(log10(carat))`.
 
 ### Exercise 11
 
+Another simple use case of making functions is making a helper `count()` function. Our name of the function will be `count_prop`, so type that and assign it to `function()`. Pass in `df`, `var`, and `sort = FALSE` for `function()`. Then close the function with curly braces.
 
 ```{r data-frame-functions-11, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+```{r data-frame-functions-11-hint-1, eval = FALSE}
+... <- function(df, var, ...= FALSE){
+  
+}
+```
 
-```{r data-frame-functions-11-hint, eval = FALSE}
+### 
+
+Note how the name of function is purposeful so others can understand easily.
+
+### Exercise 12
+
+Copying the previous code, within the curly braces, start a pipe with df to `count()` and include `var` with `sort = sort`. Remember to enclose `var` in the body using `{{}}`. Then, extend the pipe to `mutate()` and pass in `prop = n/sum(n)`.
+
+```{r data-frame-functions-12, exercise = TRUE}
 
 ```
 
-###
+<button onclick = "transfer_code(this)">Copy previous code</button>
 
+```{r data-frame-functions-12-hint-1, eval = FALSE}
+... <- function(df, var, sort = FALSE) {
+  df |>
+    count({{ ... }}, sort = ...) |>
+    ...(prop = n / sum(...))
+}
+```
 
+### 
+
+This function has three arguments: `df`, `var`, and `sort`, and only var needs to be embraced because it’s passed to `count()` which uses data-masking for all variables. 
+
+### Exercise 13
+
+Start a pipe with `dimaonds` to `count_prop()` and pass in `clarity` as the arguement.
+
+```{r data-frame-functions-13, exercise = TRUE}
+
+```
+
+```{r data-frame-functions-13-hint-1, eval = FALSE}
+dimaonds |>
+  count_prop(...)
+```
+
+### 
+
+Note that we use a default value for sort so that if the user doesn’t supply their own value it will default to FALSE.
+
+### Exercise 14
+
+```{r data-frame-functions-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r data-frame-functions-14-hint-1, eval = FALSE}
+
+```
+
+### 
 
 ## Plot Functions
 ### 
@@ -537,17 +671,68 @@ It’s straightforward to add more variables to the mix. For example, maybe you 
 
 ### Exercise 7
 
-```{r plot-functions-7, exercise = TRUE}
+Remember the histogram function we showed you earlier?
+
+```{r}
+histogram1 <- function(df, var, binwidth) {
+  df |> 
+    ggplot(aes(x = {{ var }})) + 
+    geom_histogram(binwidth = binwidth)
+}
+```
+
+Wouldn’t it be nice if we could label the output with the variable and the bin width that was used?
+
+### 
+
+To do so, we’re going to have to go under the covers of tidy evaluation and use a function from the package we haven’t talked about yet: `rlang`. `rlang` is a low-level package that’s used by just about every other package in the tidyverse because it implements tidy evaluation (as well as many other useful tools).
+
+### Exercise 8
+
+To solve the labeling problem, we can utilize `rlang::englue()`. It works similarly to `str_glue()`, inserting values wrapped in `{ }` into the string. Additionally, it understands `{{ }}`, automatically inserting the appropriate variable name.
+
+Copying the code for the `histogram1` function, before the start of the pipe, create a new variable `label` and assign it the value of `rlang::englue("A histogram of {{var}} with binwidth {binwidth}")`. Then, within the `df` pipe, add the `labs()` layer after `geom_histogram()`, and set `title = label` within `labs()`.
+
+```{r plot-functions-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r plot-functions-7-hint-1, eval = FALSE}
-
+```{r plot-functions-8-hint-1, eval = FALSE}
+histogram1 <- function(df, ..., binwidth) {
+  label <- rlang::...("A histogram of {{var}} with binwidth {...}")
+  
+  df |> 
+    ggplot(aes(x = {{ ... }})) + 
+    geom_histogram(binwidth = binwidth) + 
+    labs(...` = label)
+}
 ```
 
 ### 
+
+If you want to explore about `rlang`, check this [out](https://www.rdocumentation.org/packages/rlang/versions/1.1.1).
+ 
+### Exercise 9
+
+Now let's use the function, so start a pipe with `diamonds` to `histogram1()` and pass in `carat` and `.1` as the arguments.
+
+```{r plot-functions-9, exercise = TRUE}
+
+```
+
+```{r plot-functions-9-hint-1, eval = FALSE}
+diamonds |>
+  ...(carat, ...)
+```
+
+### 
+
+You can use the same approach in any other place where you want to supply a string in a ggplot2 plot.
+
+Good work!
+
 
 ## Style
 ### 
