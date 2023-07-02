@@ -66,6 +66,13 @@ summarize_means <- function(df, summary_vars = where(is.numeric)) {
     )
 }
 
+long <- df |> 
+  pivot_longer(a:d) |> 
+  group_by(name) |> 
+  summarize(
+    median = median(value),
+    mean = mean(value))
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -635,21 +642,21 @@ You should see a 1 x 9 table. Now, compare your table to the table produced in E
 
 ```
 Table from Exercise 24:
-#> # A tibble: 1 × 9
-#>   a_median a_n_miss b_median b_n_miss c_median c_n_miss d_median d_n_miss
-#>      <dbl>    <int>    <dbl>    <int>    <dbl>    <int>    <dbl>    <int>
-#> 1    0.139        1    -1.11        1   -0.387        2     1.15        0
+# > # A tibble: 1 × 9
+# >   a_median a_n_miss b_median b_n_miss c_median c_n_miss d_median d_n_miss
+# >      <dbl>    <int>    <dbl>    <int>    <dbl>    <int>    <dbl>    <int>
+# > 1    0.139        1    -1.11        1   -0.387        2     1.15        0
 ```
 
 ```
 Tabble from Exercise 25:
-#> # A tibble: 1 × 9
-#>   median_a n_miss_a median_b n_miss_b median_c n_miss_c median_d n_miss_d
-#>      <dbl>    <int>    <dbl>    <int>    <dbl>    <int>    <dbl>    <int>
-#> 1    0.139        1    -1.11        1   -0.387        2     1.15        0
+# > # A tibble: 1 × 9
+# >   median_a n_miss_a median_b n_miss_b median_c n_miss_c median_d n_miss_d
+# >      <dbl>    <int>    <dbl>    <int>    <dbl>    <int>    <dbl>    <int>
+# > 1    0.139        1    -1.11        1   -0.387        2     1.15        0
 ```
 
-###
+### 
 
 You should notice that the only difference is the name of columns. ie. a_median vs. median_a.
 
@@ -672,7 +679,7 @@ df_miss |>
   mutate()
 ```
 
-###
+### 
 
 The `.names` argument is particularly important when you use `across()` with `mutate()`. 
 
@@ -692,7 +699,7 @@ df_miss |>
                 \(x) coalesce(x, 0)))
 ```
 
-###
+### 
 
 Recall that argument `coalesce()` replace NAs with 0. 
 
@@ -722,11 +729,10 @@ Add arguments `a:d`, `\(x) abs(x)` and `.names = "{.col}_abs"` to the call to `a
 ```{r modifying-multiple-c-29-hint, eval = FALSE}
 df_miss |> 
   mutate(
-    across(a:d, \(x) abs(x), .names = "{.col}_abs")
-  )
+    across(a:d, \(x) abs(x), .names = "{.col}_abs"))
 ```
 
-###
+### 
 
 Now, you should get a 5 x 8 table, with 4 new columns `a_abs`, `b_abs`, `c_abs` and `d_abs`.
 
@@ -743,7 +749,7 @@ df_miss |>
   filter()
 ```
 
-###
+### 
 
 `across()` is a great match for `summarize()` and `mutate()`, but it’s more awkward to use with `filter()`. 
 
@@ -764,7 +770,7 @@ df_miss |>
   filter(if_any())
 ```
 
-###
+### 
 
 `if_any()` is the same as using `|` in-between the arguments. 
 
@@ -783,11 +789,11 @@ df_miss |>
   filter(if_any(a:d, is.na))
 ```
 
-###
+### 
 
 The code above is the same as `df_miss |> filter(is.na(a) | is.na(b) | is.na(c) | is.na(d))`.
 
-###
+### 
 
 The other alternative, `if_all`, is the same as using `&`.
 
@@ -826,8 +832,7 @@ df_date <- tibble(
 )
 ```
 
-
-###
+### 
 
 `across()` is particularly useful to program with because it allows you to operate on multiple columns. This is an example of using lubridate functions to expand all date columns into year, month, and day columns.
 
@@ -846,7 +851,7 @@ df_date |>
   expand_dates()
 ```
 
-###
+### 
 
 This should give you a 2 x 5 table with `date_year`, `date_month`, and `date_day` broken down. 
 
@@ -864,16 +869,11 @@ summarize_means <- function(df, summary_vars = where(is.numeric)) {
 }
 ```
 
-###
+### 
 
 `across()` makes it easy to supply multiple columns in a single argument.
 
 ### Exercise 37
-
-<!-- Question: can I use grou_by here? or how to use .by instead? -->
-<!-- diamonds |>  -->
-<!--   group_by(cut) |>  -->
-<!--   summarize_means() -->
 
 Pipe `diamonds` into `group_by(cut)`, then pipe into `summarize_means()`.
 
@@ -889,6 +889,12 @@ diamonds |>
   summarize_means()
 ```
 
+
+###
+
+We mentioned that where possible, `.by()` should be sued instead of `group_by()`. However here 3we encounter a situation where it is not possible to use `.by()`.
+
+Notice that `summarize_means()` is a self-defined function, as in Exercise 36, which was not built to incorporate `.by()`. Therefore, we stick with `group_by()` in this practice.
 
 ### Exercise 38
 
@@ -906,12 +912,41 @@ diamonds |>
   summarize_means(c(carat, x:z))
 ```
 
+### 
+
+Another interesting function associated with `across()` is `pivot_longer()`, which makes data sets longer by increasing the number of rows and decreasing the number of columns.
+
+### Exercise 39
+
+Hit `Run Code`. Pay attention to the table generated 
+
+```{r modifying-multiple-c-39, exercise = TRUE}
+df |> 
+  summarize(across(a:d, 
+                   list(median = median, mean = mean)))
+```
+
 ###
 
+What did you notice about this table? It's too wide and hence hard to compare values. 
 
+There's a way to compute the same values by pivoting longer and then summarizing.
 
+### Exercise 40
+
+Hit `Run Code`.
+
+```{r modifying-multiple-c-40, exercise = TRUE}
+long <- df |> 
+  pivot_longer(a:d) |> 
+  group_by(name) |> 
+  summarize(
+    median = median(value),
+    mean = mean(value))
+```
 
 ### 
+
 
 Here's a quick summary of the abovementioned functions:
 
