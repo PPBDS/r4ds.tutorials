@@ -45,6 +45,34 @@ df_miss <- tibble(
   c = rnorm_na(5, 2),
   d = rnorm(5)
 )
+
+expand_dates <- function(df) {
+  df |> 
+    mutate(
+      across(where(is.Date), list(year = year, month = month, day = mday))
+    )
+}
+
+df_date <- tibble(
+  name = c("Amy", "Bob"),
+  date = ymd(c("2009-08-03", "2010-01-16"))
+)
+
+summarize_means <- function(df, summary_vars = where(is.numeric)) {
+  df |> 
+    summarize(
+      across({{ summary_vars }}, \(x) mean(x, na.rm = TRUE)),
+      n = n()
+    )
+}
+
+long <- df |> 
+  pivot_longer(a:d) |> 
+  group_by(name) |> 
+  summarize(
+    median = median(value),
+    mean = mean(value))
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -66,6 +94,8 @@ This tutorial covers [Chapter 27: Iteration](https://r4ds.hadley.nz/iteration.ht
 
 ## Modifying multiple columns
 ### 
+
+<!-- DK: Say something! -->
 
 ### Exercise 1
 
@@ -139,7 +169,7 @@ Note that this creates a tibble with one row and zero columns.
 
 ### 
 
-The result above is due to absence of arguments and values in the function `summarise`. Next, we will add arguments to fix this problem. 
+The result above is due to absence of arguments and values in the function `summarise()`. Next, we will add arguments to fix this problem. 
 
 ### Exercise 5
 
@@ -162,7 +192,7 @@ Recall that this adds a new column of a variable named `n` that represents the n
 
 ### Exercise 6
 
-Add the median of a and median of b, `med_a = median (a)` and `med_b = median (b)`, to the call to `summarise()`.
+Add the median of a and median of b, `med_a = median (a)` and `med_b = median (b)`, to the call to `summarise()`. Remember the arguments to summarize must be separated by commas. 
 
 ```{r modifying-multiple-c-6, exercise = TRUE}
 
@@ -184,7 +214,7 @@ Now you have a table of 3 columns (vairbale `n`, `a`, `b`) and their correspondi
 
 ### Exercise 7
 
-Copy and paste the previous code, then add `med_c = median(c)` and `med_d = median(d)` to the call to `summarize ()`.
+Copy and paste the previous code, then add `med_c = median(c)` and `med_d = median(d)` to the call to `summarise ()`.
 
 ```{r modifying-multiple-c-7, exercise = TRUE}
 
@@ -193,12 +223,12 @@ Copy and paste the previous code, then add `med_c = median(c)` and `med_d = medi
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r modifying-multiple-c-7-hint-1, eval = FALSE}
-df |> ...
-  a = ...,
-  b = ...,
-  c = median(c),
-  d = median(c),
-)
+df |> 
+  summarise(n = n(),
+            med_a = median(a),
+            med_b = median(b),
+            med_c = median(c),
+            med_d = median(d))
 ```
 
 ### 
@@ -266,7 +296,7 @@ df2 <- tibble(
 
 ### Exercise 11
 
- Pipe `df2` into `.by (grp)`.
+ Pipe `df2` into `summarise()`.
 
 ```{r modifying-multiple-c-11, exercise = TRUE}
 
@@ -276,7 +306,7 @@ df2 <- tibble(
 
 ```{r modifying-multiple-c-11-hint-1, eval = FALSE}
 df2 |> 
-  .by(grp)
+  summarise()
 ```
 
 ### 
@@ -285,7 +315,7 @@ Remember that when it comes to grouping, we always prefer `.by` instead of `grou
 
 ### Exercise 12
 
-Pipe the code above into `summarise()`
+Add `.by = grp` to the call to `summarise()`
 
 ```{r modifying-multiple-c-12, exercise = TRUE}
 
@@ -295,8 +325,7 @@ Pipe the code above into `summarise()`
 
 ```{r modifying-multiple-c-12-hint-1, eval = FALSE}
 df2 |> 
-  .by (grp) |>
-  summarise ()
+  summarise (.by = grp)
 ```
 
 ### 
@@ -305,7 +334,7 @@ A reminder that `.cols` function uses the same specifications as `select()`, so 
 
 ### Exercise 13
 
-Copy the previous code. Add `across (everything(), median)` to the call to `summarise ()`.
+Copy the previous code. Add `across (everything(), median)` to the call to `summarise ()`. You should have a comma between arguments to summarize.
 
 ```{r modifying-multiple-c-13, exercise = TRUE}
 
@@ -315,15 +344,15 @@ Copy the previous code. Add `across (everything(), median)` to the call to `summ
 
 ```{r modifying-multiple-c-13-hint-1, eval = FALSE}
 df2 |> 
-  .by (grp) |>
-  summarize (across(everything(), ...))
+  summarise (.by = grp,
+             across(everything(), median))
 ```
 
 ### 
 
 You should get a 2 x 5 table.
 
-Note grouping columns (`grp` here) are not included in across(), because they’re automatically preserved by summarize().
+Note grouping columns (`grp` here) are not included in `across()`, because they’re automatically preserved by `summarise()`.
 
 ### 
 
@@ -380,7 +409,7 @@ df_miss <- tibble(
 
 ### 
 
-It’s important to note that we’re passing the function `.fns` to across(), so across() can call it; we’re not calling it ourselves. That means the function name should never be followed by (). 
+It’s important to note that we’re passing the function `.fns` to `across()`, so `across()` can call it; we’re not calling it ourselves. That means the function name should never be followed by `()`. 
 
 ie. never write `median ()`.
 
@@ -419,7 +448,7 @@ df_miss |>
 
 ### 
 
-You should get a 1 x 5 table with N/A as median for variables a, b, and c.
+You should get a 1 x 5 table with N/A as median for variables `a`, `b`, and `c`.
 
 This is because `median()` propagates those missing values, giving us a suboptimal output (ie. get N/A as median).
 
@@ -570,20 +599,18 @@ Recall that `sum(is.na(x))` gives you the total number of missing values in x. H
 
 ### 
 
-The last specification of `across()` is `.names`. argument, which we will explore next.
+The last specification of `across()` is `.names` argument, which we will explore next.
 
 ### Exercise 24
 
-<!-- add later -->
+This code is from Exercise 23. Hit `Run Code`.
 
 ```{r modifying-multiple-c-24, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r modifying-multiple-c-24-hint-1, eval = FALSE}
-
+df_miss |> 
+  summarize( across (a:d, 
+                     list (median = \(x) median(x, na.rm = TRUE),
+                           n_miss = \(x) sum(is.na(x)))),
+             n = n())
 ```
 
 ### 
@@ -592,7 +619,7 @@ The result of across() is named according to the specification provided in the `
 
 ### Exercise 25
 
-<!-- add later -->
+Add `.names = "{.fn}_{.col}"` to the call to `across()`.
 
 ```{r modifying-multiple-c-25, exercise = TRUE}
 
@@ -601,18 +628,327 @@ The result of across() is named according to the specification provided in the `
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r modifying-multiple-c-25-hint-1, eval = FALSE}
-
+df_miss |> 
+  summarize( across (a:d, 
+                     list (median = \(x) median(x, na.rm = TRUE),
+                           n_miss = \(x) sum(is.na(x))),
+                     .names = "{.fn}_{.col}"),
+             n = n())
 ```
 
 ### 
 
+You should see a 1 x 9 table. Now, compare your table to the table produced in Exercise 24. What did you notice?
+
+```
+Table from Exercise 24:
+# > # A tibble: 1 × 9
+# >   a_median a_n_miss b_median b_n_miss c_median c_n_miss d_median d_n_miss
+# >      <dbl>    <int>    <dbl>    <int>    <dbl>    <int>    <dbl>    <int>
+# > 1    0.139        1    -1.11        1   -0.387        2     1.15        0
+```
+
+```
+Tabble from Exercise 25:
+# > # A tibble: 1 × 9
+# >   median_a n_miss_a median_b n_miss_b median_c n_miss_c median_d n_miss_d
+# >      <dbl>    <int>    <dbl>    <int>    <dbl>    <int>    <dbl>    <int>
+# > 1    0.139        1    -1.11        1   -0.387        2     1.15        0
+```
+
 ### 
 
-<!-- add this later: If you look carefully, you might intuit that the columns are named using a glue specification (Section 15.3.2) like {.col}_{.fn} where .col is the name of the original column and .fn is the name of the function. That’s not a coincidence! As you’ll learn in the next section, you can use .names argument to supply your own glue spec. -->
+You should notice that the only difference is the name of columns. ie. a_median vs. median_a.
+
+By default, columns are named using a glue specification like {.col}_{.fn}. `.col` is the name of the original column (ie. `a`, `b`) and `.fn` is the name of the function (ie. `median`). Hence the name of column in Exercise 24 is `a_median`.
+
+You can use `.names` argument to supply your own glue specification. In Exercise 25, we define `.names` as "{.fn}_{.col}", therefore the column produced has name `median_a`.
+
+### Exercise 26
+
+For this practice, pipe `df_miss` into `mutate()`.
+
+```{r modifying-multiple-c-26, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-26-hint, eval = FALSE}
+df_miss |> 
+  mutate()
+```
 
 ### 
 
-Here's a quick summary of the abovementioned functions:
+The `.names` argument is particularly important when you use `across()` with `mutate()`. 
+
+### Exercise 27
+
+Add `across(a:d, \(x) coalesce(x, 0))` to the call to `mutate()`.
+
+```{r modifying-multiple-c-27, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-27-hint, eval = FALSE}
+df_miss |> 
+  mutate(across(a:d, 
+                \(x) coalesce(x, 0)))
+```
+
+### 
+
+Recall that argument `coalesce()` replace NAs with 0. 
+
+Note that by default, the output of `across()` is given the same names as the inputs. This means that `across()` inside of `mutate()` will replace existing columns, like in Exercise 27.
+
+To create new columns, we need to specify `.names`.
+
+### Exercise 28
+
+Hit `Run Code`
+
+```{r modifying-multiple-c-28, exercise = TRUE}
+df_miss |> 
+  mutate(across())
+```
+
+### Exercise 29
+
+Add arguments `a:d`, `\(x) abs(x)` and `.names = "{.col}_abs"` to the call to `across()`. Make sure to separate each argument with comma.
+
+```{r modifying-multiple-c-29, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-29-hint, eval = FALSE}
+df_miss |> 
+  mutate(
+    across(a:d, \(x) abs(x), .names = "{.col}_abs"))
+```
+
+### 
+
+Now, you should get a 5 x 8 table, with 4 new columns `a_abs`, `b_abs`, `c_abs` and `d_abs`.
+
+### Exercise 30
+
+Pipe `df_miss` into `filter()`.
+
+```{r modifying-multiple-c-30, exercise = TRUE}
+
+```
+
+```{r modifying-multiple-c-30-hint, eval = FALSE}
+df_miss |> 
+  filter()
+```
+
+### 
+
+`across()` is a great match for `summarize()` and `mutate()`, but it’s more awkward to use with `filter()`. 
+
+We use two variants of `across()` called `if_any()` and `if_all()` with `filter()`.
+
+### Exercise 31
+
+Add `if_any()` to the call to `filter()`
+
+```{r modifying-multiple-c-31, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-31-hint, eval = FALSE}
+df_miss |> 
+  filter(if_any())
+```
+
+### 
+
+`if_any()` is the same as using `|` in-between the arguments. 
+
+### Exercise 32
+
+Add `a:d` and `is.na` to the function `if_any()`. 
+
+```{r modifying-multiple-c-32, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-32-hint, eval = FALSE}
+df_miss |> 
+  filter(if_any(a:d, is.na))
+```
+
+### 
+
+The code above is the same as `df_miss |> filter(is.na(a) | is.na(b) | is.na(c) | is.na(d))`.
+
+### 
+
+The other alternative, `if_all`, is the same as using `&`.
+
+### Exercise 33
+
+Copy and past the previous code. Change `if_any` to `if_all`, see what happens.
+
+```{r modifying-multiple-c-33, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-33-hint, eval = FALSE}
+df_miss |> 
+  filter(if_any(a:d, is.na))
+```
+
+You will get a 0 x 4 table!
+
+### Exercise 34
+
+Hit `Run Code`.
+
+```{r modifying-multiple-c-34, exercise = TRUE}
+expand_dates <- function(df) {
+  df |> 
+    mutate(
+      across(where(is.Date), list(year = year, month = month, day = mday))
+    )
+}
+
+df_date <- tibble(
+  name = c("Amy", "Bob"),
+  date = ymd(c("2009-08-03", "2010-01-16"))
+)
+```
+
+### 
+
+`across()` is particularly useful to program with because it allows you to operate on multiple columns. This is an example of using lubridate functions to expand all date columns into year, month, and day columns.
+
+### Exercise 35
+
+Pipe `df_date` into `expand_dates()`.
+
+```{r modifying-multiple-c-35, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-35-hint, eval = FALSE}
+df_date |> 
+  expand_dates()
+```
+
+### 
+
+This should give you a 2 x 5 table with `date_year`, `date_month`, and `date_day` broken down. 
+
+### Exercise 36
+
+Hit `Run Code` to run the following function.
+
+```{r modifying-multiple-c-36, exercise = TRUE}
+summarize_means <- function(df, summary_vars = where(is.numeric)) {
+  df |> 
+    summarize(
+      across({{ summary_vars }}, \(x) mean(x, na.rm = TRUE)),
+      n = n()
+    )
+}
+```
+
+### 
+
+`across()` makes it easy to supply multiple columns in a single argument.
+
+### Exercise 37
+
+Pipe `diamonds` into `group_by(cut)`, then pipe into `summarize_means()`.
+
+```{r modifying-multiple-c-37, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-37-hint, eval = FALSE}
+diamonds |> 
+  group_by(cut) |> 
+  summarize_means()
+```
+
+
+###
+
+We mentioned that where possible, `.by()` should be sued instead of `group_by()`. However here 3we encounter a situation where it is not possible to use `.by()`.
+
+Notice that `summarize_means()` is a self-defined function, as in Exercise 36, which was not built to incorporate `.by()`. Therefore, we stick with `group_by()` in this practice.
+
+### Exercise 38
+
+Now, add argument `c(carat, x:z)` to the function `summarize_means()`.
+
+```{r modifying-multiple-c-38, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-38-hint, eval = FALSE}
+diamonds |> 
+  group_by(cut) |> 
+  summarize_means(c(carat, x:z))
+```
+
+### 
+
+Another interesting function associated with `across()` is `pivot_longer()`, which makes data sets longer by increasing the number of rows and decreasing the number of columns.
+
+### Exercise 39
+
+Hit `Run Code`. Pay attention to the table generated 
+
+```{r modifying-multiple-c-39, exercise = TRUE}
+df |> 
+  summarize(across(a:d, 
+                   list(median = median, mean = mean)))
+```
+
+###
+
+What did you notice about this table? It's too wide and hence hard to compare values. 
+
+There's a way to compute the same values by pivoting longer and then summarizing.
+
+### Exercise 40
+
+Hit `Run Code`.
+
+```{r modifying-multiple-c-40, exercise = TRUE}
+long <- df |> 
+  pivot_longer(a:d) |> 
+  group_by(name) |> 
+  summarize(
+    median = median(value),
+    mean = mean(value))
+```
+
+### 
+
+
+Here's a quick summary of the above mentioned functions:
 
 `.cols` specifies which columns you want to iterate over
 
