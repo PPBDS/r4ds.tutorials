@@ -76,6 +76,29 @@ histogram1 <- function(df, var, binwidth) {
     labs(title = label)
 }
 
+clean_number <- function(x) {
+  is_pct <- str_detect(x, "%")
+  num <- x |> 
+    str_remove_all("%") |> 
+    str_remove_all(",") |> 
+    str_remove_all(fixed("$")) |> 
+    as.numeric(x)
+  if_else(is_pct, num / 100, num)
+}
+
+commas <- function(x) {
+  str_flatten(x, collapse = ", ", last = " and ")
+}
+
+mape <- function(actual, predicted) {
+  sum(abs((actual - predicted) / actual)) / length(actual)
+}
+
+first_upper <- function(x) {
+  str_sub(x, 1, 1) <- str_to_upper(str_sub(x, 1, 1))
+  x
+}
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -251,49 +274,130 @@ rescale02 <- function(...) {
 
 ### 
 
-<!-- AB:should i add the infinite or finite values, feel likei t waste of time  -->
+Now you’ve got the basic idea of functions, let’s take a look at a whole bunch of examples. We’ll start by looking at “mutate” functions, i.e. functions that work well inside of `mutate()` and `filter()` because they return an output of the same length as the input.
 
 ### Exercise 9
 
+Of course functions don’t just need to work with numeric variables. You might want to do some repeated string manipulation. Maybe you need to make the first character upper case.
+
+Create a function `first_upper` and assign it to `function()` and pass in `x`. Within the curly braces, pass in `  str_sub(x, 1, 1) <- str_to_upper(str_sub(x, 1, 1))` and then on a new line call `x`.
 ```{r vector-functions-9, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r vector-functions-9-hint-1, eval = FALSE}
-
+... <- function(...) {
+  str_sub(x, 1, ....) <- str_to_upper(...(x, 1, 1))
+  ...
+}
 ```
 
 ### 
 
+Let's now use it on a string.
+
+
 ### Exercise 10
+
+Call `first_upper()` and pass in `"hello"` as the argument.
 
 ```{r vector-functions-10, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r vector-functions-10-hint-1, eval = FALSE}
-
+first_upper("...")
 ```
 
 ### 
+
+Instead of just having the first letter upper case, maybe you want to strip percent signs, commas, and dollar signs from a string before converting it into a number.
 
 ### Exercise 11
 
-```{r vector-functions-11, exercise = TRUE}
+Below is what the function would look like:
 
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r vector-functions-11-hint-1, eval = FALSE}
-
+```{r}
+knitr::include_graphics("images/img7.jpg")
 ```
 
 ### 
+
+Let's now use this on numbers which are in string.
+
+### Exercise 12
+
+Call `clean_number()` and pass in `"$12,300"` and then on a new line call `clean_number()` and pass in `"45%"`.
+
+```{r vector-functions-12, exercise = TRUE}
+
+```
+
+```{r vector-functions-12-hint-1, eval = FALSE}
+clean_number("$12,300")
+clean_number("45%")
+```
+
+### 
+
+We’ve focused on examples that take a single vector because we think they’re the most common. But there’s no reason that your function can’t take multiple vector inputs.
+
+### Exercise 13
+
+Another important family of vector functions is summary functions, functions that return a single value for use in `summarize()`. Sometimes this can just be a matter of setting a default argument or two.
+
+Let's create a function called `commas` that takes multiple strings and combines them into one string separated by `commas`. Assign `function(x)` to commas as its definition. Within the function body, use `str_flatten()` and pass in `x` with `collapse = ", "` and `last = " and "` as arguments.
+
+```{r vector-functions-13, exercise = TRUE}
+
+```
+
+```{r vector-functions-13-hint-1, eval = FALSE}
+... <- function(x) {
+  str_flatten(x, ... = ", ", last = " ... ")
+}
+```
+
+### 
+
+Let's now use the function on a vector of strings.
+
+### Exercise 14
+
+Type `commas()` and pass in a vector `c("cat","dog","piegon")`./
+
+```{r vector-functions-14, exercise = TRUE}
+
+```
+
+```{r vector-functions-14-hint-1, eval = FALSE}
+commas(...("cat", "...", "..."))
+```
+
+### 
+
+You can also write functions with multiple vector inputs. 
+
+### Exercise 15
+
+For example, maybe you want to compute the mean absolute prediction error to help you compare model predictions with actual values. Create a function `mape` and adding to `function()` and pass in `actual` and `predicted` as variables. Within the curly braces, pass in `sum(abs((actual - predicted) / actual)) / length(actual)`.
+
+```{r vector-functions-15, exercise = TRUE}
+
+```
+
+```{r vector-functions-15-hint-1, eval = FALSE}
+... <- function(actual, ...) {
+  sum(...((actual - predicted) / ...)) / length(...)
+}
+```
+
+### 
+
+Good Work!
+
+Now that you have knowlegde on vecotr unctions, let's move on to Data Frame functions.
+
 
 ## Data Frame Functions
 ### 
