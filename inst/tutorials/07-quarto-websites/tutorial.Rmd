@@ -32,7 +32,13 @@ library(plotly)
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- Revisit the use of names like car_plot or map-london.png. I think that, both in the Console and the Terminal, things like the dash in map-london will be evaluated as math, and so generate an error. Perhaps underscores cause errors as well. Either way, we don't need this extra complexity here. -->
+
+<!-- Use a tibble in place of mtcars. -->
+
 <!-- Would it be better to organize this the same way as our other work? Start with Github, connect to R project, and so on. The annoyance is that you would have to create the raw files yourself. But maybe that is good, providing an excuse to look closely at the key files? And there really aren't that many of them. -->
+
+<!-- What is the quarto website equivalent of usethis::create_package()? We want to start with Gitgub and then connect. But then we need a function to create all the annoying files. ChatGPT says that quarto::create_site() is the function I want, but it does not seem to be exported. -->
 
 
 <!-- Make use of this exchange: https://community.rstudio.com/t/how-to-set-echo-false-for-all-files-in-a-quarto-website/159435 somewhere. -->
@@ -183,6 +189,8 @@ A website is a more complex object than a single Quarto document. It has two mai
 
 We don't want to put all the files on Github. So, add `*Rproj` to your `.gitignore` file. 
 
+If you don't see a `.gitignore`, it means that you failed to follow the instructions above to ensure that the "Create a git repository" box was checked. Start over.
+
 ### 
 
 Run `cat .gitignore` in the terminal. CP/CR.
@@ -238,8 +246,6 @@ The output from the `git log` command is too complex for us to fully parse. If y
 
 
 Let's connect to Github. We are using the **usethis** package, [a library](https://usethis.r-lib.org/), maintained by the nice people at [Posit](https://posit.co/), with lots of handy functions for working with new projects.
-
-
 
 From the Console, run `usethis::use_github()`. This will create a new repository on your Github account and connect it to your `first-website` R project. 
 
@@ -331,7 +337,7 @@ Create a new code chunk in `index.qmd` and load two libraries: **tidyverse** and
 
 ```{r adding-visualization-2-hint-1, eval = FALSE}
 library(tidyverse)
-library(ggtheme)
+library(ggthemes)
 ```
 
 ### 
@@ -1260,11 +1266,11 @@ In the `car-plot` code chunk, use the function `ggsave()` to make a PNG image of
 
 ###
 
-The first argument is the name of the file you want to save the image to, `car-plot.png`. 
+The first argument is the name of the file you want to save the image to, `"car-plot.png"`. 
 
 ###
 
-The next argument is `my_plot`, set that equal to `car_plot`. 
+The next argument is `plot`, set that equal to `car_plot`. 
 
 ###
 
@@ -1301,7 +1307,7 @@ In the Terminal, run `pwd` to confirm you are in the main project directory. The
 
 ### 
 
-In the Terminal, run `ls images`. Th resulting list of files from the `images` directory should only contain one item: `car-plot.png`.
+In the Terminal, run `ls images`. Th resulting list of files from the `images` directory should only contain one item: `car-plot.png`. CP/CR
 
 ```{r images-and-comments-2}
 question_text(NULL,
@@ -1691,6 +1697,8 @@ knitr::include_graphics("images/finished-yaml.png")
 ```
 
 ### 
+
+<!-- MR: There was a version compatibility issue with Knitr 1.43 and Quarto 1.353. Was able to fix by just installing quarto 1.361 -->
 
 Save, push everything to Git, and type `quarto publish quarto-pub` in the Terminal.
 
