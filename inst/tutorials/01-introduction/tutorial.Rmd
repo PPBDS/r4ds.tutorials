@@ -15,21 +15,11 @@ description: 'Tutorial for Chapter 1: Introduction'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
-library(primer.data)
+
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
-globe_temps <- temperature |> 
-  filter(area == "globe") |> 
-  select(date, temperature)
-
-savings <- economics |> 
-  select(date, psavert)
-
-usbmi <- nhanes |> 
-  select(bmi) |>
-  drop_na()
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -38,82 +28,80 @@ usbmi <- nhanes |>
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-
-<!-- This tutorial currently does not follow Chapter 1 at all. Instead, it just uses the material from the old Visualization Overview tutorial. Let's fix this. -->
-
-<!-- Would be good to add more hints. -->
-
-<!-- 1. Get rid of the primer.data package. -->
-
-<!-- 2. No real need to create a bunch of specific tibbles in the set up code chunk. -->
-
-<!-- 3. Make the sections match the sections in the chapter, even if we include a lot of extra material in addition to the code in the book. -->
-
-<!-- Get rid of ggthemes. It no longer maintained. Just use the built in options. -->
-
+<!-- DK: Could do more throughout, but this is not bad. -->
 
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 1: Introduction](https://r4ds.hadley.nz/intro.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. To be fair, that chapter has very little R code. So, in the spirit of getting started, we include some of our own.
+This tutorial covers [Chapter 1: Introduction](https://r4ds.hadley.nz/intro.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
 
+The promise we make to teachers is that these tutorials will ensure that your students type in 90% of the code which appears in the associated chapter. This chapter has very little R code. So, in the spirit of getting started, we include some of our own.
 
-
-## Looking at data
 ### 
 
-Let's practice the basic terminology and syntax of using R in [Rstudio](https://www.rstudio.com/). Commands like `print()`, `glimpse()` and `summary()` are useful for looking at data.
+This tutorial assumes that you have already completed the Getting Started tutorial in the [**tutorial.helpers**](https://ppbds.github.io/tutorial.helpers/) package. If you haven't, do so now. It is quick!
+
+
+## What you will learn
+### 
+
+In this tutorial, we will only work within the Exercise Code Blocks. However, you can also put the commands into the Console tab in the lower left. 
+
 
 ### Exercise 1
 
-Before you start doing data science, you must load the packages you are going to use. In the code chunk below, use the function `library()` to load the **tidyverse** package.
+Type `2 + 2` and hit "Run Code."
 
-```{r looking-at-data-1, exercise = TRUE}
+```{r what-you-will-learn-1, exercise = TRUE}
 
 ```
 
-```{r looking-at-data-1-hint-1, eval = FALSE}
+```{r what-you-will-learn-1-hint-1, eval = FALSE}
+2 + 2
+```
+
+### 
+
+Data science is a vast field, and there’s no way you can master it all by reading a single book. This book aims to give you a solid foundation in the most important tools and enough knowledge to find the resources to learn more when necessary. Our model of the steps of a typical data science project looks something like this:
+
+```{r overview}
+knitr::include_graphics("images/base.png")
+```
+
+### Exercise 2
+
+Before you start doing data science, you must load the packages you are going to use. Use the function `library()` to load the **tidyverse** package.
+
+```{r what-you-will-learn-2, exercise = TRUE}
+
+```
+
+```{r what-you-will-learn-2-hint-1, eval = FALSE}
 library(tidyverse)
 ```
 
 ### 
 
-The **[tidyverse](https://www.tidyverse.org/)** is a collection of R packages used by data scientists and maintained by [Posit](https://posit.co/), a company formerly known as RStudio. 
-
-### Exercise 2
-
-We almost always use the **tidyverse** package because it contains several libraries with dozens of useful functions. Other packages are used less often. In the code chunk below, load the **primer.data** package.
-
-```{r looking-at-data-2, exercise = TRUE}
-
-```
-
-```{r looking-at-data-2-hint-1, eval = FALSE}
-library(...)
-```
-
-### 
-
-Note that, for historical reasons, we refer to R packages like **primer.data** as *packages* most commonly, but also as *libraries*. That is the reason why the `library()` function is used to load packages.
-
+Looking at the graphic above, the first step in a data science project is to import your data into R. This typically means that you take data stored in a file, database, or web application programming interface (API) and load it into a data frame in R. If you can’t get your data into R, you can’t do data science on it!
 
 ### Exercise 3
 
 If you are ever stuck while coding, R has *help pages*. Let's say we want to know what the function `sqrt()` does. Open the help page for `sqrt()` by typing `?sqrt` below.
 
-```{r looking-at-data-3, exercise = TRUE}
+```{r what-you-will-learn-3, exercise = TRUE}
 
 ```
 
 ### 
 
-You can also use the `?` to open the help page for a data set. 
+Once you’ve imported your data, it is a good idea to **tidy** it. Tidying your data means storing it in a consistent form that matches the semantics of the dataset with how it is stored. In brief, when your data is tidy, each column is a variable and each row is an observation. Tidy data is important because the consistent structure lets you focus your efforts on answering questions about the data, not fighting to get the data into the right form for different functions.
+
 
 ### Exercise 4
 
-Type `?trains` to look up the help page for the `trains` tibble from the **primer.data** package.
+Type `?diamonds` to look up the help page for the `diamonds` tibble from the **ggplot2** package, which is one of the core packages in the *Tidyverse*.
 
-```{r looking-at-data-4, exercise = TRUE}
+```{r what-you-will-learn-4, exercise = TRUE}
 
 ```
 
@@ -130,23 +118,30 @@ question_text(NULL,
 
 ### 
 
-You can find help about an entire package with `help(package = "primer.data")`. It is confusing, but unavoidable, that package names are sometimes unquoted, as in `library(primer.data)`, and sometimes quoted, as in `help(package = "primer.data")`. If one does not work, try the other.
+You can find help about an entire package with `help(package = "ggplot2")`. It is confusing, but unavoidable, that package names are sometimes unquoted, as in `library(ggplot2)`, and sometimes quoted, as in `help(package = "ggplot2")`. If one does not work, try the other.
+
+### 
+
+Note that, for historical reasons, we refer to R packages like **ggplot2** as *packages* most commonly, but also as *libraries*. That is the reason why the `library()` function is used to load packages.
+
 
 ### Exercise 5
 
-Assign the value of `sqrt(144)` to the variable `results`. Remember to use the assignment operator `<-`.
+Assign the value of `sqrt(144)` to the variable `x`. Remember to use the assignment operator `<-`.
 
-```{r looking-at-data-5, exercise = TRUE}
+```{r what-you-will-learn-5, exercise = TRUE}
 
 ```
 
-```{r looking-at-data-5-hint-1, eval = FALSE}
-results <- sqrt(144)
+```{r what-you-will-learn-5-hint-1, eval = FALSE}
+x <- sqrt(144)
 ```
 
 ### 
 
-Although there are [two additional assignment operators](https://stat.ethz.ch/R-manual/R-devel/library/base/html/assignOps.html), you should use `<-`. 
+Once you have tidy data, a common next step is to **transform** it. Transformation includes narrowing in on observations of interest (like all people in one city or all data from the last year), creating new variables that are functions of existing variables (like computing speed from distance and time), and calculating a set of summary statistics (like counts or means). Together, tidying and transforming are called **wrangling** because getting your data in a form that’s natural to work with often feels like a fight!
+
+
 
 ### Exercise 6
 
@@ -154,58 +149,58 @@ Data frames, also referred to as "tibbles", are spreadsheet-type data sets.
 
 ### 
 
-In data science, it's always a good idea to explore the data before you use it. You can simply examine a data set by typing its name. Let's examine the contents of `trains` data set. Type `trains` in the line below.
+In data science, it's always a good idea to explore the data before you use it. You can simply examine a data set by typing its name. Let's examine the contents of `diamonds` data set. Type `diamonds` in the line below.
 
-```{r looking-at-data-6, exercise = TRUE}
+```{r what-you-will-learn-6, exercise = TRUE}
 
 ```
 
 ### 
 
-In tibbles, column headers are referred to as **variables** and each row of data is referred to as an **observation**.
+**Visualization** is a fundamentally human activity. A good visualization will show you things you did not expect or raise new questions about the data. A good visualization might also hint that you’re asking the wrong question or that you need to collect different data. Visualizations can surprise you, but they don’t scale particularly well because they require a human to interpret them.
 
 
 ### Exercise 7
 
-When we type the name of a tibble in the R Console, we are implicitly using the `print()` function. Try it by using `print()` on `trains`.
+When we type the name of a tibble in the R Console, we are implicitly using the `print()` function. Try it by using `print()` on `diamonds`.
 
-```{r looking-at-data-7, exercise = TRUE}
+```{r what-you-will-learn-7, exercise = TRUE}
 
 ```
 
-```{r looking-at-data-7-hint-1, eval = FALSE}
-print(trains)
+```{r what-you-will-learn-7-hint-1, eval = FALSE}
+print(diamonds)
 ```
 
-This produces the same result as just typing `trains`. But `print()` is more flexible, allowing us to specify different numbers of rows and columns.
+This produces the same result as just typing `diamonds`. But `print()` is more flexible, allowing us to specify different numbers of rows and columns. Use the `width` argument to change how many columns appear. `print(diamonds, n = Inf, width = Inf)` will cause everything to be printed.
 
 ### Exercise 8
 
-Print out the first three rows of `trains`.
+Print out the first three rows of `diamonds`.
 
-```{r looking-at-data-8, exercise = TRUE}
+```{r what-you-will-learn-8, exercise = TRUE}
 
 ```
 
-```{r looking-at-data-8-hint-1, eval = FALSE}
-print(trains, n = 3)
+```{r what-you-will-learn-8-hint-1, eval = FALSE}
+print(diamonds, n = 3)
 ```
 
 ### 
 
-Use the `width` argument to change how many columns appear. `print(trains, n = Inf, width = Inf)` will cause everything to be printed.
+**Models** are complementary tools to visualization. Once you have made your questions sufficiently precise, you can use a model to answer them. Models are fundamentally mathematical or computational tools, so they generally scale well. Even when they don’t, it’s usually cheaper to buy more computers than it is to buy more brains! But every model makes assumptions, and by its very nature, a model cannot question its own assumptions. That means a model cannot fundamentally surprise you.
 
 
 ### Exercise 9
 
-Now use `glimpse()` to look at the `trains` data set. To learn more about the `glimpse()` function, run `?glimpse`.
+Now use `glimpse()` to look at the `diamonds` data set. To learn more about the `glimpse()` function, run `?glimpse`.
 
-```{r looking-at-data-9, exercise = TRUE}
+```{r what-you-will-learn-9, exercise = TRUE}
 
 ```
 
-```{r looking-at-data-9-hint-1, eval = FALSE}
-glimpse(trains)
+```{r what-you-will-learn-9-hint-1, eval = FALSE}
+glimpse(diamonds)
 ```
 
 ### 
@@ -216,19 +211,19 @@ glimpse(trains)
 
 ### Exercise 10
 
-Run `summary()` on `trains`.
+Run `summary()` on `diamonds`.
 
-```{r looking-at-data-10, exercise = TRUE}
+```{r what-you-will-learn-10, exercise = TRUE}
 
 ```
 
-```{r looking-at-data-10-hint-1, eval = FALSE}
+```{r what-you-will-learn-10-hint-1, eval = FALSE}
 summary(...)
 ```
 
 ### 
 
-For each variable, the `summary()` function produces summary statistics about that variable.
+Referring again to our graphic, the last step of data science is **communication**, an absolutely critical part of any data analysis project. It doesn’t matter how well your models and visualization have led you to understand the data unless you can also communicate your results to others.
 
 ### Exercise 11
 
@@ -236,13 +231,23 @@ For each variable, the `summary()` function produces summary statistics about th
 
 ### 
 
-Press Run Code. Afterwards, add the `#` and re-run the chunk. You should no longer see a result.
+Press "Run Code." Afterwards, add the `#` and re-run the chunk. You should no longer see a result.
 
-```{r looking-at-data-11, exercise = TRUE}
+```{r what-you-will-learn-11, exercise = TRUE}
 sqrt(144)
 ```
 
-## Basic plots
+Surrounding all these tools is **programming**. Programming is a cross-cutting tool that you use in nearly every part of a data science project. You don’t need to be an expert programmer to be a successful data scientist, but learning more about programming pays off because becoming a better programmer allows you to automate common tasks and solve new problems with greater ease.
+
+
+
+## How this book is organized
+### 
+
+The previous description of the tools of data science is organized roughly according to the order in which you use them in an analysis (although, of course, you’ll iterate through them multiple times). In our experience, however, learning data importing and tidying first is suboptimal because, 80% of the time, it’s routine and boring, and the other 20% of the time, it’s weird and frustrating. That’s a bad place to start learning a new subject!
+
+Instead, we’ll start with visualization and transformation of data that’s already been imported and tidied. 
+
 ### 
 
 Let's create the following scatterplot from the `mpg` dataset, which provides measurements of attributes from various car models.
@@ -265,11 +270,11 @@ scat_p
 
 First, let's `glimpse()` the data set used above called `mpg`. Looking at the axis titles, can you determine what the names are for the two variables we will use?
 
-```{r basic-plots-1, exercise = TRUE}
+```{r how-this-book-is-org-1, exercise = TRUE}
 
 ```
 
-```{r basic-plots-1-hint-1, eval = FALSE}
+```{r how-this-book-is-org-1-hint-1, eval = FALSE}
 glimpse(...)
 ```
 
@@ -283,62 +288,75 @@ We are going to use `displ` and `hwy` to create this plot.
 
 Within `ggplot()`, set `data` to `mpg`.
 
-```{r basic-plots-2, exercise = TRUE}
+```{r how-this-book-is-org-2, exercise = TRUE}
 
 ```
 
-```{r basic-plots-2-hint-1, eval = FALSE}
+```{r how-this-book-is-org-2-hint-1, eval = FALSE}
 ggplot(data = ...)
 ```
 
-<!-- Maybe mention default arguments here or somewhere else in the tutorial -->
-
-### 
-
 `ggplot()` initializes a ggplot object. Your output should be an empty canvas.
+
 
 ### Exercise 3
 
-<!-- DK: This step goes to fast. Don't forget, this is the first plot that students have ever made. Go slower! -->
+The first argument to `ggplot()` is `data`, as above. The second argument is `mapping`. Set the `mapping` to equal `aes()`, which is the "aesthetics" function for plotting.
 
-Now, map `displ` to the x-axis and `hwy` to the y-axis.
+```{r how-this-book-is-org-3, exercise = TRUE}
 
-```{r basic-plots-3, exercise = TRUE}
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r how-this-book-is-org-3-hint-1, eval = FALSE}
+
+```
+
+This produces the same blank canvas as above. We need to specify some arguments to `aes()` in order to generate the plot.
+
+### Exercise 4
+
+The two most important arguments in `aes()` are `x` and `y`. Set `x` equal to `displ`. Set `y` equal to `hwy`.
+
+
+```{r how-this-book-is-org-4, exercise = TRUE}
 
 ```
 
 <button onclick="transfer_code(this)">Copy previous code</button>
 
-```{r basic-plots-3-hint-1, eval = FALSE}
-ggplot(data = ..., 
-       mapping = aes(
-         x = ...,
-         y = ...))
+```{r how-this-book-is-org-4-hint-1, eval = FALSE}
+ggplot(data = mpg, 
+       mapping = aes(x = ...,
+                     y = ...))
 ```
 
 ### 
 
-Anything included in `aes()` brings some information from the data in our tibble onto the graph. Elsewhere in `ggplot()` and its layers, we change the appearance of the graph without using information from our data.
+Anything included in `aes()` brings some information from the data in our tibble onto the graph. In this case, R knows that `displ` (a measure of the size of a car's engine) goes on the x axis and `hwy` (miles per gallon for highway driving) goes in the y-axis. 
 
-### Exercise 4
+R can also see the range of values in `mpg` for both `displ` and `hwy`, thereby determining the range of values which the axes should cover.
 
-Let's now add the layer `geom_point()`.
+### Exercise 5
 
-```{r basic-plots-4, exercise = TRUE}
+Let's now add the layer `geom_point()`. Recall that steps within a series of plotting commands are separated by plus signs (`+`) not by pipes (`|>`).
+
+```{r how-this-book-is-org-5, exercise = TRUE}
 
 ```
 
 <button onclick="transfer_code(this)">Copy previous code</button>
 
-```{r basic-plots-4-hint-1, eval = FALSE}
+```{r how-this-book-is-org-5-hint-1, eval = FALSE}
 Remember when you add a layer you use +. 
 ```
 
-```{r basic-plots-4-hint-2, eval = FALSE}
-ggplot(data = ..., 
+```{r how-this-book-is-org-5-hint-2, eval = FALSE}
+ggplot(data = mpg, 
        mapping = aes(
-         x = ...,
-         y = ...)) +
+         x = displ,
+         y = hwy)) +
   geom_point()
 ```
 
@@ -346,19 +364,19 @@ ggplot(data = ...,
 
 `geom_*` functions (such as `geom_point()`) add ggplot objects aadditional layers to the base ggplot. This allows us to create a graphic piece-by-piece.
 
-### Exercise 5
+### Exercise 6
 
 The following code uses the `mpg` tibble to create a scatterplot that displays 126 points, however, it visualizes a data set that contains 234 points. Because many points share similar values, this causes individual data points to be hidden behind other points. This is also known as **overplotting.**
 
-One method to fight overplotting is to make each point **semi-transparent**. The code chunk below provides the code used to create the graph above. Change the transparency of the points by setting `alpha` equal to 0.5 within `geom_point()`.
+One method to fight overplotting is to make each point **semi-transparent**. The code chunk below provides the code used to create the graph above. Change the transparency of the points by setting `alpha` equal to `0.5` within `geom_point()`.
 
-```{r basic-plots-5, exercise = TRUE}
+```{r how-this-book-is-org-6, exercise = TRUE}
 
 ```
 
 <button onclick="transfer_code(this)">Copy previous code</button>
 
-```{r basic-plots-5-hint-1, eval = FALSE}
+```{r how-this-book-is-org-6-hint-1, eval = FALSE}
 ggplot(data = mpg, 
        mapping = aes(x = displ, y = hwy)) +
   geom_point(alpha = ...)
@@ -366,21 +384,22 @@ ggplot(data = mpg,
 
 ### 
 
-`alpha` only changes the appearance of the graph and does not add new information from the data. Thus, this argument is within the `geom` and is not nested within an `aes`.
+`alpha` only changes the appearance of the graph and does not add new information from the data. Thus, this argument is within the `geom` and is not nested within a call to `aes()`.
 
-### Exercise 6
+### Exercise 7
 
 Now, also within `geom_point()`, set `color` equal to `"steelblue"`.
 
-```{r basic-plots-6, exercise = TRUE}
+```{r how-this-book-is-org-7, exercise = TRUE}
 
 ```
 
 <button onclick="transfer_code(this)">Copy previous code</button>
 
-```{r basic-plots-6-hint-1, eval = FALSE}
+```{r how-this-book-is-org-7-hint-1, eval = FALSE}
 ggplot(data = mpg, 
-       mapping = aes(x = displ, y = hwy)) +
+       mapping = aes(x = displ, 
+                     y = hwy)) +
   geom_point(alpha = ..., color = "...")
 ```
 
@@ -388,23 +407,23 @@ ggplot(data = mpg,
 
 R has 657 (built in color names)[https://www.nceas.ucsb.edu/sites/default/files/2020-04/colorPaletteCheatsheet.pdf?page=3]. Like `alpha`, `color` is not changing the data so the argument is within `geom`.
 
-### Exercise 7
+### Exercise 8
 
 Now, use `labs()` to add labeling to the graph. Set the `title` to `"Measurements for Engine Displacement and Highway Fuel Efficiency of Select Car Models"` and the `subtitle` to `"Cars with greater enginer displacement are less fuel efficient"`. To label the axes, set `x` to `"Engine Displacement (L)"` and `y` to `"Highway Efficiency (mpg)"`. Set the `caption` to `"EPA (2008)"`.
 
 The caption is generally used to credit a project's sources.
 
-```{r basic-plots-7, exercise = TRUE }
+```{r how-this-book-is-org-8, exercise = TRUE }
 
 ```
 
 <button onclick="transfer_code(this)">Copy previous code</button>
 
-```{r basic-plots-7-hint-1, eval = FALSE}
+```{r how-this-book-is-org-8-hint-1, eval = FALSE}
 Remember to add a layer with the function labs()
 ```
 
-```{r basic-plots-7-hint-2, eval = FALSE}
+```{r how-this-book-is-org-8-hint-2, eval = FALSE}
 ... +
   labs(title = "...",
        subtitle = "...",
@@ -419,922 +438,143 @@ Reminder: This is what our graph should look like.
 scat_p
 ```
 
+
+## What you won’t learn
 ### 
 
-Related geoms to `geom_point()` include `geom_count()` and `geom_bin2d()`.
+[*R for Data Science (2e)*](https://r4ds.hadley.nz/) and these associated tutorials cover a lot of material. But we can't cover everything. In particular, the book and these tutorials do not cover modeling, big data, or other programming languages like Python and Julia.
 
-### Exercise 8
 
-We can also use `geom_jitter()` to fight overplotting. It plots a scatterplot and then adds a small amount of random noise to each point in the plot.
-
-Let's create the following plot with the `trains` dataset.
-
-```{r basic-plots-8}
-jitter_p <- ggplot(data = trains, 
-       mapping = aes(x = att_start, 
-                     y = att_end, 
-                     color = party)) +
-  geom_jitter(width = .2) +
-  labs(title = "Starting and Ending Attitudes of Participants", 
-       subtitle = "Democrats have a wide range of starting and ending attitudes", 
-       x = "Starting Attitude", 
-       y = "Ending Attitude", 
-       caption = "Enos (2014)")
-
-jitter_p
-```
-
+## Prerequisites
 ### 
 
-To better understand the data, read into the dataset by running `glimpse(trains)`. Take notice of the variable type for `att_start` and `att_end`.
+If you are running this tutorial, then you probably already know about R and RStudio. If, for some reason you don't, this [Getting Started chapter](https://ppbds.github.io/primer/00-getting-started.html) is the best place to start.
 
-```{r geomjitter-1, exercise = TRUE}
+If you plan to do several of the tutorials in this package, you may find it useful to install all the necessary packages. Simple copy/paste this code to Console.
+
 
 ```
+install.packages(
+  c("arrow", "babynames", "curl", "duckdb", "gapminder", 
+    "ggrepel", "ggridges", "ggthemes", "hexbin", "janitor", "Lahman", 
+    "leaflet", "maps", "nycflights13", "openxlsx", "palmerpenguins", 
+    "repurrrsive", "tidymodels", "writexl")
+  )
+```
 
+<!-- DK: Is the above really all the packages? What about the database ones? Or jsonlite? -->
+
+## Running R code
 ### 
 
-They are both of type **num**. Because there are many observations of the same discrete values, overplotting can be anticipated.
+Although the *Tidyverse* includes hundreds of commands, the most important are `filter()`, `select()`, `arrange()`, `mutate()`, and `summarize()`. Whenever you face a new problem, try to think about which one of these commands might be a good way to start.
 
-`str()` is a similar function to `glimpse()`, which displays the internal **str**ucture of an R object.
-
-### Exercise 9
-
-Run the code below that creates a scatterplot of `trains` with overplotting.
-
-```{r basic-plots-9, exercise = TRUE}
-ggplot(data = trains, 
-       mapping = aes(x = att_start, 
-                     y = att_end)) +
-  geom_point()
-```
-
-### Exercise 10
-
-Now, let's replace `geom_point()` with `geom_jitter()`. Try running this chunk multiple times. How does the noise affect the plot?
-
-```{r basic-plots-10, exercise = TRUE}
-ggplot(data = trains, 
-       mapping = aes(x = att_start, 
-                     y = att_end)) + 
-  geom_point()
-```
-
-### Exercise 11
-
-Within `geom_jitter()`, set `width` to `.2` to adjust the amount the points are jittered.
-
-```{r basic-plots-11, exercise = TRUE}
-
-```
-
-<button onclick="transfer_code(this)">Copy previous code</button>
-
-```{r basic-plots-11-hint-1, eval = FALSE}
-ggplot(data = trains, 
-       mapping = aes(x = att_start, 
-                     y = att_end)) +
-  geom_jitter(width = ...)
-
-```
-
-### Exercise 12
-
-Within `aes()`, set the `color` aesthetic to the `party` variable.
-
-```{r basic-plots-12, exercise = TRUE}
-
-```
-
-<button onclick="transfer_code(this)">Copy previous code</button>
-
-```{r basic-plots-12-hint-1, eval = FALSE}
-ggplot(data = trains, 
-       mapping = aes(x = att_start, 
-                     y = att_end, 
-                     color = ...)) +
-  geom_jitter(width = .2)
-```
-
-### Exercise 13
-
-Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption for the graph.
-
-```{r basic-plots-13, exercise = TRUE}
-
-```
-
-<button onclick="transfer_code(this)">Copy previous code</button>
-
-```{r basic-plots-13-hint-1, eval = FALSE}
-... +
-  labs(title = "...",
-       subtitle = "..."
-       x = "...",
-       y = "...",
-       caption = "...")
-```
-
-Here is an example of what the completed graph should look like:
-
-```{r show-jitter-p}
-jitter_p
-```
-
-### 
-
-Great work! Another way to combat over-plotting is to use `geom_boxplot()`.
-
-## Tidyverse
-### 
-
-Although the Tidyverse includes hundreds of commands, the most important are `filter()`, `select()`, `arrange()`, `mutate()`, and `summarize()`. Whenever you face a new problem, try to think about which one of these commands might be a good way to start.
 
 ### Exercise 1
 
-We will be working more with the `trains` tibble. Start with the `trains` tibble and then pipe it to `filter(gender == "Male")`.
+Let's warm up by examining the `gss_cat` tibble from the **forcats** package. Since **forcats** is a core **tidyverse** package, you have already loaded it. Type `gss_cat` and hit "Run Code."
 
-```{r tidyverse-1, exercise = TRUE}
+```{r running-r-code-1, exercise = TRUE}
 
 ```
 
-```{r tidyverse-1-hint-1, eval = FALSE}
-trains |> 
-  filter(gender == "Male")
+```{r running-r-code-1-hint-1, eval = FALSE}
+gss_cat
 ```
 
 ### 
 
-Most of the questions in this section will follow this example. You will create a "pipeline" --- a sequence of R commands, separated by the pipe symbol: `|>`. Each command takes a tibble as input and, almost always, produces a tibble as output, which is fed to the next command in the pipeline/
+Whenever we print a tibble, the number of rows and columns is displayed at the top:
 
+```
+# A tibble: 21,483 × 9
+```
+
+You can also see the variable type under each of the column names.
 
 ### Exercise 2
 
-Start a pipeline with `trains`, `filter()` to only keep rows in which `gender` is "Female", `party` is "Republican", and `age` is less than 40.
+Run `?forcats::gss_cat` at the Console. This should work even if you have not loaded the **forcats** package. The double colon --- `::` --- notation allows us to access the inside of a package even if we have not loaded it.
 
-```{r tidyverse-2, exercise = TRUE}
+Copy/paste the Description.
 
-```
-
-```{r tidyverse-2-hint-1, eval = FALSE}
-trains |> 
-  ...(gender == "Female" & 
-      ... == "Republican" &
-      age < ...)
+```{r running-r-code-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
 ```
 
 ### 
 
-Instead of creating a single criterion with many parts, like with an `&` as above, you can just separate the parts with a comma. See *The Primer* for details.
+Throughout these tutorials, we use a consistent set of conventions to refer to code:
+
+Functions are displayed in a code font and followed by parentheses, like `sum()` or `mean()`.
+
+Other R objects (such as data or function arguments) are in a code font, without parentheses, like `flights` or `x`.
+
+Sometimes, to make it clear which package an object comes from, we’ll use the package name followed by two colons, like `dplyr::mutate()` or `nycflights13::flights`. This is also valid R code.
 
 ### Exercise 3
 
-Start with the pipeline we created above. (Note you can use the "Copy previous code" button to insert the code from the previous exercise.) `select()` two variables: `treatment` and `race`.
+Pipe `ggs_cat` to `filter()` with the argument `age > 88`.
 
-
-```{r tidyverse-3, exercise = TRUE}
+```{r running-r-code-3, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r tidyverse-3-hint-1, eval = FALSE}
-trains |> 
-  filter(gender == "Female" & 
-         party == "Republican" &
-         age < 40) |> 
-  select(gender, treatment)
+```{r running-r-code-3-hint, eval = FALSE}
+gss_cat |> 
+  filter(age > 88)
 ```
 
 ### 
 
-The columns are ordered, not by how they appear in the `trains` tibble --- where `treatment` comes first --- but as they are ordered in the call to `select()`.
+This workflow --- in which we pipe a tibble to a function, which then outputs another tibble, which we can then pipe to another function, and so on --- is very common in R programming.
 
+The resulting tibble has the same number of columns --- `filter()` only affects the rows --- as `gss_cat` but many fewer rows, because there are only 150 people in the data older than 88.
 
 ### Exercise 4
 
-Start a new pipeline with the `trains` tibble. Select all the columns except for `gender`, `liberal`, `party`, and `age`.
+Continue the pipe with `select()`, using the argument `age, marital, race, relig, tvhours`.
 
 
-```{r tidyverse-4, exercise = TRUE}
-
-```
-
-```{r tidyverse-4-hint-1, eval = FALSE}
-trains |> 
-  select(-gender, .., ..., ...)
-```
-
-### 
-
-Using a minus sign is the easiest way to exclude variables when using `select()`. But you could also have just selected the variables that you wanted to keep.
-
-### Exercise 5
-
-Starting with `trains`, `select()` all the variables which appear between `gender` and `age`, inclusive. 
-
-```{r tidyverse-5, exercise = TRUE}
-
-```
-
-```{r tidyverse-5-hint-1, eval = FALSE}
-trains |> 
-  select(...:..)
-```
-
-### 
-
-Use a `:` to select a range. Of course, this is only helpful if all the variables you want are grouped together.
-
-
-### Exercise 6
-
-Pipe `trains` to `select()`, keeping the variables, `treatment`, `gender`, and then everything else. Using the `everything()` function to capture the remaining variables.
-
-```{r tidyverse-6, exercise = TRUE}
-
-```
-
-```{r tidyverse-6-hint-1, eval = FALSE}
-trains |> 
-  select(..., ..., everything())
-```
-
-### 
-
-Note how we use "pipe" as a verb in the instructions above. You "pipe" a tibble "into" a function. This works as long as the function follows the Tidyverse conventions. Not all functions do.
-
-
-### Exercise 7
-
-Pipe `trains` to `select()` and keep only those variables which start with the letter "a".
-
-```{r tidyverse-7, exercise = TRUE}
-
-```
-
-```{r tidyverse-7-hint-1, eval = FALSE}
-trains |> 
-  select(starts_with("..."))
-```
-
-### 
-
-The `select()` function is a core part of the Tidyverse, so there are many "tricks" for keeping just the variables we want, in the order in which we want them.
-
-Note the distinction between **tidyverse**, the actual R package, and "Tidyverse", the conceptual universe of related packages, all of which use a similar approach for data science, centered around the use of the `|>`.
-
-
-
-### Exercise 8
-
-Pipe `trains` into `select()`, keeping just `treatment`, `gender` and `age`. Continue the pipeline into the `arrange()` function, sorting the tibble so that the youngest participants appear at the top.
-
-```{r tidyverse-8, exercise = TRUE}
-
-```
-
-```{r tidyverse-8-hint-1, eval = FALSE}
-trains |> 
-  ...(treatment, gender, age) |> 
-  arrange(...)
-```
-
-### 
-
-We could reverse the order by using `arrange(desc(age))`.
-
-### Exercise 9
-
-The `mutate()` function makes it easy to create new variables.
-
-```{r tidyverse-9, exercise = TRUE}
-
-```
-
-```{r tidyverse-9-hint-1, eval = FALSE}
-trains |> 
-  select(gender, ...) |> 
-  ...(income_in_thousands = income / 1000)
-```
-
-### 
-
-### Exercise 10
-
-The `if_else()` function is often used within a call to `mutate()`. Pipe `trains` to `select()`, keeping only one varable: `age`. Then, use mutate to create a new variable, `old`, which is TRUE if `age` > 50 and FALSE otherwise.
-
-```{r tidyverse-10, exercise = TRUE}
-
-```
-
-```{r tidyverse-10-hint-1, eval = FALSE}
-trains |> 
-  ...(age) |> 
-  mutate(old = ...(age > ..., TRUE, ...))
-```
-
-### 
-
-The `if_else()` function is part of the Tidyverse, coming from the **dplyr** package. The `ifelse()` function is part of "base" R. We recommend always using `if_else()`.
-
-### Exercise 11
-
-Pipe `trains` to `summarize()`. Create two new variables --- `mn_age` and `sd_age` --- which are the `mean()` and `sd()` of `age`, respectively.
-
-```{r tidyverse-11, exercise = TRUE}
-
-```
-
-```{r tidyverse-11-hint-1, eval = FALSE}
-trains |> 
-  ...(mn_age = ...(age), 
-      ... = sd(age))
-```
-
-### 
-
-We also could have calculated these values "directly," e.g., `mean(trains$age)`. But doing calculations within a pipe is often more convenient.
-
-### Exercise 12
-
-Use `quantile()` to calculate the the 20% and 80% quantiles of `age` from the `trains` tibble.
-
-```{r tidyverse-12, exercise = TRUE}
-
-```
-
-```{r tidyverse-12-hint-1, eval = FALSE}
-quantile(trains$..., c(..., 0.8))
-```
-
-### 
-
-We can also do this calculation within a pipe, but things get trickier because, unlike with `mean()` or `sd()`, quantile returns a vector of length two.
-
-
-### Exercise 14
-
-Above, we calculated the average `age` for the entire `trains` tibble. Now, let's do the same calculation for men and women separately. 
-
-Start the pipe with `trains`. Pipe the result to `summarize()` and create a new variable, `avg`, which is the mean age. Set `.by` to `gender`.
-
-```{r tidyverse-14, exercise = TRUE}
+```{r running-r-code-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r tidyverse-14-hint-1, eval = FALSE}
-trains |> 
-  ...(avg = mean(...),
-      .by = ...)
-```
-
-
-### Exercise 15
-
-Pipe `trains` to `slice_sample()` and select 4 rows at random.
-
-```{r tidyverse-15, exercise = TRUE}
-
-```
-
-```{r tidyverse-15-hint-1, eval = FALSE}
-trains |> 
-  ...(... = 4)
-```
-
-### 
-
-`slice()` filters the row numbers which you specify. `slice_sample()` gets random rows, but you need to provide the `n` argument. When confronting a new tibble, it is always a good idea to look at some rows at random. The top of a tibble often looks very different from the rest of it!
-
-
-
-## Advanced plots I
-### 
-
-Let's begin by making this scatterplot using `geom_point()`.
-
-```{r}
-point_p <- nhanes |> 
-  drop_na(height, weight) |> 
-  filter(survey == 2009) |> 
-  ggplot(mapping= aes(x = weight, 
-                      y = height)) + 
-  geom_point(alpha = .5) +
-  geom_smooth(method = "loess", 
-              formula = y ~ x, 
-              se = TRUE) +
-  facet_wrap(~ gender) + 
-  theme_bw() +
-  labs(title = "The Relationship Between Height and Weight By Gender",
-       subtitle = "Weight has a greater positive correlation with height for men \n of common heights than for women of common heights",
-       x = "Weight (kg)",
-       y = "Height (cm)",
-       caption = "Source: National Center for Health Statistics")
- 
-point_p
-```
-
-### Exercise 1
-
-Type `library(tidyverse)` to load up the necessaries libraries.
-
-```{r advanced-plots-i-1, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-i-1-hint-1, eval = FALSE}
-library(tidyverse)
-```
-
-### 
-
-We have already preloaded this package for you, so you won't need to load it in following code chunks. However, when you are making graphs on your own, remember to run `library(tidyverse)`. The tidyverse package contains 8 packages that are essential to plotting, including the **ggplot2** package.
-
-### Exercise 2
-
-Run `?nhanes` to look more in-depth at the `nhanes` dataset. If it doesn't work in your block below, you may need to run it in your console. Remember to load `library(primer.data)`.
-
-```{r advanced-plots-i-2, exercise = TRUE}
-
-```
-
-```{r advanced-plots-i-2-hint-1, eval = FALSE}
-?nhanes
-```
-
-### Exercise 3
-
-In two or three sentences, describe what the `nhanes` dataset is in your own words. Again, you should be able to see the description from `?nhanes`.
-
-```{r advanced-plots-i-3}
-  question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-### 
-
-Good! You should see that we are looking at health data across the United States.
-
-### Exercise 4
-
-Run `nhanes` to view the data.
-
-```{r advanced-plots-i-4, exercise = TRUE}
-
-```
-
-```{r advanced-plots-i-4-hint-1, eval = FALSE}
-nhanes
-```
-
-### 
-
-Note how there are many missing values. To form nice graphs with R, we will have to remove those NA values.
-
-### Exercise 5
-
-Start a new pipe with `nhanes`. Use the function `drop_na() `to remove any rows with any missing values for `height` or for `weight`. Within `drop_na()`, you should have put `height, weight`. 
-
-```{r advanced-plots-i-5, exercise = TRUE}
-
-```
-
-```{r advanced-plots-i-5-hint-1, eval = FALSE}
-nhanes |> 
-  drop_na(..., ...)
-```
-
-### Exercise 6
-
-Extend your pipe using `|>` and use `filter()` to keep rows where `survey` is equal to 2009.
-
-```{r advanced-plots-i-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-i-6-hint-1, eval = FALSE}
-nhanes |> 
-  drop_na(height, weight) |> 
-  filter(survey == ...)
-```
-
-Remember: you must use `==` to check whether something is truly equal. The regular equal sign does not mean the same thing in R as it does in math.
-
-### Exercise 7
-
-Continue your pipe using `|>` and select the columns `height`, `weight`, and `gender`. 
-
-```{r advanced-plots-i-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-i-7-hint-1, eval = FALSE}
-nhanes |> 
-  drop_na(height, weight) |> 
-  filter(survey == ...) |> 
-  select(height, weight, gender)
-```
-
-### Exercise 8
-
-Extend your pipe using `|>` and add `ggplot()`. Map `weight` to the x-axis and `height` to the y-axis. Remember, this should all be within the `aes` argument within mapping.
-
-```{r advanced-plots-i-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-i-8-hint-1, eval = FALSE}
-nhanes |> 
-  drop_na(height, weight) |> 
-  filter(survey == 2009) |> 
-  ggplot(mapping = aes(x = ..., 
-                       y = ... ))
-```
-
-### 
-
-If you run your code, you will see a blank plot. The geom layer is key to making sure you have points on your graph.
-
-### Exercise 9
-
-Next, add the layer `geom_point()`.
-
-```{r advanced-plots-i-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-i-9-hint-1, eval = FALSE}
-nhanes |> 
-  drop_na(height, weight) |> 
-  filter(survey == 2009) |> 
-  ggplot(mapping = aes(x = ..., 
-                       y = ... )) +
-    geom_point()
-```
-
-### 
-
-Now, you should be able to see the points on the graph. However, there may still be overplotting. We will rectify this in the next question.
-
-### Exercise 10
-
-Now set the argument `alpha` to `.5` within `geom_point()`.
-
-```{r advanced-plots-i-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-i-10-hint-1, eval = FALSE}
-...  + 
-  geom_point(alpha = ...)
-```
-
-Changing the alpha helps minimize overplotting. The other way to do this is to replace `geom_point()` with `geom_jitter()`. 
-
-### Exercise 11
-
-<!-- DK: Again, this is going too fast. -->
-
-Use `geom_smooth` to add a trendline. 
-
-```{r advanced-plots-i-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-i-11-hint-1, eval = FALSE}
-...  +
-  geom_point(alpha = 0.5) +
-  geom_smooth()
-```
-
-### 
-
-Note how this gives us a warning message. We will rectify this in the following exercises.
-
-### Exercise 12
-
-Set the argument `method` to `"loess"`.
-
-```{r advanced-plots-i-12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-i-12-hint-1, eval = FALSE}
-...  +
-  geom_smooth(method = ...)
-```
-
-### 
-
-"loess" creates a trendline that is a curve.
-
-### Exercise 13
-
-Set the argument `formula` to `y ~ x`.
-
-```{r advanced-plots-i-13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-i-13-hint-1, eval = FALSE}
-...   +
-  geom_smooth(method = ...,
-              formula = y ~ x)
-```
-
-### 
-
-R has already guessed that you want to relate the variable `weight` on the y-axis to the variable `height` on the x-axis. But R does not like to guess. It wants you to specify clearly that this is what you want.  By using formula `y ~ x` as the argument to `formula`, you make it clear that this is the relationship you seek to smooth with `geom_smooth()`.
-
-### Exercise 14
-
-Within `geom_smooth()`, set the argument `se` to `TRUE`.
-
-```{r advanced-plots-i-14, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-i-14-hint-1, eval = FALSE}
-...  +
-  geom_smooth(method = ...,
-              formula = y ~ x,
-              se = TRUE)
-```
-
-### 
-
-The shading created by `se` is a measurement of error. Observe how it increases at outlying values for `height`, for which we have few data points. 
-
-### Exercise 15
-
-Use `facet_wrap()` to facet the graph by `gender`. Remember to place a `~` before `gender`.
-
-```{r advanced-plots-i-15, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-i-15-hint-1, eval = FALSE}
-You are adding a layer here so use +
-```
-
-```{r advanced-plots-i-15-hint-2, eval = FALSE}
-...  +
-  facet_wrap(~ gender)
-```
-
-Since we only have two graphs, we don't need to specify the number of rows. If you wanted both these graphs on separate rows, you could use the argument `nrows` and set it to `2`. 
-
-### Exercise 16
-
-Change the feel of the graph by adding the layer `theme_bw()`.
-
-```{r advanced-plots-i-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-i-16-hint-1, eval = FALSE}
-You are adding a layer here so use +
-```
-
-```{r advanced-plots-i-16-hint-2, eval = FALSE}
-...  +
-  facet_wrap(~ gender) +
-  theme_bw()
-```
-
-### 
-
-While we use `theme_bw()` in this graph, there are many more options available! You can explore the themes available [here](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/).
-
-### Exercise 17
-
-To finish your plot, use `labs()` to give the graph a title, subtitle, axis labels, and caption of your choosing. For an overly long subtitle like the one we have in the example, add `\n` within the quoted string at the place you want to start a new line.
-
-```{r advanced-plots-i-17, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-i-17-hint-1, eval = FALSE}
-... +
-  labs(title = "...",
-       subtitle = "... \n ...",
-       x = "...",
-       y = "...",
-       caption = "...")
-```
-
-Reminder: This is what your plot should look like.
-
-```{r show-gp-1}
-point_p
-```
-
-### 
-
-Good! You've now seen how the `geom_point()` layer can be used in combination with other layers like `geom_smooth()`. We'll explore more usages of `geom_smooth()` with `geom_point()` later in this tutorial. 
-
-## Advanced plots II
-### 
-
-Let's make the following dodged bar plot using `geom_bar`.
-
-```{r}
-bar_p <- ggplot(data = trains, 
-                aes(x = race, fill = line)) +
-  geom_bar(aes(y = after_stat(count/sum(count)))) +
-  facet_wrap(~treatment) + 
-  theme_classic() +
-  labs(title = "Starting Attitudes Toward Immigration Issue",
-       subtitle = "Higher proportion of minorities among treated participants",
-       x = "Race",
-       y = "Percentage of Participants",
-       fill = "Line",
-       caption = "Source: Enos (2014)")
-bar_p
-```
-
-### Exercise 1
-
-`glimpse` the data set `trains`. 
-
-```{r advanced-plots-ii-1, exercise = TRUE}
-
-```
-
-### Exercise 2
-
-Start a pipe with the `trains` tibble. Select the columns `treatment`, `race`, and `line`. 
-
-```{r advanced-plots-ii-2, exercise = TRUE}
-
-```
-
-```{r advanced-plots-ii-2-hint-1, eval = FALSE}
-trains |> 
-  select(treatment, race, line)
-```
-
-Notice that there are 4 unique options for the `race` variable. 
-
-### Exercise 3
-
-Continue your pipe with `ggplot()`. Map the variable `race` to the x-axis within the `aes()` call.
-
-```{r advanced-plots-ii-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-ii-3-hint-1, eval = FALSE}
-trains |> 
-  ggplot(aes(x = ...))
-```
-
-Remember, since we're using `geom_bar()`, we don't need to map something to the `y` axis. R will count the values for us.
-
-### Exercise 4
-
-Before we add a geom layer, map `line` to `fill`. This will allow us to see the difference between each train line.
-
-```{r advanced-plots-ii-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-ii-4-hint-1, eval = FALSE}
+```{r running-r-code-4-hint, eval = FALSE}
 ... |> 
-ggplot(aes(x = race, 
-           fill = ...))
+  select(age, marital, race, relig, tvhours)
 ```
+
+### 
+
+Note how the Hint only gives the most recent line of the pipe. Because `select()` does not affect the rows, we have the same number as after `filter()`. But we only have 5 columns now, consistent with what we told `select()` to do.
 
 ### Exercise 5
 
-Add the layer `geom_bar`. 
+Use the "Copy previous code" button to place a copy of the pipe from the last question into the Exercise Code Block. Extend the pipe with `arrange()`, using `desc(tvhours)` as the argument.
 
-```{r advanced-plots-ii-5, exercise = TRUE}
+```{r running-r-code-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r advanced-plots-ii-5-hint-1, eval = FALSE}
-
+```{r running-r-code-5-hint, eval = FALSE}
+... |> 
+  arrange(desc(tvhours))
 ```
 
 ### 
 
-### Exercise 6
+Got to respect someone who watches TV 18 hours a day!
 
-We want to change the y-axis into a percentage, since the numbers don't really tell us anything. Within `geom_bar()`, nest the function `aes()`.  Within that set `y` equal to `after_stat(count / sum(count))`. Keep track of closing parentheses. 
-
-```{r advanced-plots-ii-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-ii-6-hint-1, eval = FALSE}
-... +
-  geom_bar(aes(y = after_stat(count/sum(count))))
-```
-
-### 
-
-
-`after_stat` is a function used to manipulate variables like `count` which have been calculated by `ggplot()` to plot the graph. 
-
-### Exercise 7
-
-Add the layer `facet_wrap` and facet by the variable `treatment`. 
-
-```{r advanced-plots-ii-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-ii-7-hint-1, eval = FALSE}
-... + 
-  facet_wrap( ~ ...)
-```
-
-```{r advanced-plots-ii-7-hint-2, eval = FALSE}
-... + 
-  facet_wrap( ~treatment)
-```
-
-### Exercise 8
-
-Let's add a theme to our graph. Add the layer `theme_classic()` to your code. 
-
-```{r advanced-plots-ii-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-ii-8-hint-1, eval = FALSE}
-... + 
-  theme_classic()
-```
-
-### Exercise 9
-
-To finish your plot, use `labs()` to give the graph a title, subtitle, axes labels, legend labels,  and caption of your choosing.
-
-Reminder: This is what your plot should look like.
-
-```{r}
-bar_p
-```
-
-```{r advanced-plots-ii-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r advanced-plots-ii-9-hint-1, eval = FALSE}
-... +
-  labs(..., 
-       fill = "...",
-       ...)
-```
 
 
 ## Summary
