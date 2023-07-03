@@ -20,6 +20,10 @@ knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
+myfunc_1 <- function(){}
+myfunc_2 <- function(x){}
+myfunc_3 <- function(x){x^2}
+
 rescale01 <- function(x) {
   (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
 }
@@ -114,17 +118,48 @@ first_upper <- function(x) {
 <!-- * Review: https://ppbds.github.io/tutorial.helpers/articles/instructions.html -->
 <!-- * Delete this and the other commented instructions below. -->
 
+
+<!-- DK: Add in at least 10 questions to Simple functions section. -->
+
+<!-- Switch images for code within tripple backticks. -->
+
+
+
 ## Introduction
 ### 
 
-## Vector Functions
+## Simple function
+###
+
+
+
+## Vector functions
 ### 
 
 We’ll begin with vector functions: functions that take one or more vectors and return a vector result. For example, take a look at this code. What does it do?
 
-```{r}
-knitr::include_graphics("images/img2.jpg")
+
 ```
+df <- tibble(
+  a = rnorm(5),
+  b = rnorm(5),
+  c = rnorm(5),
+  d = rnorm(5),
+)
+
+df |> mutate(
+  a = (a - min(a, na.rm = TRUE)) / 
+    (max(a, na.rm = TRUE) - min(a, na.rm = TRUE)),
+  b = (b - min(b, na.rm = TRUE)) / 
+    (max(b, na.rm = TRUE) - min(a, na.rm = TRUE)),
+  c = (c - min(c, na.rm = TRUE)) / 
+    (max(c, na.rm = TRUE) - min(c, na.rm = TRUE)),
+  d = (d - min(d, na.rm = TRUE)) / 
+    (max(d, na.rm = TRUE) - min(d, na.rm = TRUE)),
+)
+```
+
+###
 
 You might have noticed that this code rescales each column to have a range from 0 to 1. However, there is a mistake that went unnoticed. When Anish copied and pasted the code, they inadvertently forgot to change an `'a'` to a `'b'`. This highlights the importance of learning how to write functions, as it helps prevent such mistakes from occurring.
 
@@ -160,7 +195,7 @@ For the code which we wanted to make a function for, we will call that `rescale0
 
 ### Exercise 3
 
-Type `rescale01` and assign it to `function()` and pass in `x` to be the argument which will be passe in when using the function. After `function()`, don't forget to add curly braces.
+Type `rescale01` and assign it to `function()` and pass in `x` to be the argument which will be passed in when using the function. After `function()`, don't forget to add curly braces.
 
 ```{r vector-functions-3, exercise = TRUE}
 
@@ -399,7 +434,7 @@ Good Work!
 Now that you have knowlegde on vecotr unctions, let's move on to Data Frame functions.
 
 
-## Data Frame Functions
+## Data frame functions
 ### 
 
 Vector functions are useful for reducing code repetition within dplyr verbs. However, when you find yourself duplicating multiple verbs multiple times in a large pipeline, it's a good indication to write a data frame function. Data frame functions, like dplyr verbs, take a data frame as the first argument, additional arguments to specify the operations, and return a data frame or vector.
@@ -656,7 +691,7 @@ Note that we use a default value for sort so that if the user doesn’t supply t
 
 ### 
 
-## Plot Functions
+## Plot functions
 ### 
 
 Instead of returning a data frame, you might want to return a plot. Fortunately, you can use the same techniques with ggplot2, because `aes()` is a data-masking function. For example, imagine that you’re making a lot of histograms like the following:
@@ -676,7 +711,7 @@ Creating a plot function becomes effortless once you understand that `aes()` ser
 ```
 
 ```{r plot-functions-1-hint-1, eval = FALSE}
-histogram <- ...(...,var,binwidth = ...){
+histogram <- ...(..., var, binwidth = ...){
   
 }
 ```
