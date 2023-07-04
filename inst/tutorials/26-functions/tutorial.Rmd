@@ -20,6 +20,10 @@ knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
+myfunc_1 <- function(){}
+myfunc_2 <- function(x){}
+myfunc_3 <- function(x){x^2}
+
 rescale01 <- function(x) {
   (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
 }
@@ -76,6 +80,29 @@ histogram1 <- function(df, var, binwidth) {
     labs(title = label)
 }
 
+clean_number <- function(x) {
+  is_pct <- str_detect(x, "%")
+  num <- x |> 
+    str_remove_all("%") |> 
+    str_remove_all(",") |> 
+    str_remove_all(fixed("$")) |> 
+    as.numeric(x)
+  if_else(is_pct, num / 100, num)
+}
+
+commas <- function(x) {
+  str_flatten(x, collapse = ", ", last = " and ")
+}
+
+mape <- function(actual, predicted) {
+  sum(abs((actual - predicted) / actual)) / length(actual)
+}
+
+first_upper <- function(x) {
+  str_sub(x, 1, 1) <- str_to_upper(str_sub(x, 1, 1))
+  x
+}
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -91,17 +118,48 @@ histogram1 <- function(df, var, binwidth) {
 <!-- * Review: https://ppbds.github.io/tutorial.helpers/articles/instructions.html -->
 <!-- * Delete this and the other commented instructions below. -->
 
+
+<!-- DK: Add in at least 10 questions to Simple functions section. -->
+
+<!-- Switch images for code within tripple backticks. -->
+
+
+
 ## Introduction
 ### 
 
-## Vector Functions
+## Simple function
+###
+
+
+
+## Vector functions
 ### 
 
 We’ll begin with vector functions: functions that take one or more vectors and return a vector result. For example, take a look at this code. What does it do?
 
-```{r}
-knitr::include_graphics("images/img2.jpg")
+
 ```
+df <- tibble(
+  a = rnorm(5),
+  b = rnorm(5),
+  c = rnorm(5),
+  d = rnorm(5),
+)
+
+df |> mutate(
+  a = (a - min(a, na.rm = TRUE)) / 
+    (max(a, na.rm = TRUE) - min(a, na.rm = TRUE)),
+  b = (b - min(b, na.rm = TRUE)) / 
+    (max(b, na.rm = TRUE) - min(a, na.rm = TRUE)),
+  c = (c - min(c, na.rm = TRUE)) / 
+    (max(c, na.rm = TRUE) - min(c, na.rm = TRUE)),
+  d = (d - min(d, na.rm = TRUE)) / 
+    (max(d, na.rm = TRUE) - min(d, na.rm = TRUE)),
+)
+```
+
+###
 
 You might have noticed that this code rescales each column to have a range from 0 to 1. However, there is a mistake that went unnoticed. When Anish copied and pasted the code, they inadvertently forgot to change an `'a'` to a `'b'`. This highlights the importance of learning how to write functions, as it helps prevent such mistakes from occurring.
 
@@ -137,7 +195,7 @@ For the code which we wanted to make a function for, we will call that `rescale0
 
 ### Exercise 3
 
-Type `rescale01` and assign it to `function()` and pass in `x` to be the argument which will be passe in when using the function. After `function()`, don't forget to add curly braces.
+Type `rescale01` and assign it to `function()` and pass in `x` to be the argument which will be passed in when using the function. After `function()`, don't forget to add curly braces.
 
 ```{r vector-functions-3, exercise = TRUE}
 
@@ -251,51 +309,132 @@ rescale02 <- function(...) {
 
 ### 
 
-<!-- AB:should i add the infinite or finite values, feel likei t waste of time  -->
+Now you’ve got the basic idea of functions, let’s take a look at a whole bunch of examples. We’ll start by looking at “mutate” functions, i.e. functions that work well inside of `mutate()` and `filter()` because they return an output of the same length as the input.
 
 ### Exercise 9
 
+Of course functions don’t just need to work with numeric variables. You might want to do some repeated string manipulation. Maybe you need to make the first character upper case.
+
+Create a function `first_upper` and assign it to `function()` and pass in `x`. Within the curly braces, pass in `  str_sub(x, 1, 1) <- str_to_upper(str_sub(x, 1, 1))` and then on a new line call `x`.
 ```{r vector-functions-9, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r vector-functions-9-hint-1, eval = FALSE}
-
+... <- function(...) {
+  str_sub(x, 1, ....) <- str_to_upper(...(x, 1, 1))
+  ...
+}
 ```
 
 ### 
 
+Let's now use it on a string.
+
+
 ### Exercise 10
+
+Call `first_upper()` and pass in `"hello"` as the argument.
 
 ```{r vector-functions-10, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r vector-functions-10-hint-1, eval = FALSE}
-
+first_upper("...")
 ```
 
 ### 
+
+Instead of just having the first letter upper case, maybe you want to strip percent signs, commas, and dollar signs from a string before converting it into a number.
 
 ### Exercise 11
 
-```{r vector-functions-11, exercise = TRUE}
+Below is what the function would look like:
 
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r vector-functions-11-hint-1, eval = FALSE}
-
+```{r}
+knitr::include_graphics("images/img7.jpg")
 ```
 
 ### 
 
-## Data Frame Functions
+Let's now use this on numbers which are in string.
+
+### Exercise 12
+
+Call `clean_number()` and pass in `"$12,300"` and then on a new line call `clean_number()` and pass in `"45%"`.
+
+```{r vector-functions-12, exercise = TRUE}
+
+```
+
+```{r vector-functions-12-hint-1, eval = FALSE}
+clean_number("$12,300")
+clean_number("45%")
+```
+
+### 
+
+We’ve focused on examples that take a single vector because we think they’re the most common. But there’s no reason that your function can’t take multiple vector inputs.
+
+### Exercise 13
+
+Another important family of vector functions is summary functions, functions that return a single value for use in `summarize()`. Sometimes this can just be a matter of setting a default argument or two.
+
+Let's create a function called `commas` that takes multiple strings and combines them into one string separated by `commas`. Assign `function(x)` to commas as its definition. Within the function body, use `str_flatten()` and pass in `x` with `collapse = ", "` and `last = " and "` as arguments.
+
+```{r vector-functions-13, exercise = TRUE}
+
+```
+
+```{r vector-functions-13-hint-1, eval = FALSE}
+... <- function(x) {
+  str_flatten(x, ... = ", ", last = " ... ")
+}
+```
+
+### 
+
+Let's now use the function on a vector of strings.
+
+### Exercise 14
+
+Type `commas()` and pass in a vector `c("cat","dog","piegon")`./
+
+```{r vector-functions-14, exercise = TRUE}
+
+```
+
+```{r vector-functions-14-hint-1, eval = FALSE}
+commas(...("cat", "...", "..."))
+```
+
+### 
+
+You can also write functions with multiple vector inputs. 
+
+### Exercise 15
+
+For example, maybe you want to compute the mean absolute prediction error to help you compare model predictions with actual values. Create a function `mape` and adding to `function()` and pass in `actual` and `predicted` as variables. Within the curly braces, pass in `sum(abs((actual - predicted) / actual)) / length(actual)`.
+
+```{r vector-functions-15, exercise = TRUE}
+
+```
+
+```{r vector-functions-15-hint-1, eval = FALSE}
+... <- function(actual, ...) {
+  sum(...((actual - predicted) / ...)) / length(...)
+}
+```
+
+### 
+
+Good Work!
+
+Now that you have knowlegde on vecotr unctions, let's move on to Data Frame functions.
+
+
+## Data frame functions
 ### 
 
 Vector functions are useful for reducing code repetition within dplyr verbs. However, when you find yourself duplicating multiple verbs multiple times in a large pipeline, it's a good indication to write a data frame function. Data frame functions, like dplyr verbs, take a data frame as the first argument, additional arguments to specify the operations, and return a data frame or vector.
@@ -552,7 +691,7 @@ Note that we use a default value for sort so that if the user doesn’t supply t
 
 ### 
 
-## Plot Functions
+## Plot functions
 ### 
 
 Instead of returning a data frame, you might want to return a plot. Fortunately, you can use the same techniques with ggplot2, because `aes()` is a data-masking function. For example, imagine that you’re making a lot of histograms like the following:
@@ -572,7 +711,7 @@ Creating a plot function becomes effortless once you understand that `aes()` ser
 ```
 
 ```{r plot-functions-1-hint-1, eval = FALSE}
-histogram <- ...(...,var,binwidth = ...){
+histogram <- ...(..., var, binwidth = ...){
   
 }
 ```
