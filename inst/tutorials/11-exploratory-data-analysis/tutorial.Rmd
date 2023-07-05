@@ -20,6 +20,9 @@ knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
+smaller <- diamonds |> 
+  filter(carat < 3)
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -36,16 +39,679 @@ options(tutorial.exercise.timelimit = 60,
 <!-- https://socviz.co/ -->
 <!-- https://clauswilke.com/dataviz/ -->
 
+<!-- DK: Always load the libraries. -->
+
+<!-- DK: Why not make every plot look professional. -->
+
+<!-- DK: Create plot object, like p2, and then show it twice, at start and end of the exercises which create the plot. -->
+
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 11: Exploratory data analysis](https://r4ds.hadley.nz/eda.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.  
+This tutorial covers [Chapter 11: Exploratory data analysis](https://r4ds.hadley.nz/eda.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. We will be making use of the [**ggplot2**](https://ggplot2.tidyverse.org/) package to learn about Variation and Patterns. Some key commands that we will be making use of is [`coord_cartesian()`](https://ggplot2.tidyverse.org/reference/coord_cartesian.html) which sets limits on the coordinate system and will zoom the plot, [`geom_freqpoly()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html) which visualizes the distribution of a single continuous variable by dividing the x axis into bins and counts the number of observations in each bin, and [`geom_count()`](https://ggplot2.tidyverse.org/reference/geom_count.html) which is a variant of `geom_point()` that counts the number of observations at each location, that maps the count to point area. 
+
+## Variation
+###
+
+In this section, we will learn about variation or basically the tendency of values of a variable to change from measurement to measurement. 
+
+### Exercise 1
+
+Type in `diamonds` and hit "Run Code"
+
+```{r variation-1, exercise = TRUE}
+
+```
+
+
+
+```{r variation-1-hint, eval = FALSE}
+diamonds
+```
+
+###
+
+The `diamonds` dataset contains the prices and other attributes of almost 54,000 diamonds, such as the `price`, `carat`, `cut`, `color`, and so on.
+
+### Exercise 2
+
+With a new pipeline, pipe `diamonds` to `ggplot()`.
+
+```{r variation-2, exercise = TRUE}
+
+```
+
+
+
+```{r variation-2-hint, eval = FALSE}
+diamonds |> 
+  ggplot()
+```
+
+Note that this plot is blank.
+
+###
+
+You can see variation easily in real life; if you measure any continuous variable twice, you will get two different results. Each of your measurements will include a small amount of error that varies from measurement to measurement.
+
+### Exercise 3
+
+Within `ggplot()`, using `aes()`, set the `x` argument to `carat`.
+
+```{r variation-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-3-hint, eval = FALSE}
+diamonds |> 
+  ggplot(aes(x = ...))
+```
+
+###
+
+Variables can also vary if you measure across different subjects (e.g., the eye colors of different people) or at different times (e.g., the energy levels of an electron at different moments). 
+
+### Exercise 4
+
+Add `geom_histogram()` to the pipeline.
+
+```{r variation-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-4-hint, eval = FALSE}
+... + 
+  geom_histogram()
+```
+
+###
+
+Let's visualize the distribution of the variable's values using the `binwidth` argument to `geom_histogram()`.
+
+### Exercise 5
+
+Within `geom_histogram()`, add the `binwidth` argument and set it equal to `0.5`. 
+
+```{r variation-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-5-hint, eval = FALSE}
+... +
+  geom_histogram(binwidth = ...)
+```
+
+###
+
+This plot is a way to visualize variation. Let's now take a look at the distribution of carat for smaller diamonds.
+
+### Exercise 6
+
+Create a new variable called `smaller` and set it equal to `diamonds`. 
+
+```{r variation-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-6-hint, eval = FALSE}
+smaller <- ...
+```
+
+###
+
+Some valuable questions to ask yourself when dealing with variation are the following:
+
+- Which values are the most common? Why?
+- Which values are rare? Why? Does that match your expectations?
+- Can you see any unusual patterns? What might explain them?
+
+### Exercise 7
+
+We are still creating the `smaller` tibble. Copy your previous code and create a pipeline with `diamonds`. Pipe `diamonds` with `filter()` and filter out `carat` that are less than `3`. 
+
+```{r variation-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-7-hint, eval = FALSE}
+smaller <- diamonds |> 
+  filter(carat < ...)
+```
+
+### Exercise 8
+
+With a new pipeline, pipe `smaller` to `ggplot()`. 
+
+```{r variation-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-8-hint, eval = FALSE}
+smaller |> ggplot()
+```
+
+### Exercise 9
+
+Within `ggplot()`, using `aes()`, set the `x` argument to `carat`. 
+
+```{r variation-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-9-hint, eval = FALSE}
+smaller |> 
+  ggplot(aes(x = ...))
+```
+
+### Exercise 10
+
+Add `geom_histogram()` to the pipeline.
+
+```{r variation-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-10-hint, eval = FALSE}
+... + 
+  geom_histogram()
+```
+
+###
+
+This histogram suggests several interesting questions:
+
+- Why are there more diamonds at whole carats and common fractions of carats?
+
+- Why are there more diamonds slightly to the right of each peak than there are slightly to the left of each peak?
+
+### Exercise 11
+
+Within `geom_histogram()`, set the `binwidth` argument to `0.01`. 
+
+```{r variation-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-11-hint, eval = FALSE}
+... +
+  geom_histogram(binwidth = ...)
+```
+
+###
+
+This visualization also revealed clusters, which suggest that subgroups exist in your data. To understand the subgroups, ask:
+
+- How are the observations within each subgroup similar to each other?
+
+- How are the observations in separate clusters different from each other?
+
+- How can you explain or describe the clusters?
+
+- Why might the appearance of clusters be misleading?
+
+###
+
+Some of these questions can be answered with the data while some will require domain expertise about the data. Many of them will prompt you to explore a relationship *between* variables.
+
+### Exercise 12
+
+Let's observe and take note of unusual values in the dataset. With a new pipeline, pipe `diamonds` to `ggplot()`. 
+
+```{r variation-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-12-hint, eval = FALSE}
+diamonds |> 
+  ggplot()
+```
+
+###
+
+Outliers are observations that are unusual; data points that don’t seem to fit the pattern.
+
+### Exercise 13
+
+Within `ggplot()`, using `aes()`, set the `x` argument to `y`. 
+
+```{r variation-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-13-hint, eval = FALSE}
+diamonds |> 
+  ggplot(aes(x = ...))
+```
+
+###
+
+Sometimes outliers are data entry errors, sometimes they are simply values at the extremes that happened to be observed in this data collection, and other times they suggest important new discoveries.
+
+### Exercise 14
+
+Add `geom_histogram()` to the pipeline
+
+```{r variation-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-14-hint, eval = FALSE}
+... +
+  geom_histogram()
+```
+
+###
+
+When you have a lot of data, outliers are sometimes difficult to see in a histogram.
+
+### Exercise 15
+
+Within `geom_histogram()`, add the `binwidth` argument and set it equal to `0.5`. 
+
+```{r variation-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-15-hint, eval = FALSE}
+... +
+  geom_histogram(binwidth = ...)
+```
+
+###
+
+There are so many observations in the common bins that the rare bins are very short, making it very difficult to see them (although maybe if you stare intently at 0 you’ll spot something). To make it easy to see the unusual values, we need to zoom to small values of the y-axis with `coord_cartesian()`.
+
+### Exercise 16
+
+Add `coord_cartesian()` to the pipeline. Within `coord_cartesian()`, add the `ylim` argument and set it equal to `c(0, 50)`. 
+
+```{r variation-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-16-hint, eval = FALSE}
+
+```
+
+###
+
+The function, `coord_cartesian()`, also has an `xlim` argument for when you need to zoom into the x-axis. ggplot2 also has `xlim()` and `ylim()` functions that work slightly differently: they throw away the data outside the limits. 
+
+###
+
+This allows us to see that there are three unusual values: `0`, `~30`, and `~60`. Let's pluck them out with **dplyr**. 
+
+### Exercise 17
+
+Create a new variable `unusual` and set it equal to `diamonds`. 
+
+```{r variation-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-17-hint, eval = FALSE}
+unusual <- ...
+```
+
+### Exercise 18
+
+Copy your previous code and create a new pipeline with `diamonds`. Pipe `filter()` to `diamonds`, and filter `y` less than 3 or `y` greater than `20`. 
+
+```{r variation-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-18-hint, eval = FALSE}
+unusual <- diamonds |> 
+  filter(y < 3 | ...)
+```
+
+###
+
+The `y` variable measures one of the three dimensions of these diamonds, in `mm`. We know that diamonds can’t have a width of `0mm`, so these values must be incorrect. 
+
+### Exercise 19
+
+Add `select()` to the pipeline. Within `select()`, select the variables `price`, `x`, `y`, and `z`.
+
+```{r variation-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-19-hint, eval = FALSE}
+... |> 
+  select(price, x, ...)
+```
+
+### Exercise 20
+
+Add `arrange()` to the pipeline. Within `arrange()`, add the variable `y` so that we can arrange the data by the width of the diamonds. 
+
+```{r variation-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r variation-20-hint, eval = FALSE}
+... |> 
+  arrange(...)
+```
+
+By doing EDA, we have discovered missing data that was coded as `0`, which we never would have found by simply searching for `NAs`. Going forward we might choose to re-code these values as `NAs` in order to prevent misleading calculations. We might also suspect that measurements of `32mm` and `59mm` are implausible: those diamonds are over an inch long, but don’t cost hundreds of thousands of dollars!
+
+### 
+
+It’s good practice to repeat your analysis with and without the outliers. If they have minimal effect on the results, and you can’t figure out why they’re there, it’s reasonable to omit them, and move on. However, if they have a substantial effect on your results, you shouldn’t drop them without justification. You’ll need to figure out what caused them (e.g., a data entry error) and disclose that you removed them in your write-up.
+
+## Unusual Values
+###
+
+In this section we will learn about the ways to deal with unusual values in a dataset.
+
+###
+
+One way is to drop the entire row with the strange values.
+
+### 
+
+By the end of this section we will be creating the plot below:
+
+```{r}
+nycflights13::flights |> 
+  mutate(
+    cancelled = is.na(dep_time),
+    sched_hour = sched_dep_time %/% 100,
+    sched_min = sched_dep_time %% 100,
+    sched_dep_time = sched_hour + (sched_min / 60)
+  ) |> 
+  ggplot(aes(x = sched_dep_time)) + 
+  geom_freqpoly(aes(color = cancelled), binwidth = 1/4)
+```
+
+### Exercise 1
+
+With a new pipeline, pipe `diamonds` to `filter()`. Within `filter()`, type `between(y, 3, 20)`. 
+
+```{r unusual-values-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unusual-values-1-hint, eval = FALSE}
+
+```
+
+###
+
+This just keeps the rows with the normal values and drops all of the rows with the strange values. We don’t recommend this option because one invalid value doesn’t imply that all the other values for that observation are also invalid. Additionally, if you have low quality data, by the time that you’ve applied this approach to every variable you might find that you don’t have any data left!
+
+###
+
+Instead, we recommend replacing the unusual values with missing values. The easiest way to do this is to use `mutate()` to replace the variable with a modified copy. You can use the `if_else()` function to replace unusual values with `NA`:
+
+### Exercise 2
+
+Create a new variable called `diamonds2` and set it equal to `diamonds`.
+
+
+```{r unusual-values-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unusual-values-2-hint, eval = FALSE}
+diamonds2 <- ...
+```
+
+###
+
+The function `if_else()` is a vectorized *if-else*. Compared to the base R equivalent, `ifelse()`, this function allows you to handle missing values in the `condition` with `missing` and always takes `true`, `false`, and `missing` into account when determining what the output type should be.
+
+### Exercise 3
+
+Copy your previous code and pipe `diamonds` to `mutate()`. Within `mutate()`, create a new variable, `y`, and set it equal to `if_else(y < 3 | y > 20, NA, y)`.
+
+```{r unusual-values-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unusual-values-3-hint, eval = FALSE}
+diamonds2 <- diamonds |> 
+  mutate(y_new = ...)
+```
+
+###
+
+Let's create a plot with this new data.
+
+### Exercise 4
+
+Add `ggplot()` to the pipeline.
+
+```{r unusual-values-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unusual-values-4-hint, eval = FALSE}
+... |> 
+  ggplot()
+```
+
+### Exercise 5
+
+Within `ggplot()`, using `aes()`, set the `x` argument to `x` and the `y` argument to `y_new`.
+
+```{r unusual-values-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unusual-values-5-hint, eval = FALSE}
+... +
+  ggplot(aes(x = ..., y = ...))
+```
+
+### Exercise 6
+
+Add `geom_point()` to the pipeline.
+
+```{r unusual-values-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unusual-values-6-hint, eval = FALSE}
+... +
+  geom_point()
+```
+
+###
+
+It’s not obvious where you should plot missing values, so **ggplot2** doesn’t include them in the plot, but it does warn that they’ve been removed. To suppress that warning, set `na.rm = TRUE`.
+
+### Exercise 7
+
+Within `geom_point()`, add the `na.rm` argument and set it equal to `TRUE`. 
+
+```{r unusual-values-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unusual-values-7-hint, eval = FALSE}
+... + 
+  geom_point(na.rm = ...)
+```
+
+###
+
+Other times you want to understand what makes observations with missing values different to observations with recorded values. For example, in `nycflights13::flights`, missing values in the `dep_time` variable indicate that the flight was cancelled. So you might want to compare the scheduled departure times for cancelled and non-cancelled times. You can do this by making a new variable, using `is.na()` to check if `dep_time` is missing. Let's make a plot using `geom_freqpoly()`. 
+
+### Exercise 8
+
+With a new pipeline, pipe `nycflights13::flights` to `mutate()`. Within `mutate()`, create a new variable called `cancelled` and set it equal to `is.na(dep_time)`.
+
+```{r unusual-values-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unusual-values-8-hint, eval = FALSE}
+nycflights13::flights |> 
+  mutate(
+    cancelled = ...
+  )
+```
+
+### Exercise 9
+
+Within `mutate()`, create the `sched_hour` variable and set it equal to `sched_dep_time %/% 100`. 
+
+```{r unusual-values-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unusual-values-9-hint, eval = FALSE}
+nycflights13::flights |> 
+  mutate(
+    cancelled = ...,
+    sched_hour = ...
+  )
+```
+
+###
+
+### Exercise 10
+
+
+```{r unusual-values-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unusual-values-10-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 11
+
+
+```{r unusual-values-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unusual-values-11-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 12
+
+
+```{r unusual-values-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unusual-values-12-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 13
+
+
+```{r unusual-values-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unusual-values-13-hint, eval = FALSE}
+
+```
+
+###
+
+### Exercise 14
+
+
+```{r unusual-values-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r unusual-values-14-hint, eval = FALSE}
+
+```
+
+###
+
+
+
 
 
 ## Summary
 ### 
 
-This tutorial covered [Chapter 11: Exploratory data analysis](https://r4ds.hadley.nz/eda.html)  from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
+This tutorial covered [Chapter 11: Exploratory data analysis](https://r4ds.hadley.nz/eda.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. We made use of the [**ggplot2**](https://ggplot2.tidyverse.org/) package and learned about Variation and Patterns. Some key commands that we used are [`coord_cartesian()`](https://ggplot2.tidyverse.org/reference/coord_cartesian.html) which sets limits on the coordinate system and will zoom the plot, [`geom_freqpoly()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html) which visualizes the distribution of a single continuous variable by dividing the x axis into bins and counts the number of observations in each bin, and [`geom_count()`](https://ggplot2.tidyverse.org/reference/geom_count.html) which is a variant of `geom_point()` that counts the number of observations at each location, that maps the count to point area. 
+
 
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
