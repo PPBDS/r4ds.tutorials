@@ -27,6 +27,12 @@ x2 <- c(10, 3, NA, 5, 8, 1, NA)
 
 x3 <- c(abc = 1, def = 2, xyz = 5)
 
+df <- tibble(
+  x = c(2, 3, 1, 1, NA), 
+  y = letters[1:5], 
+  z = runif(5)
+) 
+
 
 ```
 
@@ -114,7 +120,7 @@ When you run the code above, you should see that it extracts "two", "three", and
 
 ### Exercise 5
 
-Along with passing in a vector of positive values into `[]`, you can also pass in a vector of negative values. Run the following code and observe what happens.
+You can also pass in a vector of negative values. In the code chunk below, type `x[]`, placing the vector `c(-1, -2)` inside the brackets and observe what happens
 
 ```{r subsetting-with-a-si-5, exercise = TRUE}
 x[c(-1, -2)]
@@ -122,14 +128,18 @@ x[c(-1, -2)]
 
 ### 
 
-Negative values drop the elements at the specified positions. The code above drops the first and second elements, returning "three", "four", and "five".
+Negative values drop the elements at the specified positions; the code above drops the first and second elements, returning "three", "four", and "five".
 
 ### Exercise 6
 
-Subsetting with logical vectors are another type of thing that you can subset a vector with. Run the code below.
+Subsetting with logical vectors are another type of thing that you can subset a vector with. Create a vector with the values `10`, `3`, `NA`, `5`, `8`, `1`, and `NA`. Save this to a variable named `x2`.
 
 ```{r subsetting-with-a-si-6, exercise = TRUE}
-x2 <- c(10, 3, NA, 5, 8, 1, NA)
+
+```
+
+```{r subsetting-with-a-si-6-hint-1, eval = FALSE}
+... <- c(10, 3, NA, 5, 8, 1, NA)
 ```
 
 ### 
@@ -144,8 +154,6 @@ Subsetting with a logical vector keeps all values corresponding to a TRUE value.
 ```{r subsetting-with-a-si-7, exercise = TRUE}
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r subsetting-with-a-si-7-hint-1, eval = FALSE}
 x2[is.na(x2)]
@@ -257,12 +265,81 @@ df1 <- data.frame(x = 1:3)
 df2 <- tibble(x = 1:3)
 ```
 
-
-###
+### 
 
 If `df` is a data.frame, then `df[, cols]` will return a vector if `col` selects a single column and a data frame if it selects more than one column. If `df` is a tibble, then `[` will always return a `tibble.
 
+### Exercise 14
 
+The `dplyr` package contains many equivalents of subsetting, such as `filter()`, `arrange()`, `select()`, and `relocate()` functions.
+
+
+Let's observe the `filter()` equivalent. On a new line, pipe `df` (with the `|>`) to the filter function. Pass in `x > 1` into `filter()`.
+
+
+```{r subsetting-with-a-si-14, exercise = TRUE}
+df <- tibble(
+  x = c(2, 3, 1, 1, NA), 
+  y = letters[1:5], 
+  z = runif(5)
+)
+
+```
+
+```{r subsetting-with-a-si-14-hint-1, eval = FALSE}
+... |> 
+  ...(x > ...)
+```
+
+### 
+
+`filter()` is equivalent to subsetting the rows with a logical vector, taking care to exclude any missing values. For this scenario, the equivalent subset code would be `df[!is.na(df$x) & df$x > 1, ]` Running this code produces the same result.
+
+### 
+
+The `$` symbol is used to pull out columns from data frames. We will go over the `$` symbol in the next section
+
+### Exercise 15
+
+`arrange()` is equivalent to subsetting the rows with an integer vector, usually created with order(). In the code chunk below, pipe `df` to `arrange()`, passing in `x, y`. After, on a new line, paste its equivalent: `df[order(df$x, df$y),]`
+
+
+```{r subsetting-with-a-si-15, exercise = TRUE}
+
+```
+
+```{r subsetting-with-a-si-15-hint-1, eval = FALSE}
+... |> 
+  ...(x, y)
+
+df[order(df$x, df$y), ]
+```
+
+### 
+
+You can use `order(decreasing = TRUE)` to sort all columns in descending order or `-rank(col)` to sort columns in decreasing order individually.
+
+### Exercise 16
+
+`select()` is equivalent to subsetting columns with character vector. In the code chunk below, pipe `df` to `select()`, passing in `x, z` to `select()`. Then, on a new line, paste its equivalent: `df[, c("x", "z")]`
+
+
+```{r subsetting-with-a-si-16, exercise = TRUE}
+
+```
+
+```{r subsetting-with-a-si-16-hint-1, eval = FALSE}
+... |>
+  ...(x, z)
+
+df[, c("x", "z")]
+```
+
+### 
+
+`filter()`, `arrange()`, and `select()` are very useful functions that help organize data. You will use these functions quite often when analyzing data. 
+
+### 
 
 ## Subsetting with double brackets and a dollar sign
 ## Apply family
