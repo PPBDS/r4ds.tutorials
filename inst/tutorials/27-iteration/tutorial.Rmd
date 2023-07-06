@@ -83,7 +83,7 @@ long <- df |>
 
 <!-- Avoid group_by() if possible. .by/by in the next function should work. -->
 
-<!-- Don't use the same variable name for the input and output columns! Use `med_b` for the median of the variable `b`. -->
+<!-- Add `paths` creation to setup code chunk. -->
 
 ## Introduction
 ### 
@@ -947,6 +947,8 @@ long <- df |>
 
 ### 
 
+<!-- Quetion: how to break this part down... -->
+
 
 Here's a quick summary of the above mentioned functions:
 
@@ -957,6 +959,138 @@ Here's a quick summary of the above mentioned functions:
 `.names` is used when you need additional control over the names of output columns, which is particularly important when you use `across()` with `mutate()`. 
 
 `if_any()` and `if_all()` are two important variations which work with `filter()`.
+
+
+## Reading multiple files
+### 
+
+In this section, you’ll learn how to use `purrr::map()` to do something to every file in a directory. 
+
+<!-- Will add some intro later - MB-->
+
+### Exercise 1
+
+Hit `Run Code` to open the following excel data file.
+
+```{r reading-multiple-fil-1, exercise = TRUE}
+data2019 <- readxl::read_excel("data/y2019.xlsx")
+```
+
+###
+
+Now, I want to look at data from year 2020, 2021 and 2022. What would you do to achieve it?
+
+You can simply copy and past the previous code and change the years respectively.
+
+### Exercise 2
+
+Now, copy and past the previous code 4 times, change `"data/y2019.xlsx"` to `"data/y2020.xlsx"`, `"data/y2021.xlsx"` and `"data/y2022.xlsx"`.
+
+```{r reading-multiple-fil-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-2-hint, eval = FALSE}
+data2019 <- readxl::read_excel("data/y2019.xlsx")
+data2020 <- readxl::read_excel("data/y2020.xlsx")
+data2021 <- readxl::read_excel("data/y....xlsx")
+data2022 <- readxl::read_excel("data/y....xlsx")
+```
+
+##
+
+Now, you can connect the excels together using `dplyr::bind_rows()`.
+
+### Exercise 3
+
+Assign `data` to `bind_rows()`.
+
+```{r reading-multiple-fil-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-3-hint, eval = FALSE}
+data <- bind_rows()
+```
+
+### Exercise 4
+
+Add `data2019`, `data2020`, `data2021` and `data2022` to the call to `bind_rows()`
+
+```{r reading-multiple-fil-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-4-hint, eval = FALSE}
+data <- bind_rows(data2019, data2020, data2021, data2022)
+```
+
+###
+
+What we did above is a doable- when there's only 4 data sets. It also violates our rule for not copy-paste more than 3 times. 
+
+In the rest of this section, you will learn a better and quicker method of doing so.
+
+### Exercise 5
+
+Hit `Run Code`
+```{r reading-multiple-fil-5, exercise = TRUE}
+paths <- list.files("data/gapminder", pattern = "[.]xlsx$", full.names = TRUE)
+
+paths
+```
+
+###
+
+Notice that we used function `list.files()` here, which basicallt lists the files in a directory. 
+
+Just like `across()` in the previous section, `list.files()` also have three arguments.
+
+##
+
+This is the code from lasgt exercise: `paths <- list.files("data/gapminder", pattern = "[.]xlsx$", full.names = TRUE)`
+
+The first argument, `path`, is the directory to look in. In this case, it is `"data/gapminder"`.
+
+`pattern` is a regular expression used to filter the file names. The most common pattern is something like `[.]xlsx$` or `[.]csv$` to find all files with a specified extension.
+
+`full.names` determines whether or not the directory name should be included in the output. You almost always want this to be `TRUE`.
+
+### Exercise 6
+
+Based on the 12 paths created from the last exercise, call `read_excel()` 12 times to get 12 data frames. Hit `Run Code`.
+
+```{r reading-multiple-fil-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-6-hint, eval = FALSE}
+gapminder_1952 <- readxl::read_excel("data/gapminder/1952.xlsx")
+gapminder_1957 <- readxl::read_excel("data/gapminder/1957.xlsx")
+gapminder_1962 <- readxl::read_excel("data/gapminder/1962.xlsx")
+ ...,
+gapminder_2007 <- readxl::read_excel("data/gapminder/2007.xlsx")
+```
+
+###
+
+
+
+##
+
+<!-- End of Section knowledge drop -->
+
+Just a recap, there are three basic steps: 
+
+use `list.files()` to list all the files in a directory, then use `purrr::map()` to read each of them into a list, then use `purrr::list_rbind()` to combine them into a single data frame. We’ll then discuss how you can handle situations of increasing heterogeneity, where you can’t do exactly the same thing to every file.
 
 ## Summary
 ### 
