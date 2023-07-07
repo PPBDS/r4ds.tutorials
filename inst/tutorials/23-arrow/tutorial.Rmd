@@ -53,7 +53,7 @@ library(...)
 
 ### 
 
-<!-- DK: Knowledge Drop. -->
+We’ll pair parquet files with Apache Arrow, a multi-language toolbox designed for efficient analysis and transport of large datasets. We’ll use Apache Arrow via the the arrow package, which provides a dplyr backend allowing you to analyze larger-than-memory datasets using familiar **dplyr** syntax
 
 ### Exercise 2
 
@@ -69,7 +69,7 @@ library(...)
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+As an additional benefit, arrow is extremely fast: you’ll see some examples later in the chapter.
 
 ### Exercise 3
 
@@ -85,7 +85,7 @@ library(...)
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+Both arrow and dbplyr provide dplyr backends, so you might wonder when to use each. In many cases, the choice is made for you, as in the data is already in a database or in parquet files, and you’ll want to work with it as is. But if you’re starting with your own data (perhaps CSV files), you can either load it into a database or convert it to parquet.
 
 ### Exercise 4
 
@@ -101,7 +101,7 @@ library(..., warn.conflicts = FALSE)
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+In general, it’s hard to know what will work best, so in the early stages of your analysis we’d encourage you to try both and pick the one that works the best for you.
 
 ### Exercise 5
 
@@ -142,7 +142,7 @@ Set `seattle_csv` to `open_dataset()`. Within `open_dataset()`, add the argument
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+In this chapter, we’ll continue to use the tidyverse, particularly dplyr, but we’ll pair it with the arrow package which is designed specifically for working with large data. Later in the chapter, we’ll also see some connections between arrow and duckdb, so we’ll also need dbplyr and duckdb.
 
 ### Exercise 2
 
@@ -163,7 +163,7 @@ seattle_csv <- open_dataset(
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+What happens when this code is run? `open_dataset()` will scan a few thousand rows to figure out the structure of the dataset. Then it records what it’s found and stops; it will only read further rows as you specifically request them. 
 
 ### Exercise 3
 
@@ -179,7 +179,7 @@ seattle_csv
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+The first line in the output tells you that `seattle_csv` is stored locally on-disk as a single CSV file; it will only be loaded into memory as needed. The remainder of the output tells you the column type that arrow has imputed for each column.
 
 ### Exercise 4
 
@@ -198,7 +198,7 @@ seattle_csv|>
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+We can see what’s actually in with glimpse(). This reveals that there are ~41 million rows and 12 columns, and shows us a few values.
 
 ### Exercise 5
 
@@ -253,7 +253,7 @@ seattle_csv |>
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+We can start to use this dataset with dplyr verbs, using collect() to force arrow to perform the computation and return some data. For example, this next code will tell us the total number of checkouts per year.
 
 ### Exercise 8
 
@@ -295,7 +295,7 @@ pq_path <- "..."
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+Like CSV, parquet is used for rectangular data, but instead of being a text format that you can read with any file editor, it’s a custom binary format designed specifically for the needs of big data.
 
 ### Exercise 2
 
@@ -311,7 +311,7 @@ seattle_csv
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+Parquet files are usually smaller the equivalent CSV file. Parquet relies on efficient encodings to keep file size down, and supports file compression. This helps make parquet files fast because there’s less data to move from disk to memory.
 
 ### Exercise 3
 
@@ -330,7 +330,7 @@ seattle_csv|>
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+Parquet files have a rich type system. As we talked about in Section 8.3, a CSV file does not provide any information about column types. For example, a CSV reader has to guess whether `"08-10-2022"` should be parsed as a string or a date. In contrast, parquet files store data in a way that records the type along with the data.
 
 ### Exercise 4
 
@@ -350,11 +350,11 @@ seattle_csv |>
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+Parquet files are “column-oriented”. This means that they’re organized column-by-column, much like R’s data frame. This typically leads to better performance for data analysis tasks compared to CSV files, which are organized row-by-row.
 
 ### Exercise 5
 
-Copy previous code and add the argument `format = "parquet"` in `write_dataset()`. Make sure to separate the arguments with commas.
+Copy previous code and add the argument `format = "parquet"` in `write_dataset()`. Make sure to separate the arguments with commas. This will take a minute but it pays off as it makes future operations much faster.
 
 ```{r the-parquet-format-5, exercise = TRUE}
 
@@ -370,7 +370,7 @@ seattle_csv |>
 
 ###
 
-This takes about a minute to run; as we’ll see shortly this is an initial investment that pays off by making future operations much much faster.
+Parquet files are “chunked”, which makes it possible to work on different parts of the file at the same time, and, if you’re lucky, to skip some chunks all together.
 
 Let’s take a look at what we just produced:
 
@@ -406,7 +406,7 @@ Set `seattle_pq` to `open_dataset()` with the argument `pq_path` inside.
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+As datasets get larger and larger, storing all the data in a single file gets increasingly painful and it’s often useful to split large datasets across many files. When this structuring is done intelligently, this strategy can lead to significant improvements in performance because many analyses will only require a subset of the files.
 
 ### Exercise 2
 
@@ -422,7 +422,7 @@ seattle_pq
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+There are no hard and fast rules about how to partition your dataset: the results will depend on your data, access patterns, and the systems that read the data. You’re likely to need to do some experimentation before you find the ideal partitioning for your situation.
 
 ### Exercise 3
 
@@ -441,7 +441,7 @@ seattle_pq |>
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+As a rough guide, arrow suggests that you avoid files smaller than 20MB and larger than 2GB and avoid partitions that produce more than 10,000 files. You should also try to partition by variables that you filter by; as you’ll see shortly, that allows arrow to skip a lot of work by reading only the relevant files.
 
 ### Exercise 4
 
@@ -588,7 +588,7 @@ query <- seattle_pq |>
 
 ###
 
-Writing dplyr code for arrow data is conceptually similar to **dbplyr**, Chapter 22: you write **dbplyr** code, which is automatically transformed into a query that the Apache Arrow C++ library understands, which is then executed when you call `collect()`. If we print out the query object we can see a little information about what we expect Arrow to return when the execution takes place.
+ for arrow data is conceptually similar to **dbplyr**, Chapter 22: you write **dbplyr** code, which is automatically transformed into a query that the Apache Arrow C++ library understands, which is then executed when you call `collect()`. If we print out the query object we can see a little information about what we expect Arrow to return when the execution takes place.
 
 ### Exercise 11
 
@@ -809,6 +809,8 @@ seattle_csv |>
 
 ###
 
+This code calculates the number of books checked out in each month of 2021.
+
 Now let’s use our new version of the dataset in which the Seattle library checkout data has been partitioned into 18 smaller parquet files.
 
 ### Exercise 22
@@ -827,7 +829,7 @@ Copy previous code and switch `seattle_csv` for `seattle_pq`
 
 ###
 
-<!-- DK: Knowledge Drop. Say something about how the seattle csv and pq differ -->
+Partitioning improves performance because this query uses `CheckoutYear == 2021` to filter the data, and arrow is smart enough to recognize that it only needs to read 1 of the 18 parquet files.
 
 ### Exercise 23
 
@@ -843,7 +845,7 @@ seattle_pq
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+The parquet format improves performance by storing data in a binary format that can be read more directly into memory. The column-wise format and rich metadata means that arrow only needs to read the four columns actually used in the query (`CheckoutYear`, `MaterialType`, `CheckoutMonth`, and `Checkouts`).
 
 ### Exercise 24
 
@@ -862,7 +864,7 @@ seattle_pq |>
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+The ~100x speedup in performance is attributable to two factors: the multi-file partitioning, and the format of individual files. This massive difference in performance is why it pays off to convert large CSVs to parquet!
 
 ### Exercise 25
 
@@ -882,7 +884,7 @@ seattle_pq |>
 
 ###
 
-<!-- DK: Knowledge Drop. -->
+Another advantage of parquet and arrow is it’s very easy to turn an arrow dataset into a DuckDB database by calling `arrow::to_duckdb()`.
 
 ### Exercise 26
 
