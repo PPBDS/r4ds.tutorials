@@ -28,10 +28,21 @@ x2 <- c(10, 3, NA, 5, 8, 1, NA)
 x3 <- c(abc = 1, def = 2, xyz = 5)
 
 df <- tibble(
+  x = 1:3, 
+  y = c("a", "e", "f"), 
+  z = runif(3)
+)
+
+df0 <- tibble(
   x = c(2, 3, 1, 1, NA), 
   y = letters[1:5], 
   z = runif(5)
 ) 
+
+tb <- tibble(
+  x = 1:4,
+  y = c(10, 4, 1, 21)
+)
 
 
 ```
@@ -41,7 +52,6 @@ df <- tibble(
 
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
-
 
 ## Introduction
 ### 
@@ -119,10 +129,14 @@ When you run the code above, you should see that it extracts "two", "three", and
 
 ### Exercise 5
 
-You can also pass in a vector of negative values. In the code chunk below, type `x[]`, placing the vector `c(-1, -2)` inside the brackets and observe what happens
+You can also pass in a vector of negative values. In the code chunk below, type `x[]`, placing the vector `c(-1, -2)` inside the brackets. Oberseve what happens.
 
 ```{r subsetting-with-a-si-5, exercise = TRUE}
-x[c(-1, -2)]
+
+```
+
+```{r subsetting-with-a-si-5-hint-1, eval = FALSE}
+x[c(..., ...)]
 ```
 
 ### 
@@ -177,7 +191,7 @@ x2[x2 %% 2 == 0]
 
 ### 
 
-The `%%` operator is used to calculate the remainder of the division of 2 numbers. So, by placing `x2 %% 2 == 0` inside the brackets, the code will search through each element of `x2` and return all of the numbers with a remainder of 0 when divided by 2 (thus being an even number).
+The `%%` operator is used to calculate the remainder of the division of 2 numbers. So, by placing `x2 %% 2 == 0` inside the brackets, the code will search through each element of `x2` and return all of the numbers with a remainder of 0 when divided by 2 (thus being an even number). And as mentioned previously, all `NA` indicies will be included in the output as `NA`
 
 ### Exercise 9
 
@@ -198,7 +212,7 @@ Along with sub-setting logical, character, and integer vectors, you can also sub
 
 ### Exercise 10
 
-Sub-setting can not only be used on vectors; it works on data sets too. In the code chunk below, create a tibble called `df`. The first argument, `x`, should contain a range of numbers from 1 to 3. The second argument, `y`, should be set to `c("a", "e", "f")`. The third argument, `z`, should be set to `runif(3)`. After completing this, run `df` on a new line.
+Sub-setting can not only be used on vectors; it works on data sets too. In the code chunk below, create a tibble called `df`. The first argument, `x`, should contain a range of numbers from 1 to 3. The second argument, `y`, should be set to the vector `c("a", "e", "f")`. The third argument, `z`, should be set to `runif(3)`. After completing this, run `df` on a new line.
 
 
 ```{r subsetting-with-a-si-10, exercise = TRUE}
@@ -219,7 +233,7 @@ There are many ways to use `[` with data sets, but the most common way is to sub
 
 ### Exercise 11
 
-Using `df`,  let's extract the letter "a". Copy the previous code and on a new line, type `df` followed by a pair of brackets. In the brackets, type `1,2`. 
+Using `df`,  let's extract the letter "a". On a new line, type `df` followed by a pair of brackets. In the brackets, type `1,2`. 
 
 ```{r subsetting-with-a-si-11, exercise = TRUE}
 
@@ -239,7 +253,7 @@ This extracts the element in the 1st row, 2nd column, which is the letter "a".
 
 You can also leave the row/column input blank when extracting data from a data set. For example, `df[rows, ]` returns the specified row(s) and all columns in the data set, while `df[, cols]` returns all rows and the specified column(s) in the data set. 
 
-Copy `df` from the previous exercise, and using `df`, extract all the rows in `df`, as well as the columns `x` and `z`.
+In the code chunk below, extract all the rows in `df`, as well as the columns `x` and `z`.
 
 ```{r subsetting-with-a-si-12, exercise = TRUE}
 
@@ -255,7 +269,7 @@ As you can see, by leaving the first part of the subset blank (the part before t
 
 ### Exercise 13
 
-There’s an important difference between tibbles and data frames when it comes to [. In the tutorials, we’ve mainly used tibbles, which are data frames, but they tweak some behaviors to make your life a little easier. In most places, you can use “tibble” and “data frame” interchangeably, so when we want to draw particular attention to R’s built-in data frame, we’ll write data.frame. 
+There’s an important difference between tibbles and data frames when it comes to `[` . In the tutorials, we’ve mainly used tibbles, which are data frames, but they tweak some behaviors to make your life a little easier. In most places, you can use “tibble” and “data frame” interchangeably, so when we want to draw particular attention to R’s built-in data frame, we’ll write data.frame. 
 
 Press "Run Code".
 
@@ -263,6 +277,9 @@ Press "Run Code".
 ```{r subsetting-with-a-si-13, exercise = TRUE}
 df1 <- data.frame(x = 1:3)
 df2 <- tibble(x = 1:3)
+
+df1
+df2
 ```
 
 ### 
@@ -271,37 +288,26 @@ If `df` is a data.frame, then `df[, cols]` will return a vector if `col` selects
 
 ### Exercise 14
 
-The `dplyr` package contains many equivalents of subsetting, such as `filter()`, `arrange()`, `select()`, and `relocate()` functions.
-
-
-Let's observe the `filter()` equivalent. On a new line, pipe `df` (with the `|>`) to the filter function. Pass in `x > 1` into `filter()`.
-
+Press "Run code".
 
 ```{r subsetting-with-a-si-14, exercise = TRUE}
-df <- tibble(
+df0 <- tibble(
   x = c(2, 3, 1, 1, NA), 
   y = letters[1:5], 
   z = runif(5)
 )
 
-```
-
-```{r subsetting-with-a-si-14-hint-1, eval = FALSE}
-... |> 
-  ...(x > ...)
+df0
 ```
 
 ### 
-
-`filter()` is equivalent to subsetting the rows with a logical vector, taking care to exclude any missing values. For this scenario, the equivalent subset code would be `df[!is.na(df$x) & df$x > 1, ]` Running this code produces the same result.
-
-### 
-
-The `$` symbol is used to pull out columns from data frames. We will go over the `$` symbol in the next section
 
 ### Exercise 15
 
-`arrange()` is equivalent to subsetting the rows with an integer vector, usually created with order(). In the code chunk below, pipe `df` to `arrange()`, passing in `x, y`. After, on a new line, paste its equivalent: `df[order(df$x, df$y),]`
+The `dplyr` package contains many equivalents of subsetting, such as `filter()`, `arrange()`, `select()`, and `relocate()` functions.
+
+
+Let's observe the `filter()` equivalent. Pipe `df0` (with the `|>`) to the filter function. Pass `x > 1` into `filter()`.
 
 
 ```{r subsetting-with-a-si-15, exercise = TRUE}
@@ -310,18 +316,20 @@ The `$` symbol is used to pull out columns from data frames. We will go over the
 
 ```{r subsetting-with-a-si-15-hint-1, eval = FALSE}
 ... |> 
-  ...(x, y)
-
-df[order(df$x, df$y), ]
+  ...(x > ...)
 ```
 
 ### 
 
-You can use `order(decreasing = TRUE)` to sort all columns in descending order or `-rank(col)` to sort columns in decreasing order individually.
+`filter()` is equivalent to subsetting the rows with a logical vector, taking care to exclude any missing values. For this scenario, the equivalent subset code would be `df0[!is.na(df0$x) & df0$x > 1, ]`. Running this code produces the same result.
+
+### 
+
+The `$` symbol is used to pull out columns from data frames. We will go over the `$` symbol in the next section.
 
 ### Exercise 16
 
-`select()` is equivalent to subsetting columns with character vector. In the code chunk below, pipe `df` to `select()`, passing in `x, z` to `select()`. Then, on a new line, paste its equivalent: `df[, c("x", "z")]`
+`arrange()` is equivalent to subsetting the rows with an integer vector, usually created with order(). In the code chunk below, pipe `df0` to `arrange()`, passing in `x, y`. Then, on a new line, paste its equivalent: `df0[order(df0$x, df0$y),]`
 
 
 ```{r subsetting-with-a-si-16, exercise = TRUE}
@@ -329,10 +337,30 @@ You can use `order(decreasing = TRUE)` to sort all columns in descending order o
 ```
 
 ```{r subsetting-with-a-si-16-hint-1, eval = FALSE}
+... |> 
+  ...(x, y)
+
+df0[order(df0$x, df0$y), ]
+```
+
+### 
+
+You can use `order(decreasing = TRUE)` to sort all columns in descending order or `-rank(col)` to sort columns in decreasing order individually.
+
+### Exercise 17
+
+`select()` is equivalent to subsetting columns with character vector. In the code chunk below, pipe `df0` to `select()`, passing in `x, z` to `select()`. Then, on a new line, paste its equivalent: `df0[, c("x", "z")]`
+
+
+```{r subsetting-with-a-si-17, exercise = TRUE}
+
+```
+
+```{r subsetting-with-a-si-17-hint-1, eval = FALSE}
 ... |>
   ...(x, z)
 
-df[, c("x", "z")]
+df0[, c("x", "z")]
 ```
 
 ### 
@@ -344,11 +372,128 @@ df[, c("x", "z")]
 ## Subsetting with double brackets and a dollar sign
 ###
 
+`[`, which selects many elements, is paired with `[[` and `$`, which extract a single element. In this section, we’ll show you how to use `[[` and `$` to pull columns out of data frames, discuss a couple more differences between data.frames and tibbles, and emphasize some important differences between `[` and `[[` when used with lists.
+
+###
+
+### Exercise 1
+
+In the code chunk below, create a tibble. The first value should be `x`, which is equal to a range of integers from 1 to 4. The second value should be `y`, which is a vector containing 10, 4, 1, and 21. Save this tibble to the name `tb` and print it on a new line.
+
+```{r subsetting-with-doub-1, exercise = TRUE}
+
+```
+
+```{r subsetting-with-doub-1-hint-1, eval = FALSE}
+... <- tibble(x = .. : .., y = c(..., ..., ..., ...))
+```
+
+
+### 
+
+### Exercise 2
+
+`[[` and `$` can be used to extract columns out of a data frame. `[[` can access by position or by name, and `$` is specialized for access by name.
+
+In the code chunk below, lets extract the elements of column `x`. In the code chunk below, type in `tb` followed by `[[]]`. Inside the inner bracket, type in `1`.
+
+
+
+```{r subsetting-with-doub-2, exercise = TRUE}
+
+```
+
+```{r subsetting-with-doub-2-hint-1, eval = FALSE}
+tb[[...]]
+```
+
+### 
+
+In this scenario, the `[[]]` are being used to return the values by position. By placing the number `1` inside the brackets, the code returns the values in the first position, which are the range of integers stored in column `x`. 
+
+
+### Exercise 3
+
+Now, lets extract the same elements by name. Copy the code above, replacing the code inside the inner bracket with `"x"`
+
+
+```{r subsetting-with-doub-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+### 
+
+By entering either the position or the name of the column, you can extract the values it contains. 
+
+### Exercise 4
+
+As mentioned previously, the `$` is specialized for accessing columns by name. In the code chunk below, lets extract the elements inside `y`. Type in the name of the tibble, `tb`, followed by `$` and the name of the column, `y`. 
+
+```{r subsetting-with-doub-4, exercise = TRUE}
+
+```
+
+```{r subsetting-with-doub-4-hint, eval = FALSE}
+tb...y
+```
+
+###
+
+As you can see, the `$` extracted the values inside column `y`, which are 10, 4, 1, and 21.
+
+### Exercise 5
+
+The `$` can also be used to create new columns, which is the Base R equivalent of the `mutate()` method. In the code chunk below, type in `tb$z`, setting it equal to `tb$x + tb$y` (use `<-` to do this). On a new line, type in `tb`.
+
+```{r subsetting-with-doub-5, exercise = TRUE}
+
+```
+
+```{r subsetting-with-doub-5-hint, eval = FALSE}
+tb$z <- ... + ...
+```
+
+###
+
+There are several other base R approaches to creating new columns including with `transform()`, `with()`, and `within()`. Hadley collected a few examples at [https://gist.github.com/hadley/1986a273e384fb2d4d752c18ed71bedf](https://gist.github.com/hadley/1986a273e384fb2d4d752c18ed71bedf).
+
+### Exercise 6
+
+Press "Run code".
+
+```{r subsetting-with-doub-6, exercise = TRUE}
+diamonds
+```
+
+###
+
+Using `$` directly is convenient when performing quick summaries. Lets use this to calculate some values of the **diamonds** package. 
+
+### Exercise 7
+
+Lets find out the maximum carat in the **diamonds** package, using the `max()` function. Extract the `carat` column using `$` and place the code inside the `max()` function. 
+
+```{r subsetting-with-doub-7, exercise = TRUE}
+
+```
+
+```{r subsetting-with-doub-7-hint, eval = FALSE}
+max(...$...)
+```
+
+###
+
+In this scenario, the code would be the Base R equivalent of the `summarize()` function.      
+
+
+
+
 
 ## Apply family
 ## For loops
 ## Plots
-
 ## Summary
 ### 
 
