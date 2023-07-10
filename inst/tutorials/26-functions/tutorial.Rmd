@@ -104,6 +104,20 @@ first_upper <- function(x) {
 }
 
 
+sorted_bars <- function(df, var) {
+  df |> 
+    mutate({{ var }} := fct_rev(fct_infreq({{ var }})))  |>
+    ggplot(aes(y = {{ var }})) +
+    geom_bar()
+}
+
+conditional_bars <- function(df, condition, var) {
+  df |> 
+    filter({{ condition }}) |> 
+    ggplot(aes(x = {{ var }})) + 
+    geom_bar()
+}
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -717,6 +731,7 @@ Tidy evaluation includes a solution to this problem called embracing 🤗. Embra
 
 Copy the code for `grouped_mean` and rename the function to `grouped_mean1`. Modify the arguments within `group_by()`` and `summarize()` to be enclosed with `{{}}`.
 
+
 ```{r data-frame-functions-5, exercise = TRUE}
 
 ```
@@ -760,6 +775,7 @@ Data-masking: This is used in functions like `arrange()`, `filter()`, and `summa
 Tidy-selection: This is used in functions like `select()`, `relocate()`, and `rename()` that involve selecting variables.
 
 For many common functions, your intuition about which arguments use tidy evaluation should be sufficient—just consider whether you need to perform computations (e.g., x + 1) or select variables (e.g., a:x).
+
 
 
 ### 
@@ -1004,19 +1020,98 @@ It’s straightforward to add more variables to the mix. For example, maybe you 
 
 ### Exercise 6
 
+There are many helper functions in in tidyverse and ggplot2 which help makes data manipulation easy, but how do we implement those functions in a function that you will make?
+
+Let's use `fct_infreq()` and `fct_rev()` as the helper functions and what they do is sort the bars by frequency in highest to lowest for a vertical bar graph.
+
+Create a function `sorted_bars` and assign `function()` to it. Pass in `df` and `var` and then close the function with `{}`.
+
 ```{r plot-functions-6, exercise = TRUE}
+
+```
+
+```{r plot-functions-6-hint-1, eval = FALSE}
+sorted_bars <- function(..., var){
+  
+}
+```
+
+### 
+
+Now that we set the function name and arguments right, let's now edit the body of the code.
+
+
+### Exercise 7
+
+Copy the code, within the curly braces, start a pipe with `df` to `mutate()` Pass in `var` enclosed with `{{}}` and set it to `fct_rev(fct_infreq({{ var }}))` using `:=`.
+
+```{r plot-functions-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r plot-functions-6-hint-1, eval = FALSE}
-
+```{r plot-functions-7-hint-1, eval = FALSE}
+sorted_bars <- function(..., var) {
+  ... |> 
+    mutate({{ ... }} := fct_rev(...({{ var }}))) 
+}
 ```
 
 ### 
 
-### Exercise 7
+We have to use a new operator here, `:=`, because we are generating the variable name based on user-supplied data. Variable names go on the left hand side of `=`, but R’s syntax doesn’t allow anything to the left of `=` except for a single literal name. To work around this problem, we use the special operator `:=` which tidy evaluation treats in exactly the same way as `=`.
+
+### Exercise 8
+
+Copy the code, extend the pipe from `mutate()` to `ggplot()` and pass in `aes(y = {{var}})`. Then add the `geom_bar()` layer.
+
+```{r plot-functions-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-functions-8-hint-1, eval = FALSE}
+sorted_bars <- function(..., var) {
+  ... |> 
+    mutate({{ ... }} := fct_rev(...({{ var }}))) |>
+    ggplot(aes(... = {{var}}))+
+    geom_bar()
+}
+```
+
+### 
+
+You have now made a sorted bar graph.
+
+### Exercise 9
+
+Let's now use the `filter()` function which is another helper function. Copy the previous code, change the name to `conditional_bars` , add another argument `var` and delete the `mutate()` and add ` filter({{ condition }})` and also change the `y` to `x` since this is a horizontal grpah.
+
+```{r plot-functions-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-functions-9-hint-1, eval = FALSE}
+conditional_bars <- function(df, ..., var) {
+  df |> 
+    filter({{ ... }}) |> 
+    ggplot(aes(... = {{ var }})) + 
+    geom_bar()
+}
+```
+
+### 
+
+Good Work!
+
+You can also get creative and display data summaries in other ways. You can find a cool application at [here](https://gist.github.com/GShotwell/b19ef520b6d56f61a830fabb3454965b); it uses the axis labels to display the highest value. As you learn more about ggplot2, the power of your functions will continue to increase.
+
+
+### Exercise 10
 
 Remember the histogram function we showed you earlier?
 
@@ -1034,19 +1129,19 @@ Wouldn’t it be nice if we could label the output with the variable and the bin
 
 To do so, we’re going to have to go under the covers of tidy evaluation and use a function from the package we haven’t talked about yet: `rlang`. `rlang` is a low-level package that’s used by just about every other package in the tidyverse because it implements tidy evaluation (as well as many other useful tools).
 
-### Exercise 8
+### Exercise 11
 
 To solve the labeling problem, we can utilize `rlang::englue()`. It works similarly to `str_glue()`, inserting values wrapped in `{ }` into the string. Additionally, it understands `{{ }}`, automatically inserting the appropriate variable name.
 
 Copying the code for the `histogram1` function, before the start of the pipe, create a new variable `label` and assign it the value of `rlang::englue("A histogram of {{var}} with binwidth {binwidth}")`. Then, within the `df` pipe, add the `labs()` layer after `geom_histogram()`, and set `title = label` within `labs()`.
 
-```{r plot-functions-8, exercise = TRUE}
+```{r plot-functions-11, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r plot-functions-8-hint-1, eval = FALSE}
+```{r plot-functions-11-hint-1, eval = FALSE}
 histogram1 <- function(df, ..., binwidth) {
   label <- rlang::...("A histogram of {{var}} with binwidth {...}")
   
@@ -1061,15 +1156,15 @@ histogram1 <- function(df, ..., binwidth) {
 
 If you want to explore about `rlang`, check this [out](https://www.rdocumentation.org/packages/rlang/versions/1.1.1).
  
-### Exercise 9
+### Exercise 12
 
 Now let's use the function, so start a pipe with `diamonds` to `histogram1()` and pass in `carat` and `.1` as the arguments.
 
-```{r plot-functions-9, exercise = TRUE}
+```{r plot-functions-12, exercise = TRUE}
 
 ```
 
-```{r plot-functions-9-hint-1, eval = FALSE}
+```{r plot-functions-12-hint-1, eval = FALSE}
 diamonds |>
   ...(carat, ...)
 ```
@@ -1078,23 +1173,25 @@ diamonds |>
 
 You can use the same approach in any other place where you want to supply a string in a ggplot2 plot.
 
-### Exercise 10
+### Exercise 13
 
 Let's make the x and y axis look better so copy the code and after `histogram()` add the `labs()` layer and set `x` to `"Size (in carats)"` and `y` to `"Number of diamonds"`.
 
-```{r plot-functions-10, exercise = TRUE}
+```{r plot-functions-13, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r plot-functions-10-hint, eval = FALSE}
+```{r plot-functions-13-hint-1, eval = FALSE}
 ... |>
   ...(carat, ...) +
   labs(x = ..., y = ...)
 ```
 
-###
+### 
+
+Good Work! You now know how to make plot functions.
 
 ## Style
 ### 
