@@ -73,6 +73,16 @@ long <- df |>
     median = median(value),
     mean = mean(value))
 
+df_paired <- tibble(
+  a_val = rnorm(10),
+  a_wts = runif(10),
+  b_val = rnorm(10),
+  b_wts = runif(10),
+  c_val = rnorm(10),
+  c_wts = runif(10),
+  d_val = rnorm(10),
+  d_wts = runif(10)
+)
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -88,7 +98,7 @@ long <- df |>
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 27: Iteration](https://r4ds.hadley.nz/iteration.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
+This tutorial covers [Chapter 27: Iteration](https://r4ds.hadley.nz/iteration.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
 
 <!-- finish this part later. -->
 
@@ -111,7 +121,7 @@ library(...)
 
 ### 
 
-Recall that we have already learnt a number of tools that perform the same action for multiple “things”:
+Recall that we have already learnt a number of tools that perform the same action for multiple "things":
 
 `facet_wrap()` and `facet_grid()` draws a plot for each subset.
 
@@ -146,8 +156,10 @@ Type `df` and hit "Run Code".
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r modifying-multiple-c-3-hint-1, eval = FALSE}
-df
+
 ```
 
 ### Exercise 4
@@ -169,7 +181,7 @@ Note that this creates a tibble with one row and zero columns.
 
 ### 
 
-The result above is due to absence of arguments and values in the function `summarise()`. Next, we will add arguments to fix this problem. 
+The result above is due to absence of arguments and values in the function `summarise()`. Next, we will add arguments to fix this problem.
 
 ### Exercise 5
 
@@ -192,7 +204,7 @@ Recall that this adds a new column of a variable named `n` that represents the n
 
 ### Exercise 6
 
-Add the median of a and median of b, `med_a = median (a)` and `med_b = median (b)`, to the call to `summarise()`. Remember the arguments to summarize must be separated by commas. 
+Add the median of a and median of b, `med_a = median (a)` and `med_b = median (b)`, to the call to `summarise()`. Remember the arguments to summarize must be separated by commas.
 
 ```{r modifying-multiple-c-6, exercise = TRUE}
 
@@ -210,7 +222,6 @@ df |>
 ### 
 
 Now you have a table of 3 columns (vairbale `n`, `a`, `b`) and their corresponding median. Next, we will add variable `c` and `d` to complete the code.
-
 
 ### Exercise 7
 
@@ -237,7 +248,7 @@ Now we've completed the code. You should see a table of 5 columns (vairbale `n`,
 
 ### 
 
-You may find the above process repetitive- we were simply copy-pasted `med_a = median(a)` 4 times- which, violates our rule of thumb to never copy and paste more than twice. 
+You may find the above process repetitive- we were simply copy-pasted `med_a = median(a)` 4 times- which, violates our rule of thumb to never copy and paste more than twice.
 
 This will get even more tedious if you have tens or even hundreds of columns!
 
@@ -270,11 +281,11 @@ df |>
             across (a:d, ...))
 ```
 
-You should get the exact same table as in Exercise 7. 
+You should get the exact same table as in Exercise 7.
 
 ### 
 
-We will discuss 3 important specifications of `across()` in the following sections. 
+We will discuss 3 important specifications of `across()` in the following sections.
 
 ### 
 
@@ -296,7 +307,7 @@ df2 <- tibble(
 
 ### Exercise 11
 
- Pipe `df2` into `summarise()`.
+Pipe `df2` into `summarise()`.
 
 ```{r modifying-multiple-c-11, exercise = TRUE}
 
@@ -352,7 +363,7 @@ df2 |>
 
 You should get a 2 x 5 table.
 
-Note grouping columns (`grp` here) are not included in `across()`, because they’re automatically preserved by `summarise()`.
+Note grouping columns (`grp` here) are not included in `across()`, because they're automatically preserved by `summarise()`.
 
 ### 
 
@@ -382,13 +393,13 @@ You can combine these with Boolean algebra. For example:
 
 `!where(is.numeric)` selects all non-numeric columns
 
-`starts_with ("a") & where (is.logical)` selects all logical columns whose name starts with “a”.
+`starts_with ("a") & where (is.logical)` selects all logical columns whose name starts with "a".
 
 ### 
 
 We will now explore `.fns`, the second specification of `across()`.
 
-This argument defines how each column will be transformed. 
+This argument defines how each column will be transformed.
 
 ### 
 
@@ -409,15 +420,15 @@ df_miss <- tibble(
 
 ### 
 
-It’s important to note that we’re passing the function `.fns` to `across()`, so `across()` can call it; we’re not calling it ourselves. That means the function name should never be followed by `()`. 
+It's important to note that we're passing the function `.fns` to `across()`, so `across()` can call it; we're not calling it ourselves. That means the function name should never be followed by `()`.
 
 ie. never write `median ()`.
 
-If you forget, you’ll get an error.
+If you forget, you'll get an error.
 
 ### Exercise 15
 
-Pipe `df_miss` into  `summarize()`
+Pipe `df_miss` into `summarize()`
 
 ```{r modifying-multiple-c-15, exercise = TRUE}
 
@@ -454,13 +465,13 @@ This is because `median()` propagates those missing values, giving us a suboptim
 
 ### 
 
-Solution? 
+Solution?
 
 Recall that `na. rm = TRUE` can remove the NA values. Therefore, it would be nice if we could pass along `na.rm = TRUE` to `median()`.
 
 ### Exercise 17
 
-Pipe `df_miss` into  `summarize()`
+Pipe `df_miss` into `summarize()`
 
 ```{r modifying-multiple-c-17, exercise = TRUE}
 
@@ -508,13 +519,14 @@ df_miss |>
 
 ### 
 
-Now you should get a 1 x 5 table with all medians as numerical numbers. 
+Now you should get a 1 x 5 table with all medians as numerical numbers.
 
-Notice here, instead of calling `median()` directly, we created a new function, `function(x)` that calls `median()` with the desired arguments. This is how you can avoid error. 
+Notice here, instead of calling `median()` directly, we created a new function, `function(x)` that calls `median()` with the desired arguments. This is how you can avoid error.
 
 ### Exercise 20
 
 Use the previous code, but replace `function` with `\`
+
 ```{r modifying-multiple-c-20, exercise = TRUE}
 
 ```
@@ -535,7 +547,7 @@ The above showcases a less verbose way by replacing `function` with `\`.
 
 ### 
 
-To know how many values were removed from the `median()`, 2 other functions can be supplied to across(): one to compute the median, the other to count the missing values. 
+To know how many values were removed from the `median()`, 2 other functions can be supplied to across(): one to compute the median, the other to count the missing values.
 
 ### Exercise 21
 
@@ -640,7 +652,7 @@ df_miss |>
 
 You should see a 1 x 9 table. Now, compare your table to the table produced in Exercise 24. What did you notice?
 
-```
+```         
 Table from Exercise 24:
 # > # A tibble: 1 × 9
 # >   a_median a_n_miss b_median b_n_miss c_median c_n_miss d_median d_n_miss
@@ -648,7 +660,7 @@ Table from Exercise 24:
 # > 1    0.139        1    -1.11        1   -0.387        2     1.15        0
 ```
 
-```
+```         
 Tabble from Exercise 25:
 # > # A tibble: 1 × 9
 # >   median_a n_miss_a median_b n_miss_b median_c n_miss_c median_d n_miss_d
@@ -660,9 +672,9 @@ Tabble from Exercise 25:
 
 You should notice that the only difference is the name of columns. ie. a_median vs. median_a.
 
-By default, columns are named using a glue specification like {.col}_{.fn}. `.col` is the name of the original column (ie. `a`, `b`) and `.fn` is the name of the function (ie. `median`). Hence the name of column in Exercise 24 is `a_median`.
+By default, columns are named using a glue specification like {.col}\_{.fn}. `.col` is the name of the original column (ie. `a`, `b`) and `.fn` is the name of the function (ie. `median`). Hence the name of column in Exercise 24 is `a_median`.
 
-You can use `.names` argument to supply your own glue specification. In Exercise 25, we define `.names` as "{.fn}_{.col}", therefore the column produced has name `median_a`.
+You can use `.names` argument to supply your own glue specification. In Exercise 25, we define `.names` as "{.fn}\_{.col}", therefore the column produced has name `median_a`.
 
 ### Exercise 26
 
@@ -681,7 +693,7 @@ df_miss |>
 
 ### 
 
-The `.names` argument is particularly important when you use `across()` with `mutate()`. 
+The `.names` argument is particularly important when you use `across()` with `mutate()`.
 
 ### Exercise 27
 
@@ -701,7 +713,7 @@ df_miss |>
 
 ### 
 
-Recall that argument `coalesce()` replace NAs with 0. 
+Recall that argument `coalesce()` replace NAs with 0.
 
 Note that by default, the output of `across()` is given the same names as the inputs. This means that `across()` inside of `mutate()` will replace existing columns, like in Exercise 27.
 
@@ -751,7 +763,7 @@ df_miss |>
 
 ### 
 
-`across()` is a great match for `summarize()` and `mutate()`, but it’s more awkward to use with `filter()`. 
+`across()` is a great match for `summarize()` and `mutate()`, but it's more awkward to use with `filter()`.
 
 We use two variants of `across()` called `if_any()` and `if_all()` with `filter()`.
 
@@ -772,11 +784,11 @@ df_miss |>
 
 ### 
 
-`if_any()` is the same as using `|` in-between the arguments. 
+`if_any()` is the same as using `|` in-between the arguments.
 
 ### Exercise 32
 
-Add `a:d` and `is.na` to the function `if_any()`. 
+Add `a:d` and `is.na` to the function `if_any()`.
 
 ```{r modifying-multiple-c-32, exercise = TRUE}
 
@@ -853,7 +865,7 @@ df_date |>
 
 ### 
 
-This should give you a 2 x 5 table with `date_year`, `date_month`, and `date_day` broken down. 
+This should give you a 2 x 5 table with `date_year`, `date_month`, and `date_day` broken down.
 
 ### Exercise 36
 
@@ -889,8 +901,7 @@ diamonds |>
   summarize_means()
 ```
 
-
-###
+### 
 
 We mentioned that where possible, `.by()` should be sued instead of `group_by()`. However here 3we encounter a situation where it is not possible to use `.by()`.
 
@@ -918,7 +929,7 @@ Another interesting function associated with `across()` is `pivot_longer()`, whi
 
 ### Exercise 39
 
-Hit `Run Code`. Pay attention to the table generated 
+Hit `Run Code`. Pay attention to the table generated
 
 ```{r modifying-multiple-c-39, exercise = TRUE}
 df |> 
@@ -926,29 +937,132 @@ df |>
                    list(median = median, mean = mean)))
 ```
 
-###
+### 
 
-What did you notice about this table? It's too wide and hence hard to compare values. 
+What did you notice about this table? It's too wide and hence hard to compare values.
 
 There's a way to compute the same values by pivoting longer and then summarizing.
 
 ### Exercise 40
 
-Hit `Run Code`.
+Hit `Run Code` to create the following tibble.
 
 ```{r modifying-multiple-c-40, exercise = TRUE}
-long <- df |> 
-  pivot_longer(a:d) |> 
-  group_by(name) |> 
-  summarize(
-    median = median(value),
-    mean = mean(value))
+df_paired <- tibble(
+  a_val = rnorm(10),
+  a_wts = runif(10),
+  b_val = rnorm(10),
+  b_wts = runif(10),
+  c_val = rnorm(10),
+  c_wts = runif(10),
+  d_val = rnorm(10),
+  d_wts = runif(10)
+)
+```
+
+### Exercise 41
+
+Type in `df_paired` and hit `Run Code`. 
+
+```{r modifying-multiple-c-41, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-41-hint, eval = FALSE}
+df_paired
 ```
 
 ### 
 
-<!-- Quetion: how to break this part down... -->
+Now you should see the tibble you have created!
 
+
+### Exercise 42
+
+Pipe `df_paired` into function `pivot_longer()`.
+
+```{r modifying-multiple-c-42, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-42-hint, eval = FALSE}
+df_paired |> 
+  pivot_longer()
+```
+
+You will receive an error message, because we haven't put in any arguments. `cols` must select at least one column.
+
+### 
+
+`pivot_longer()` makes datasets longer by increasing the number of rows and decreasing the number of columns.
+
+### Exercise 43
+
+Add arguments `everything()` to the function `pivot_longer()`. 
+
+```{r modifying-multiple-c-43, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-43-hint, eval = FALSE}
+df_paired |> 
+  pivot_longer(everything())
+```
+
+### 
+
+Remember that the `cols` argument specifies which columns to pivot and `everything()` specifies that we want to pivot every column.
+
+### Exercise 44
+
+Add a second argument, `names_to = c("group", ".value")` to the call to `pivot_longer()`.
+
+```{r modifying-multiple-c-44, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-44-hint, eval = FALSE}
+df_paired |> 
+  pivot_longer(everything(),
+               names_to = c("group", ".value"))
+```
+
+### 
+
+`names_to()` is used to create variables from the column names. Here, we creates two new columns: `group` and `.value`.
+
+### Exercise 45
+
+Finally let's add argument `names_sep = "_"` to the call to `pivot_longer()`.
+
+```{r modifying-multiple-c-45, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-multiple-c-45-hint, eval = FALSE}
+df_paired |> 
+  pivot_longer(everything(),
+               names_to = c("group", ".value"),
+               names_sep = "_")
+```
+
+### 
+
+The `names_sep` argument tell `pivot_longer()` what separates a `group` value from a  `.value` in each of the column names. Here, that's an underscore `_`.
+
+### 
+
+<!-- Quetion: how to break this part down... -->
 
 Here's a quick summary of the above mentioned functions:
 
@@ -956,15 +1070,14 @@ Here's a quick summary of the above mentioned functions:
 
 `.fns` specifies what to do with each column
 
-`.names` is used when you need additional control over the names of output columns, which is particularly important when you use `across()` with `mutate()`. 
+`.names` is used when you need additional control over the names of output columns, which is particularly important when you use `across()` with `mutate()`.
 
 `if_any()` and `if_all()` are two important variations which work with `filter()`.
-
 
 ## Reading multiple files
 ### 
 
-In this section, you’ll learn how to use `purrr::map()` to do something to every file in a directory. 
+In this section, you'll learn how to use `purrr::map()` to do something to every file in a directory.
 
 <!-- Will add some intro later - MB-->
 
@@ -976,85 +1089,97 @@ Hit `Run Code` to open the following excel data file.
 data2019 <- readxl::read_excel("data/y2019.xlsx")
 ```
 
-###
+### 
 
-Now, I want to look at data from year 2020, 2021 and 2022. What would you do to achieve it?
+There are many arguments to `read_excel()`, we can directly call its document name (remember to put in `""`).
 
-You can simply copy and past the previous code and change the years respectively.
+Here, we are assigning this excel to new variable `data2019`.
 
 ### Exercise 2
 
-Now, copy and past the previous code 4 times, change `"data/y2019.xlsx"` to `"data/y2020.xlsx"`, `"data/y2021.xlsx"` and `"data/y2022.xlsx"`.
+Now, I want to look at data from year 2020, 2021 and 2022. 
+Copy and past the previous code 4 times, change `"data/y2019.xlsx"` to `"data/y2020.xlsx"`, `"data/y2021.xlsx"` and `"data/y2022.xlsx"`.
 
 ```{r reading-multiple-fil-2, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+<button onclick="transfer_code(this)">
 
-```{r reading-multiple-fil-2-hint, eval = FALSE}
-data2019 <- readxl::read_excel("data/y2019.xlsx")
-data2020 <- readxl::read_excel("data/y2020.xlsx")
-data2021 <- readxl::read_excel("data/y....xlsx")
-data2022 <- readxl::read_excel("data/y....xlsx")
+Copy previous code
+
+</button>
+
+```{r reading-multiple-fil-2-hint-1, eval = FALSE}
+data2019 <- readxl::read_excel("...")
+data2020 <- readxl::read_excel("...")
+data2021 <- readxl::read_excel("...")
+data2022 <- readxl::read_excel("...")
 ```
 
-##
-
+## 
 Now, you can connect the excels together using `dplyr::bind_rows()`.
 
 ### Exercise 3
 
-Assign `data` to `bind_rows()`.
+Now, you can connect the excels together using `dplyr::bind_rows()`. Type `bind_rows()` in the code chunck below, then hit `Run Code`.
 
-```{r reading-multiple-fil-3, exercise = TRUE}
+```{r -3, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+<button onclick="transfer_code(this)">
 
-```{r reading-multiple-fil-3-hint, eval = FALSE}
-data <- bind_rows()
+Copy previous code
+
+</button>
+
+```{r -3-hint-1, eval = FALSE}
+bind_rows()
 ```
 
 ### Exercise 4
 
 Add `data2019`, `data2020`, `data2021` and `data2022` to the call to `bind_rows()`
 
-```{r reading-multiple-fil-4, exercise = TRUE}
+```{r -4, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+<button onclick="transfer_code(this)">
 
-```{r reading-multiple-fil-4-hint, eval = FALSE}
-data <- bind_rows(data2019, data2020, data2021, data2022)
+Copy previous code
+
+</button>
+
+```{r -4-hint-1, eval = FALSE}
+bind_rows(data2019, data2020, data2021, data2022)
 ```
 
-###
+### 
 
-What we did above is a doable- when there's only 4 data sets. It also violates our rule for not copy-paste more than 3 times. 
+What we did above is a doable- when there's only 4 data sets. It also violates our rule for not copy-paste more than 3 times.
 
 In the rest of this section, you will learn a better and quicker method of doing so.
 
 ### Exercise 5
 
 Hit `Run Code`
-```{r reading-multiple-fil-5, exercise = TRUE}
+
+```{r -5, exercise = TRUE}
 paths <- list.files("data/gapminder", pattern = "[.]xlsx$", full.names = TRUE)
 
 paths
 ```
 
-###
+### 
 
-Notice that we used function `list.files()` here, which basicallt lists the files in a directory. 
+Notice that we used function `list.files()` here, which basicallt lists the files in a directory.
 
 Just like `across()` in the previous section, `list.files()` also have three arguments.
 
-##
-
-This is the code from lasgt exercise: `paths <- list.files("data/gapminder", pattern = "[.]xlsx$", full.names = TRUE)`
+## 
+This is the code from last exercise: `paths <- list.files("data/gapminder", pattern = "[.]xlsx$", full.names = TRUE)`
 
 The first argument, `path`, is the directory to look in. In this case, it is `"data/gapminder"`.
 
@@ -1062,42 +1187,86 @@ The first argument, `path`, is the directory to look in. In this case, it is `"d
 
 `full.names` determines whether or not the directory name should be included in the output. You almost always want this to be `TRUE`.
 
-### Exercise 6
+### 
 
-Based on the 12 paths created from the last exercise, call `read_excel()` 12 times to get 12 data frames. Hit `Run Code`.
+Based on the 12 paths created from the last exercise, call `read_excel()` 12 times to get 12 data frames. 
 
-```{r reading-multiple-fil-6, exercise = TRUE}
-
+Your code should look something like this:
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r reading-multiple-fil-6-hint, eval = FALSE}
 gapminder_1952 <- readxl::read_excel("data/gapminder/1952.xlsx")
 gapminder_1957 <- readxl::read_excel("data/gapminder/1957.xlsx")
 gapminder_1962 <- readxl::read_excel("data/gapminder/1962.xlsx")
  ...,
 gapminder_2007 <- readxl::read_excel("data/gapminder/2007.xlsx")
+
 ```
 
-###
+### 
+
+Separate excel sheets are always easier to work with once we put them into a single object. You can use `list()` to combine them together, then assign the list bto a new variable, `files`.
+
+your code should look like this:
+
+```
+files <- list(
+  readxl::read_excel("data/gapminder/1952.xlsx"),
+  readxl::read_excel("data/gapminder/1957.xlsx"),
+  readxl::read_excel("data/gapminder/1962.xlsx"),
+  ...,
+  readxl::read_excel("data/gapminder/2007.xlsx")
+)
+
+```
+
+### Exercise 6
+
+type `files[]` and hit `Run Code`, see what happens. Note that we are using `[]` here instead of `()`.
+
+```{r -6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r -6-hint-1, eval = FALSE}
+files[]
+```
+
+### 
+
+Remember that after you have data frames in a list, you can use `files[[i]]` to extract the ith element in the list.
+
+### Exercise 7
+
+Type `list()` in the code chucnk, then hit `Run Code`.
+
+```{r -7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r -7-hint-1, eval = FALSE}
+list()
+```
+
+### 
+
+`list()` is a function used to construct, coerce and check for both kinds of R lists.
 
 
 
-##
-
+## 
 <!-- End of Section knowledge drop -->
 
-Just a recap, there are three basic steps: 
+Just a recap, there are three basic steps:
 
-use `list.files()` to list all the files in a directory, then use `purrr::map()` to read each of them into a list, then use `purrr::list_rbind()` to combine them into a single data frame. We’ll then discuss how you can handle situations of increasing heterogeneity, where you can’t do exactly the same thing to every file.
+use `list.files()` to list all the files in a directory, then use `purrr::map()` to read each of them into a list, then use `purrr::list_rbind()` to combine them into a single data frame. We'll then discuss how you can handle situations of increasing heterogeneity, where you can't do exactly the same thing to every file.
 
 ## Summary
 ### 
 
-This tutorial covered [Chapter 27: Iteration](https://r4ds.hadley.nz/iteration.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
-
-
+This tutorial covered [Chapter 27: Iteration](https://r4ds.hadley.nz/iteration.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
