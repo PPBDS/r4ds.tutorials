@@ -48,6 +48,13 @@ tb <- tibble(
 
 tb2 <- tibble(x1 = 1)
 
+list1 <- list(
+  a = 1:3, 
+  b = "a string", 
+  c = pi, 
+  d = list(-1, -5)
+)
+
 
 ```
 
@@ -60,14 +67,14 @@ tb2 <- tibble(x1 = 1)
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 28: A field guide to base R](https://r4ds.hadley.nz/base-r) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
+This tutorial covers [Chapter 28: A field guide to base R](https://r4ds.hadley.nz/base-r) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
 
-In this chapter, we’ll focus on four big topics: subsetting with [, subsetting with [[ and $, the apply family of functions, and for loops. To finish off, we’ll briefly discuss two essential plotting functions. These topics are particularly useful as you do more programming and will help you read code you’ll encounter in the wild.
+In this chapter, we'll focus on four big topics: subsetting with [, subsetting with [[ and \$, the apply family of functions, and for loops. To finish off, we'll briefly discuss two essential plotting functions. These topics are particularly useful as you do more programming and will help you read code you'll encounter in the wild.
 
 ## Subsetting with the single bracket operator
 ### 
 
-The `[` bracket can be used to extract sub-components from data frames and vectors, with the syntax `x[i]`. `x` represents the vector and `i` represents the position of the value inside of `x` (1st element is position 1, second element is position 2, and so forth). 
+The `[` bracket can be used to extract sub-components from data frames and vectors, with the syntax `x[i]`. `x` represents the vector and `i` represents the position of the value inside of `x` (1st element is position 1, second element is position 2, and so forth).
 
 ### Exercise 1
 
@@ -81,11 +88,11 @@ Load the tidyverse library
 
 There are five main types of things that you can subset a vector with, which will be covered in the following exercises:
 
-1) A vector of positive integers
-2) A vector of negative integers
-3) A logical vector
-4) A character vector
-5) Nothing
+1)  A vector of positive integers
+2)  A vector of negative integers
+3)  A logical vector
+4)  A character vector
+5)  Nothing
 
 ### Exercise 2
 
@@ -97,7 +104,7 @@ x <- c("one", "two", "three", "four", "five")
 
 ### 
 
-This code sets the variable `x` to the vector `c("one", "two", "three", "four", "five")`. 
+This code sets the variable `x` to the vector `c("one", "two", "three", "four", "five")`.
 
 ### Exercise 3
 
@@ -113,7 +120,7 @@ x[...]
 
 ### 
 
-As you can see, the code extracts the first value of the `x` vector, printing out the value "one". 
+As you can see, the code extracts the first value of the `x` vector, printing out the value "one".
 
 ### Exercise 4
 
@@ -167,7 +174,6 @@ Subsetting with a logical vector keeps all values corresponding to a TRUE value.
 
 `is.na()` is a function that identifies missing values in vectors, data frames, etc. In the code chunk below, type `x2[]`, placing `is.na(x2)` inside of the brackets.
 
-
 ```{r subsetting-with-the--7, exercise = TRUE}
 
 ```
@@ -183,7 +189,6 @@ This code prints out the missing values (the `NA`'s) stored inside `x2`. Unlike 
 ### Exercise 8
 
 Let's extract all the even values of `x2`. In the code chunk below, type `x2[]` and extract the even numbers using the `%%` operator.
-
 
 ```{r subsetting-with-the--8, exercise = TRUE}
 
@@ -213,11 +218,9 @@ x3["..."]
 
 Along with sub-setting logical, character, and integer vectors, you can also subset nothing. For example, by running `x[]` on the code above, it'll just return the vector `x`.
 
-
 ### Exercise 10
 
 Sub-setting can not only be used on vectors; it works on data sets too. In the code chunk below, create a tibble called `df`. The first argument, `x`, should contain a range of numbers from 1 to 3. The second argument, `y`, should be set to the vector `c("a", "e", "f")`. The third argument, `z`, should be set to `runif(3)`. After completing this, run `df` on a new line.
-
 
 ```{r subsetting-with-the--10, exercise = TRUE}
 
@@ -234,16 +237,19 @@ Sub-setting can not only be used on vectors; it works on data sets too. In the c
 
 There are many ways to use `[` with data sets, but the most common way is to subset by selecting rows and columns, with the syntax `df[row, col]`.
 
-
 ### Exercise 11
 
-Using `df`,  let's extract the letter "a". On a new line, type `df` followed by a pair of brackets. In the brackets, type `1,2`. 
+Using `df`, let's extract the letter "a". On a new line, type `df` followed by a pair of brackets. In the brackets, type `1,2`.
 
 ```{r subsetting-with-the--11, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+<button onclick="transfer_code(this)">
+
+Copy previous code
+
+</button>
 
 ```{r subsetting-with-the--11-hint-1, eval = FALSE}
 df[... , ...]
@@ -251,11 +257,11 @@ df[... , ...]
 
 ### 
 
-This extracts the element in the 1st row, 2nd column, which is the letter "a". 
+This extracts the element in the 1st row, 2nd column, which is the letter "a".
 
 ### Exercise 12
 
-You can also leave the row/column input blank when extracting data from a data set. For example, `df[rows, ]` returns the specified row(s) and all columns in the data set, while `df[, cols]` returns all rows and the specified column(s) in the data set. 
+You can also leave the row/column input blank when extracting data from a data set. For example, `df[rows, ]` returns the specified row(s) and all columns in the data set, while `df[, cols]` returns all rows and the specified column(s) in the data set.
 
 In the code chunk below, extract all the rows in `df`, as well as the columns `x` and `z`.
 
@@ -273,10 +279,9 @@ As you can see, by leaving the first part of the subset blank (the part before t
 
 ### Exercise 13
 
-There’s an important difference between tibbles and data frames when it comes to `[` . In the tutorials, we’ve mainly used tibbles, which are data frames, but tibbles tweak some behaviors to make your life a little easier. In most places, you can use “tibble” and “data frame” interchangeably, so when we want to draw particular attention to R’s built-in data frame, we’ll write data.frame. 
+There's an important difference between tibbles and data frames when it comes to `[` . In the tutorials, we've mainly used tibbles, which are data frames, but tibbles tweak some behaviors to make your life a little easier. In most places, you can use "tibble" and "data frame" interchangeably, so when we want to draw particular attention to R's built-in data frame, we'll write data.frame.
 
 Press "Run Code".
-
 
 ```{r subsetting-with-the--13, exercise = TRUE}
 df1 <- data.frame(x = 1:3)
@@ -288,7 +293,7 @@ df2
 
 ### 
 
-If `df` is a data.frame, then `df[, cols]` will return a vector if `col` selects a single column and a data frame if it selects more than one column. If `df` is a tibble, then `[` will always return a `tibble.
+If `df` is a data.frame, then `df[, cols]` will return a vector if `col` selects a single column and a data frame if it selects more than one column. If `df` is a tibble, then `[` will always return a \`tibble.
 
 ### Exercise 14
 
@@ -310,9 +315,7 @@ df0
 
 The `dplyr` package contains many equivalents of subsetting, such as the `filter()`, `arrange()`, and`select()` functions.
 
-
 Let's observe the `filter()` equivalent. Pipe `df0` (with the `|>`) to the filter function. Pass `x > 1` into `filter()`.
-
 
 ```{r subsetting-with-the--15, exercise = TRUE}
 
@@ -335,7 +338,6 @@ The `$` symbol is used to pull out columns from data frames.
 
 `arrange()` is equivalent to subsetting the rows with an integer vector, usually created with order(). In the code chunk below, pipe `df0` to `arrange()`, passing in `x, y`. Then, on a new line, paste its equivalent: `df0[order(df0$x, df0$y),]`
 
-
 ```{r subsetting-with-the--16, exercise = TRUE}
 
 ```
@@ -355,7 +357,6 @@ You can use `order(decreasing = TRUE)` to sort all columns in descending order o
 
 `select()` is equivalent to subsetting columns with character vector. In the code chunk below, pipe `df0` to `select()`, passing in `x, z` to `select()`. Then, on a new line, paste its equivalent: `df0[, c("x", "z")]`
 
-
 ```{r subsetting-with-the--17, exercise = TRUE}
 
 ```
@@ -369,14 +370,12 @@ df0[, c("x", "z")]
 
 ### 
 
-`filter()`, `arrange()`, and `select()` are very useful functions that help organize data. You will use these functions quite often when analyzing data. 
-
+`filter()`, `arrange()`, and `select()` are very useful functions that help organize data. You will use these functions quite often when analyzing data.
 
 ## Subsetting with double brackes and a dollar sign
 ### 
 
-The single bracket operator, `[`, which selects many elements, is paired with the double bracket operator, `[[`, and `$`, which extract a single element. In this section, we’ll show you how to use `[[` and `$` to pull columns out of data frames, discuss a couple more differences between data.frames and tibbles, and emphasize some important differences between `[` and `[[` when used with lists.
-
+The single bracket operator, `[`, which selects many elements, is paired with the double bracket operator, `[[`, and `$`, which extract a single element. In this section, we'll show you how to use `[[` and `$` to pull columns out of data frames, discuss a couple more differences between data.frames and tibbles, and emphasize some important differences between `[` and `[[` when used with lists.
 
 ### Exercise 1
 
@@ -398,8 +397,6 @@ The double bracket operator, `[[`, and dollar sign, `$`, can be used to extract 
 
 In the code chunk below, lets extract the elements of column `x`. In the code chunk below, type in `tb` followed by `[[]]`. Inside the inner bracket, type in `1`.
 
-
-
 ```{r subsetting-with-doub-2, exercise = TRUE}
 
 ```
@@ -410,27 +407,29 @@ tb[[...]]
 
 ### 
 
-In this scenario, the `[[]]` are being used to return the values by position. By placing the number `1` inside the brackets, the code returns the values in the first position, which are the range of integers stored in column `x`. 
-
+In this scenario, the `[[]]` are being used to return the values by position. By placing the number `1` inside the brackets, the code returns the values in the first position, which are the range of integers stored in column `x`.
 
 ### Exercise 3
 
 Now, lets extract the same elements by name. Copy the code above, replacing the code inside the inner bracket with `"x"`
 
-
 ```{r subsetting-with-doub-3, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+<button onclick="transfer_code(this)">
+
+Copy previous code
+
+</button>
 
 ### 
 
-By entering either the position or the name of the column, you can extract the values it contains. 
+By entering either the position or the name of the column, you can extract the values it contains.
 
 ### Exercise 4
 
-As mentioned previously, the `$` is specialized for accessing columns by name. In the code chunk below, lets extract the elements inside `y`. Type in the name of the tibble, `tb`, followed by `$` and the name of the column, `y`. 
+As mentioned previously, the `$` is specialized for accessing columns by name. In the code chunk below, lets extract the elements inside `y`. Type in the name of the tibble, `tb`, followed by `$` and the name of the column, `y`.
 
 ```{r subsetting-with-doub-4, exercise = TRUE}
 
@@ -470,11 +469,11 @@ diamonds
 
 ### 
 
-Using `$` directly is convenient when performing quick summaries. Lets use this to calculate some values of the **diamonds** package. 
+Using `$` directly is convenient when performing quick summaries. Lets use this to calculate some values of the **diamonds** package.
 
 ### Exercise 7
 
-Lets find out the maximum carat in the **diamonds** package, using the `max()` function. Extract the `carat` column using `$` and place the code inside the `max()` function. 
+Lets find out the maximum carat in the **diamonds** package, using the `max()` function. Extract the `carat` column using `$` and place the code inside the `max()` function.
 
 ```{r subsetting-with-doub-7, exercise = TRUE}
 
@@ -486,7 +485,7 @@ max(...$...)
 
 ### 
 
-In this scenario, the code above would be the Base R equivalent of the `summarize()` function. 
+In this scenario, the code above would be the Base R equivalent of the `summarize()` function.
 
 ### Exercise 8
 
@@ -504,11 +503,11 @@ diamonds |> ...(carat) |> ...()
 
 ### 
 
-Just like the previous exercise, the code returns the maximum carat, which is `5.01`. 
+Just like the previous exercise, the code returns the maximum carat, which is `5.01`.
 
 ### Exercise 9
 
-An important difference between tibbles and data frames is that tibbles are much more strict when extracting columns with `$`. 
+An important difference between tibbles and data frames is that tibbles are much more strict when extracting columns with `$`.
 
 Press "Run code".
 
@@ -519,11 +518,11 @@ df2$x
 
 ### 
 
-Although there is no column named `x` in `df2`, the code is still able to output the values in column `x1`. This is because data frames are able to match the prefix of any variable's name (so-called **partial matching**) without returning an error if the column doesn't exist. 
+Although there is no column named `x` in `df2`, the code is still able to output the values in column `x1`. This is because data frames are able to match the prefix of any variable's name (so-called **partial matching**) without returning an error if the column doesn't exist.
 
 ### Exercise 10
 
-However, tibbles are much stricter: they only ever match variable names exactly and they will generate a warning if the column you are trying to access doesn’t exist.
+However, tibbles are much stricter: they only ever match variable names exactly and they will generate a warning if the column you are trying to access doesn't exist.
 
 Press "Run code".
 
@@ -536,21 +535,157 @@ tb2$x
 
 Since there is no column named exactly `x1` in the tibble `tb2`, the code will print warning message and `NULL`. For this reason we sometimes joke that tibbles are lazy and surly: they do less and complain more.
 
+### Exercise 11
+
+The double bracket operator `[[` and dollar sign `$` are really important when working with lists, and have differences compared to the single bracket operator `[`.
 
 
+Using the `list()` function, create a list. Set the first list element to `a`, which is equal to a range of integers from 1 to 3. Set the second list element to `b`, which is equal to the string `"a string"`. Set the third list element to `c`, which is equal to `pi`, and set the fourth list element to `d`, which is equal to another list containing `-1` and `-5`. Then, set the entire list equal to the variable `list1`.
 
 
+```{r subsetting-with-doub-11, exercise = TRUE}
+
+```
+
+```{r subsetting-with-doub-11-hint-1, eval = FALSE}
+list1 <- ...(
+  ... = 1:3, 
+  b = "...", 
+  c = ..., 
+  ... = list(-1, -5)
+)
+```
+
+### 
+
+Remember that the single bracket operator `[`  is used to extract sub-components, while the double bracket operator `[[` is used to extract single elements.
+
+
+### Exercise 12
+
+The `[`can be used to extract a sub-list. In the code chunk below, type in `str()`. Place `list1[1:2]` inside the parenthesis
+`
+
+```{r subsetting-with-doub-12, exercise = TRUE}
+
+```
+
+```{r subsetting-with-doub-12-hint-1, eval = FALSE}
+str(list1[... : ...])
+```
+
+### 
+
+As you can see, the code returns two lists: one list for `a` and one list for `b`. It doesn’t matter how many elements you extract, the result will always be a list.
+
+
+### Exercise 13
+
+`[[` and `$` extract a single component from a list. Using `list1` and the `[[` operator, extract all the components of `d`. Then, on a new line, extract the same component, but using the `$` operator. Make sure to pass in the code to the `str()` function before running the code (Note: Use the name of the list element when extracting with the `$` operator).
+
+```{r subsetting-with-doub-13, exercise = TRUE}
+
+```
+
+```{r subsetting-with-doub-13-hint-1, eval = FALSE}
+str(list1[[...]])
+str(list1$...)
+```
+
+### 
+
+The difference between `[` and `[[` is particularly important for lists because `[[` drills down into the list while `[` returns a new, smaller list. Click [here](https://r4ds.hadley.nz/base-r#fig-pepper) to see a visualization of the differences.
 
 
 ## Apply family
+###
+
+In [Chapter 27](https://r4ds.hadley.nz/iteration.html), you learned tidyverse techniques for iteration like `dplyr::across()` and the map family of functions. In this section, you’ll learn about their base equivalents, the **apply family**. In this context apply and map are synonyms because another way of saying “map a function over each element of a vector” is “apply a function over each element of a vector”. Here we’ll give you a quick overview of this family so you can recognize them in the wild.
+
+### Exercise 1
+
+
+```{r apply-family-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r apply-family-1-hint, eval = FALSE}
+
+```
+
+###
+
+
+
+
+
+
+
 ## For loops
 ## Plots
+### 
+
+Many R users who don’t otherwise use the tidyverse prefer ggplot2 for plotting due to helpful features like sensible defaults, automatic legends, and a modern look. However, base R plotting functions can still be useful because they’re so concise — it takes very little typing to do a basic exploratory plot.
+
+There are two main types of base plot you’ll see in the wild: scatterplots and histograms, produced with `plot()` and `hist()` respectively.
+
+### Exercise 1
+
+Run `?hist()` in the console and look at the **Descripton** section. CP/CR.
+
+```{r plots-1}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### Exercise 2
+
+Lets use `hist()` and the **diamonds** package to create a histogram. In the code chunk below, type in `hist()`, passing in the `carat` column from the **diamonds** package in the parenthesis (Hint: use the `$` operator).
+
+
+```{r plots-2, exercise = TRUE}
+
+```
+
+```{r plots-2-hint-1, eval = FALSE}
+
+hist(... $ ...)
+
+```
+
+### 
+
+As you can see, this code creates a basic histogram of the data in the `carat` column. The `hist()` function would be a quick & easy way to create a histogram of your data.
+
+### Exercise 3
+
+Now lets use the `plot()` function. The `plot()` function creates a scatterplot of the specified data. 
+
+In the code chunk below, type in `plot()`, placing the `carat` and `price` columns from the **diamonds** package into the parenthesis. 
+
+```{r plots-3, exercise = TRUE}
+
+```
+
+```{r plots-3-hint-1, eval = FALSE}
+plot(...$... , ...$...)
+```
+
+### 
+
+Note that base plotting functions work with vectors, so you need to pull columns out of the data frame using $ or some other technique.
+
+
 ## Summary
 ### 
 
-This tutorial covered [Chapter 28: A field guide to base R](https://r4ds.hadley.nz/base-r) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
-`
-
+This tutorial covered [Chapter 28: A field guide to base R](https://r4ds.hadley.nz/base-r) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. \`
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
