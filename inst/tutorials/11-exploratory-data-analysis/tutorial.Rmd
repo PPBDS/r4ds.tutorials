@@ -23,6 +23,28 @@ options(tutorial.exercise.timelimit = 60,
 smaller <- diamonds |> 
   filter(carat < 3)
 
+p1 <- nycflights13::flights |> 
+  mutate(
+    cancelled = is.na(dep_time),
+    sched_hour = sched_dep_time %/% 100,
+    sched_min = sched_dep_time %% 100,
+    sched_dep_time = sched_hour + (sched_min / 60)
+  ) |> 
+  ggplot(aes(x = sched_dep_time)) + 
+  geom_freqpoly(aes(color = cancelled), binwidth = 1/4) + 
+  labs(title = "Frequency of Cancelled and Non-cancelled Flights for Scheduled Flights",
+       subtitle = "There are a lot of non-cancelled flights at 3 PM",
+       x = "Scheduled Departure Time",
+       y = "Frequency",
+       color = "Cancelled or Non-Cancelled")
+
+p2 <- mpg |> 
+  ggplot(aes(x = hwy, y = fct_reorder(class, hwy, median))) +
+  geom_boxplot() + 
+  labs(
+    title = ""
+  )
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -478,7 +500,7 @@ One way is to drop the entire row with the strange values.
 By the end of this section we will be creating the plot below:
 
 ```{r}
-nycflights13::flights |> 
+p1 <- nycflights13::flights |> 
   mutate(
     cancelled = is.na(dep_time),
     sched_hour = sched_dep_time %/% 100,
@@ -486,7 +508,14 @@ nycflights13::flights |>
     sched_dep_time = sched_hour + (sched_min / 60)
   ) |> 
   ggplot(aes(x = sched_dep_time)) + 
-  geom_freqpoly(aes(color = cancelled), binwidth = 1/4)
+  geom_freqpoly(aes(color = cancelled), binwidth = 1/4) + 
+  labs(title = "Frequency of Cancelled and Non-cancelled Flights for Scheduled Flights",
+       subtitle = "There are a lot of non-cancelled flights at 3 PM",
+       x = "Scheduled Departure Time",
+       y = "Frequency",
+       color = "Cancelled or Non-Cancelled")
+
+p1
 ```
 
 ### Exercise 1
@@ -837,13 +866,431 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs(
 
 However this plot isn’t great because there are many more non-cancelled flights than cancelled flights. In the next section we’ll explore some techniques for improving this comparison.
 
+###
+
+Reminder: This is what our graph should look like
+
+```{r}
+p1
+
+```
+
+## Covariation
+###
+
+In this section we will be learning how to describe the behavior between variables.
+
+###
+
+By the end of this section we will have made this graph:
+```{r}
+p2 <- mpg |> 
+  ggplot(aes(x = hwy, y = fct_reorder(class, hwy, median))) +
+  geom_boxplot()
+
+p2
+```
+
+
+### Exercise 1
+
+With a new pipeline, pipe `diamonds` to `ggplot()`.
+
+```{r covariation-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-1-hint, eval = FALSE}
+diamonds |> 
+  ...
+```
+
+###
+
+Covariation is the tendency for the values of two or more variables to vary together in a related way. The best way to spot covariation is to visualize the relationship between two or more variables.
+
+### Exercise 2
+
+Within `ggplot()`, using `aes()`, set the `x` argument to the variable `price`. 
+
+```{r covariation-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-2-hint, eval = FALSE}
+diamonds |> 
+  ggplot(aes(x = ...))
+```
+
+###
+
+Every variable has its own pattern of variation, which can reveal interesting information about how that it varies between measurements on the same observation as well as across observations. The best way to understand that pattern is to visualize the distribution of the variable’s values.
+
+### Exercise 3
+
+Add `geom_freqpoly()` to the pipeline.
+
+```{r covariation-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-3-hint, eval = FALSE}
+... + 
+  geom_freqpoly()
+```
+
+###
+
+The function, `geom_freqpoly()`, visualizes the distribution of a single continuous variable by dividing the x-axis into bins and counting the number of observations in each bin. Frequency polygons display he counts with lines. Frequency polygons are more suitable when you want to compare the distribution across the levels of a categorical variable.
+
+### Exercise 4
+
+Within `geom_freqpoly()`, using `aes()`, set the `color` argument to the `cut` variable. 
+
+```{r covariation-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-4-hint, eval = FALSE}
+... + 
+  geom_freqpoly(aes(color = ...))
+```
+
+###
+
+Note that ggplot2 uses an ordered color scale for `cut` because it’s defined as an ordered factor variable in the data.
+
+### Exercise 5
+
+Within `geom_freqpoly()`, add the `binwidth` argument and set it equal to `500`. 
+
+```{r covariation-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-5-hint, eval = FALSE}
+... + 
+  geom_freqpoly(aes(color = cut), binwidth = ...)
+```
+
+### Exercise 6
+
+Within `geom_freqpoly()`, add the `linewidth` argument and set it equal to `0.75`. 
+
+```{r covariation-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-6-hint, eval = FALSE}
+... + 
+  geom_freqpoly(aes(color = cut), binwidth = 500, linewidth = ...)
+```
+
+###
+
+The default appearance of `geom_freqpoly()` is not that useful here because the height, determined by the overall count, differs so much across `cut`s, making it hard to see the differences in the shapes of their distributions. To make the comparison easier we need to swap what is displayed on the y-axis. Instead of displaying count, we’ll display the **density**, which is the count standardized so that the area under each frequency polygon is one.
+
+### Exercise 7
+
+Within `ggplot()`, within `aes()`, set the `y` argument to `after_stat(density)`. 
+
+```{r covariation-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-7-hint, eval = FALSE}
+diamonds |> 
+  ggplot(aes(x = price, y = ...) + 
+  geom_freqpoly(aes(color = cut), binwidth = 500, linewidth = 0.75)
+```
+
+###
+
+Note that we’re mapping the `density` to `y`, but since `density` is not a variable in the `diamonds` dataset, we need to first calculate it. We use the `after_stat()` function to do so.
+
+### Exercise 8
+
+Add a `title`, `subtitle`, `x` axis title, a `y` axis title, and a legend title (`color`) by adding `labs()` to the pipeline. 
+
+```{r covariation-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-8-hint, eval = FALSE}
+... + 
+  labs(
+    title = ...,
+    subtitle = ...,
+    x = ...,
+    y = ...
+  )
+```
+
+###
+
+There’s something rather surprising about this plot - it appears that fair diamonds (the lowest quality) have the highest average price! But maybe that’s because frequency polygons are a little hard to interpret - there’s a lot going on in this plot. A visually simpler plot for exploring this relationship is using side-by-side boxplots.
+
+### Exercise 9
+
+With a new pipeline, pipe `diamonds` to `ggplot()`. 
+
+```{r covariation-9, exercise = TRUE}
+
+```
 
 
 
+```{r covariation-9-hint, eval = FALSE}
+diamonds |> 
+  ggplot()
+```
 
+###
 
+Note that this plot is blank.
 
+### Exercise 10
 
+Within `ggplot()`, using `aes()`, set the `x` argument to the `cut` variable. 
+
+```{r covariation-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-10-hint, eval = FALSE}
+diamonds |> 
+  ggplot(aes(x = ...))
+```
+
+###
+
+Note that this plot should only have an x-axis labelled.
+
+### Exercise 11
+
+Within `ggplot()`, using `aes()`, set the `y` argument to the `price` variable. 
+
+```{r covariation-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-11-hint, eval = FALSE}
+diamonds |> 
+  ggplot(aes(x = cut, y = ...))
+```
+
+### Exercise 12
+
+Add `geom_boxplot()` to the pipeline.
+
+```{r covariation-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-12-hint, eval = FALSE}
+... +
+  geom_boxplot()
+```
+
+###
+
+We see much less information about the distribution, but the boxplots are much more compact so we can more easily compare them (and fit more on one plot). It supports the counter-intuitive finding that better quality diamonds are typically cheaper! In the exercises, you’ll be challenged to figure out why.
+
+### Exercise 13
+
+Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs()` to the pipeline. 
+
+```{r covariation-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-13-hint, eval = FALSE}
+... + 
+  labs(
+    title = ...,
+    subtitle = ...,
+    x = ...,
+    y = ...
+  )
+```
+
+###
+
+`cut` is an ordered factor: fair is worse than good, which is worse than very good and so on. Many categorical variables don’t have such an intrinsic order, so you might want to reorder them to make a more informative display. One way to do that is with `fct_reorder()`. Let's use a new dataset.
+
+### Exercise 14
+
+Type in `mpg` and hit "Run Code". 
+
+```{r covariation-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-14-hint, eval = FALSE}
+mpg
+```
+
+###
+
+This dataset contains a subset of the fuel economy data that the EPA makes available on https://fueleconomy.gov/. It contains only models which had a new release every year between 1999 and 2008 - this was used as a proxy for the popularity of the car.
+
+### Exercise 15
+
+With a new pipeline, pipe `mpg` to `ggplot()`. 
+
+```{r covariation-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-15-hint, eval = FALSE}
+mpg |> 
+  ggplot()
+```
+
+###
+
+Note that this plot is blank. 
+
+### Exercise 16
+
+Within `ggplot()`, using `aes()`, set the `x` argument to the `class` variable.
+
+```{r covariation-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-16-hint, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ...))
+```
+
+### Exercise 17
+
+Within `ggplot()`, using `aes()`, set the `y` argument to `hwy`.
+
+```{r covariation-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-17-hint, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = class, y = ...))
+```
+
+### Exercise 18
+
+Add `geom_boxplot()` to the pipeline.
+
+```{r covariation-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-18-hint, eval = FALSE}
+... + 
+  geom_boxplot()
+```
+
+###
+
+The trend is pretty hard to see, so to make it easier on the eyes, we can reorder `class` based on the `median` value of `hwy`. 
+
+### Exercise 19
+
+Within `ggplot()`, within `aes()`, set the `x` argument to `fct_reorder(class, hwy, median)`.
+
+```{r covariation-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-19-hint, eval = FALSE}
+
+```
+
+###
+
+The function, `fct_reorder()`, is useful for 1d displays where the factor is mapped to position and the function `fct_reorder2()` is for 2d displays where the factor is mapped to a non-position aesthetic. Since we have long variable names, `geom_boxplot()` will work better if you flip it `90°`. You can do that by exchanging the `x` and `y` aesthetic mappings.
+
+### Exercise 20
+
+<!-- SG: Is this the correct wording? -->
+
+Within `ggplot()`, within `aes()`, swap the aesthetic mappings of `x` and `y`.
+
+```{r covariation-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-20-hint, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ..., y = ...)) + 
+  ...
+```
+
+### Exercise 21
+
+Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs()` to the pipeline. 
+
+```{r covariation-21, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-21-hint, eval = FALSE}
+... + 
+  labs(
+    title = ...,
+    subtitle = ...,
+    x = ...,
+    y = ...
+  )
+```
+
+###
+
+Reminder this is what our plot should look like: 
+
+```{r}
+p2
+```
 
 ## Summary
 ### 
