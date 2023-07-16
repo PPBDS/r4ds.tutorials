@@ -83,6 +83,19 @@ df_paired <- tibble(
   d_val = rnorm(10),
   d_wts = runif(10)
 )
+
+gapminder_1952 <- readxl::read_excel("data/gapminder/1952.xlsx")
+gapminder_1957 <- readxl::read_excel("data/gapminder/1957.xlsx")
+gapminder_1962 <- readxl::read_excel("data/gapminder/1962.xlsx")
+gapminder_1952 <- readxl::read_excel("data/gapminder/1967.xlsx")
+gapminder_1957 <- readxl::read_excel("data/gapminder/1972.xlsx")
+gapminder_1962 <- readxl::read_excel("data/gapminder/1977.xlsx")
+gapminder_1952 <- readxl::read_excel("data/gapminder/1982.xlsx")
+gapminder_1957 <- readxl::read_excel("data/gapminder/1987.xlsx")
+gapminder_1962 <- readxl::read_excel("data/gapminder/1992.xlsx")
+gapminder_1952 <- readxl::read_excel("data/gapminder/1997.xlsx")
+gapminder_1957 <- readxl::read_excel("data/gapminder/2002.xlsx")
+gapminder_2007 <- readxl::read_excel("data/gapminder/2007.xlsx")
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -1104,11 +1117,7 @@ Copy and past the previous code 4 times, change `"data/y2019.xlsx"` to `"data/y2
 
 ```
 
-<button onclick="transfer_code(this)">
-
-Copy previous code
-
-</button>
+<button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r reading-multiple-fil-2-hint-1, eval = FALSE}
 data2019 <- readxl::read_excel("...")
@@ -1117,24 +1126,21 @@ data2021 <- readxl::read_excel("...")
 data2022 <- readxl::read_excel("...")
 ```
 
-## 
+### 
+
 Now, you can connect the excels together using `dplyr::bind_rows()`.
 
 ### Exercise 3
 
 Now, you can connect the excels together using `dplyr::bind_rows()`. Type `bind_rows()` in the code chunck below, then hit `Run Code`.
 
-```{r -3, exercise = TRUE}
+```{r reading-multiple-fil-3, exercise = TRUE}
 
 ```
 
-<button onclick="transfer_code(this)">
+<button onclick="transfer_code(this)">Copy previous code</button>
 
-Copy previous code
-
-</button>
-
-```{r -3-hint-1, eval = FALSE}
+```{r reading-multiple-fil-3-hint-1, eval = FALSE}
 bind_rows()
 ```
 
@@ -1142,17 +1148,13 @@ bind_rows()
 
 Add `data2019`, `data2020`, `data2021` and `data2022` to the call to `bind_rows()`
 
-```{r -4, exercise = TRUE}
+```{r reading-multiple-fil-4, exercise = TRUE}
 
 ```
 
-<button onclick="transfer_code(this)">
+<button onclick="transfer_code(this)">Copy previous code</button>
 
-Copy previous code
-
-</button>
-
-```{r -4-hint-1, eval = FALSE}
+```{r reading-multiple-fil-4-hint-1, eval = FALSE}
 bind_rows(data2019, data2020, data2021, data2022)
 ```
 
@@ -1166,7 +1168,7 @@ In the rest of this section, you will learn a better and quicker method of doing
 
 Hit `Run Code`
 
-```{r -5, exercise = TRUE}
+```{r reading-multiple-fil-5, exercise = TRUE}
 paths <- list.files("data/gapminder", pattern = "[.]xlsx$", full.names = TRUE)
 
 paths
@@ -1178,7 +1180,8 @@ Notice that we used function `list.files()` here, which basicallt lists the file
 
 Just like `across()` in the previous section, `list.files()` also have three arguments.
 
-## 
+### 
+
 This is the code from last exercise: `paths <- list.files("data/gapminder", pattern = "[.]xlsx$", full.names = TRUE)`
 
 The first argument, `path`, is the directory to look in. In this case, it is `"data/gapminder"`.
@@ -1192,13 +1195,20 @@ The first argument, `path`, is the directory to look in. In this case, it is `"d
 Based on the 12 paths created from the last exercise, call `read_excel()` 12 times to get 12 data frames. 
 
 Your code should look something like this:
+
 ```
 gapminder_1952 <- readxl::read_excel("data/gapminder/1952.xlsx")
 gapminder_1957 <- readxl::read_excel("data/gapminder/1957.xlsx")
 gapminder_1962 <- readxl::read_excel("data/gapminder/1962.xlsx")
- ...,
+gapminder_1952 <- readxl::read_excel("data/gapminder/1967.xlsx")
+gapminder_1957 <- readxl::read_excel("data/gapminder/1972.xlsx")
+gapminder_1962 <- readxl::read_excel("data/gapminder/1977.xlsx")
+gapminder_1952 <- readxl::read_excel("data/gapminder/1982.xlsx")
+gapminder_1957 <- readxl::read_excel("data/gapminder/1987.xlsx")
+gapminder_1962 <- readxl::read_excel("data/gapminder/1992.xlsx")
+gapminder_1952 <- readxl::read_excel("data/gapminder/1997.xlsx")
+gapminder_1957 <- readxl::read_excel("data/gapminder/2002.xlsx")
 gapminder_2007 <- readxl::read_excel("data/gapminder/2007.xlsx")
-
 ```
 
 ### 
@@ -1222,13 +1232,13 @@ files <- list(
 
 type `files[]` and hit `Run Code`, see what happens. Note that we are using `[]` here instead of `()`.
 
-```{r -6, exercise = TRUE}
+```{r reading-multiple-fil-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r -6-hint-1, eval = FALSE}
+```{r reading-multiple-fil-6-hint-1, eval = FALSE}
 files[]
 ```
 
@@ -1236,27 +1246,284 @@ files[]
 
 Remember that after you have data frames in a list, you can use `files[[i]]` to extract the ith element in the list.
 
+
 ### Exercise 7
 
-Type `list()` in the code chucnk, then hit `Run Code`.
+Type `map()` in the code chucnk, then hit `Run Code`.
 
-```{r -7, exercise = TRUE}
+```{r reading-multiple-fil-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r -7-hint-1, eval = FALSE}
-list()
+```{r reading-multiple-fil-7-hint-1, eval = FALSE}
+map()
 ```
 
 ### 
 
-`list()` is a function used to construct, coerce and check for both kinds of R lists.
+The `map()` functions transform their input by applying a function to each element of a list or atomic vector and returning an object of the same length as the input.
+
+### Exercise 8
+
+Add argument `paths` and `readxl::read_excel` to the call to `map()`.
+
+```{r reading-multiple-fil-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-8-hint-1, eval = FALSE}
+map(paths, readxl::read_excel)
+```
+
+### 
+
+The `map()` vector takes the format fo `map(x, f)`, it is a way to make good use of the `path` vector. 
+
+### Exercise 9
+
+Type `length()`, then hit `Run Code`.
+
+```{r reading-multiple-fil-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-9-hint-1, eval = FALSE}
+length()
+```
+
+This will give you an error because we haven't added any argumenyts yet.
+
+### 
+
+Function `length()` can get or set the length of vectors (including lists) and factors, and of any other R object for which a method has been defined.
+
+### Exercise 10
+
+Add `file`, the collection of tibbles we just created, to thew function `lenght()`.
+
+```{r reading-multiple-fil-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-10-hint-1, eval = FALSE}
+length(files)
+```
+
+### 
+
+Now you know how many files are in `files`.
+
+### Exercise 11
+
+Run the code below to see what happens.
+
+```{r reading-multiple-fil-11, exercise = TRUE}
+files[[1]]
+```
+
+### 
+
+This is another data structure that doesn’t display particularly compactly with str() so you might want to load it into RStudio and inspect it with View().
+
+### Exercise 12
+
+Type `list_rbind()` in the space below. Hit `Run Code`.
+
+```{r reading-multiple-fil-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-12-hint-1, eval = FALSE}
+list_rbind() 
+```
+
+### 
+
+`list_rbind()` combines elements into a data frame by row-binding them together with `vctrs::vec_rbind()`.
+
+### Exercise 13
+
+Add `files` to the call to `list_rbind()`.
+
+```{r reading-multiple-fil-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-13-hint-1, eval = FALSE}
+list_rbind(files)
+```
+
+### 
+
+There are two more functions that combine list elements into a single data structure than just `list_rbind()`.
+
+1. `list_c()` combines elements into a vector by **concatenating them together** with vctrs::vec_c().
+
+2. `list_rbind()` combines elements into a data frame by **row-binding them together** with vctrs::vec_rbind().
+
+3. `list_cbind()` combines elements into a data frame by **column-binding them together** with vctrs::vec_cbind().
+
+### Exercise 14
+
+Pipe `paths` into fucntion `map()`.
+
+```{r reading-multiple-fil-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-14-hint-1, eval = FALSE}
+paths |> 
+  map
+```
+
+### Exercise 15
+
+Add `\(path) readxl::read_excel(path, n_max = 1)` into the function `map()`.
+
+```{r reading-multiple-fil-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-15-hint-1, eval = FALSE}
+paths |> 
+  map(\(path) readxl::read_excel(path, n_max = 1))
+```
+
+### 
+
+`n_max = 1` allows us to peak at the first few rows of the data.
+
+### Exercise 16
+
+Pipe the code above into function `list_rbind()`.
+
+```{r reading-multiple-fil-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-16-hint-1, eval = FALSE}
+paths |> 
+  map(\(path) readxl::read_excel(path, n_max = 1)) |> 
+  list_rbind()
+```
+
+### 
+
+This combination of `map()` and `list_rbind()` allows all sporeasheet to be viewed at once and combined into one. Like what we did above with `n_max = 1`, you can also customize how many rows you want to see.
+
+### 
+
+Another important observation is that there's no "year" column indicating which row of data belong to which spreadsheet. 
+
+### Exercise 17
+
+Pipe `paths` into `set_names(basename)`
+
+```{r reading-multiple-fil-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-17-hint-1, eval = FALSE}
+paths |> set_names(basename) 
+```
+
+### 
+
+Using `basename()` in the `set_names()` function, we can extract just the file name from the full path.
+
+### Exercise 18
+
+Pipe the previous code into `map(readxl::read_excel)`
+
+```{r reading-multiple-fil-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-18-hint-1, eval = FALSE}
+paths |> 
+  set_names(basename) |> 
+  map(readxl::read_excel)
+```
+
+### 
+
+The names created in the last exercise automatically carried along by all the map functions, so the list of data frames will have those same names.
+
+### Exercise 19
+
+Assign a new variable `file` to the previous code.
+
+```{r reading-multiple-fil-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-19-hint-1, eval = FALSE}
+file <- paths |> 
+  set_names(basename) |> 
+  map(readxl::read_excel)
+```
+
+### 
+
+What we've created above is actually shorthand for:
+
+```
+files <- list(
+  "1952.xlsx" = readxl::read_excel("data/gapminder/1952.xlsx"),
+  "1957.xlsx" = readxl::read_excel("data/gapminder/1957.xlsx"),
+  "1962.xlsx" = readxl::read_excel("data/gapminder/1962.xlsx"),
+  ...,
+  "2007.xlsx" = readxl::read_excel("data/gapminder/2007.xlsx"))
+```
+
+Imagine how much time we would save!
+
+### Exercise 20
+
+Type `files[[""]]`, with any `year.xlsx` between the `""`
+
+```{r reading-multiple-fil-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-20-hint-1, eval = FALSE}
+files[["1962.xlsx"]]
+```
+
+### 
+
+You should get the file of the respective year you chose! 
 
 
 
-## 
+###
+
 <!-- End of Section knowledge drop -->
 
 Just a recap, there are three basic steps:
