@@ -108,7 +108,7 @@ In addition to `&` and `|`, R also has `&&` and `||`. Don't use them in dplyr fu
 
 ### Exercise 5
 
-Use the same code as above, add `& dep_time < 2000` to the call to `filter()`.This will look at flights scheduled to depart after 6:00 AM and begore 8:00 PM
+Use the same code as above and add `& dep_time < 2000` to the call to `filter()`. This will look at flights scheduled to depart after 6:00 AM and before 8:00 PM.
 
 ```{r comparisons-5, exercise = TRUE}
 
@@ -123,11 +123,11 @@ flights |>
 
 ### 
 
-An easy way to avoid the problem of getting your `==`s and `|`s in the right order is to use `%in%`. `x %in% y` returns a logical vector the same length as `x` that is `TRUE` whenever a value in `x` is anywhere in `y` .
+An easy way to avoid the problem of getting your `==`'s and `|`'s in the right order is to use `%in%`. `x %in% y` returns a logical vector the same length as `x` that is `TRUE` whenever a value in `x` is anywhere in `y` .
 
 ### Exercise 6
 
-Use the same code as above and add `& abs(arr_delay) < 20` to the call to `filter()`. This will filter the data out so that the absolute value of the arrival delay is less then 20 minutes
+Use the same code as above and add `& abs(arr_delay) < 20` to the call to `filter()`. This will filter the data out so that the absolute value of the arrival delay is less then 20 minutes.
 
 ```{r comparisons-6, exercise = TRUE}
 
@@ -142,11 +142,13 @@ flights |>
 
 ### 
 
-Good. It's useful to know that this is a shortcut and you can explicitly create the underlying logical variables with `mutate()`
+<!-- RM: What is the text below referring to? -->
+
+Great work. It's useful to know that this is a shortcut and you can explicitly create the underlying logical variables with `mutate()`
 
 ### Exercise 7
 
-Start a new pipe with `flights`. Pipe `flights` into the `mutate()` function. Within `mutate`, use `daytime = dep_time > 600 & dep_time < 2000`. This will create a new column called `daytime` which is `TRUE` when the `dep_time` is anytime after 6:00 AM and before 8:00 PM.
+Start a new pipe with `flights`. Pipe `flights` into the `mutate()` function. Within `mutate`, use `daytime = dep_time > 600 & dep_time < 2000`. This will create a new column called `daytime` which is `TRUE` when the `dep_time` is between 6:00 AM and 8:00 PM.
 
 ```{r comparisons-7, exercise = TRUE}
 
@@ -157,7 +159,7 @@ flights |>
   mutate(...)
 ```
 
-### 
+###
 
 Just remember that any manipulation we do to a free-floating vector, you can do to a variable inside a data frame with `mutate()` and friends.
 
@@ -178,11 +180,13 @@ flights |>
 
 ### 
 
+<!-- RM: This has been said earlier. -->
+
 As well as `&` and `|`, R also has `&&` and `||`. Don’t use them in **dplyr** functions!
 
 ### Exercise 9
 
-Copy previous code and add `,.keep = "used"` to the `mutate()` function. This keeps only the new variables and the variables used to create that in the tibble and drops all the unused variables.
+Copy previous code and add `,.keep = "used"` to the `mutate()` function. This keeps only the new columns and the columns used to create them in the tibble and drops all the unused columns.
 
 ```{r comparisons-9, exercise = TRUE}
 
@@ -197,6 +201,8 @@ flights |>
 ```
 
 ### 
+
+<!-- RM: This has been written already. -->
 
 `&&` and `||` are called short-circuiting operators and only ever return a single `TRUE` or `FALSE`. They’re important for programming, not data science.
 
@@ -224,7 +230,7 @@ So far, we’ve mostly created logical variables transiently within `filter()` �
 
 ### Exercise 11
 
-Set `x` to `c(1 / 49 * 49, sqrt(2) ^ 2)` using `<-`. Click "Run Code".
+Set `x` to `c(1 / 49 * 49, sqrt(2) ^ 2)` using `<-`. Then, click "Run Code".
 
 ```{r comparisons-11, exercise = TRUE}
 
@@ -234,13 +240,13 @@ Set `x` to `c(1 / 49 * 49, sqrt(2) ^ 2)` using `<-`. Click "Run Code".
 x <- c(...)
 ```
 
-### 
+###
 
 Beware of using `==` with numbers. For example, it looks like this vector contains the numbers `1` and `2`. But if you test them for equality, you get `FALSE`.
 
 ### Exercise 12
 
-Copy previous code and run `x == c(1,2)`. It should say `FALSE`.
+Copy previous code and run `x == c(1,2)`. The expected output is `FALSE`.
 
 ```{r comparisons-12, exercise = TRUE}
 
@@ -275,11 +281,11 @@ print(...)
 
 ### 
 
-You can see why R defaults to rounding these numbers; they really are very close to what you expect. Now that you've seen why `==`is failing, what can you do about it? One option is to use `dplyr::near()` which ignores small differences:
+You can see why R defaults to rounding these numbers; they really are very close to what you expect. Now that you've seen why `==` is failing, what can you do about it? One option is to use `dplyr::near()` which ignores small differences:
 
 ### Exercise 14
 
-Copy previous code and type `near()` on the next line. Within `near()`, add `x, c(1,2)`. This should come out as `TRUE` for both.
+Copy the previous code and type `near()` on the next line. Within `near()`, add `x, c(1,2)`. This should come out as `TRUE` for both.
 
 ```{r comparisons-14, exercise = TRUE}
 
