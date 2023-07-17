@@ -615,7 +615,7 @@ In [Chapter 27](https://r4ds.hadley.nz/iteration.html), you learned tidyverse te
 
 ### Exercise 1
 
-The most important member of this family is `lapply()`. Run `?lapply()` in the console and read the [Description]{.underline} section. CP/CR. 
+The most important member of this family is `lapply()`. Run `?lapply()` in the console and read the [Description]{.underline} section. CP/CR.
 
 ```{r apply-family-1}
 question_text(NULL,
@@ -628,7 +628,7 @@ question_text(NULL,
 
 ### 
 
-There’s no exact base R equivalent to `across()` but you can get close by using `[` with `lapply()`. This works because under the hood, data frames are lists of columns, so calling `lapply()` on a data frame applies the function to each column.
+There's no exact base R equivalent to `across()` but you can get close by using `[` with `lapply()`. This works because under the hood, data frames are lists of columns, so calling `lapply()` on a data frame applies the function to each column.
 
 ### Exercise 2
 
@@ -645,11 +645,11 @@ question_text(NULL,
 
 ### 
 
-`sapply()` is similar to `lapply()` but it always tries to simplify the result, hence the "s" in its name. 
+`sapply()` is similar to `lapply()` but it always tries to simplify the result, hence the "s" in its name.
 
 ### Exercise 3
 
-Press "Run code" 
+Press "Run code"
 
 ```{r apply-family-3, exercise = TRUE}
 df4 <- tibble(a = 1, b = 2, c = "a", d = "b", e = 4)
@@ -662,7 +662,7 @@ We can use the `sapply()` and `lapply()` functions to modify this data.
 
 ### Exercise 4
 
-Lets find all the numeric columns in `df4`, using `sapply()`. In the code chunk below, type `sapply()`, passing in `df4` as the first argument and `is.numeric` as the second argument. Save the results to the variable `num_cols`. Then, on a new line, print `num_cols`.  
+Lets find all the numeric columns in `df4`, using `sapply()`. In the code chunk below, type `sapply()`, passing in `df4` as the first argument and `is.numeric` as the second argument. Save the results to the variable `num_cols`. Then, on a new line, print `num_cols`.
 
 ```{r apply-family-4, exercise = TRUE}
 
@@ -675,24 +675,23 @@ num_cols <- ...(df4, ...)
 
 ### 
 
-As mentioned previously, `sapply()` always tries to simplify the results, hence producing a logical vector instead of a list in the code above. We don’t recommend using it for programming, because the simplification can fail and give you an unexpected type, but it’s usually fine for interactive use.
-
+As mentioned previously, `sapply()` always tries to simplify the results, hence producing a logical vector instead of a list in the code above. We don't recommend using it for programming, because the simplification can fail and give you an unexpected type, but it's usually fine for interactive use.
 
 ### Exercise 5
 
-Now, lets transform each column with `lapply()` and then replace the original values. In the code chunk below, type in `lapply()`. In the first argument, pass in `df4[, num_cols, drop = FALSE]`. In the second column, type in `\(x) x * 2`. Save the results to `df[, num_cols]`. Then on a new line, type `df4`. 
+Now, lets transform each column with `lapply()` and then replace the original values. In the code chunk below, type in `lapply()`. In the first argument, pass in `df4[, num_cols, drop = FALSE]`. In the second column, type in `\(x) x * 2`. Save the results to `df[, num_cols]`. Then on a new line, type `df4`.
 
 ```{r apply-family-5, exercise = TRUE}
 
 ```
 
-```{r apply-family-5-hint, eval = FALSE}
+```{r apply-family-5-hint-1, eval = FALSE}
 df[, ...] <- ...(df[, ...,  = FALSE], \(x) x * 2)
 ```
 
-###
+### 
 
-This code transforms each numeric column of `df4` to store the original number multiplied by 2. For example, the original value of column "e" was 4. After running the `lapply()` code, that number has been changed to 8. 
+This code transforms each numeric column of `df4` to store the original number multiplied by 2. For example, the original value of column "e" was 4. After running the `lapply()` code, that number has been changed to 8.
 
 ### Exercise 6
 
@@ -702,19 +701,18 @@ We can replace the `sapply()` code from Exercise 4 with `vapply()`, making sure 
 
 On a new line, type in `vapply()`. The first argument should be `df4`, the second argument should be `is.numeric`, and the third argument should be `logical(1)`. Then on a new line, type in `df4` and press "Run Code".
 
-
 ```{r apply-family-6, exercise = TRUE}
 df4 <- tibble(a = 1, b = 2, c = "a", d = "b", e = 4)
 
 ```
 
-```{r apply-family-6-hint, eval = FALSE}
+```{r apply-family-6-hint-1, eval = FALSE}
 vapply(... , ... , logical(...))
 ```
 
-###
+### 
 
-The distinction between `sapply()` and `vapply()` is really important when they’re inside a function (because it makes a big difference to the function’s robustness to unusual inputs), but it doesn’t usually matter in data analysis.
+The distinction between `sapply()` and `vapply()` is really important when they're inside a function (because it makes a big difference to the function's robustness to unusual inputs), but it doesn't usually matter in data analysis.
 
 ### Exercise 7
 
@@ -724,17 +722,29 @@ Another important member of the apply family is `tapply()` which computes a sing
 
 ```
 
-###
+### 
 
+If you want to see how you might use `tapply()` or other base techniques to perform other grouped summaries, Hadley has collected a [few techniques](https://gist.github.com/hadley/c430501804349d382ce90754936ab8ec).
 
+### Exercise 8
 
+In the code chunk below, type `tapply()`. The first element should be `diamonds$price`, the second element should be `diamonds$cut`, and the third element should be `mean`. Press "Run Code" after you are done.
 
+```{r apply-family-8, exercise = TRUE}
 
+```
 
+```{r apply-family-8-hint-1, eval = FALSE}
+tapply(..$.., ..$.., ...)
+```
 
+### 
 
+Unfortunately `tapply()` returns its results in a named vector which requires some gymnastics if you want to collect multiple summaries and grouping variables into a data frame (it's certainly possible to not do this and just work with free floating vectors, but in our experience that just delays the work).
 
+### 
 
+The final member of the apply family is the titular `apply()`, which works with matrices and arrays, however, this rarely comes up in data science because we usually work with data frames and not matrices.
 
 ## For loops
 ### 
@@ -1005,6 +1015,18 @@ Note that base plotting functions work with vectors, so you need to pull columns
 ### 
 
 This tutorial covered [Chapter 28: A field guide to base R](https://r4ds.hadley.nz/base-r) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. \`
+
+In this tutorial, you have learned:
+
+-   how to subset with the single bracket operator, `[`
+
+-   how to subset with the double bracket operator, `[[` and dollar sign, `$`
+
+-   how to use functions from the apply family, such as `lapply()`, `sapply()`, `vapply()`, and `tapply()`
+
+-   how to use `for` loops as a form of iteration
+
+-   how to create plots without **tidyverse** and **ggplot2**
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
