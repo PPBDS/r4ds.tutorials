@@ -128,6 +128,23 @@ hex_plot <- function(df, x, y, z, bins = 20, fun = "mean") {
     )
 }
 
+unique_where <- function(df, condition, var) {
+  df |> 
+    filter({{ condition }}) |> 
+    distinct({{ var }}) |> 
+    arrange({{ var }})
+}
+
+count_missing <- function(df, group_vars, x_var) {
+  df |> 
+    group_by({{ group_vars }}) |> 
+    summarize(
+      n_miss = sum(is.na({{ x_var }})),
+      .groups = "drop"
+    )
+}
+
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -732,6 +749,7 @@ Copy the code for `grouped_mean` and rename the function to `grouped_mean1`. Mod
 
 
 
+
 ```{r data-frame-functions-5, exercise = TRUE}
 
 ```
@@ -775,6 +793,7 @@ Data-masking: This is used in functions like `arrange()`, `filter()`, and `summa
 Tidy-selection: This is used in functions like `select()`, `relocate()`, and `rename()` that involve selecting variables.
 
 For many common functions, your intuition about which arguments use tidy evaluation should be sufficient—just consider whether you need to perform computations (e.g., x + 1) or select variables (e.g., a:x).
+
 
 
 
@@ -901,17 +920,175 @@ Note that we use a default value for sort so that if the user doesn’t supply t
 
 ### Exercise 14
 
+Other helper functions we could use is `filter()`, `arrange()` and `distinct()`. Let's make a function which finds distinct sorted values from a filtered data.
+
+Type `unique_where` and assign it to `function()` and pass in `df`, `condition`, and `var`. Then close it with curly braces, within the curly braces start a pipe with `df` to `filter()` and pass in `condition` embraced with `{{}}`. 
+
 ```{r data-frame-functions-14, exercise = TRUE}
+
+```
+
+```{r data-frame-functions-14-hint-1, eval = FALSE}
+unique_where <- function(..., condition, ...) {
+  df |> 
+    filter({{ ... }})
+  
+}
+```
+
+### 
+
+We have now finished the filtering part, let's now find distinct values.
+
+### Exercise 15
+
+Copy the code and extend the pipe to `distinct()` and pass in `var` and enclose it with `{{}}`. Extend the pipe once again to `arrange()` and pass in `var` again enclosed in `{{}}`.
+
+```{r data-frame-functions-15, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r data-frame-functions-14-hint-1, eval = FALSE}
-
+```{r data-frame-functions-15-hint-1, eval = FALSE}
+unique_where <- function(..., condition, ...) {
+  df |> 
+    filter({{ ... }})|>
+    distinct({{...}})|>
+    ...({{var}})
+  
+}
 ```
 
 ### 
+
+Let's now use this function on the `flights` dataset.
+
+### Exercise 16
+
+Start a pipe with `flights` to `unique_where()` and pass in `month == 12` and `dest`.
+
+```{r data-frame-functions-16, exercise = TRUE}
+
+```
+
+```{r data-frame-functions-16-hint-1, eval = FALSE}
+flights |> unique_where(... == 12, dest)
+```
+
+### 
+
+Next up, let's talk about Data Masking and tidy selection.
+
+### Exercise 17
+
+Sometimes you want to select variables inside a function that uses data-masking. For example, imagine you want to write a `count_missing()` that counts the number of missing observations in rows. You might try writing something like:
+
+```
+count_missing <- function(df, group_vars, x_var) {
+  df |> 
+    group_by({{ group_vars }}) |> 
+    summarize(
+      n_miss = sum(is.na({{ x_var }})),
+      .groups = "drop"
+    )
+}
+
+```
+### 
+
+The function first group the data by the vars, then it will summarize the missing values.
+
+### Exercise 18
+
+Start a pipe with `flights` to `count_missing()` and pass in `c(year, month, day), dep_time`.
+
+```{r data-frame-functions-18, exercise = TRUE}
+
+```
+
+```{r data-frame-functions-18-hint-1, eval = FALSE}
+flights |>
+  count_missing(...,...)
+```
+
+### 
+
+This doesn’t work because group_by() uses data-masking, not tidy-selection. We can work around that problem by using the handy pick() function, which allows you to use tidy-selection inside data-masking functions.
+
+### Exercise 19
+
+Copy the code of the function from Exercise 17 and change the name to `count_missing1`, then within `group_by()`, enclose `{{group_vars}}` with `pick()`.
+
+```{r data-frame-functions-19, exercise = TRUE}
+
+```
+
+```{r data-frame-functions-19-hint-1, eval = FALSE}
+count_missing1 <- function(df, ..., x_var) {
+  ... |> 
+    group_by(...({{ group_vars }})) |> 
+    summarize(
+      n_miss = ...(is.na({{ x_var }})),
+      .groups = "..."
+  )
+}
+```
+
+### 
+
+Let's now run it with `flights`.
+
+### Exercise 20
+
+copy the code from exercise 18 and change the function name to `count_missing1` and run it.
+
+```{r data-frame-functions-20, exercise = TRUE}
+
+```
+
+```{r data-frame-functions-20-hint-1, eval = FALSE}
+flights |>
+  count_missing1
+```
+
+### 
+
+Another convenient use of pick() is to make a 2d table of counts. 
+
+### Exercise 21
+
+Below we count using all the variables in the rows and columns, then use pivot_wider() to rearrange the counts into a grid:
+
+```
+count_wide <- function(data, rows, cols) {
+  data |> 
+    count(pick(c({{ rows }}, {{ cols }}))) |> 
+    pivot_wider(
+      names_from = {{ cols }}, 
+      values_from = n,
+      names_sort = TRUE,
+      values_fill = 0
+    )
+}
+
+diamonds |> count_wide(c(clarity, color), cut)
+# > # A tibble: 56 × 7
+# >   clarity color  Fair  Good `Very Good` Premium Ideal
+# >   <ord>   <ord> <int> <int>       <int>   <int> <int>
+# > 1 I1      D         4     8           5      12    13
+# > 2 I1      E         9    23          22      30    18
+# > 3 I1      F        35    19          13      34    42
+# > 4 I1      G        53    19          16      46    16
+# > 5 I1      H        52    14          12      46    38
+# > 6 I1      I        34     9           8      24    17
+# > # ℹ 50 more rows
+```
+
+### 
+
+While our examples have mostly focused on dplyr, tidy evaluation also underpins tidyr, and if you look at the pivot_wider() docs you can see that names_from uses tidy-selection.
+
 
 ## Plot functions
 ### 
