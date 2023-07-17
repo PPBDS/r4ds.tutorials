@@ -60,6 +60,19 @@ L <- list(1, 2, 3, 4, 5)
 L1 <- list(4, 16, 25, 49, 64)
 
 
+tb4 <- tibble(
+  col1 = list(1, 2, 3, 4),
+  col2 = list(11, 12, 13, 14)
+)
+
+save_data <- vector(mode = "list" , length = length(tb4))
+indexes <- seq_along(tb4)
+
+
+df4 <- tibble(a = 1, b = 2, c = "a", d = "b", e = 4)
+
+
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -543,9 +556,7 @@ Since there is no column named exactly `x1` in the tibble `tb2`, the code will p
 
 The double bracket operator `[[` and dollar sign `$` are really important when working with lists, and have differences compared to the single bracket operator `[`.
 
-
 Using the `list()` function, create a list. Set the first list element to `a`, which is equal to a range of integers from 1 to 3. Set the second list element to `b`, which is equal to the string `"a string"`. Set the third list element to `c`, which is equal to `pi`, and set the fourth list element to `d`, which is equal to another list containing `-1` and `-5`. Then, set the entire list equal to the variable `list1`.
-
 
 ```{r subsetting-with-doub-11, exercise = TRUE}
 
@@ -562,13 +573,11 @@ list1 <- ...(
 
 ### 
 
-Remember that the single bracket operator `[`  is used to extract sub-components, while the double bracket operator `[[` is used to extract single elements.
-
+Remember that the single bracket operator `[` is used to extract sub-components, while the double bracket operator `[[` is used to extract single elements.
 
 ### Exercise 12
 
-The `[`can be used to extract a sub-list. In the code chunk below, type in `str()`. Place `list1[1:2]` inside the parenthesis
-`
+The `[`can be used to extract a sub-list. In the code chunk below, type in `str()`. Place `list1[1:2]` inside the parenthesis \`
 
 ```{r subsetting-with-doub-12, exercise = TRUE}
 
@@ -580,8 +589,7 @@ str(list1[... : ...])
 
 ### 
 
-As you can see, the code returns two lists: one list for `a` and one list for `b`. It doesn’t matter how many elements you extract, the result will always be a list.
-
+As you can see, the code returns two lists: one list for `a` and one list for `b`. It doesn't matter how many elements you extract, the result will always be a list.
 
 ### Exercise 13
 
@@ -600,11 +608,81 @@ str(list1$...)
 
 The difference between `[` and `[[` is particularly important for lists because `[[` drills down into the list while `[` returns a new, smaller list. Click [here](https://r4ds.hadley.nz/base-r#fig-pepper) to see a visualization of the differences.
 
-
 ## Apply family
 ### 
 
-In [Chapter 27](https://r4ds.hadley.nz/iteration.html), you learned tidyverse techniques for iteration like `dplyr::across()` and the map family of functions. In this section, you’ll learn about their base equivalents, the **apply family**. In this context apply and map are synonyms because another way of saying “map a function over each element of a vector” is “apply a function over each element of a vector”. Here we’ll give you a quick overview of this family so you can recognize them in the wild.
+In [Chapter 27](https://r4ds.hadley.nz/iteration.html), you learned tidyverse techniques for iteration like `dplyr::across()` and the map family of functions. In this section, you'll learn about their base equivalents, the [apply family]{.underline}. In this context apply and map are synonyms because another way of saying "map a function over each element of a vector" is "apply a function over each element of a vector". Here we'll give you a quick overview of this family so you can recognize them in the wild.
+
+### Exercise 1
+
+The most important member of this family is `lapply()`. Run `?lapply()` in the console and read the [Description]{.underline} section. CP/CR. 
+
+```{r apply-family-1}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+There’s no exact base R equivalent to `across()` but you can get close by using `[` with `lapply()`. This works because under the hood, data frames are lists of columns, so calling `lapply()` on a data frame applies the function to each column.
+
+### Exercise 2
+
+The function `sapply()` is very similar to `lapply()`. Run `?sapply()` in the console and read the [Description]{.underline} section. CP/CR.
+
+```{r apply-family-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+`sapply()` is similar to `lapply()` but it always tries to simplify the result, hence the s in its name. 
+
+### Exercise 3
+
+Press "Run code" 
+
+```{r apply-family-3, exercise = TRUE}
+df4 <- tibble(a = 1, b = 2, c = "a", d = "b", e = 4)
+
+```
+
+### 
+
+We can use the `sapply()` and `lapply()` functions to modify this data.
+
+### Exercise 4
+
+Lets find all the numeric columns in `df4`, using `sapply()`. In the code chunk below, type `sapply()`, passing in `df4` as the first argument and `is.numeric` as the second argument. Save the results to the variable `num_cols`. Then, on a new line, print `num_cols`.  
+
+```{r apply-family-4, exercise = TRUE}
+
+```
+
+```{r apply-family-4-hint-1, eval = FALSE}
+num_cols <- ...(df4, ...)
+  
+```
+
+### 
+
+As mentioned previously, `sapply()` always tries to simplify the results, hence producing a logical vector instead of a list in the code above. We don’t recommend using it for programming, because the simplification can fail and give you an unexpected type, but it’s usually fine for interactive use.
+
+
+
+
+
+
+
 
 
 ## For loops
@@ -614,16 +692,15 @@ In [Chapter 27](https://r4ds.hadley.nz/iteration.html), you learned tidyverse te
 
 The structure for `for` loops looks like this:
 
-````
+```         
 for (element in vector) {
   # do something with element
 }
-````
+```
 
 ### Exercise 1
 
 Press "Run Code"
-
 
 ```{r for-loops-1, exercise = TRUE}
 L <- list(1, 2, 3, 4, 5)
@@ -634,32 +711,67 @@ for (element in L) {
 
 ### 
 
-As you can see, the `for` loop iterates through each element in the list, printing out the element. 
+As you can see, the `for` loop iterates through each element in the list, printing out the element.
 
 ### Exercise 2
 
-Create a list, placing in the elements `4, 16, 25, 49, 64` inside the parenthesis. Save this to a variable called `L1`.
+Type in `list()`, placing in the elements `4, 16, 25, 49, 64` inside the parenthesis. Save this to a variable called `L1`.
 
 ```{r for-loops-2, exercise = TRUE}
 
 ```
 
+```{r for-loops-2-hint-1, eval = FALSE}
+... <- list(... , ... , ... , ... , ...)
+```
+
 ### 
 
-`for()` loops can iterate over many objects, including vectors, tibbles, lists, and dataframes. 
-
+`for()` loops can iterate over many objects, including vectors, tibbles, lists, and dataframes.
 
 ### Exercise 3
 
-The most straightforward use of `for` loops is to achieve the same effect as `walk()`: call some function with a side-effect on each element of a list. 
-
-Create a `for` loop, placing `element in L1` inside the parenthesis. Inside the loop, print out the square root of each element inside `L1` (Hint: Use the `sqrt()` and `print()` functions).
+The `sqrt()` is a function that takes the square root of a number. In the code chunk below, type in `sqrt()`, placing the vector `c(4, 16, 121)` inside the parenthesis
 
 ```{r for-loops-3, exercise = TRUE}
 
 ```
 
 ```{r for-loops-3-hint-1, eval = FALSE}
+sqrt(c(... , ... , ...))
+```
+
+### 
+
+As you can see, the code calculates the square root of each number inside the vector.
+
+### Exercise 4
+
+The `print()` function is used to display the output of code to the console. In the code chunk below, pass in `L` to the `print()` function.
+
+```{r for-loops-4, exercise = TRUE}
+L <- list(1, 2, 3, 4, 5)
+```
+
+```{r for-loops-4-hint-1, eval = FALSE}
+print(...)
+```
+
+### 
+
+As you can see, the `print()` displayed the values inside list `L` in the console.
+
+### Exercise 5
+
+The most straightforward use of `for` loops is to achieve the same effect as `walk()`: call some function with a side-effect on each element of a list.
+
+Create a `for` loop, placing `element in L1` inside the parenthesis. Inside the loop, type in `print()`, passing in the `sqrt()` function. Inside `sqrt()`, type in `element`.
+
+```{r for-loops-5, exercise = TRUE}
+
+```
+
+```{r for-loops-5-hint-1, eval = FALSE}
 for (element in L1) {
   ...(sqrt(...))
 }
@@ -667,19 +779,131 @@ for (element in L1) {
 
 ### 
 
-As you can see, the `for` loop goes through each element of `L1` and utilizes the `sqrt()` and `print()` functions to print the square root of each element. `for` loops can be paired with many functions to perform various tasks. 
+As you can see, the `for` loop goes through each element of `L1` and utilizes the `sqrt()` and `print()` functions to print the square root of each element. `for` loops can be paired with many functions to perform various tasks.
 
+### Exercise 6
+
+Things get tricky if you want to save the output of a `for` loop. Start by creating a `tibble()` with two columns. The first column, called `col1`, should store a `list()` with the numbers `1, 2, 3, 4`. The second column, called `col2`, should store a `list()` with the numbers `11, 12, 13, 14`. Save the result to a variable named `tb4` and print it on a new line.
+
+```{r for-loops-6, exercise = TRUE}
+
+```
+
+```{r for-loops-6-hint-1, eval = FALSE}
+
+... <- tibble(
+  ... = list(... , ... , ... , ...),
+  col2 = ...(11, ... , ... , ...)
+  
+)
+
+```
+
+### 
+
+By using `for` loops, we are able to iterate through data in a tibble and save its output.
+
+### Exercise 7
+
+In order to store output using `for` loops, we will need to use the `vector()` function. In the console, type in `?vector()` and look at the Description section. CP/CR
+
+```{r for-loops-7}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+We will be using the `mode` and `length` arguments of the `vector()` function. In the [Arguments]{.underline} section of `?vector()`, take a look at what these arguments do.
+
+### Exercise 8
+
+There are a few different techniques that you can use to store output with `for` loops, but we recommend being explicit about what the output is going to look like upfront. In this case, we're going to want a list the same length as `tb4`.
+
+In the code chunk below, type in `vector()`. Set the first argument, called `mode`, to "list". Set the second argument, called `length`, to `length(tb4)`. Save the result to the variable `save_data`.
+
+```{r for-loops-8, exercise = TRUE}
+
+```
+
+```{r for-loops-8-hint-1, eval = FALSE}
+... <- vector(mode = ... , ... = length(...))
+```
+
+### 
+
+This code produces a vector, which has the same length as `tb4` and is of mode "list". As mentioned previously, we recommend being explicit about what the output is going to look like, which is why we do this step.
+
+### Exercise 9
+
+Now, instead of iterating over the elements of `tb4`, we'll iterate over their indices, using `seq_along()` to generate one index for each element of `tb4`.
+
+In the code chunk below, type `seq_along()`, passing in `tb4`. Save the result to the variable `indexes` and type it on a new line.
+
+```{r for-loops-9, exercise = TRUE}
+
+```
+
+```{r for-loops-9-hint-1, eval = FALSE}
+... <- seq_along(...)
+```
+
+### 
+
+The `seq_along()` function is being used to generate an index for every element of the `tb4` tibble. As you can see from printing out `indexes`, there are 2 indices created.
+
+### Exercise 10
+
+Now, lets store the contents of `tb4` into `save_data`, with the use of `for` loops. In the code chunk below, create a `for` loop, passing in `i in indexes` in the parenthesis. Inside the `for` loop, type in `tb4[[i]]`. Then, using the `<-` operator, save the code [inside the for loop]{.underline} to `save_data[[i]]`.
+
+```{r for-loops-10, exercise = TRUE}
+
+```
+
+```{r for-loops-10-hint-1, eval = FALSE}
+
+```
+
+### 
+
+Using the `for` loop, the code above iterates through each element of `tb4` and stores it inside `save_data`. Using indices are important because they allows us to link to each position in the input with the corresponding position in the output.
+
+### Exercise 11
+
+Copy the code from the previous exercise. On a new line, type in `save_data` and press run.
+
+```{r for-loops-11, exercise = TRUE}
+
+```
+
+<button onclick="transfer_code(this)">
+
+Copy previous code
+
+</button>
+
+```{r for-loops-11-hint-1, eval = FALSE}
+save_data
+```
+
+### 
+
+As you can see, all of the output in `tb4` has been stored inside `save_data`.
 
 ## Plots
 ### 
 
-Many R users who don’t otherwise use the tidyverse prefer ggplot2 for plotting due to helpful features like sensible defaults, automatic legends, and a modern look. However, base R plotting functions can still be useful because they’re so concise — it takes very little typing to do a basic exploratory plot.
+Many R users who don't otherwise use the tidyverse prefer ggplot2 for plotting due to helpful features like sensible defaults, automatic legends, and a modern look. However, base R plotting functions can still be useful because they're so concise --- it takes very little typing to do a basic exploratory plot.
 
-There are two main types of base plot you’ll see in the wild: scatterplots and histograms, produced with `plot()` and `hist()` respectively.
+There are two main types of base plot you'll see in the wild: scatterplots and histograms, produced with `plot()` and `hist()` respectively.
 
 ### Exercise 1
 
-Run `?hist()` in the console and look at the **Descripton** section. CP/CR.
+Run `?hist()` in the console and look at the Descripton section. CP/CR.
 
 ```{r plots-1}
 question_text(NULL,
@@ -692,8 +916,7 @@ question_text(NULL,
 
 ### Exercise 2
 
-Lets use `hist()` and the **diamonds** package to create a histogram. In the code chunk below, type in `hist()`, passing in the `carat` column from the **diamonds** package in the parenthesis (Hint: use the `$` operator).
-
+Lets use `hist()` and the **diamonds** package to create a histogram. In the code chunk below, type in `hist()`, passing in `diamonds$carat`.
 
 ```{r plots-2, exercise = TRUE}
 
@@ -711,9 +934,9 @@ As you can see, this code creates a basic histogram of the data in the `carat` c
 
 ### Exercise 3
 
-Now lets use the `plot()` function. The `plot()` function creates a scatterplot of the specified data. 
+Now lets use the `plot()` function. The `plot()` function creates a scatterplot of the specified data.
 
-In the code chunk below, type in `plot()`, placing the `carat` and `price` columns from the **diamonds** package into the parenthesis. 
+In the code chunk below, type in `plot()`, passing in `diamonds$carat` and `diamonds$price`.
 
 ```{r plots-3, exercise = TRUE}
 
@@ -725,8 +948,7 @@ plot(...$... , ...$...)
 
 ### 
 
-Note that base plotting functions work with vectors, so you need to pull columns out of the data frame using $ or some other technique.
-
+Note that base plotting functions work with vectors, so you need to pull columns out of the data frame using `$` or some other technique.
 
 ## Summary
 ### 
