@@ -1,6 +1,6 @@
 ---
 title: Logical vectors
-author: David Kane and Zayan Farooq
+author: David Kane and Zayan Farooq and Rajarshi Mandal
 tutorial:
   id: logical-vectors
 output:
@@ -16,6 +16,7 @@ library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
 library(nycflights13)
+
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
@@ -49,6 +50,11 @@ Load the **tidyverse** package
 library(...)
 ```
 
+```{r, include=FALSE}
+library(tidyverse)
+```
+
+
 ### 
 
 Most of the functions you'll learn about in this chapter are provided by base R, so we don't need the tidyverse, but we'll still load it so we can use `mutate()`, `filter()`, and others to work with data frames.
@@ -65,6 +71,10 @@ Load the **nycflights13** package.
 library(...)
 ```
 
+```{r, include=FALSE}
+library(nycflights13)
+```
+
 ### 
 
 You can find more information about the package with `help(package = "nycflights13")`.
@@ -77,7 +87,7 @@ Type `flights` and hit "Run Code".
 
 ```
 
-```{r comparisons-3-hint, eval = FALSE}
+```{r, include=FALSE}
 flights
 ```
 
@@ -87,7 +97,6 @@ A very common way to create a logical vector is via a numeric comparison with `<
 
 ### Exercise 4
 
-<!-- RM: Put arrange first? -->
 
 Pipe `flights` into the `filter()` function. Within `filter()`, add `dep_time > 600` to only look at flights scheduled to depart after 6:00 AM.
 
@@ -102,9 +111,15 @@ flights |>
   filter(...)
 ```
 
+```{r, include=FALSE}
+flights |> 
+  filter(dep_time > 600)
+```
+
+
 ### 
 
-In addition to `&` and `|`, R also has `&&` and `||`. Don't use them in dplyr functions! These are called short-circuiting operators and only ever return a single `TRUE` or `FALSE`. They're mainly used for programming, not data science.
+In addition to `&` and `|`, R also has `&&` and `||`. Don't use them in **dplyr** functions! These are called short-circuiting operators and only ever return a single `TRUE` or `FALSE`. They're mainly used for programming, not data science.
 
 ### Exercise 5
 
@@ -142,7 +157,7 @@ flights |>
 
 ### 
 
-<!-- RM: What is the text below referring to? -->
+<!-- What is the text below referring to? Fix it. -->
 
 Great work. It's useful to know that this is a shortcut and you can explicitly create the underlying logical variables with `mutate()`
 
@@ -180,7 +195,7 @@ flights |>
 
 ### 
 
-<!-- RM: This has been said earlier. -->
+<!-- This has been said earlier. So delete it, -->
 
 As well as `&` and `|`, R also has `&&` and `||`. Don’t use them in **dplyr** functions!
 
@@ -202,7 +217,7 @@ flights |>
 
 ### 
 
-<!-- RM: This has been written already. -->
+<!-- This has been written already. -->
 
 `&&` and `||` are called short-circuiting operators and only ever return a single `TRUE` or `FALSE`. They’re important for programming, not data science.
 
@@ -494,9 +509,10 @@ The `desc()` function is used to create a descending order of the logical vector
 
 ## Boolean algebra
 ### 
-<!-- RM: Why ^2 -->
 
-Once you have multiple logical vectors, you can combine them together using Boolean algebra. In R, `&` is “and”, `|` is “or”, `!` is “not”, and `xor()` is exclusive or^2. For example, `df |> filter(!is.na(x))` finds all rows where `x` is not missing and `df |> filter(x < -10 | x > 0)` finds all rows where `x` is smaller than `-10` or bigger than `0`. Figure 13.1 shows the complete set of Boolean operations and how they work.
+<!-- Why ^2? Check the book.  -->
+
+Once you have multiple logical vectors, you can combine them together using Boolean algebra. In R, `&` is “and”, `|` is “or”, `!` is “not”, and `xor()` is exclusive or. For example, `df |> filter(!is.na(x))` finds all rows where `x` is not missing and `df |> filter(x < -10 | x > 0)` finds all rows where `x` is smaller than `-10` or bigger than `0`. Figure 13.1 shows the complete set of Boolean operations and how they work.
 
 ### Exercise 1
 
@@ -567,7 +583,7 @@ flights|>
 
 ###
 
-<!-- RM: A little repetitive -->
+<!-- A little repetitive. De-repetitify it.  -->
 
 `nov = month == 11` creates a new variable called `nov` and assigns it to the Boolean `TRUE` for rows where the month is equal to `11`, and `FALSE` otherwise. The expression `month == 11` checks the equality between the month column and the value `11`, resulting in a logical vector.
 
@@ -594,7 +610,7 @@ flights|>
 
 ### Exercise 6
 
-<!-- RM: Explanation of x in y is repeated -->
+<!-- Explanation of x in y is repeated. Fix! -->
 
 `x %in% y` returns `TRUE` if anything in `x` is in `y`. For example, type `1:12 %in% c(1,5,11)`. This makes `x` a vector containing all the numbers from `1` through `11`, and `y` `1`,`5`, and `11`. Now, click "Run Code"
 
@@ -612,7 +628,7 @@ An easy way to avoid the problem of getting your `==`s and `|`s in the right ord
 
 ### Exercise 7
 
-<!-- RM: This has been done a few times now and the learner is probably getting bored. -->
+<!-- This has been done a few times now and the learner is probably getting bored. Fix!? -->
 
 To find all of the flights in November and December, start a new pipe with `flights`. Pipe it into `filter()`. Within `filter()`, add `month %in% c(11,12)`.
 
@@ -631,7 +647,7 @@ Fun Fact: `%in%` obeys different rules for `NA` than `==`, as `NA %in% NA` is `T
 
 ### Exercise 8
 
-<!-- RM: This exercise should be added earlier or deleted, as it is repeating what has been stated earlier. -->
+<!-- This exercise should be added earlier or deleted, as it is repeating what has been stated earlier. Delete away. -->
 
 Type `c(1, 2, NA) == NA`. It should say `NA` for all 3. 
 
@@ -646,7 +662,7 @@ c(...) == NA
 
 ###
 
-<!-- RM: Not necessarily true. Earlier, we have stated that NA or True is True. -->
+<!-- Not necessarily true. Earlier, we have stated that NA or True is True. Fix. -->
 
 This should output `#> [1] NA NA NA` because when comparing any value (including `NA`) with `NA` using the `==` operator, the result will be `NA`. This is because the value of `NA` represents unknown information, so the result of any comparison involving `NA` is also unknown.
 
@@ -688,7 +704,7 @@ This should result in a tibble where the only values in the `dep_time` column ar
 ## Summaries
 ###
 
-<!-- RM: The English here is confused. -->
+<!-- The English here is confused. Fix. -->
 
 The following sections describe some useful techniques for summarizing logical vectors. As well as functions that only work specifically with logical vectors, you can also use functions that work with numeric vectors.
 
@@ -958,7 +974,7 @@ Always put lists of values within `c()`; otherwise, the code will result in an e
 
 Copy previous code and add `day` to the `.by()` argument within `summarize()` to get rows for every single day of the year. Make sure to separate the arguments with commas.
 
-<!-- RM: Make sure to separate arguments with commas has been written at least five times, maybe delete every other occurence? -->
+<!-- Make sure to separate arguments with commas has been written at least five times, maybe delete every other occurence? Good. -->
 
 ```{r summaries-14, exercise = TRUE}
 
@@ -993,9 +1009,7 @@ flights |>
 
 ###
 
-<!-- RM: Where is Section 28.2? -->
-
-There’s one final use for logical vectors in summaries: you can use a logical vector to filter a single variable to a subset of interest. This makes use of the base `[` (pronounced subset) operator, which you’ll learn more about in Section 28.2.
+There’s one final use for logical vectors in summaries: you can use a logical vector to filter a single variable to a subset of interest. This makes use of the base `[` (pronounced subset) operator.
 
 ### Exercise 16
 
@@ -1142,8 +1156,6 @@ if_else(is.na(x1), y1, x1)
 
 ###
 
-<!-- RM: I don't think that middle schoolers know what infelicity means -->
-
 The output should be `#> [1] 3 1 2 6`. You might have noticed a small infelicity in our labeling example above: zero is neither positive nor negative. We could resolve this by adding an additional `if_else()`.
 
 ### Exercise 5
@@ -1268,7 +1280,7 @@ if_else(TRUE, "a", 1)
 
 This should output `#> Error in if_else(): #> ! Can't combine true <character> and false <double>.`
 
-<!-- RM: This section could be more interactive. -->
+<!-- RM: This section could be more interactive. OK. -->
 
 ## Summary
 ### 
