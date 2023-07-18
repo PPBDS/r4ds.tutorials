@@ -99,11 +99,14 @@ gapminder_2007 <- readxl::read_excel("data/gapminder/2007.xlsx")
 
 paths <- list.files("data/gapminder", pattern = "[.]xlsx$", full.names = TRUE)
 
-gapminder <- paths |> 
-  set_names(basename) |> 
-  map(readxl::read_excel) |> 
-  list_rbind(names_to = "year") |> 
-  mutate(year = parse_number(year))
+# DK: Had to comment out the creation of this object since it was causing a
+# weird error during Github checks. Let's discuss.
+
+# gapminder <- paths |> 
+#   set_names(basename) |> 
+#   map(readxl::read_excel) |> 
+#   list_rbind(names_to = "year") |> 
+#   mutate(year = parse_number(year))
 
 process_file <- function(path) {
   df <- read_csv(path)
@@ -120,6 +123,8 @@ process_file <- function(path) {
 
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
+
+<!-- DK: Only use the code button where it makes sense to do so. -->
 
 <!-- Avoid group_by() if possible. .by/by in the next function should work. -->
 
@@ -148,6 +153,11 @@ Load the **tidyverse** package with the `library()` command.
 ```{r modifying-multiple-c-1-hint-1, eval = FALSE}
 library(...)
 ```
+
+```{r, include=FALSE}
+library(tidyverse)
+```
+
 
 ### 
 
@@ -186,11 +196,15 @@ Type `df` and hit "Run Code".
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r modifying-multiple-c-3-hint-1, eval = FALSE}
 
 ```
+
+```{r, include = FALSE}
+df
+```
+
 
 ### Exercise 4
 
@@ -204,6 +218,11 @@ Pipe `df` to `summarise()`.
 
 ```{r modifying-multiple-c-4-hint-1, eval = FALSE}
 df |> 
+  ...()
+```
+
+```{r, include=FALSE}
+df |> 
   summarise()
 ```
 
@@ -211,7 +230,7 @@ Note that this creates a tibble with one row and zero columns.
 
 ### 
 
-The result above is due to absence of arguments and values in the function `summarise()`. Next, we will add arguments to fix this problem.
+The result above is due to absence of arguments and values in the function `summarise()`. 
 
 ### Exercise 5
 
@@ -228,13 +247,19 @@ df |>
   summarise(n = ...)
 ```
 
+```{r, include=FALSE}
+df |> 
+  summarise(n = n())
+```
+
+
 ### 
 
-Recall that this adds a new column of a variable named `n` that represents the number of observations.
+Recall that this create a new column named `n` which records the number of observations in `df`.
 
 ### Exercise 6
 
-Add the median of a and median of b, `med_a = median (a)` and `med_b = median (b)`, to the call to `summarise()`. Remember the arguments to summarize must be separated by commas.
+Add the median of `a` and median of `b`, `med_a = median (a)` and `med_b = median (b)`, to the call to `summarise()`. Remember the arguments to summarize must be separated by commas.
 
 ```{r modifying-multiple-c-6, exercise = TRUE}
 
@@ -245,13 +270,21 @@ Add the median of a and median of b, `med_a = median (a)` and `med_b = median (b
 ```{r modifying-multiple-c-6-hint-1, eval = FALSE}
 df |> 
   summarise(n = n(),
+            ... = median(a),
+            med_b = ...(b))
+```
+
+```{r, include=FALSE}
+df |> 
+  summarise(n = n(),
             med_a = median(a),
             med_b = median(b))
 ```
 
+
 ### 
 
-Now you have a table of 3 columns (vairbale `n`, `a`, `b`) and their corresponding median. Next, we will add variable `c` and `d` to complete the code.
+Now you have a table of 3 columns: `n`, `med_a`, and `med_b`. 
 
 ### Exercise 7
 
@@ -268,19 +301,29 @@ df |>
   summarise(n = n(),
             med_a = median(a),
             med_b = median(b),
+            ... = ...,
+            med_d = median(...))
+```
+
+```{r, include=FALSE}
+df |> 
+  summarise(n = n(),
+            med_a = median(a),
+            med_b = median(b),
             med_c = median(c),
             med_d = median(d))
 ```
 
-### 
-
-Now we've completed the code. You should see a table of 5 columns (vairbale `n`, `med_a`, `med_b`, `med_c`, `med_d`) and their corresponding median.
 
 ### 
 
-You may find the above process repetitive- we were simply copy-pasted `med_a = median(a)` 4 times- which, violates our rule of thumb to never copy and paste more than twice.
+You should see a tibble with five columns: `n`, `med_a`, `med_b`, `med_c`, and `med_d`.
 
-This will get even more tedious if you have tens or even hundreds of columns!
+### 
+
+You may find the above process repetitive -- we were simply copy-pasted `med_a = median(a)` 4 times --- which, violates our rule of thumb to never copy and paste more than twice.
+
+This would get even more tedious if you have tens or even hundreds of columns!
 
 ### 
 
@@ -295,6 +338,8 @@ df |>
   summarise(n = n())
 ```
 
+<!-- DK: drop some knowledg. tells us about across. link to its help page. -->
+
 ### Exercise 9
 
 Copy the previous code. Now, add `across(a:d, median)` to the call to `summarise()`. Hit "Run Code," see what happens.
@@ -308,8 +353,16 @@ Copy the previous code. Now, add `across(a:d, median)` to the call to `summarise
 ```{r modifying-multiple-c-9-hint-1, eval = FALSE}
 df |> 
   summarise(n = n(),
-            across (a:d, ...))
+            ...(a:d, ...))
 ```
+
+```{r, include=FALSE}
+df |> 
+  summarise(n = n(),
+            across(a:d, median))
+```
+
+<!-- DK: Do not hard code exercise numbers. Use "as above" or "as previously." -->
 
 You should get the exact same table as in Exercise 7.
 
@@ -343,7 +396,6 @@ Pipe `df2` into `summarise()`.
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r modifying-multiple-c-11-hint-1, eval = FALSE}
 df2 |> 
