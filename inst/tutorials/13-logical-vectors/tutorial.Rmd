@@ -726,7 +726,7 @@ flights|>
 
 ###
 
-In R, any non-zero numeric value is considered as `TRUE` in logical operations. Therefore, the expression `nov | 12` performs a logical OR operation between the `nov` column and the value `12`, resulting in a logical vector. 
+As well as & and |, R also has && and ||. Don’t use them in dplyr functions! These are called short-circuiting operators and only ever return a single TRUE or FALSE. They’re important for programming, not data science.
 
 ### Exercise 6
 
@@ -841,9 +841,7 @@ This should result in a tibble where the only values in the `dep_time` column ar
 ## Summaries
 ###
 
-<!-- The English here is confused. Fix. -->
-
-The following sections describe some useful techniques for summarizing logical vectors. As well as functions that only work specifically with logical vectors, you can also use functions that work with numeric vectors.
+Next, we wil describe some useful techniques for summarizing logical vectors. In addition to functions that only work with logical vectors, you can also use functions that work with numeric vectors.
 
 ### Exercise 1
 
@@ -856,7 +854,12 @@ Start a pipe with `flights`. Pipe it into `summarize()`. Within `summarize()`, a
 
 ```{r summaries-1-hint, eval = FALSE}
 flights|>
-  summarize(... = all(...))
+  summarize(all_delayed = all(dep_delay <= ...))
+```
+
+```{r, include=FALSE}
+flights|>
+  summarize(all_delayed = all(dep_delay <= 60))
 ```
 
 ###
