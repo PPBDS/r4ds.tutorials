@@ -612,8 +612,6 @@ The `desc()` function is used to create a descending order of the logical vector
 ## Boolean algebra
 ### 
 
-<!-- Why ^2? Check the book.  -->
-
 Once you have multiple logical vectors, you can combine them together using Boolean algebra. In R, `&` is “and”, `|` is “or”, `!` is “not”, and `xor()` is exclusive or. For example, `df |> filter(!is.na(x))` finds all rows where `x` is not missing and `df |> filter(x < -10 | x > 0)` finds all rows where `x` is smaller than `-10` or bigger than `0`. Figure 13.1 shows the complete set of Boolean operations and how they work.
 
 ### Exercise 1
@@ -643,8 +641,13 @@ Start a new pipe with `flights` and pipe it into `filter()`. Within `filter()`, 
 ```
 
 ```{r boolean-algebra-2-hint, eval = FALSE}
-flights|>
-  filter(...)
+flights |>
+  filter(month == ... | month == ...)
+```
+
+```{r, include=FALSE}
+flights |>
+  filter(month == 11 | month == 12)
 ```
 
 ###
@@ -662,8 +665,13 @@ Now, try replacing `month == 11 | month == 12` with `month == 11 | 12`. This sho
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r boolean-algebra-3-hint, eval = FALSE}
-flights|>
-  filter(...)
+flights |>
+  filter(month == ... | ...)
+```
+
+```{r, include=FALSE}
+flights |>
+  filter(month == 11 | 12)
 ```
 
 ###
@@ -680,20 +688,21 @@ Start a new pipe with `flights`. Pipe `flights` into the `mutate()` function. Wi
 
 ```{r boolean-algebra-4-hint, eval = FALSE}
 flights|>
-  mutate(...)
+  mutate(nov = month == ...)
+```
+
+```{r, include=FALSE}
+flights|>
+  mutate(nov = month == 11)
 ```
 
 ###
-
-<!-- A little repetitive. De-repetitify it.  -->
 
 `nov = month == 11` creates a new variable called `nov` and assigns it to the Boolean `TRUE` for rows where the month is equal to `11`, and `FALSE` otherwise. The expression `month == 11` checks the equality between the month column and the value `11`, resulting in a logical vector.
 
 ### Exercise 5
 
-<!-- RM: Maybe split this into two parts (description is a little long) -->
-
-Copy previous code and add `final = nov | 12, .keep = "used"` to the `mutate()` function.
+Copy previous code and add `final = nov | 12, .keep = "used"` to the `mutate()` function. `final = nov | 12` results in the variable `final` being `TRUE` if `nov` is `TRUE` or if the value `12` is considered as `TRUE`. The `.keep = "used"` argument keeps only the new variables, and the variables that were used to make them in the tibble.
 
 ```{r boolean-algebra-5, exercise = TRUE}
 
@@ -703,30 +712,41 @@ Copy previous code and add `final = nov | 12, .keep = "used"` to the `mutate()` 
 
 ```{r boolean-algebra-5-hint, eval = FALSE}
 flights|>
-  mutate(nov = month == 12, ...)
+ mutate(nov = month == 11,
+        final = nov | ...,
+        .keep = ...)
+```
+
+```{r, include=FALSE}
+flights|>
+ mutate(nov = month == 11,
+        final = nov | 12,
+        .keep = "used")
 ```
 
 ###
 
-`final = nov | 12` creates another new variable called `final`. It assigns the Boolean `TRUE` to `final` if `nov` is `TRUE` or if the value `12` is considered as `TRUE`. In R, any non-zero numeric value is considered as `TRUE` in logical operations. Therefore, the expression `nov | 12` performs a logical OR operation between the `nov` column and the value `12`, resulting in a logical vector. The `.keep = "used"` argument keeps only the new variables, and the variables that were used to make them in the tibble.
+In R, any non-zero numeric value is considered as `TRUE` in logical operations. Therefore, the expression `nov | 12` performs a logical OR operation between the `nov` column and the value `12`, resulting in a logical vector. 
 
 ### Exercise 6
 
-<!-- Explanation of x in y is repeated. Fix! -->
-
-`x %in% y` returns `TRUE` if anything in `x` is in `y`. For example, type `1:12 %in% c(1,5,11)`. This makes `x` a vector containing all the numbers from `1` through `11`, and `y` `1`,`5`, and `11`. Now, click "Run Code"
+An easy way to avoid the problem of getting your `==`s and `|`s in the right order is to use `%in%`. `x %in% y` returns a logical vector the same length as `x` that is `TRUE` whenever a value in `x` is anywhere in `y`. `x %in% y` returns `TRUE` if anything in `x` is in `y`. For example, type `1:12 %in% c(1,5,11)` and click "Run Code". 
 
 ```{r boolean-algebra-6, exercise = TRUE}
 
 ```
 
 ```{r boolean-algebra-6-hint, eval = FALSE}
-... %in% c(...)
+1:12 %in% c(..., ..., ...)
+```
+
+```{r, include=FALSE}
+1:12 %in% c(1, 5, 11)
 ```
 
 ###
 
-An easy way to avoid the problem of getting your `==`s and `|`s in the right order is to use `%in%`. `x %in% y` returns a logical vector the same length as `x` that is `TRUE` whenever a value in `x` is anywhere in `y` .
+This code assigns a vector containing all the numbers from `1` through `11` to `x`, and `1`,`5`, and `11` to `y`.
 
 ### Exercise 7
 
@@ -739,8 +759,13 @@ To find all of the flights in November and December, start a new pipe with `flig
 ```
 
 ```{r boolean-algebra-7-hint, eval = FALSE}
-flights|>
-  filter(...)
+flights |>
+  filter(month %in% c(..., ...))
+```
+
+```{r, include=FALSE}
+flights |>
+  filter(month %in% c(11, 12))
 ```
 
 ###
@@ -749,24 +774,25 @@ Fun Fact: `%in%` obeys different rules for `NA` than `==`, as `NA %in% NA` is `T
 
 ### Exercise 8
 
-<!-- This exercise should be added earlier or deleted, as it is repeating what has been stated earlier. Delete away. -->
-
-Type `c(1, 2, NA) == NA`. It should say `NA` for all 3. 
+Type `c(1, 2, NA) == NA` and click "Run code".
 
 ```{r boolean-algebra-8, exercise = TRUE}
 
 ```
 
-
 ```{r boolean-algebra-8-hint, eval = FALSE}
-c(...) == NA
+c(1, 2, NA) == ...
+```
+
+```{r, include=FALSE}
+c(1, 2, NA) == NA
 ```
 
 ###
 
 <!-- Not necessarily true. Earlier, we have stated that NA or True is True. Fix. -->
 
-This should output `#> [1] NA NA NA` because when comparing any value (including `NA`) with `NA` using the `==` operator, the result will be `NA`. This is because the value of `NA` represents unknown information, so the result of any comparison involving `NA` is also unknown.
+This should output `#> [1] NA NA NA` because when comparing any value (including `NA`) with `NA` using the `==` operator, the result will be `NA`. This is because the value of `NA` represents unknown information, so the result of most comparisons involving `NA` are also unknown.
 
 ### Exercise 9
 
@@ -779,7 +805,11 @@ Copy previous code but instead of using `==`, use `%in%`. This checks to see if 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r boolean-algebra-9-hint, eval = FALSE}
-c(...) %in% NA
+c(1, 2, NA) %in% ...
+```
+
+```{r, include=FALSE}
+c(1, 2, NA) %in% NA
 ```
 
 ###
@@ -796,7 +826,12 @@ Start a new pipe with `flights`. Pipe it into `filter()`. Within `filter()`, add
 
 ```{r boolean-algebra-10-hint, eval = FALSE}
 flights |> 
-  filter(... %in% c(...))
+  filter(dep_time %in% c(..., ...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  filter(dep_time %in% c(NA, 0800))
 ```
 
 ###
