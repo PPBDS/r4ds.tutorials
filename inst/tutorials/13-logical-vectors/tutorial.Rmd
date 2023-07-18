@@ -87,10 +87,6 @@ Type `flights` and hit "Run Code".
 
 ```
 
-```{r, include=FALSE}
-flights
-```
-
 ### 
 
 A very common way to create a logical vector is via a numeric comparison with `<`, `<=`, `>`, `>=`, `!=`, and `==`.
@@ -136,6 +132,11 @@ flights |>
   filter(dep_time > 600 & ...)
 ```
 
+```{r, include=FALSE}
+flights |> 
+  filter(dep_time > 600 & dep_time < 2000)
+```
+
 ### 
 
 An easy way to avoid the problem of getting your `==`'s and `|`'s in the right order is to use `%in%`. `x %in% y` returns a logical vector the same length as `x` that is `TRUE` whenever a value in `x` is anywhere in `y` .
@@ -152,7 +153,12 @@ Use the same code as above and add `& abs(arr_delay) < 20` to the call to `filte
 
 ```{r comparisons-6-hint, eval = FALSE}
 flights |> 
-  filter(dep_time > 600 & dep_time < 2000 & ...)
+  filter(dep_time > 600 & dep_time < 2000 & abs(arr_delay) < ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  filter(dep_time > 600 & dep_time < 2000 & abs(arr_delay) < 20)
 ```
 
 ### 
@@ -163,6 +169,8 @@ Great work. It's useful to know that this is a shortcut and you can explicitly c
 
 ### Exercise 7
 
+<!-- RM: Should I remove numbers or columns in the hint? -->
+
 Start a new pipe with `flights`. Pipe `flights` into the `mutate()` function. Within `mutate`, use `daytime = dep_time > 600 & dep_time < 2000`. This will create a new column called `daytime` which is `TRUE` when the `dep_time` is between 6:00 AM and 8:00 PM.
 
 ```{r comparisons-7, exercise = TRUE}
@@ -171,7 +179,12 @@ Start a new pipe with `flights`. Pipe `flights` into the `mutate()` function. Wi
 
 ```{r comparisons-7-hint, eval = FALSE}
 flights |> 
-  mutate(...)
+  mutate(daytime = dep_time > ... & dep_time < ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  mutate(daytime = dep_time > 600 & dep_time < 2000)
 ```
 
 ###
@@ -190,7 +203,14 @@ Use the same code as above and add `, approx_ontime = abs(arr_delay) < 20` to th
 
 ```{r comparisons-8-hint, eval = FALSE}
 flights |> 
-  mutate(daytime = dep_time > 600 & dep_time < 2000, ...)
+  mutate(daytime = dep_time > 600 & dep_time < 2000,
+         approx_ontime = abs(arr_delay) < ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  mutate(daytime = dep_time > 600 & dep_time < 2000,
+         approx_ontime = abs(arr_delay) < 20)
 ```
 
 ### 
@@ -212,7 +232,15 @@ Copy previous code and add `,.keep = "used"` to the `mutate()` function. This ke
 ```{r comparisons-9-hint, eval = FALSE}
 flights |> 
   mutate(daytime = dep_time > 600 & dep_time < 2000,
-         approx_ontime = abs(arr_delay) < 20,...)
+         approx_ontime = abs(arr_delay) < 20,
+         .keep = ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  mutate(daytime = dep_time > 600 & dep_time < 2000,
+         approx_ontime = abs(arr_delay) < 20,
+         .keep = "used")
 ```
 
 ### 
@@ -236,7 +264,15 @@ flights |>
   mutate(daytime = dep_time > 600 & dep_time < 2000,
          approx_ontime = abs(arr_delay) < 20,
          .keep = "used")|>
-  filter(...)
+  filter(daytime & ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  mutate(daytime = dep_time > 600 & dep_time < 2000,
+         approx_ontime = abs(arr_delay) < 20,
+         .keep = "used") |>
+  filter(daytime & approx_ontime)
 ```
 
 ### 
@@ -252,7 +288,11 @@ Set `x` to `c(1 / 49 * 49, sqrt(2) ^ 2)` using `<-`. Then, click "Run Code".
 ```
 
 ```{r comparisons-11-hint, eval = FALSE}
-x <- c(...)
+x <- c(..., ...)
+```
+
+```{r, include=FALSE}
+x <- c(1 / 49 * 49, sqrt(2) ^ 2)
 ```
 
 ###
@@ -271,7 +311,12 @@ Copy previous code and run `x == c(1,2)`. The expected output is `FALSE`.
 
 ```{r comparisons-12-hint, eval = FALSE}
 x <- c(1 / 49 * 49, sqrt(2) ^ 2)
-x <- c(...)
+x == c(..., ...)
+```
+
+```{r, include=FALSE}
+x <- c(1 / 49 * 49, sqrt(2) ^ 2)
+x == c(1, 2)
 ```
 
 ### 
@@ -290,8 +335,14 @@ We can see the exact values by calling `print()` with the digits argument. Copy 
 
 ```{r comparisons-13-hint, eval = FALSE}
 x <- c(1 / 49 * 49, sqrt(2) ^ 2)
-x <- c(1,2)
-print(...)
+x == c(1, 2)
+print(x, digits = ...)
+```
+
+```{r, include=FALSE}
+x <- c(1 / 49 * 49, sqrt(2) ^ 2)
+x == c(1, 2)
+print(x, digits = 16)
 ```
 
 ### 
@@ -310,9 +361,16 @@ Copy the previous code and type `near()` on the next line. Within `near()`, add 
 
 ```{r comparisons-14-hint, eval = FALSE}
 x <- c(1 / 49 * 49, sqrt(2) ^ 2)
-x <- c(1,2)
+x == c(1, 2)
 print(x, digits = 16)
-near(x,...)
+near(x, c(..., ...))
+```
+
+```{r, include=FALSE}
+x <- c(1 / 49 * 49, sqrt(2) ^ 2)
+x == c(1, 2)
+print(x, digits = 16)
+near(x, c(1, 2))
 ```
 
 ### 
@@ -330,6 +388,11 @@ Run `NA > 5` and `10 == NA`. They should both come out as `NA`
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r comparisons-15-hint, eval = FALSE}
+NA > ...
+... == NA
+```
+
+```{r, include=FALSE}
 NA > 5
 10 == NA
 ```
@@ -348,7 +411,7 @@ Now, run `NA == NA`.This should also come out as `NA`
 
 <button onclick="transfer_code(this)">Copy previous code</button>
 
-```{r comparisons-16-hint, eval = FALSE}
+```{r, include=FALSE}
 NA == NA
 ```
 
@@ -358,7 +421,7 @@ That is the most confusing result. It's easiest to understand why this is true i
 
 ### Exercise 17
 
-Set `age_mary <- NA`, then set `age_john <- NA` on the next line. On a new line set `age_mary == age_john`.
+Set `age_mary <- NA` and `age_john <- NA` on the next line. On a new line, type `age_mary == age_john` and click run code.
 
 ```{r comparisons-17, exercise = TRUE}
 
@@ -369,7 +432,13 @@ Set `age_mary <- NA`, then set `age_john <- NA` on the next line. On a new line 
 ```{r comparisons-17-hint, eval = FALSE}
 age_mary <- ...
 ... <- NA
-age_john == ...
+age_mary == age_john
+```
+
+```{r, include=FALSE}
+age_mary <- NA
+age_john <- NA
+age_mary == age_john
 ```
 
 ### 
@@ -388,7 +457,12 @@ Start a new pipe with `flights`. Pipe that into the `filter()` function. Within 
 
 ```{r comparisons-18-hint, eval = FALSE}
 flights|>
-  filter(...)
+  filter(dep_time == ...)
+```
+
+```{r, include=FALSE}
+flights|>
+  filter(dep_time == NA)
 ```
 
 ### 
@@ -404,6 +478,10 @@ Type `is.na()` into the code chunk. Within `is.na()`, add `c(TRUE, NA, FALSE)`
 ```
 
 ```{r comparisons-19-hint, eval = FALSE}
+is.na(c(TRUE, NA, ...))
+```
+
+```{r, include=FALSE}
 is.na(c(TRUE, NA, FALSE))
 ```
 
@@ -421,7 +499,12 @@ Start a new pipe with `flights`. Pipe `flights` into `filter()`. Within `filter(
 
 ```{r comparisons-20-hint, eval = FALSE}
 flights |> 
-  filter(...)
+  filter(is.na(...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  filter(is.na(dep_time))
 ```
 
 ### 
@@ -438,7 +521,14 @@ Start a new pipe with `flights`. Pipe it into the `filter()` function. Within `f
 
 ```{r comparisons-21-hint, eval = FALSE}
 flights|>
-  filter(...)
+  filter(month == ..., 
+         day == ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  filter(month == 1,
+         day == 1)
 ```
 
 ### 
@@ -457,8 +547,14 @@ Continue the pipe with `arrange()`. Within `arrange()`, add `dep_time`. This sho
 
 ```{r comparisons-22-hint, eval = FALSE}
 flights|>
-  filter(month == 1, day == 1)|>
+  filter(month == 1, day == 1) |>
   arrange(...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  filter(month == 1, day == 1) |>
+  arrange(dep_time)
 ```
 
 ### 
@@ -478,7 +574,13 @@ Within `arrange()`, put `is.na(dep_time)`.
 ```{r comparisons-23-hint, eval = FALSE}
 flights|>
   filter(month == 1, day == 1)|>
-  arrange(...(dep_time))
+  arrange(is.na(...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  filter(month == 1, day == 1) |>
+  arrange(is.na(dep_time))
 ```
 
 ### 
@@ -498,7 +600,13 @@ Within `arrange()`, put `desc(is.na(dep_time)), dep_time`
 ```{r comparisons-24-hint, eval = FALSE}
 flights|>
   filter(month == 1, day == 1)|>
-  arrange(...(is.na(dep_time)), ...)
+  arrange(desc(is.na(...)), ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  filter(month == 1, day == 1) |>
+  arrange(desc(is.na(dep_time)), dep_time)
 ```
 
 ### 
