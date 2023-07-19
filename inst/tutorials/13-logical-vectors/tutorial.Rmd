@@ -1,6 +1,6 @@
 ---
 title: Logical vectors
-author: David Kane and Zayan Farooq and Rajarshi Mandal
+author: David Kane, Zayan Farooq, and Rajarshi Mandal
 tutorial:
   id: logical-vectors
 output:
@@ -10,6 +10,7 @@ output:
 runtime: shiny_prerendered
 description: 'Tutorial for Chapter 13: Logical vectors'
 ---
+
 
 ```{r setup, include = FALSE}
 library(learnr)
@@ -87,10 +88,6 @@ Type `flights` and hit "Run Code".
 
 ```
 
-```{r, include=FALSE}
-flights
-```
-
 ### 
 
 A very common way to create a logical vector is via a numeric comparison with `<`, `<=`, `>`, `>=`, `!=`, and `==`.
@@ -136,6 +133,11 @@ flights |>
   filter(dep_time > 600 & ...)
 ```
 
+```{r, include=FALSE}
+flights |> 
+  filter(dep_time > 600 & dep_time < 2000)
+```
+
 ### 
 
 An easy way to avoid the problem of getting your `==`'s and `|`'s in the right order is to use `%in%`. `x %in% y` returns a logical vector the same length as `x` that is `TRUE` whenever a value in `x` is anywhere in `y` .
@@ -152,16 +154,20 @@ Use the same code as above and add `& abs(arr_delay) < 20` to the call to `filte
 
 ```{r comparisons-6-hint, eval = FALSE}
 flights |> 
-  filter(dep_time > 600 & dep_time < 2000 & ...)
+  filter(dep_time > 600 & dep_time < 2000 & abs(arr_delay) < ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  filter(dep_time > 600 & dep_time < 2000 & abs(arr_delay) < 20)
 ```
 
 ### 
 
-<!-- What is the text below referring to? Fix it. -->
-
-Great work. It's useful to know that this is a shortcut and you can explicitly create the underlying logical variables with `mutate()`
+You can always explicitly create the underlying logical variables with `mutate()`
 
 ### Exercise 7
+
 
 Start a new pipe with `flights`. Pipe `flights` into the `mutate()` function. Within `mutate`, use `daytime = dep_time > 600 & dep_time < 2000`. This will create a new column called `daytime` which is `TRUE` when the `dep_time` is between 6:00 AM and 8:00 PM.
 
@@ -171,7 +177,12 @@ Start a new pipe with `flights`. Pipe `flights` into the `mutate()` function. Wi
 
 ```{r comparisons-7-hint, eval = FALSE}
 flights |> 
-  mutate(...)
+  mutate(daytime = dep_time > ... & dep_time < ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  mutate(daytime = dep_time > 600 & dep_time < 2000)
 ```
 
 ###
@@ -190,14 +201,17 @@ Use the same code as above and add `, approx_ontime = abs(arr_delay) < 20` to th
 
 ```{r comparisons-8-hint, eval = FALSE}
 flights |> 
-  mutate(daytime = dep_time > 600 & dep_time < 2000, ...)
+  mutate(daytime = dep_time > 600 & dep_time < 2000,
+         approx_ontime = abs(arr_delay) < ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  mutate(daytime = dep_time > 600 & dep_time < 2000,
+         approx_ontime = abs(arr_delay) < 20)
 ```
 
 ### 
-
-<!-- This has been said earlier. So delete it, -->
-
-As well as `&` and `|`, R also has `&&` and `||`. Don’t use them in **dplyr** functions!
 
 ### Exercise 9
 
@@ -212,14 +226,18 @@ Copy previous code and add `,.keep = "used"` to the `mutate()` function. This ke
 ```{r comparisons-9-hint, eval = FALSE}
 flights |> 
   mutate(daytime = dep_time > 600 & dep_time < 2000,
-         approx_ontime = abs(arr_delay) < 20,...)
+         approx_ontime = abs(arr_delay) < 20,
+         .keep = ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  mutate(daytime = dep_time > 600 & dep_time < 2000,
+         approx_ontime = abs(arr_delay) < 20,
+         .keep = "used")
 ```
 
 ### 
-
-<!-- This has been written already. -->
-
-`&&` and `||` are called short-circuiting operators and only ever return a single `TRUE` or `FALSE`. They’re important for programming, not data science.
 
 ### Exercise 10
 
@@ -236,7 +254,15 @@ flights |>
   mutate(daytime = dep_time > 600 & dep_time < 2000,
          approx_ontime = abs(arr_delay) < 20,
          .keep = "used")|>
-  filter(...)
+  filter(daytime & ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  mutate(daytime = dep_time > 600 & dep_time < 2000,
+         approx_ontime = abs(arr_delay) < 20,
+         .keep = "used") |>
+  filter(daytime & approx_ontime)
 ```
 
 ### 
@@ -252,7 +278,11 @@ Set `x` to `c(1 / 49 * 49, sqrt(2) ^ 2)` using `<-`. Then, click "Run Code".
 ```
 
 ```{r comparisons-11-hint, eval = FALSE}
-x <- c(...)
+x <- c(..., ...)
+```
+
+```{r, include=FALSE}
+x <- c(1 / 49 * 49, sqrt(2) ^ 2)
 ```
 
 ###
@@ -271,7 +301,12 @@ Copy previous code and run `x == c(1,2)`. The expected output is `FALSE`.
 
 ```{r comparisons-12-hint, eval = FALSE}
 x <- c(1 / 49 * 49, sqrt(2) ^ 2)
-x <- c(...)
+x == c(..., ...)
+```
+
+```{r, include=FALSE}
+x <- c(1 / 49 * 49, sqrt(2) ^ 2)
+x == c(1, 2)
 ```
 
 ### 
@@ -290,8 +325,14 @@ We can see the exact values by calling `print()` with the digits argument. Copy 
 
 ```{r comparisons-13-hint, eval = FALSE}
 x <- c(1 / 49 * 49, sqrt(2) ^ 2)
-x <- c(1,2)
-print(...)
+x == c(1, 2)
+print(x, digits = ...)
+```
+
+```{r, include=FALSE}
+x <- c(1 / 49 * 49, sqrt(2) ^ 2)
+x == c(1, 2)
+print(x, digits = 16)
 ```
 
 ### 
@@ -310,14 +351,21 @@ Copy the previous code and type `near()` on the next line. Within `near()`, add 
 
 ```{r comparisons-14-hint, eval = FALSE}
 x <- c(1 / 49 * 49, sqrt(2) ^ 2)
-x <- c(1,2)
+x == c(1, 2)
 print(x, digits = 16)
-near(x,...)
+near(x, c(..., ...))
+```
+
+```{r, include=FALSE}
+x <- c(1 / 49 * 49, sqrt(2) ^ 2)
+x == c(1, 2)
+print(x, digits = 16)
+near(x, c(1, 2))
 ```
 
 ### 
 
-Missing values represent the unknown so they are "contagious": almost any operation involving an unknown value will also be unknown.
+Missing values represent the unknown so they are “contagious”: almost any operation involving an unknown value will also be unknown.
 
 ### Exercise 15
 
@@ -330,6 +378,11 @@ Run `NA > 5` and `10 == NA`. They should both come out as `NA`
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r comparisons-15-hint, eval = FALSE}
+NA > ...
+... == NA
+```
+
+```{r, include=FALSE}
 NA > 5
 10 == NA
 ```
@@ -348,7 +401,7 @@ Now, run `NA == NA`.This should also come out as `NA`
 
 <button onclick="transfer_code(this)">Copy previous code</button>
 
-```{r comparisons-16-hint, eval = FALSE}
+```{r, include=FALSE}
 NA == NA
 ```
 
@@ -358,7 +411,7 @@ That is the most confusing result. It's easiest to understand why this is true i
 
 ### Exercise 17
 
-Set `age_mary <- NA`, then set `age_john <- NA` on the next line. On a new line set `age_mary == age_john`.
+Set `age_mary <- NA` and `age_john <- NA` on the next line. On a new line, type `age_mary == age_john` and click run code.
 
 ```{r comparisons-17, exercise = TRUE}
 
@@ -369,7 +422,13 @@ Set `age_mary <- NA`, then set `age_john <- NA` on the next line. On a new line 
 ```{r comparisons-17-hint, eval = FALSE}
 age_mary <- ...
 ... <- NA
-age_john == ...
+age_mary == age_john
+```
+
+```{r, include=FALSE}
+age_mary <- NA
+age_john <- NA
+age_mary == age_john
 ```
 
 ### 
@@ -388,7 +447,12 @@ Start a new pipe with `flights`. Pipe that into the `filter()` function. Within 
 
 ```{r comparisons-18-hint, eval = FALSE}
 flights|>
-  filter(...)
+  filter(dep_time == ...)
+```
+
+```{r, include=FALSE}
+flights|>
+  filter(dep_time == NA)
 ```
 
 ### 
@@ -404,12 +468,18 @@ Type `is.na()` into the code chunk. Within `is.na()`, add `c(TRUE, NA, FALSE)`
 ```
 
 ```{r comparisons-19-hint, eval = FALSE}
+is.na(c(TRUE, NA, ...))
+```
+
+```{r, include=FALSE}
 is.na(c(TRUE, NA, FALSE))
 ```
 
 ### 
 
 You will see the output `FALSE` for `TRUE` and `FALSE`, but `TRUE` for `NA`. This is because `is.na()` works with any type of vector and returns `TRUE` for missing values and `FALSE` for everything else.
+
+<!-- RM: Add a new exercise to include some code missing in the tutorial -->
 
 ### Exercise 20
 
@@ -421,7 +491,12 @@ Start a new pipe with `flights`. Pipe `flights` into `filter()`. Within `filter(
 
 ```{r comparisons-20-hint, eval = FALSE}
 flights |> 
-  filter(...)
+  filter(is.na(...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  filter(is.na(dep_time))
 ```
 
 ### 
@@ -438,7 +513,12 @@ Start a new pipe with `flights`. Pipe it into the `filter()` function. Within `f
 
 ```{r comparisons-21-hint, eval = FALSE}
 flights|>
-  filter(...)
+  filter(month == ..., day == ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  filter(month == 1, day == 1)
 ```
 
 ### 
@@ -457,8 +537,14 @@ Continue the pipe with `arrange()`. Within `arrange()`, add `dep_time`. This sho
 
 ```{r comparisons-22-hint, eval = FALSE}
 flights|>
-  filter(month == 1, day == 1)|>
+  filter(month == 1, day == 1) |>
   arrange(...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  filter(month == 1, day == 1) |>
+  arrange(dep_time)
 ```
 
 ### 
@@ -478,7 +564,13 @@ Within `arrange()`, put `is.na(dep_time)`.
 ```{r comparisons-23-hint, eval = FALSE}
 flights|>
   filter(month == 1, day == 1)|>
-  arrange(...(dep_time))
+  arrange(is.na(...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  filter(month == 1, day == 1) |>
+  arrange(is.na(dep_time))
 ```
 
 ### 
@@ -498,19 +590,23 @@ Within `arrange()`, put `desc(is.na(dep_time)), dep_time`
 ```{r comparisons-24-hint, eval = FALSE}
 flights|>
   filter(month == 1, day == 1)|>
-  arrange(...(is.na(dep_time)), ...)
+  arrange(desc(is.na(...)), ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  filter(month == 1, day == 1) |>
+  arrange(desc(is.na(dep_time)), dep_time)
 ```
 
 ### 
 
-The `desc()` function is used to create a descending order of the logical vector obtained from `is.na(dep_time)`. This means that rows with missing `dep_time` values (`NA`) will appear first in the data frame.
+The `desc()` function is used to create a descending order of the logical vector obtained from `is.na(dep_time)`. This means that rows with missing `dep_time` values (`NA`) will appear first in the data frame. We will discuss missing values further in the Missing Values tutorial.
 
 
 
 ## Boolean algebra
 ### 
-
-<!-- Why ^2? Check the book.  -->
 
 Once you have multiple logical vectors, you can combine them together using Boolean algebra. In R, `&` is “and”, `|` is “or”, `!` is “not”, and `xor()` is exclusive or. For example, `df |> filter(!is.na(x))` finds all rows where `x` is not missing and `df |> filter(x < -10 | x > 0)` finds all rows where `x` is smaller than `-10` or bigger than `0`. Figure 13.1 shows the complete set of Boolean operations and how they work.
 
@@ -541,8 +637,13 @@ Start a new pipe with `flights` and pipe it into `filter()`. Within `filter()`, 
 ```
 
 ```{r boolean-algebra-2-hint, eval = FALSE}
-flights|>
-  filter(...)
+flights |>
+  filter(month == ... | month == ...)
+```
+
+```{r, include=FALSE}
+flights |>
+  filter(month == 11 | month == 12)
 ```
 
 ###
@@ -560,8 +661,13 @@ Now, try replacing `month == 11 | month == 12` with `month == 11 | 12`. This sho
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r boolean-algebra-3-hint, eval = FALSE}
-flights|>
-  filter(...)
+flights |>
+  filter(month == ... | ...)
+```
+
+```{r, include=FALSE}
+flights |>
+  filter(month == 11 | 12)
 ```
 
 ###
@@ -578,20 +684,21 @@ Start a new pipe with `flights`. Pipe `flights` into the `mutate()` function. Wi
 
 ```{r boolean-algebra-4-hint, eval = FALSE}
 flights|>
-  mutate(...)
+  mutate(nov = month == ...)
+```
+
+```{r, include=FALSE}
+flights|>
+  mutate(nov = month == 11)
 ```
 
 ###
-
-<!-- A little repetitive. De-repetitify it.  -->
 
 `nov = month == 11` creates a new variable called `nov` and assigns it to the Boolean `TRUE` for rows where the month is equal to `11`, and `FALSE` otherwise. The expression `month == 11` checks the equality between the month column and the value `11`, resulting in a logical vector.
 
 ### Exercise 5
 
-<!-- RM: Maybe split this into two parts (description is a little long) -->
-
-Copy previous code and add `final = nov | 12, .keep = "used"` to the `mutate()` function.
+Copy previous code and add `final = nov | 12, .keep = "used"` to the `mutate()` function. `final = nov | 12` results in the variable `final` being `TRUE` if `nov` is `TRUE` or if the value `12` is considered as `TRUE`. The `.keep = "used"` argument keeps only the new variables, and the variables that were used to make them in the tibble.
 
 ```{r boolean-algebra-5, exercise = TRUE}
 
@@ -601,34 +708,43 @@ Copy previous code and add `final = nov | 12, .keep = "used"` to the `mutate()` 
 
 ```{r boolean-algebra-5-hint, eval = FALSE}
 flights|>
-  mutate(nov = month == 12, ...)
+ mutate(nov = month == 11,
+        final = nov | ...,
+        .keep = ...)
+```
+
+```{r, include=FALSE}
+flights|>
+ mutate(nov = month == 11,
+        final = nov | 12,
+        .keep = "used")
 ```
 
 ###
 
-`final = nov | 12` creates another new variable called `final`. It assigns the Boolean `TRUE` to `final` if `nov` is `TRUE` or if the value `12` is considered as `TRUE`. In R, any non-zero numeric value is considered as `TRUE` in logical operations. Therefore, the expression `nov | 12` performs a logical OR operation between the `nov` column and the value `12`, resulting in a logical vector. The `.keep = "used"` argument keeps only the new variables, and the variables that were used to make them in the tibble.
+As well as & and |, R also has && and ||. Don’t use them in dplyr functions! These are called short-circuiting operators and only ever return a single TRUE or FALSE. They’re important for programming, not data science.
 
 ### Exercise 6
 
-<!-- Explanation of x in y is repeated. Fix! -->
-
-`x %in% y` returns `TRUE` if anything in `x` is in `y`. For example, type `1:12 %in% c(1,5,11)`. This makes `x` a vector containing all the numbers from `1` through `11`, and `y` `1`,`5`, and `11`. Now, click "Run Code"
+An easy way to avoid the problem of getting your `==`s and `|`s in the right order is to use `%in%`. `x %in% y` returns a logical vector the same length as `x` that is `TRUE` whenever a value in `x` is anywhere in `y`. `x %in% y` returns `TRUE` if anything in `x` is in `y`. For example, type `1:12 %in% c(1,5,11)` and click "Run Code". 
 
 ```{r boolean-algebra-6, exercise = TRUE}
 
 ```
 
 ```{r boolean-algebra-6-hint, eval = FALSE}
-... %in% c(...)
+1:12 %in% c(..., ..., ...)
+```
+
+```{r, include=FALSE}
+1:12 %in% c(1, 5, 11)
 ```
 
 ###
 
-An easy way to avoid the problem of getting your `==`s and `|`s in the right order is to use `%in%`. `x %in% y` returns a logical vector the same length as `x` that is `TRUE` whenever a value in `x` is anywhere in `y` .
+This code assigns a vector containing all the numbers from `1` through `11` to `x`, and `1`,`5`, and `11` to `y`.
 
 ### Exercise 7
-
-<!-- This has been done a few times now and the learner is probably getting bored. Fix!? -->
 
 To find all of the flights in November and December, start a new pipe with `flights`. Pipe it into `filter()`. Within `filter()`, add `month %in% c(11,12)`.
 
@@ -637,8 +753,13 @@ To find all of the flights in November and December, start a new pipe with `flig
 ```
 
 ```{r boolean-algebra-7-hint, eval = FALSE}
-flights|>
-  filter(...)
+flights |>
+  filter(month %in% c(..., ...))
+```
+
+```{r, include=FALSE}
+flights |>
+  filter(month %in% c(11, 12))
 ```
 
 ###
@@ -647,24 +768,23 @@ Fun Fact: `%in%` obeys different rules for `NA` than `==`, as `NA %in% NA` is `T
 
 ### Exercise 8
 
-<!-- This exercise should be added earlier or deleted, as it is repeating what has been stated earlier. Delete away. -->
-
-Type `c(1, 2, NA) == NA`. It should say `NA` for all 3. 
+Type `c(1, 2, NA) == NA` and click "Run code".
 
 ```{r boolean-algebra-8, exercise = TRUE}
 
 ```
 
-
 ```{r boolean-algebra-8-hint, eval = FALSE}
-c(...) == NA
+c(1, 2, NA) == ...
+```
+
+```{r, include=FALSE}
+c(1, 2, NA) == NA
 ```
 
 ###
 
-<!-- Not necessarily true. Earlier, we have stated that NA or True is True. Fix. -->
-
-This should output `#> [1] NA NA NA` because when comparing any value (including `NA`) with `NA` using the `==` operator, the result will be `NA`. This is because the value of `NA` represents unknown information, so the result of any comparison involving `NA` is also unknown.
+This should output `#> [1] NA NA NA` because when comparing any value (including `NA`) with `NA` using the `==` operator, the result will be `NA`. This is because the value of `NA` represents unknown information, so the result of most comparisons involving `NA` are also unknown.
 
 ### Exercise 9
 
@@ -677,7 +797,11 @@ Copy previous code but instead of using `==`, use `%in%`. This checks to see if 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r boolean-algebra-9-hint, eval = FALSE}
-c(...) %in% NA
+c(1, 2, NA) %in% ...
+```
+
+```{r, include=FALSE}
+c(1, 2, NA) %in% NA
 ```
 
 ###
@@ -694,7 +818,12 @@ Start a new pipe with `flights`. Pipe it into `filter()`. Within `filter()`, add
 
 ```{r boolean-algebra-10-hint, eval = FALSE}
 flights |> 
-  filter(... %in% c(...))
+  filter(dep_time %in% c(..., ...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  filter(dep_time %in% c(NA, 0800))
 ```
 
 ###
@@ -704,9 +833,7 @@ This should result in a tibble where the only values in the `dep_time` column ar
 ## Summaries
 ###
 
-<!-- The English here is confused. Fix. -->
-
-The following sections describe some useful techniques for summarizing logical vectors. As well as functions that only work specifically with logical vectors, you can also use functions that work with numeric vectors.
+Next, we will describe some useful techniques for summarizing logical vectors. In addition to functions that only work with logical vectors, you can also use functions that work with numeric vectors.
 
 ### Exercise 1
 
@@ -716,10 +843,14 @@ Start a pipe with `flights`. Pipe it into `summarize()`. Within `summarize()`, a
 
 ```
 
-
 ```{r summaries-1-hint, eval = FALSE}
-flights|>
-  summarize(... = all(...))
+flights |>
+  summarize(all_delayed = all(dep_delay <= ...))
+```
+
+```{r, include=FALSE}
+flights |>
+  summarize(all_delayed = all(dep_delay <= 60))
 ```
 
 ###
@@ -738,8 +869,12 @@ Copy the previous code. Within `all()`, add `na.rm = TRUE` separated with a `,`.
 
 ```{r summaries-2-hint, eval = FALSE}
 flights |> 
-  summarize(
-    all_delayed = all(dep_delay <= 60,...)
+  summarize(all_delayed = all(dep_delay <= 60, na.rm = ...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(all_delayed = all(dep_delay <= 60, na.rm = TRUE))
 ```
 
 ###
@@ -760,7 +895,14 @@ Copy the previous code. Within `summarize()`, add `any_long_delay = any(arr_dela
 flights |> 
   summarize(
     all_delayed = all(dep_delay <= 60, na.rm = TRUE),
-    any_long_delay = any(...)
+    any_long_delay = any(arr_delay >= ...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = all(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = any(arr_delay >= 300))
 ```
 
 ###
@@ -781,7 +923,14 @@ Copy the previous code. Add the `na.rm = TRUE` argument in `any()`.
 flights |> 
   summarize(
     all_delayed = all(dep_delay <= 60, na.rm = TRUE),
-    any_long_delay = any(arr_delay >= 300),...)
+    any_long_delay = any(arr_delay >= 300), ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = all(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = any(arr_delay >= 300), na.rm = TRUE)
 ```
 
 ###
@@ -790,7 +939,7 @@ flights |>
 
 ### Exercise 5
 
-Copy the previous code. Add `.by = c(year, month)` to the `summarize()` function. Make sure to separate the arguments with commas. The added code will make the tibble have one row for each variation of `month` and `year`
+Copy the previous code. Add `.by = c(year, month)` to the `summarize()` function. Make sure to separate the arguments with commas. The added code will make the tibble have one row for each variation of `month` and `year`.
 
 ```{r summaries-5, exercise = TRUE}
 
@@ -799,11 +948,19 @@ Copy the previous code. Add `.by = c(year, month)` to the `summarize()` function
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-5-hint, eval = FALSE}
-flights |>
+flights |> 
   summarize(
     all_delayed = all(dep_delay <= 60, na.rm = TRUE),
-    any_long_delay = any(arr_delay >= 300, na.rm = TRUE),
+    any_long_delay = any(arr_delay >= 300), na.rm = TRUE,
     .by = c(..., ...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = all(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = any(arr_delay >= 300), na.rm = TRUE,
+    .by = c(year, month))
 ```
 
 ###
@@ -812,7 +969,7 @@ However, in most cases, `any()` and `all()` are a little too crude, and it would
 
 ### Exercise 6
 
-Add `day` as a new argument in `.by()`. Make sure to separate the arguments with commas.
+Add `day` as a new argument in `.by()`.
 
 ```{r summaries-6, exercise = TRUE}
 
@@ -825,7 +982,15 @@ flights |>
   summarize(
     all_delayed = all(dep_delay <= 60, na.rm = TRUE),
     any_long_delay = any(arr_delay >= 300, na.rm = TRUE),
-    .by = c(year, month,...))
+    .by = c(year, month, ...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = all(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = any(arr_delay >= 300), na.rm = TRUE,
+    .by = c(year, month, day))
 ```
 
 ###
@@ -841,8 +1006,15 @@ Start a new pipe with `flights`. Pipe it into `summarize()`. Within `summarize()
 ```
 
 ```{r summaries-7-hint, eval = FALSE}
-flights|>
-  summarize(all_delayed = ...)
+flights |> 
+  summarize(
+    all_delayed = dep_delay <= ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = dep_delay <= 60)
 ```
 
 ###
@@ -860,8 +1032,15 @@ Copy the previous code. Add `dep_delay <= 60` within `mean()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-8-hint, eval = FALSE}
-flights|>
-  summarize(all_delayed = ...(dep_delay <= 60))
+flights |> 
+  summarize(
+    all_delayed = ...(dep_delay <= 60))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60))
 ```
 
 ###
@@ -883,13 +1062,19 @@ flights|>
   summarize(all_delayed = mean(dep_delay <= 60,...))
 ```
 
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE))
+```
+
 ###
 
 Setting `na.rm` equal to `TRUE` removes all `NA` values.
 
 ### Exercise 10
 
-Copy the previous code and add `any_long_delay = arr_delay >= 300` as a new argument in `summarize()`. Make sure to separate the arguments with commas.
+Copy the previous code and add `any_long_delay = arr_delay >= 300` as a new argument in `summarize()`. Again, make sure to separate the arguments with commas.
 
 ```{r summaries-10, exercise = TRUE}
 
@@ -903,11 +1088,14 @@ flights|>
             any_long_delay = ...)
 ```
 
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = arr_delay >= 300)
+```
+
 ###
-
-<!-- RM: Relation to current exercise -->
-
-The `mean()` function gives the proportion of `TRUE`'s of whatever is inside it.
 
 ### Exercise 11
 
@@ -920,9 +1108,17 @@ Copy the previous code and add `arr_delay >= 300` within `sum()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-11-hint, eval = FALSE}
-flights|>
-  summarize(all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
-            any_long_delay = ...(arr_delay >= 300))
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = ...(arr_delay >= 300))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = sum(arr_delay >= 300))
 ```
 
 ###
@@ -945,6 +1141,13 @@ flights|>
             any_long_delay = sum(arr_delay >= 300, ...))
 ```
 
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = sum(arr_delay >= 300, na.rm = TRUE))
+```
+
 ###
 
 When you use a logical vector in a numeric context, `TRUE` becomes `1` and `FALSE` becomes `0`. This makes `sum()` and `mean()` very useful with logical vectors because `sum(x)` gives the number of `TRUE`s and `mean(x)` gives the proportion of `TRUE`s (`mean()` is `sum()` divided by `length()`).
@@ -963,7 +1166,15 @@ Copy the previous code and add `.by = c(year, month)` as a new argument within `
 flights|>
   summarize(all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
             any_long_delay = sum(arr_delay >= 300, na.rm = TRUE),
-            .by = c(...))
+            .by = c(..., ...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = sum(arr_delay >= 300, na.rm = TRUE),
+    .by = c(year, month))
 ```
 
 ###
@@ -972,9 +1183,7 @@ Always put lists of values within `c()`; otherwise, the code will result in an e
 
 ### Exercise 14
 
-Copy previous code and add `day` to the `.by()` argument within `summarize()` to get rows for every single day of the year. Make sure to separate the arguments with commas.
-
-<!-- Make sure to separate arguments with commas has been written at least five times, maybe delete every other occurence? Good. -->
+Copy previous code and add `day` to the `.by()` argument within `summarize()` to get rows for every single day of the year. Make sure to separate the arguments with commas!
 
 ```{r summaries-14, exercise = TRUE}
 
@@ -988,6 +1197,14 @@ flights |>
     all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
     any_long_delay = sum(arr_delay >= 300, na.rm = TRUE),
     .by = c(year, month, ...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = sum(arr_delay >= 300, na.rm = TRUE),
+    .by = c(year, month, day))
 ```
 
 ###
@@ -1004,7 +1221,12 @@ Start a new pipe with `flights`. Pipe it into `filter`. Within `filter()`, add `
 
 ```{r summaries-15-hint, eval = FALSE}
 flights |>
-  filter(... > 0)
+  filter(arr_delay > ...)
+```
+
+```{r, include=FALSE}
+flights |>
+  filter(arr_delay > 0)
 ```
 
 ###
@@ -1023,8 +1245,14 @@ Continue the pipe with `summarize()`. Within `summarize()`, add the argument `be
 
 ```{r summaries-16-hint, eval = FALSE}
 flights |>
-  filter(arr_delay > 0)|>
-  summarize(...)
+  filter(arr_delay > 0) |>
+  summarize(behind = mean(...))
+```
+
+```{r, include=FALSE}
+flights |>
+  filter(arr_delay > 0) |>
+  summarize(behind = mean(arr_delay))
 ```
 
 ###
@@ -1045,7 +1273,14 @@ Copy the previous code and add the argument `n = n()` within `summarize()`. Make
 flights |>
   filter(arr_delay > 0)|>
   summarize(behind = mean(arr_delay),
-            n = ...)
+            n = ...())
+```
+
+```{r, include=FALSE}
+flights |>
+  filter(arr_delay > 0) |>
+  summarize(behind = mean(arr_delay),
+            n = n())
 ```
 
 ###
@@ -1064,10 +1299,18 @@ Add `.by = c(year, month, day)` to have one row for each day of the year.
 
 ```{r summaries-18-hint, eval = FALSE}
 flights |>
-  filter(arr_delay > 0)|>
+  filter(arr_delay > 0) |>
   summarize(behind = mean(arr_delay),
             n = n(),
-            .by = c(...))
+            .by = c(..., ..., ...))
+```
+
+```{r, include=FALSE}
+flights |>
+  filter(arr_delay > 0) |>
+  summarize(behind = mean(arr_delay),
+            n = n(),
+            .by = c(year, month, day))
 ```
 
 ###
@@ -1099,22 +1342,26 @@ Also note the difference in the group size: in the first chunk `n()` gives the n
 
 ### Exercise 1
 
-Let’s begin with a simple example of labeling a numeric vector as either `“+ve”` (positive) or `“-ve”` (negative). Press "Run Code".
+Let’s begin with a simple example of labeling a numeric vector as either `“+ve”` (positive) or `“-ve”` (negative). Assign `x` to the vector `c(-3:3, NA)` and press "Run Code".
 
 ```{r conditional-transfor-1, exercise = TRUE}
-x <- c(-3:3, NA)
-if_else(x > 0, "+ve", "-ve")
+
 ```
 
-###
+<button onclick = "transfer_code(this)">Copy previous code</button>
 
-This should output `#> [1] "-ve" "-ve" "-ve" "-ve" "+ve" "+ve" "+ve" NA`
+```{r conditional-transfor-1-hint, eval = FALSE}
+x <- c(-3:3, ...)
+```
+
+```{r, include=FALSE}
+x <- c(-3:3, NA)
+```
+###
 
 ### Exercise 2
 
-<!-- RM: A little confusing. -->
-
-There’s an optional fourth argument, missing, which will be used if the input is `NA`. Add the `"???"` argument to `if_else()`.
+Copy the previous code. Then, type `if_else(x > 0, "+ve", "-ve")`. This should output `#> [1] "-ve" "-ve" "-ve" "-ve" "+ve" "+ve" "+ve" NA`.
 
 ```{r conditional-transfor-2, exercise = TRUE}
 
@@ -1124,18 +1371,56 @@ There’s an optional fourth argument, missing, which will be used if the input 
 
 ```{r conditional-transfor-2-hint, eval = FALSE}
 x <- c(-3:3, NA)
-if_else(x > 0, "+ve", "-ve", ...)
+if_else(x > ..., "+ve", "-ve")
+```
+
+```{r, include=FALSE}
+x <- c(-3:3, NA)
+if_else(x > 0, "+ve", "-ve")
 ```
 
 ###
 
-This output should be `#> [1] "-ve" "-ve" "-ve" "-ve" "+ve" "+ve" "+ve" "???"`
-
 ### Exercise 3
 
-You can also use vectors for the the `TRUE` and `FALSE` arguments. This allows us to create a minimal implementation of `abs()`. Click "Run Code".
+There’s an optional fourth argument, `missing`, which will be used if the input is `NA`. In this example, we can add the string `"???"` as an argument to `if_else()`.
 
 ```{r conditional-transfor-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r conditional-transfor-3-hint, eval = FALSE}
+x <- c(-3:3, NA)
+if_else(x > 0, "+ve", "-ve", ...)
+```
+
+```{r, include=FALSE}
+x <- c(-3:3, NA)
+if_else(x > 0, "+ve", "-ve", "???")
+```
+
+###
+
+The output should be `#> [1] "-ve" "-ve" "-ve" "-ve" "+ve" "+ve" "+ve" "???"`
+
+### Exercise 4
+
+You can also use vectors for the the `TRUE` and `FALSE` arguments. Let us attempt to create a minimal implementation of `abs()`. Below the code assigning a vector to `x`, type `if_else(x < 0, -x, x)`. Click "Run Code". 
+
+```{r conditional-transfor-4, exercise = TRUE}
+x <- c(-3:3, NA)
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r conditional-transfor-4-hint, eval = FALSE}
+x <- c(-3:3, NA)
+if_else(x < ..., -x, x)
+```
+
+```{r, include=FALSE}
 x <- c(-3:3, NA)
 if_else(x < 0, -x, x)
 ```
@@ -1144,11 +1429,24 @@ if_else(x < 0, -x, x)
 
 This should output `#> [1]  3  2  1  0  1  2  3 NA`. So far, all the arguments have used the same vectors, but you can also mix and match!
 
-### Exercise 4
+### Exercise 5
 
-For example, you could implement a simple version of `coalesce()` as shown below. Click "Run Code".
+For example, you could implement a simple version of `coalesce()`. Below the code assigning vectors to `x1` and `y1`, type `if_else(is.na(x1), y1, x1)` and click "Run Code".
 
-```{r conditional-transfor-4, exercise = TRUE}
+```{r conditional-transfor-5, exercise = TRUE}
+x1 <- c(NA, 1, 2, NA)
+y1 <- c(3, NA, 4, 6)
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r conditional-transfor-5-hint, eval = FALSE}
+x1 <- c(NA, 1, 2, NA)
+y1 <- c(3, NA, 4, 6)
+if_else(is.na(...), y1, x1)
+```
+
+```{r, include=FALSE}
 x1 <- c(NA, 1, 2, NA)
 y1 <- c(3, NA, 4, 6)
 if_else(is.na(x1), y1, x1)
@@ -1158,11 +1456,22 @@ if_else(is.na(x1), y1, x1)
 
 The output should be `#> [1] 3 1 2 6`. You might have noticed a small infelicity in our labeling example above: zero is neither positive nor negative. We could resolve this by adding an additional `if_else()`.
 
-### Exercise 5
+### Exercise 6
 
-Click "Run Code".
+Below the provided code, type `if_else(x == 0, "0", if_else(x < 0, "-ve", "+ve"), "???")` and click "Run Code".
 
-```{r conditional-transfor-5, exercise = TRUE}
+```{r conditional-transfor-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r conditional-transfor-6-hint, eval = FALSE}
+x <- c(-3:3, NA)
+if_else(x == 0, "0", ...(x < 0, "-ve", "+ve"), "???")
+```
+
+```{r, include=FALSE}
 x <- c(-3:3, NA)
 if_else(x == 0, "0", if_else(x < 0, "-ve", "+ve"), "???")
 ```
@@ -1171,11 +1480,11 @@ if_else(x == 0, "0", if_else(x < 0, "-ve", "+ve"), "???")
 
 This is already a little hard to read, and you can imagine it would only get harder if you have more conditions. One solution is to switch to `dplyr::case_when()`.
 
-### Exercise 6
+### Exercise 7
 
-Below should have the same output as above, but instead of using `if_else`, we are using `case_when()`. Click "Run Code".
+The code below should have the same output as above, but instead of using `if_else`, we are using `case_when()`. Click "Run Code".
 
-```{r conditional-transfor-6, exercise = TRUE}
+```{r conditional-transfor-7, exercise = TRUE}
 x <- c(-3:3, NA)
 case_when(
   x == 0   ~ "0",
@@ -1189,11 +1498,11 @@ case_when(
 
 dplyr’s `case_when()` is inspired by SQL’s `CASE` statement and provides a flexible way of performing different computations for different conditions. It has a special syntax that unfortunately looks like nothing else you’ll use in the tidyverse. It takes pairs that look like `condition ~ output`. `condition` must be a logical vector; when it’s `TRUE`, output will be used.
 
-### Exercise 7
+### Exercise 8
 
 To explain how `case_when()` works, let’s explore some simpler cases. If none of the cases match, the output gets an `NA`. Click "Run Code".
 
-```{r conditional-transfor-7, exercise = TRUE}
+```{r conditional-transfor-8, exercise = TRUE}
 x <- c(-3:3, NA)
 case_when(
   x < 0 ~ "-ve",
@@ -1203,36 +1512,45 @@ case_when(
 
 ###
 
-The output should be `#> [1] "-ve" "-ve" "-ve" NA    "+ve" "+ve" "+ve" NA`
+The output should be `#> [1] "-ve" "-ve" "-ve" NA    "+ve" "+ve" "+ve" NA`.
 
-### Exercise 8
+### Exercise 9
 
 If you want to create a “default”/catch all value, use TRUE on the left hand side. Copy the previous code and add `TRUE ~ "???"` as a new argument. Make sure to separate the arguments with a comma.
 
-```{r conditional-transfor-8, exercise = TRUE}
+```{r conditional-transfor-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r conditional-transfor-8-hint, eval = FALSE}
+```{r conditional-transfor-9-hint, eval = FALSE}
 x <- c(-3:3, NA)
 case_when(
   x < 0 ~ "-ve",
   x > 0 ~ "+ve",
-  ...
+  ... ~ "???"
+)
+```
+
+```{r, include=FALSE}
+x <- c(-3:3, NA)
+case_when(
+  x < 0 ~ "-ve",
+  x > 0 ~ "+ve",
+  TRUE ~ "???"
 )
 ```
 
 ###
 
-This should output `#> [1] "-ve" "-ve" "-ve" "???" "+ve" "+ve" "+ve" "???"`
+This should output `#> [1] "-ve" "-ve" "-ve" "???" "+ve" "+ve" "+ve" "???"`.
 
-### Exercise 9
+### Exercise 10
 
 Also, note that if multiple conditions match, only the first will be used. Click "Run Code".
 
-```{r conditional-transfor-9, exercise = TRUE}
+```{r conditional-transfor-10, exercise = TRUE}
 x <- c(-3:3, NA)
 case_when(
   x > 0 ~ "+ve",
@@ -1244,11 +1562,11 @@ case_when(
 
 This should output `#> [1] NA    NA    NA    NA    "+ve" "+ve" "+ve" NA` because it used the first argument. Just like with `if_else()` you can use variables on both sides of the`~` and you can mix and match variables as needed for your problem.
 
-### Exercise 10
+### Exercise 11
 
-For example, we could use `case_when()` to provide some human readable labels for the arrival delay. Click "Run Code".
+For example, we could use `case_when()` to provide some human readable labels for the arrival delay. Your gratitude for having the code written for you is much appreciated.
 
-```{r conditional-transfor-10, exercise = TRUE}
+```{r conditional-transfor-11, exercise = TRUE}
 flights |> 
   mutate(
     status = case_when(
@@ -1261,26 +1579,23 @@ flights |>
     ),
     .keep = "used"
   )
-
 ```
 
 ###
 
-Be wary when writing this sort of complex case_when() statement; my first two attempts used a mix of < and > and I kept accidentally creating overlapping conditions.
+Be wary when writing this sort of complex `case_when()` statement.
 
-### Exercise 11
+### Exercise 12
 
-Note that both `if_else()` and `case_when()` require compatible types in the output. If they’re not compatible, you’ll see errors like this. Click "Run Code".
+Note that both `if_else()` and `case_when()` require compatible types in the output. If they’re not compatible, you’ll see errors. To demonstrate, click "Run Code".
 
-```{r conditional-transfor-11, exercise = TRUE}
+```{r conditional-transfor-12, exercise = TRUE}
 if_else(TRUE, "a", 1)
 ```
 
 ###
 
 This should output `#> Error in if_else(): #> ! Can't combine true <character> and false <double>.`
-
-<!-- RM: This section could be more interactive. OK. -->
 
 ## Summary
 ### 
