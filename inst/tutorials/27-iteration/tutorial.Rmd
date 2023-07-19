@@ -96,6 +96,26 @@ gapminder_1962 <- readxl::read_excel("data/gapminder/1992.xlsx")
 gapminder_1952 <- readxl::read_excel("data/gapminder/1997.xlsx")
 gapminder_1957 <- readxl::read_excel("data/gapminder/2002.xlsx")
 gapminder_2007 <- readxl::read_excel("data/gapminder/2007.xlsx")
+
+paths <- list.files("data/gapminder", pattern = "[.]xlsx$", full.names = TRUE)
+
+# DK: Had to comment out the creation of this object since it was causing a
+# weird error during Github checks. Let's discuss.
+
+# gapminder <- paths |> 
+#   set_names(basename) |> 
+#   map(readxl::read_excel) |> 
+#   list_rbind(names_to = "year") |> 
+#   mutate(year = parse_number(year))
+
+process_file <- function(path) {
+  df <- read_csv(path)
+  
+  df |> 
+    filter(!is.na(id)) |> 
+    mutate(id = tolower(id)) |> 
+    pivot_longer(jan:dec, names_to = "month")
+}
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -103,6 +123,8 @@ gapminder_2007 <- readxl::read_excel("data/gapminder/2007.xlsx")
 
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
+
+<!-- DK: Only use the code button where it makes sense to do so. -->
 
 <!-- Avoid group_by() if possible. .by/by in the next function should work. -->
 
@@ -131,6 +153,11 @@ Load the **tidyverse** package with the `library()` command.
 ```{r modifying-multiple-c-1-hint-1, eval = FALSE}
 library(...)
 ```
+
+```{r, include=FALSE}
+library(tidyverse)
+```
+
 
 ### 
 
@@ -169,11 +196,15 @@ Type `df` and hit "Run Code".
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r modifying-multiple-c-3-hint-1, eval = FALSE}
 
 ```
+
+```{r, include = FALSE}
+df
+```
+
 
 ### Exercise 4
 
@@ -187,6 +218,11 @@ Pipe `df` to `summarise()`.
 
 ```{r modifying-multiple-c-4-hint-1, eval = FALSE}
 df |> 
+  ...()
+```
+
+```{r, include=FALSE}
+df |> 
   summarise()
 ```
 
@@ -194,7 +230,7 @@ Note that this creates a tibble with one row and zero columns.
 
 ### 
 
-The result above is due to absence of arguments and values in the function `summarise()`. Next, we will add arguments to fix this problem.
+The result above is due to absence of arguments and values in the function `summarise()`. 
 
 ### Exercise 5
 
@@ -211,13 +247,19 @@ df |>
   summarise(n = ...)
 ```
 
+```{r, include=FALSE}
+df |> 
+  summarise(n = n())
+```
+
+
 ### 
 
-Recall that this adds a new column of a variable named `n` that represents the number of observations.
+Recall that this create a new column named `n` which records the number of observations in `df`.
 
 ### Exercise 6
 
-Add the median of a and median of b, `med_a = median (a)` and `med_b = median (b)`, to the call to `summarise()`. Remember the arguments to summarize must be separated by commas.
+Add the median of `a` and median of `b`, `med_a = median (a)` and `med_b = median (b)`, to the call to `summarise()`. Remember the arguments to summarize must be separated by commas.
 
 ```{r modifying-multiple-c-6, exercise = TRUE}
 
@@ -228,13 +270,21 @@ Add the median of a and median of b, `med_a = median (a)` and `med_b = median (b
 ```{r modifying-multiple-c-6-hint-1, eval = FALSE}
 df |> 
   summarise(n = n(),
+            ... = median(a),
+            med_b = ...(b))
+```
+
+```{r, include=FALSE}
+df |> 
+  summarise(n = n(),
             med_a = median(a),
             med_b = median(b))
 ```
 
+
 ### 
 
-Now you have a table of 3 columns (vairbale `n`, `a`, `b`) and their corresponding median. Next, we will add variable `c` and `d` to complete the code.
+Now you have a table of 3 columns: `n`, `med_a`, and `med_b`. 
 
 ### Exercise 7
 
@@ -251,19 +301,29 @@ df |>
   summarise(n = n(),
             med_a = median(a),
             med_b = median(b),
+            ... = ...,
+            med_d = median(...))
+```
+
+```{r, include=FALSE}
+df |> 
+  summarise(n = n(),
+            med_a = median(a),
+            med_b = median(b),
             med_c = median(c),
             med_d = median(d))
 ```
 
-### 
-
-Now we've completed the code. You should see a table of 5 columns (vairbale `n`, `med_a`, `med_b`, `med_c`, `med_d`) and their corresponding median.
 
 ### 
 
-You may find the above process repetitive- we were simply copy-pasted `med_a = median(a)` 4 times- which, violates our rule of thumb to never copy and paste more than twice.
+You should see a tibble with five columns: `n`, `med_a`, `med_b`, `med_c`, and `med_d`.
 
-This will get even more tedious if you have tens or even hundreds of columns!
+### 
+
+You may find the above process repetitive -- we were simply copy-pasted `med_a = median(a)` 4 times --- which, violates our rule of thumb to never copy and paste more than twice.
+
+This would get even more tedious if you have tens or even hundreds of columns!
 
 ### 
 
@@ -278,6 +338,8 @@ df |>
   summarise(n = n())
 ```
 
+<!-- DK: drop some knowledg. tells us about across. link to its help page. -->
+
 ### Exercise 9
 
 Copy the previous code. Now, add `across(a:d, median)` to the call to `summarise()`. Hit "Run Code," see what happens.
@@ -291,8 +353,16 @@ Copy the previous code. Now, add `across(a:d, median)` to the call to `summarise
 ```{r modifying-multiple-c-9-hint-1, eval = FALSE}
 df |> 
   summarise(n = n(),
-            across (a:d, ...))
+            ...(a:d, ...))
 ```
+
+```{r, include=FALSE}
+df |> 
+  summarise(n = n(),
+            across(a:d, median))
+```
+
+<!-- DK: Do not hard code exercise numbers. Use "as above" or "as previously." -->
 
 You should get the exact same table as in Exercise 7.
 
@@ -326,7 +396,6 @@ Pipe `df2` into `summarise()`.
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r modifying-multiple-c-11-hint-1, eval = FALSE}
 df2 |> 
@@ -1519,6 +1588,266 @@ files[["1962.xlsx"]]
 ### 
 
 You should get the file of the respective year you chose! 
+
+### Exercise 21
+
+Copy and paste code from Exercise 18 to the space below. Hit `Run Code`.
+
+```{r reading-multiple-fil-21, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-21-hint, eval = FALSE}
+paths |> 
+  set_names(basename) |> 
+  map(readxl::read_excel)
+```
+
+
+### Exercise 22
+
+Pipe the code above into `list_rbind() `, then add argument `names_to = "year"` to this function.
+
+```{r reading-multiple-fil-22, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-22-hint, eval = FALSE}
+paths |> 
+  set_names(basename) |> 
+  map(readxl::read_excel) |> 
+  ...(names_to = "year")
+```
+
+###
+
+The argument `names_to` gives the name of the variable that will be created from the data stored in the column names
+
+### Exercise 23
+
+Pipe the previous code into `mutate()` to create a new column, with the argument `year = parse_number(year)`.
+
+```{r reading-multiple-fil-23, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-23-hint, eval = FALSE}
+paths |> 
+  set_names(basename) |> 
+  map(readxl::read_excel) |> 
+  list_rbind(names_to = "year") |> 
+  mutate(year = parse_number(year))
+```
+
+###
+
+`parse_number` parses the first number it finds, dropping any non-numeric characters before the first number and all characters after the first number. The grouping mark specified by the locale is ignored inside the number.
+
+###
+
+Overall, we used the  `names_to` argument to `list_rbind()` to tell it to save the names into a new column called year then use `readr::parse_number()` to extract the number from the string.
+
+
+### Exercise 24
+
+Assign the previous code to the variable `gapminder`
+
+```{r reading-multiple-fil-24, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-24-hint, eval = FALSE}
+gapminder <- paths |> 
+  set_names(basename) |> 
+  map(readxl::read_excel) |> 
+  list_rbind(n...) |> 
+  mutate(...)
+```
+
+
+### Exercise 25
+
+Type `write_csv()` in the empty code chunk below, hit `Run Code`.
+
+```{r reading-multiple-fil-25, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-25-hint, eval = FALSE}
+write_csv()
+```
+
+###
+
+In brief, `write_csv()` is used to write a data frame to a delimited file.
+
+### Exercise 26
+
+Add arguments `gapminder` and `"gapminder.csv"` to the call to `write_csv()`
+
+```{r reading-multiple-fil-26, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-26-hint, eval = FALSE}
+write_csv(gapminder, "gapminder.csv")
+```
+
+###
+
+This is how we save the work we have previously done, a single csv file is now created and ready for future use.
+
+### Exercise 27
+
+Run the following code.
+
+```{r reading-multiple-fil-27, exercise = TRUE}
+df <- read_csv(path)
+```
+
+### Exercise 28
+
+Pipe the newly created variable `df` into `filter()`, with argument `!is.na(id)`.
+
+```{r reading-multiple-fil-28, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-28-hint, eval = FALSE}
+df |> 
+    filter(!is.na(id))
+```
+
+###
+
+`is.na()` is used to deal with missing values in the dataset or data frame.
+
+### Exercise 29
+
+Pipe the code above into `mutate()` with argument `id = tolower(id)`.
+```{r reading-multiple-fil-29, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-29-hint, eval = FALSE}
+  df |> 
+    filter(!is.na(id)) |> 
+    mutate(...)
+```
+
+
+### Exercise 30
+
+Then use `pivot_longer()` and add arguments `jan:dec` and `names_to = "month"` to the call. Make sure to add a `,` between the two arguments.
+
+```{r reading-multiple-fil-30, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-30-hint, eval = FALSE}
+  df |> 
+    filter(!is.na(id)) |> 
+    mutate(id = tolower(id)) |> 
+    pivot_longer(...)
+```
+
+###
+
+Just a recap, `pivot_longer()` makes datasets longer by increasing the number of rows and decreasing the number of columns.
+
+### Exercise 31
+
+Assigned variable name `process_file` to <- `function(path)`,followed by a `{}` with the previous code. 
+
+```{r reading-multiple-fil-31, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-31-hint, eval = FALSE}
+process_file <- function(path) {
+  df <- read_csv(path)
+  
+  df |> 
+    filter(!is.na(id)) |> 
+    mutate(id = tolower(id)) |> 
+    pivot_longer(jan:dec, names_to = "month")
+}
+```
+
+###
+
+In this step, we write a function that takes a file and does all the modifications (in this case, we read a bunch of files, filter out missing values, pivot, and then combine).
+
+### Exercise 32
+
+Pipe `paths` into `map()`.
+
+```{r reading-multiple-fil-32, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-32-hint, eval = FALSE}
+paths |> 
+  map()
+```
+
+
+### Exercise 33
+
+Add `process_file` as argument to `map()`.
+
+```{r reading-multiple-fil-33, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-33-hint, eval = FALSE}
+paths |> 
+  map(process_file)
+```
+
+### Exercise 34
+
+Pipe the above into `list_rbind()`.
+
+```{r reading-multiple-fil-34, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-34-hint, eval = FALSE}
+paths |> 
+  map(process_file) |> 
+  list_rbind()
+```
+
+###
+
+This is an example of doing one round of iteration with a complex function.
 
 
 
