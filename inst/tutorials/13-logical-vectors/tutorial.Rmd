@@ -1346,22 +1346,26 @@ Also note the difference in the group size: in the first chunk `n()` gives the n
 
 ### Exercise 1
 
-Let’s begin with a simple example of labeling a numeric vector as either `“+ve”` (positive) or `“-ve”` (negative). Press "Run Code".
+Let’s begin with a simple example of labeling a numeric vector as either `“+ve”` (positive) or `“-ve”` (negative). Assign `x` to the vector `c(-3:3, NA)` and press "Run Code".
 
 ```{r conditional-transfor-1, exercise = TRUE}
-x <- c(-3:3, NA)
-if_else(x > 0, "+ve", "-ve")
+
 ```
 
-###
+<button onclick = "transfer_code(this)">Copy previous code</button>
 
-This should output `#> [1] "-ve" "-ve" "-ve" "-ve" "+ve" "+ve" "+ve" NA`
+```{r conditional-transfor-1-hint, eval = FALSE}
+x <- c(-3:3, ...)
+```
+
+```{r, include=FALSE}
+x <- c(-3:3, NA)
+```
+###
 
 ### Exercise 2
 
-<!-- RM: A little confusing. -->
-
-There’s an optional fourth argument, missing, which will be used if the input is `NA`. Add the `"???"` argument to `if_else()`.
+Copy the previous code. Then, type `if_else(x > 0, "+ve", "-ve")`. This should output `#> [1] "-ve" "-ve" "-ve" "-ve" "+ve" "+ve" "+ve" NA`.
 
 ```{r conditional-transfor-2, exercise = TRUE}
 
@@ -1371,18 +1375,56 @@ There’s an optional fourth argument, missing, which will be used if the input 
 
 ```{r conditional-transfor-2-hint, eval = FALSE}
 x <- c(-3:3, NA)
-if_else(x > 0, "+ve", "-ve", ...)
+if_else(x > ..., "+ve", "-ve")
+```
+
+```{r, include=FALSE}
+x <- c(-3:3, NA)
+if_else(x > 0, "+ve", "-ve")
 ```
 
 ###
 
-This output should be `#> [1] "-ve" "-ve" "-ve" "-ve" "+ve" "+ve" "+ve" "???"`
-
 ### Exercise 3
 
-You can also use vectors for the the `TRUE` and `FALSE` arguments. This allows us to create a minimal implementation of `abs()`. Click "Run Code".
+There’s an optional fourth argument, `missing`, which will be used if the input is `NA`. In this example, we can add the string `"???"` as an argument to `if_else()`.
 
 ```{r conditional-transfor-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r conditional-transfor-3-hint, eval = FALSE}
+x <- c(-3:3, NA)
+if_else(x > 0, "+ve", "-ve", ...)
+```
+
+```{r, include=FALSE}
+x <- c(-3:3, NA)
+if_else(x > 0, "+ve", "-ve", "???")
+```
+
+###
+
+The output should be `#> [1] "-ve" "-ve" "-ve" "-ve" "+ve" "+ve" "+ve" "???"`
+
+### Exercise 4
+
+You can also use vectors for the the `TRUE` and `FALSE` arguments. Let us attempt to create a minimal implementation of `abs()`. Below the code assigning a vector to `x`, type `if_else(x < 0, -x, x)`. Click "Run Code". 
+
+```{r conditional-transfor-4, exercise = TRUE}
+x <- c(-3:3, NA)
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r conditional-transfor-4-hint, eval = FALSE}
+x <- c(-3:3, NA)
+if_else(x < ..., -x, x)
+```
+
+```{r, include=FALSE}
 x <- c(-3:3, NA)
 if_else(x < 0, -x, x)
 ```
@@ -1391,11 +1433,24 @@ if_else(x < 0, -x, x)
 
 This should output `#> [1]  3  2  1  0  1  2  3 NA`. So far, all the arguments have used the same vectors, but you can also mix and match!
 
-### Exercise 4
+### Exercise 5
 
-For example, you could implement a simple version of `coalesce()` as shown below. Click "Run Code".
+For example, you could implement a simple version of `coalesce()`. Below the code assigning vectors to `x1` and `y1`, type `if_else(is.na(x1), y1, x1)` and click "Run Code".
 
-```{r conditional-transfor-4, exercise = TRUE}
+```{r conditional-transfor-5, exercise = TRUE}
+x1 <- c(NA, 1, 2, NA)
+y1 <- c(3, NA, 4, 6)
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r conditional-transfor-5-hint, eval = FALSE}
+x1 <- c(NA, 1, 2, NA)
+y1 <- c(3, NA, 4, 6)
+if_else(is.na(...), y1, x1)
+```
+
+```{r, include=FALSE}
 x1 <- c(NA, 1, 2, NA)
 y1 <- c(3, NA, 4, 6)
 if_else(is.na(x1), y1, x1)
@@ -1405,11 +1460,22 @@ if_else(is.na(x1), y1, x1)
 
 The output should be `#> [1] 3 1 2 6`. You might have noticed a small infelicity in our labeling example above: zero is neither positive nor negative. We could resolve this by adding an additional `if_else()`.
 
-### Exercise 5
+### Exercise 6
 
-Click "Run Code".
+Below the provided code, type `if_else(x == 0, "0", if_else(x < 0, "-ve", "+ve"), "???")` and click "Run Code".
 
-```{r conditional-transfor-5, exercise = TRUE}
+```{r conditional-transfor-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r conditional-transfor-6-hint, eval = FALSE}
+x <- c(-3:3, NA)
+if_else(x == 0, "0", ...(x < 0, "-ve", "+ve"), "???")
+```
+
+```{r, include=FALSE}
 x <- c(-3:3, NA)
 if_else(x == 0, "0", if_else(x < 0, "-ve", "+ve"), "???")
 ```
@@ -1418,11 +1484,11 @@ if_else(x == 0, "0", if_else(x < 0, "-ve", "+ve"), "???")
 
 This is already a little hard to read, and you can imagine it would only get harder if you have more conditions. One solution is to switch to `dplyr::case_when()`.
 
-### Exercise 6
+### Exercise 7
 
-Below should have the same output as above, but instead of using `if_else`, we are using `case_when()`. Click "Run Code".
+The code below should have the same output as above, but instead of using `if_else`, we are using `case_when()`. Click "Run Code".
 
-```{r conditional-transfor-6, exercise = TRUE}
+```{r conditional-transfor-7, exercise = TRUE}
 x <- c(-3:3, NA)
 case_when(
   x == 0   ~ "0",
@@ -1436,11 +1502,11 @@ case_when(
 
 dplyr’s `case_when()` is inspired by SQL’s `CASE` statement and provides a flexible way of performing different computations for different conditions. It has a special syntax that unfortunately looks like nothing else you’ll use in the tidyverse. It takes pairs that look like `condition ~ output`. `condition` must be a logical vector; when it’s `TRUE`, output will be used.
 
-### Exercise 7
+### Exercise 8
 
 To explain how `case_when()` works, let’s explore some simpler cases. If none of the cases match, the output gets an `NA`. Click "Run Code".
 
-```{r conditional-transfor-7, exercise = TRUE}
+```{r conditional-transfor-8, exercise = TRUE}
 x <- c(-3:3, NA)
 case_when(
   x < 0 ~ "-ve",
@@ -1450,36 +1516,45 @@ case_when(
 
 ###
 
-The output should be `#> [1] "-ve" "-ve" "-ve" NA    "+ve" "+ve" "+ve" NA`
+The output should be `#> [1] "-ve" "-ve" "-ve" NA    "+ve" "+ve" "+ve" NA`.
 
-### Exercise 8
+### Exercise 9
 
 If you want to create a “default”/catch all value, use TRUE on the left hand side. Copy the previous code and add `TRUE ~ "???"` as a new argument. Make sure to separate the arguments with a comma.
 
-```{r conditional-transfor-8, exercise = TRUE}
+```{r conditional-transfor-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r conditional-transfor-8-hint, eval = FALSE}
+```{r conditional-transfor-9-hint, eval = FALSE}
 x <- c(-3:3, NA)
 case_when(
   x < 0 ~ "-ve",
   x > 0 ~ "+ve",
-  ...
+  ... ~ "???"
+)
+```
+
+```{r, include=FALSE}
+x <- c(-3:3, NA)
+case_when(
+  x < 0 ~ "-ve",
+  x > 0 ~ "+ve",
+  TRUE ~ "???"
 )
 ```
 
 ###
 
-This should output `#> [1] "-ve" "-ve" "-ve" "???" "+ve" "+ve" "+ve" "???"`
+This should output `#> [1] "-ve" "-ve" "-ve" "???" "+ve" "+ve" "+ve" "???"`.
 
-### Exercise 9
+### Exercise 10
 
 Also, note that if multiple conditions match, only the first will be used. Click "Run Code".
 
-```{r conditional-transfor-9, exercise = TRUE}
+```{r conditional-transfor-10, exercise = TRUE}
 x <- c(-3:3, NA)
 case_when(
   x > 0 ~ "+ve",
@@ -1491,11 +1566,11 @@ case_when(
 
 This should output `#> [1] NA    NA    NA    NA    "+ve" "+ve" "+ve" NA` because it used the first argument. Just like with `if_else()` you can use variables on both sides of the`~` and you can mix and match variables as needed for your problem.
 
-### Exercise 10
+### Exercise 11
 
-For example, we could use `case_when()` to provide some human readable labels for the arrival delay. Click "Run Code".
+For example, we could use `case_when()` to provide some human readable labels for the arrival delay. Your gratitude for having the code written for you is much appreciated.
 
-```{r conditional-transfor-10, exercise = TRUE}
+```{r conditional-transfor-11, exercise = TRUE}
 flights |> 
   mutate(
     status = case_when(
@@ -1508,26 +1583,25 @@ flights |>
     ),
     .keep = "used"
   )
-
 ```
 
 ###
 
+<!-- RM: Should this stay? -->
+
 Be wary when writing this sort of complex case_when() statement; my first two attempts used a mix of < and > and I kept accidentally creating overlapping conditions.
 
-### Exercise 11
+### Exercise 12
 
-Note that both `if_else()` and `case_when()` require compatible types in the output. If they’re not compatible, you’ll see errors like this. Click "Run Code".
+Note that both `if_else()` and `case_when()` require compatible types in the output. If they’re not compatible, you’ll see errors. To demonstrate, click "Run Code".
 
-```{r conditional-transfor-11, exercise = TRUE}
+```{r conditional-transfor-12, exercise = TRUE}
 if_else(TRUE, "a", 1)
 ```
 
 ###
 
 This should output `#> Error in if_else(): #> ! Can't combine true <character> and false <double>.`
-
-<!-- RM: This section could be more interactive. OK. -->
 
 ## Summary
 ### 
