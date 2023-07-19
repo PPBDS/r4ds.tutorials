@@ -837,7 +837,7 @@ This should result in a tibble where the only values in the `dep_time` column ar
 ## Summaries
 ###
 
-Next, we wil describe some useful techniques for summarizing logical vectors. In addition to functions that only work with logical vectors, you can also use functions that work with numeric vectors.
+Next, we will describe some useful techniques for summarizing logical vectors. In addition to functions that only work with logical vectors, you can also use functions that work with numeric vectors.
 
 ### Exercise 1
 
@@ -899,7 +899,14 @@ Copy the previous code. Within `summarize()`, add `any_long_delay = any(arr_dela
 flights |> 
   summarize(
     all_delayed = all(dep_delay <= 60, na.rm = TRUE),
-    any_long_delay = any(...)
+    any_long_delay = any(arr_delay >= ...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = all(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = any(arr_delay >= 300))
 ```
 
 ###
@@ -920,7 +927,14 @@ Copy the previous code. Add the `na.rm = TRUE` argument in `any()`.
 flights |> 
   summarize(
     all_delayed = all(dep_delay <= 60, na.rm = TRUE),
-    any_long_delay = any(arr_delay >= 300),...)
+    any_long_delay = any(arr_delay >= 300), ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = all(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = any(arr_delay >= 300), na.rm = TRUE)
 ```
 
 ###
@@ -938,11 +952,19 @@ Copy the previous code. Add `.by = c(year, month)` to the `summarize()` function
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-5-hint, eval = FALSE}
-flights |>
+flights |> 
   summarize(
     all_delayed = all(dep_delay <= 60, na.rm = TRUE),
-    any_long_delay = any(arr_delay >= 300, na.rm = TRUE),
+    any_long_delay = any(arr_delay >= 300), na.rm = TRUE,
     .by = c(..., ...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = all(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = any(arr_delay >= 300), na.rm = TRUE,
+    .by = c(year, month))
 ```
 
 ###
@@ -964,7 +986,15 @@ flights |>
   summarize(
     all_delayed = all(dep_delay <= 60, na.rm = TRUE),
     any_long_delay = any(arr_delay >= 300, na.rm = TRUE),
-    .by = c(year, month,...))
+    .by = c(year, month, ...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = all(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = any(arr_delay >= 300), na.rm = TRUE,
+    .by = c(year, month, day))
 ```
 
 ###
@@ -980,8 +1010,15 @@ Start a new pipe with `flights`. Pipe it into `summarize()`. Within `summarize()
 ```
 
 ```{r summaries-7-hint, eval = FALSE}
-flights|>
-  summarize(all_delayed = ...)
+flights |> 
+  summarize(
+    all_delayed = dep_delay <= ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = dep_delay <= 60)
 ```
 
 ###
@@ -999,8 +1036,15 @@ Copy the previous code. Add `dep_delay <= 60` within `mean()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-8-hint, eval = FALSE}
-flights|>
-  summarize(all_delayed = ...(dep_delay <= 60))
+flights |> 
+  summarize(
+    all_delayed = ...(dep_delay <= 60))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60))
 ```
 
 ###
@@ -1020,6 +1064,12 @@ Copy the previous code. Add `na.rm = TRUE` within `mean()`.
 ```{r summaries-9-hint, eval = FALSE}
 flights|>
   summarize(all_delayed = mean(dep_delay <= 60,...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE))
 ```
 
 ###
@@ -1042,6 +1092,13 @@ flights|>
             any_long_delay = ...)
 ```
 
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = arr_delay >= 300)
+```
+
 ###
 
 <!-- RM: Relation to current exercise -->
@@ -1059,9 +1116,17 @@ Copy the previous code and add `arr_delay >= 300` within `sum()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r summaries-11-hint, eval = FALSE}
-flights|>
-  summarize(all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
-            any_long_delay = ...(arr_delay >= 300))
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = ...(arr_delay >= 300))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = sum(arr_delay >= 300))
 ```
 
 ###
@@ -1084,6 +1149,13 @@ flights|>
             any_long_delay = sum(arr_delay >= 300, ...))
 ```
 
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = sum(arr_delay >= 300, na.rm = TRUE))
+```
+
 ###
 
 When you use a logical vector in a numeric context, `TRUE` becomes `1` and `FALSE` becomes `0`. This makes `sum()` and `mean()` very useful with logical vectors because `sum(x)` gives the number of `TRUE`s and `mean(x)` gives the proportion of `TRUE`s (`mean()` is `sum()` divided by `length()`).
@@ -1102,7 +1174,15 @@ Copy the previous code and add `.by = c(year, month)` as a new argument within `
 flights|>
   summarize(all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
             any_long_delay = sum(arr_delay >= 300, na.rm = TRUE),
-            .by = c(...))
+            .by = c(..., ...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = sum(arr_delay >= 300, na.rm = TRUE),
+    .by = c(year, month))
 ```
 
 ###
@@ -1129,6 +1209,14 @@ flights |>
     .by = c(year, month, ...))
 ```
 
+```{r, include=FALSE}
+flights |> 
+  summarize(
+    all_delayed = mean(dep_delay <= 60, na.rm = TRUE),
+    any_long_delay = sum(arr_delay >= 300, na.rm = TRUE),
+    .by = c(year, month, day))
+```
+
 ###
 
 This allows for us to see the proportion of flights that were delayed on departure by at most 1 hour (`60` minutes) and the number of flights that were delayed on arrival by 5 hours (`300` minutes) or more.
@@ -1143,7 +1231,12 @@ Start a new pipe with `flights`. Pipe it into `filter`. Within `filter()`, add `
 
 ```{r summaries-15-hint, eval = FALSE}
 flights |>
-  filter(... > 0)
+  filter(arr_delay > ...)
+```
+
+```{r, include=FALSE}
+flights |>
+  filter(arr_delay > 0)
 ```
 
 ###
@@ -1162,8 +1255,14 @@ Continue the pipe with `summarize()`. Within `summarize()`, add the argument `be
 
 ```{r summaries-16-hint, eval = FALSE}
 flights |>
-  filter(arr_delay > 0)|>
-  summarize(...)
+  filter(arr_delay > 0) |>
+  summarize(behind = mean(...))
+```
+
+```{r, include=FALSE}
+flights |>
+  filter(arr_delay > 0) |>
+  summarize(behind = mean(arr_delay))
 ```
 
 ###
@@ -1184,7 +1283,14 @@ Copy the previous code and add the argument `n = n()` within `summarize()`. Make
 flights |>
   filter(arr_delay > 0)|>
   summarize(behind = mean(arr_delay),
-            n = ...)
+            n = ...())
+```
+
+```{r, include=FALSE}
+flights |>
+  filter(arr_delay > 0) |>
+  summarize(behind = mean(arr_delay),
+            n = n())
 ```
 
 ###
@@ -1203,10 +1309,18 @@ Add `.by = c(year, month, day)` to have one row for each day of the year.
 
 ```{r summaries-18-hint, eval = FALSE}
 flights |>
-  filter(arr_delay > 0)|>
+  filter(arr_delay > 0) |>
   summarize(behind = mean(arr_delay),
             n = n(),
-            .by = c(...))
+            .by = c(..., ..., ...))
+```
+
+```{r, include=FALSE}
+flights |>
+  filter(arr_delay > 0) |>
+  summarize(behind = mean(arr_delay),
+            n = n(),
+            .by = c(year, month, day))
 ```
 
 ###
