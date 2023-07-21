@@ -23,6 +23,7 @@ options(tutorial.exercise.timelimit = 1200,
         tutorial.storage = "local") 
 
 pq_path <- "data/seattle-library-checkouts"
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -30,6 +31,9 @@ pq_path <- "data/seattle-library-checkouts"
 
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
+
+
+<!-- DK: file.remove() all the files which you had the student create. -->
 
 <!-- DK: Stick a bunch of comments here about the complexity of this tutorial, given the data that has to be downloaded.  -->
 
@@ -79,6 +83,7 @@ library(...)
 ```{r, include=FALSE}
 library(arrow)
 ```
+
 ###
 
 As an additional benefit, arrow is extremely fast: you’ll see some examples later in the chapter.
@@ -100,7 +105,7 @@ library(duckdb)
 ```
 ###
 
-Both arrow and dbplyr provide dplyr backends, so you might wonder when to use each. In many cases, the choice is made for you, as in the data is already in a database or in parquet files, and you’ll want to work with it as is. But if you’re starting with your own data (perhaps CSV files), you can either load it into a database or convert it to parquet.
+Both **arrow** and **dbplyr** provide **dplyr** backends, so you might wonder when to use each. In many cases, the choice is made for you, as in the data is already in a database or in parquet files, and you’ll want to work with it as is. But if you’re starting with your own data (perhaps CSV files), you can either load it into a database or convert it to parquet.
 
 ### Exercise 4
 
@@ -160,9 +165,9 @@ Set `seattle_csv` to `open_dataset()`. Within `open_dataset()`, add the argument
 ```
 
 ```{r, include=FALSE}
-seattle_csv <- open_dataset(
-  sources = "data/seattle-library-checkouts.csv"
-)
+# seattle_csv <- open_dataset(
+#  sources = "data/seattle-library-checkouts.csv"
+# )
 ```
 
 ###
@@ -181,16 +186,16 @@ Copy previous code and add the argument `format = "csv"` to `open_dataset()`
 
 ```{r opening-a-dataset-2-hint, eval = FALSE}
 seattle_csv <- open_dataset(
-  sources = "data/seattle-library-checkouts.csv", 
+  sources = "data/seattle-library-checkouts.csv",
   format = "..."
 )
 ```
 
 ```{r, include=FALSE}
-seattle_csv <- open_dataset(
-  sources = "data/seattle-library-checkouts.csv",
-  format = "csv"
-)
+# seattle_csv <- open_dataset(
+#   sources = "data/seattle-library-checkouts.csv",
+#   format = "csv"
+# )
 ```
 
 ###
@@ -210,7 +215,7 @@ seattle_csv
 ```
 
 ```{r, include=FALSE}
-seattle_csv
+# seattle_csv
 ```
 ###
 
@@ -227,13 +232,13 @@ Copy previous code and pipe it into `glimpse()`
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r opening-a-dataset-4-hint, eval = FALSE}
-seattle_csv|>
+seattle_csv |>
   ...()
 ```
 
 ```{r, include=FALSE}
-seattle_csv|>
-  glimpse()
+# seattle_csv |>
+#   glimpse()
 ```
 
 ###
@@ -253,7 +258,7 @@ seattle_csv
 ```
 
 ```{r, include=FALSE}
-seattle_csv
+# seattle_csv
 ```
 
 ###
@@ -276,8 +281,8 @@ seattle_csv |>
 ```
 
 ```{r, include=FALSE}
-seattle_csv |> 
-  count(CheckoutYear, wt = Checkouts)
+# seattle_csv |> 
+#   count(CheckoutYear, wt = Checkouts)
 ```
 
 ###
@@ -300,9 +305,9 @@ seattle_csv |>
 ```
 
 ```{r, include=FALSE}
-seattle_csv |> 
-  count(CheckoutYear, wt = Checkouts) |> 
-  arrange(CheckoutYear)
+# seattle_csv |> 
+#   count(CheckoutYear, wt = Checkouts) |> 
+#   arrange(CheckoutYear)
 ```
 
 ###
@@ -320,17 +325,15 @@ Finish off the pipe with `collect()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r opening-a-dataset-8-hint, eval = FALSE}
-seattle_csv |> 
-  count(CheckoutYear, wt = Checkouts) |> 
-  arrange(CheckoutYear) |> 
+... |> 
   collect()
 ```
 
 ```{r, include=FALSE}
-seattle_csv |> 
-  count(CheckoutYear, wt = Checkouts) |> 
-  arrange(CheckoutYear) |> 
-  collect()
+# seattle_csv |> 
+#   count(CheckoutYear, wt = Checkouts) |> 
+#   arrange(CheckoutYear) |> 
+#   collect()
 ```
 
 ###
@@ -375,7 +378,7 @@ seattle_csv
 ```
 
 ```{r,include=FALSE}
-seattle_csv
+# seattle_csv
 ```
 
 ###
@@ -393,13 +396,13 @@ Continue the pipe with `group_by()`. Within `group_by()`, add the argument `Chec
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r the-parquet-format-3-hint, eval = FALSE}
-seattle_csv|>
+seattle_csv |>
   group_by(...)
 ```
 
 ```{r, include=FALSE}
-seattle_csv|>
-  group_by(CheckoutYear)
+# seattle_csv |>
+#   group_by(CheckoutYear)
 ```
 
 ###
@@ -423,9 +426,9 @@ seattle_csv |>
 ```
 
 ```{r, include=FALSE}
-seattle_csv |>
-  group_by(CheckoutYear) |>
-  write_dataset(path = pq_path)
+# seattle_csv |>
+#   group_by(CheckoutYear) |>
+#   write_dataset(path = pq_path)
 ```
 
 ###
@@ -487,7 +490,7 @@ Set `seattle_pq` to `open_dataset()` with the argument `pq_path` inside.
 ... <- open_dataset(...)
 ```
 
-```{r, results='hide'}
+```{r, include=FALSE}
 # seattle_pq <- open_dataset(pq_path)
 ```
 
