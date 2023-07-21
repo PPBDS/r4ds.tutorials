@@ -56,6 +56,10 @@ Load the **tidyverse** library.
 library(...)
 ```
 
+```{r, include=FALSE}
+library(tidyverse)
+```
+
 ### 
 
 We’ll pair parquet files with Apache Arrow, a multi-language toolbox designed for efficient analysis and transport of large datasets. We’ll use Apache Arrow via the the arrow package, which provides a dplyr backend allowing you to analyze larger-than-memory datasets using familiar **dplyr** syntax
@@ -72,6 +76,9 @@ Load the **arrow** library.
 library(...)
 ```
 
+```{r, include=FALSE}
+library(arrow)
+```
 ###
 
 As an additional benefit, arrow is extremely fast: you’ll see some examples later in the chapter.
@@ -88,6 +95,9 @@ Load the **duckdb** library
 library(...)
 ```
 
+```{r, include=FALSE}
+library(duckdb)
+```
 ###
 
 Both arrow and dbplyr provide dplyr backends, so you might wonder when to use each. In many cases, the choice is made for you, as in the data is already in a database or in parquet files, and you’ll want to work with it as is. But if you’re starting with your own data (perhaps CSV files), you can either load it into a database or convert it to parquet.
@@ -102,6 +112,10 @@ Load the **dbplyr** library with `warn.conflicts = FALSE`
 
 ```{r getting-the-data-4-hint, eval = FALSE}
 library(..., warn.conflicts = FALSE)
+```
+
+```{r, include=FALSE}
+library(dbplyr, warn.conflicts = FALSE)
 ```
 
 ###
@@ -145,6 +159,12 @@ Set `seattle_csv` to `open_dataset()`. Within `open_dataset()`, add the argument
 )
 ```
 
+```{r, include=FALSE}
+seattle_csv <- open_dataset(
+  sources = "data/seattle-library-checkouts.csv"
+)
+```
+
 ###
 
 In this chapter, we’ll continue to use the tidyverse, particularly dplyr, but we’ll pair it with the arrow package which is designed specifically for working with large data. Later in the chapter, we’ll also see some connections between arrow and duckdb, so we’ll also need dbplyr and duckdb.
@@ -166,6 +186,13 @@ seattle_csv <- open_dataset(
 )
 ```
 
+```{r, include=FALSE}
+seattle_csv <- open_dataset(
+  sources = "data/seattle-library-checkouts.csv",
+  format = "csv"
+)
+```
+
 ###
 
 What happens when this code is run? `open_dataset()` will scan a few thousand rows to figure out the structure of the dataset. Then it records what it’s found and stops; it will only read further rows as you specifically request them. 
@@ -182,6 +209,9 @@ Type `seattle_csv` and run code.
 seattle_csv
 ```
 
+```{r, include=FALSE}
+seattle_csv
+```
 ###
 
 The first line in the output tells you that `seattle_csv` is stored locally on-disk as a single CSV file; it will only be loaded into memory as needed. The remainder of the output tells you the column type that arrow has imputed for each column.
@@ -201,6 +231,11 @@ seattle_csv|>
   ...()
 ```
 
+```{r, include=FALSE}
+seattle_csv|>
+  glimpse()
+```
+
 ###
 
 We can see what’s actually in with glimpse(). This reveals that there are ~41 million rows and 12 columns, and shows us a few values.
@@ -214,6 +249,10 @@ Start a new pipe with `seattle_csv`.
 ```
 
 ```{r opening-a-dataset-5-hint, eval = FALSE}
+seattle_csv
+```
+
+```{r, include=FALSE}
 seattle_csv
 ```
 
@@ -236,8 +275,12 @@ seattle_csv |>
   count(..., wt = ...)
 ```
 
-###
+```{r, include=FALSE}
+seattle_csv |> 
+  count(CheckoutYear, wt = Checkouts)
+```
 
+###
 
 
 ### Exercise 7
@@ -256,6 +299,12 @@ seattle_csv |>
   arrange(...)
 ```
 
+```{r, include=FALSE}
+seattle_csv |> 
+  count(CheckoutYear, wt = Checkouts) |> 
+  arrange(CheckoutYear)
+```
+
 ###
 
 We can start to use this dataset with dplyr verbs, using collect() to force arrow to perform the computation and return some data. For example, this next code will tell us the total number of checkouts per year.
@@ -271,6 +320,13 @@ Finish off the pipe with `collect()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r opening-a-dataset-8-hint, eval = FALSE}
+seattle_csv |> 
+  count(CheckoutYear, wt = Checkouts) |> 
+  arrange(CheckoutYear) |> 
+  collect()
+```
+
+```{r, include=FALSE}
 seattle_csv |> 
   count(CheckoutYear, wt = Checkouts) |> 
   arrange(CheckoutYear) |> 
@@ -298,6 +354,10 @@ Set `pq_path` to `"data/seattle-library-checkouts"`
 pq_path <- "..."
 ```
 
+```{r, include=FALSE}
+pq_path <- "data/seattle-library-checkouts"
+```
+
 ###
 
 Like CSV, parquet is used for rectangular data, but instead of being a text format that you can read with any file editor, it’s a custom binary format designed specifically for the needs of big data.
@@ -311,6 +371,10 @@ Start a pipe with `seattle_csv`.
 ```
 
 ```{r the-parquet-format-2-hint, eval = FALSE}
+seattle_csv
+```
+
+```{r,include=FALSE}
 seattle_csv
 ```
 
@@ -333,6 +397,11 @@ seattle_csv|>
   group_by(...)
 ```
 
+```{r, include=FALSE}
+seattle_csv|>
+  group_by(CheckoutYear)
+```
+
 ###
 
 Parquet files have a rich type system. As we talked about in Section 8.3, a CSV file does not provide any information about column types. For example, a CSV reader has to guess whether `"08-10-2022"` should be parsed as a string or a date. In contrast, parquet files store data in a way that records the type along with the data.
@@ -351,6 +420,12 @@ Continue the pipe with `write_dataset()`. Within `write_dataset()` add the argum
 seattle_csv |>
   group_by(CheckoutYear) |>
   write_dataset(...)
+```
+
+```{r, include=FALSE}
+seattle_csv |>
+  group_by(CheckoutYear) |>
+  write_dataset(path = pq_path)
 ```
 
 ###
