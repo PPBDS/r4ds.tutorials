@@ -149,6 +149,10 @@ Use `parse_number()` when the string contains non-numeric text that you want to 
 y <- c(..., ..., ...)
 ```
 
+```{r, include=FALSE}
+y <- c("$1,1234", "USD 3,513", "59%")
+```
+
 ### 
 
 As you can see, in this vector `y` there are non-numeric text that we would normally want to ignore if we were to see this in a dataset. 
@@ -168,6 +172,10 @@ y <- c("$1,234", "USD 3,513", "59%")
 parse_number(y)
 ```
 
+```{r, include=FALSE}
+y <- c("$1,234", "USD 3,513", "59%")
+parse_number(y)
+```
 ### 
 
 The result you should've received is `#> [1] 1234 3513   59`
@@ -212,6 +220,10 @@ Type in `flights` and hit "Run Code".
 flights
 ```
 
+```{r, include = FALSE}
+flights
+```
+
 ### Exercise 3
 
 Let's count the number of planes of which departed from a certain destination. Pipe `flights` to the `count()` function. Within the call to `count()`, put an argument of `dest`.
@@ -223,6 +235,10 @@ Let's count the number of planes of which departed from a certain destination. P
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r counts-3-hint-1, eval = FALSE}
+flights |> count(dest)
+```
+
+```{r, include=FALSE}
 flights |> count(dest)
 ```
 
@@ -242,6 +258,10 @@ If you want to see the most common values, use the previous pipe and add the par
 
 ```{r counts-4-hint-1, eval = FALSE}
 flights |> count(..., sort = TRUE)
+```
+
+```{r, include=FALSE}
+flights |> count(dest, sort = TRUE)
 ```
 
 ### 
@@ -264,13 +284,19 @@ flights |>
   
 ```
 
+```{r, include=FALSE}
+flights |> 
+  summarize(carriers = n_distinct(carrier)) 
+  
+```
+
 ### 
 
 The function `n_distinct()` counts the number of distinct (unique) values of one or more variables. For example, we could figure out which destinations are served by the most carriers. 
 
 ### Exercise 6
 
-Using your previous code, within your call to `summarize()` add a the `.by` argument and set it to `dest` so that we can group by the destination.
+Using your previous code, within your call to `summarize()` add a the `.by` argument and set it to `dest`.
 
 ```{r counts-6, exercise = TRUE}
 
@@ -283,7 +309,14 @@ flights |>
   summarize(carriers = ..., .by = ...)
 ```
 
+```{r, include=FALSE}
+flights |> 
+  summarize(carriers = n_distinct(carrier), .by = dest)
+```
+
 ### 
+
+Setting `.by` to `dest` lets us group the `summarize()` function by the destination.
 
 ### Exercise 7
 
@@ -298,6 +331,12 @@ Using the previous code, add the `arrange()` function to your pipeline. Within t
 ```{r counts-7-hint-1, eval = FALSE}
 ... |> 
   arrange(...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(carriers = n_distinct(carrier), .by = dest) |> 
+  arrange(carriers)
 ```
 
 ### 
@@ -319,7 +358,15 @@ Using your previous code, within your call to `arrange()`, add the argument `des
   arrange(desc(...))
 ```
 
+```{r, include=FALSE}
+flights |> 
+  summarize(carriers = n_distinct(carrier), .by = dest) |> 
+  arrange(desc(carriers))
+```
+
 ### 
+
+`desc(x)` gives the largest values the smallest ranks.
 
 ### Exercise 9
 
@@ -336,9 +383,13 @@ flights |>
   count(...)
 ```
 
+```{r, include=FALSE}
+flights |> 
+  count(tailnum)
+```
 ### 
 
-A weighted count is a sum. For example you could “count” the number of miles each plane flew by using the `sum()` function. But, `count()` has a `wt` argument that does the same thing. 
+A weighted count is a sum. For example you could “count” the number of miles each plane flew by using the `sum()` function. 
 
 ### Exercise 10
 
@@ -355,6 +406,15 @@ flights |>
   count(tailnum, wt = ...)
 ```
 
+```{r, include=FALSE}
+flights |> 
+  count(tailnum, wt = distance)
+```
+
+###
+
+Weighted counts are a common problem so count() has the `wt` argument that does the same thing.
+
 ### Exercise 11
 
 Now, count the number of cancelled flights or missing values of each destination. With a new pipeline, pipe `flights` to the `summarize()` function. Within the call to `summarize()`, create a new variable called `n_cancelled` and set it equal to `sum(is.na(dep_time)`.
@@ -369,6 +429,15 @@ Now, count the number of cancelled flights or missing values of each destination
 flights |> 
   summarize(n_cancelled = ...)
 ```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(n_cancelled = sum(is.na(dep_time)))
+```
+
+###
+
+You can count missing values by combining sum() and is.na(). In the flights dataset this represents flights that are cancelled.
 
 ### Exercise 12
 
@@ -385,9 +454,14 @@ flights |>
   summarize(n_cancelled = ..., .by = ...)
 ```
 
+```{r, include=FALSE}
+flights |> 
+  summarize(n_cancelled = sum(is.na(dep_time)), .by = dest)
+```
+
 ### 
 
-The summarize() function here counts the canceled flights in each destination.
+The summarize() function here now counts the canceled flights in each destination.
 
 ## Numeric Transformations
 ### 
@@ -428,6 +502,10 @@ Make a new vector `x` and set it to `c(1, 2, 10, 20)`.
 x <- c(...)
 ```
 
+```{r,include=FALSE}
+x <- c(1, 2, 10, 20)
+```
+
 ### Exercise 2
 
 Divide the vector `x` by 5.
@@ -441,6 +519,11 @@ x <- c(1, 2, 10, 20)
 ```{r numeric-transformati-2-hint-1, eval = FALSE}
 x <- c(1, 2, 10, 20)
 x / ...
+```
+
+```{r, include=FALSE}
+x <- c(1, 2, 10, 20)
+x / 5
 ```
 
 ### 
@@ -462,6 +545,11 @@ x <- c(1, 2, 10, 20)
 x * c(...)
 ```
 
+```{r, include=FALSE}
+x <- c(1, 2, 10, 20)
+x * c(1,2,3)
+```
+
 ### 
 
 It usually (but not always) gives you a warning if the longer vector isn’t a multiple of the shorter:
@@ -481,6 +569,10 @@ flights |>
   filter(month == c(...))
 ```
 
+```{r, include=FALSE}
+flights |> 
+  filter(month == c(1, 2))
+```
 ### 
 
 The code runs without error, but it doesn’t return what you want. Because of the recycling rules it finds flights in odd numbered rows that departed in January and flights in even numbered rows that departed in February. And unfortunately there’s no warning because `flights` has an even number of rows.
@@ -503,9 +595,13 @@ Let's utilize a premade dataframe `df`. Type in `df` and hit "Run Code".
 df
 ```
 
+```{r, include=FALSE}
+df
+```
+
 ### Exercise 6
 
-Create a new pipeline. Pipe `df` to the `mutate()`. Within the `mutate()`, create a new variable called `min` and set it to `pmin(x, y, na.rm = TRUE)`.
+Create a new pipeline. Pipe `df` to the `mutate()`. Within the `mutate()`, create a new variable called `min` and set it to `pmin(x, y)`.
 
 ```{r numeric-transformati-6, exercise = TRUE}
 
@@ -514,6 +610,13 @@ Create a new pipeline. Pipe `df` to the `mutate()`. Within the `mutate()`, creat
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-6-hint-1, eval = FALSE}
+df |> 
+  mutate(
+    min = pmin(x, y)
+  )
+```
+
+```{r, include=FALSE}
 df |> 
   mutate(
     min = pmin(x, y)
@@ -541,6 +644,13 @@ df |>
   )
 ```
 
+```{r, include=FALSE}
+df |> 
+  mutate(
+    min = pmin(x, y, na.rm = TRUE)
+  )
+```
+
 ### 
 
 The function `pmin()` will take in the variables inputted and output only the minimum between the variables. For example, this exercise took the minimum between the variables `x` and `y`.
@@ -559,6 +669,14 @@ Using the previous pipeline. Within the call to the `mutate()` function create a
 df |> 
   mutate(
     min = pmin(x, y, na.rm = ...), 
+    max = pmax(x, y)
+  )
+```
+
+```{r, include=FALSE}
+df |> 
+  mutate(
+    min = pmin(x, y, na.rm = TRUE), 
     max = pmax(x, y)
   )
 ```
@@ -585,6 +703,14 @@ Using the previous pipe, add the argument `na.rm` to the `pmax()` function call 
   )
 ```
 
+```{r, include=FALSE}
+  df |> 
+  mutate(
+    min = pmin(x, y, na.rm = TRUE), 
+    max = pmax(x, y, na.rm = TRUE)
+  )
+```
+
 ### 
 
 Note that these are different to the summary functions min() and max() which take multiple observations and return a single value. You can tell that you’ve used the wrong form when all the minimums and all the maximums have the same value.
@@ -607,6 +733,10 @@ Make a new vector called `z` equal to `1:10`.
 z <- c(1:10)
 ```
 
+```{r, include=FALSE}
+z <- c(1:10)
+```
+
 ### Exercise 11
 
 Using the same vector, `z`, divide by 3 using integer division (`%/%`).
@@ -618,6 +748,11 @@ z <- 1:10
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-11-hint-1, eval = FALSE}
+z <- 1:10
+z ... 3
+```
+
+```{r, include=FALSE}
 z <- 1:10
 z %/% 3
 ```
@@ -638,6 +773,11 @@ z <- 1:10
 
 ```{r numeric-transformati-12-hint-1, eval = FALSE}
 z <- 1:10
+z ... 3
+```
+
+```{r,include = FALSE}
+z <- 1:10
 z %% 3
 ```
 
@@ -654,12 +794,22 @@ Create a new pipeline. Pipe `flights` with the function `mutate()`. Within the `
 ```{r numeric-transformati-13-hint-1, eval = FALSE}
 flights |> 
   mutate(
+    hour = ...
+  )
+
+```
+
+```{r, include = FALSE}
+flights |> 
+  mutate(
     hour = sched_dep_time %/% 100
   )
 
 ```
 
-### 
+###
+
+Modular arithmetic is handy for the flights dataset, because we can use it to unpack the `sched_dep_time` variable into `hour` and `minute`.
 
 ### Exercise 14
 
@@ -672,6 +822,14 @@ Using the previous code, within the `mutate()` function, create a new variable c
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-14-hint-1, eval = FALSE}
+flights |> 
+  mutate(
+    hour = ..., 
+    minute = ...
+  )
+```
+
+```{r, include=FALSE}
 flights |> 
   mutate(
     hour = sched_dep_time %/% 100, 
@@ -694,6 +852,15 @@ Using your previous code, within the `mutate()` function and add an argument cal
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-transformati-15-hint-1, eval = FALSE}
+flights |> 
+  mutate(
+    hour = ..., 
+    minute = ..., 
+    .keep = ...
+  )
+```
+
+```{r, include = FALSE}
 flights |> 
   mutate(
     hour = sched_dep_time %/% 100, 
@@ -730,6 +897,16 @@ flights |>
 
 ```
 
+```{r, include=FALSE}
+flights |> 
+  summarize(hour = sched_dep_time %/% 100)
+
+```
+
+###
+
+We can combine that with a trick using `mean(is.na(x))` to see how the proportion of cancelled flights varies over the course of the day. 
+
 ### Exercise 17
 
 Using your previous code. Within the call to `summarize()`, create a new variable called `prop_cancelled` and set it to `mean(is.na(dep_time))`.
@@ -745,7 +922,15 @@ flights |>
   summarize(hour = ..., prop_cancelled = ...)
 ```
 
+```{r, include=FALSE}
+flights |> 
+  summarize(hour = sched_dep_time %/% 100, prop_cancelled =  
+              mean(is.na(dep_time)))
+```
+
 ### 
+
+`is.na(x)` works with any type of vector and returns TRUE for missing values and FALSE for everything else, which we can use to find all the rows with a missing `dep_time`.
 
 ### Exercise 18
 
@@ -762,7 +947,15 @@ flights |>
   summarize(hour = ..., prop_cancelled = ..., n = ...)
 ```
 
+```{r, include=FALSE}
+flights |> 
+  summarize(hour = sched_dep_time %/% 100, prop_cancelled =  
+              mean(is.na(dep_time)), n = n())
+```
+
 ### 
+
+`n()` is a special summary function that doesn’t take any arguments and instead accesses information about the “current” group. This means that it only works inside dplyr verb.
 
 ### Exercise 19
 
@@ -777,6 +970,12 @@ Using your previous code. Within the call to `summarize()`, add an argument call
 ```{r numeric-transformati-19-hint-1, eval = FALSE}
 flights |> 
   summarize(hour = ..., prop_cancelled = ..., n = ..., .by = ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(hour = sched_dep_time %/% 100, prop_cancelled =  
+              mean(is.na(dep_time)), n = n(), .by = hour)
 ```
 
 ### Exercise 20
@@ -795,7 +994,12 @@ flights |>
   filter(...)
 ```
 
-### 
+```{r, include=FALSE}
+flights |> 
+  summarize(hour = sched_dep_time %/% 100, prop_cancelled =  
+              mean(is.na(dep_time)), n = n(), .by = hour) |>
+  filter(hour > 1)
+```
 
 ### Exercise 21
 
@@ -812,6 +1016,15 @@ flights |>
   summarize(hour = ..., prop_cancelled = ..., n = ..., .by = ...) |> 
   filter(...) |> 
   ggplot(aes(x = ..., y = ...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(hour = sched_dep_time %/% 100, prop_cancelled =  
+              mean(is.na(dep_time)), n = n(), .by = hour) |>
+  filter(hour > 1) |>
+  ggplot(aes(x=hour, y=prop_cancelled))
+  
 ```
 
 ### 
@@ -834,7 +1047,15 @@ flights |>
   geom_line()
 ```
 
-### 
+```{r, include=FALSE}
+flights |> 
+  summarize(hour = sched_dep_time %/% 100, prop_cancelled =  
+              mean(is.na(dep_time)), n = n(), .by = hour) |>
+  filter(hour > 1) |>
+  ggplot(aes(x=hour, y=prop_cancelled)) +
+  geom_line()
+  
+```
 
 ### Exercise 23
 
@@ -854,7 +1075,15 @@ flights |>
   geom_line(color = ...)
 ```
 
-### 
+```{r, include=FALSE}
+flights |> 
+  summarize(hour = sched_dep_time %/% 100, prop_cancelled =  
+              mean(is.na(dep_time)), n = n(), .by = hour) |>
+  filter(hour > 1) |>
+  ggplot(aes(x=hour, y=prop_cancelled)) +
+  geom_line(color = "grey50")
+  
+```
 
 ### Exercise 24
 
@@ -875,7 +1104,15 @@ flights |>
   geom_point()
 ```
 
-### 
+```{r, include=FALSE}
+flights |> 
+  summarize(hour = sched_dep_time %/% 100, prop_cancelled =  
+              mean(is.na(dep_time)), n = n(), .by = hour) |>
+  filter(hour > 1) |>
+  ggplot(aes(x=hour, y=prop_cancelled)) +
+  geom_line(color = "grey50") +
+  geom_point()
+```
 
 ### Exercise 25
 
@@ -893,6 +1130,16 @@ flights |>
   filter(...) |> 
   ggplot(aes(x = ..., y = ...)) +
   geom_line(color = ...) + 
+  geom_point(aes(size = ...))
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(hour = sched_dep_time %/% 100, prop_cancelled =  
+              mean(is.na(dep_time)), n = n(), .by = hour) |>
+  filter(hour > 1) |>
+  ggplot(aes(x=hour, y=prop_cancelled)) +
+  geom_line(color = "grey50") +
   geom_point(aes(size = n))
 ```
 
@@ -917,6 +1164,17 @@ flights |>
        subtitle = ..., 
        x = ...,
        y = ...)
+```
+
+```{r, include=FALSE}
+flights |> 
+  summarize(hour = sched_dep_time %/% 100, prop_cancelled =  
+              mean(is.na(dep_time)), n = n(), .by = hour) |>
+  filter(hour > 1) |>
+  ggplot(aes(x=hour, y=prop_cancelled)) +
+  geom_line(color = "grey50") +
+  geom_point(aes(size = n)) +
+  labs(title = "title", subtitle = "subtitle", x= "x", y="y")
 ```
 
 ### 
@@ -965,6 +1223,10 @@ Use the function `round()` with the argument `123.456` and hit "Run Code".
 round(...)
 ```
 
+```{r, include=FALSE}
+round(123.456)
+```
+
 ### 
 
 The function round(x) rounds a number to the nearest integer. You can control the precision of the rounding with the second argument, digits. `round(x, digits)` rounds to the nearest 10^-digits so `digits = 2` will round to the nearest 0.01.
@@ -981,6 +1243,10 @@ Copy your previous code. Add the `digits` argument, with a value of `2`, to the 
 
 ```{r other-number-functio-3-hint-1, eval = FALSE}
 round(..., digits = 2)
+```
+
+```{r, include = FALSE}
+round(123.456, digits = 2)
 ```
 
 ### 
@@ -1001,6 +1267,10 @@ Copy your previous code and change the `digits` argument to `-2`.
 round(..., digits = ...)
 ```
 
+```{r, include = FALSE}
+round(123.456, digits = -2)
+```
+
 ### 
 
 The *-2* argument in the `round()` function will round the number `123.456` to the nearest hundred which would be 100 in this case.
@@ -1017,6 +1287,10 @@ Type in `round(c(1.5, 2.5))` and hit "Run Code".
 
 ```{r other-number-functio-5-hint-1, eval = FALSE}
 round(...)
+```
+
+```{r, include=FALSE}
+round(c(1.5, 2.5))
 ```
 
 ### 
@@ -1037,6 +1311,10 @@ The functions `floor()` and `ceiling()` are paired with `round()`. Use the funct
 floor(...)
 ```
 
+```{r, include = FALSE}
+floor(123.456)
+```
+
 ### 
 
 The function `floor()` will always round down to the nearest integer.
@@ -1054,6 +1332,10 @@ Type in ceiling() with the numerical argument of `123.456`.
 ceiling(...)
 ```
 
+```{r, include = FALSE}
+ceiling(123.456)
+```
+
 ### 
 
 The function `ceiling()` always round up to the nearest integer.
@@ -1069,6 +1351,10 @@ Make a new variable `x` and set it to the number 123.456.
 
 ```{r other-number-functio-8-hint-1, eval = FALSE}
 x <- ...
+```
+
+```{r, include = FALSE}
+x <- 123.456
 ```
 
 ### 
@@ -1089,6 +1375,11 @@ x <- 123.456
 floor(...) * ...
 ```
 
+```{r, include = FALSE}
+x <- 123.456
+floor(x / 0.01) * 0.01
+```
+
 ### Exercise 10
 
 Let's round up to the nearest two digits. Type in `ceiling(x / 0.01) * 0.01` and hit "Run Code". 
@@ -1101,6 +1392,11 @@ x <- 123.456
 ```{r other-number-functio-10-hint-1, eval = FALSE}
 x <- 123.456
 ceiling(... / 0.01) * ...
+```
+
+```{r, include = FALSE}
+x <- 123.456
+ceiling(x / 0.01) * 0.01
 ```
 
 ### 
@@ -1121,6 +1417,11 @@ x <- 123.456
 round(...) * ...
 ```
 
+```{r, include = FALSE}
+x <- 123.456
+round(x/4) * 4
+```
+
 ### Exercise 12
 
 This time let's round to the nearest 0.25. Type in `round(x / 0.25) * 0.25` and hit "Run Code".
@@ -1135,6 +1436,12 @@ x <- 123.456
 round(...) * ...
 ```
 
+
+```{r, include = FALSE}
+x <- 123.456
+round(x / 0.25) * 0.25
+```
+
 ### Exercise 13
 
 Make a new vector `x` and set it to equal `c(1, 2, 5, 10, 15, 20)`. 
@@ -1146,6 +1453,10 @@ Make a new vector `x` and set it to equal `c(1, 2, 5, 10, 15, 20)`.
 
 ```{r other-number-functio-13-hint-1, eval = FALSE}
 x <- c(...)
+```
+
+```{r,include = FALSE}
+x <- c(1,2,5,10,15,20)
 ```
 
 ### 
@@ -1166,6 +1477,11 @@ x <- c(1, 2, 5, 10, 15, 20)
 cut(x, breaks = ...)
 ```
 
+```{r, include = FALSE}
+x <- c(1, 2, 5, 10, 15, 20)
+cut(x, breaks = c(0,5,10,15,20))
+```
+
 ### Exercise 15
 
 The breaks don't need to be evenly spaced. Copy the previous code and change the `breaks` argument and set it to `c(0, 5, 10, 100)`.
@@ -1178,6 +1494,11 @@ x <- c(1, 2, 5, 10, 15, 20)
 ```{r other-number-functio-15-hint-1, eval = FALSE}
 x <- c(1, 2, 5, 10, 15, 20)
 cut(x, breaks = ...)
+```
+
+```{r, include = FALSE}
+x <- c(1, 2, 5, 10, 15, 20)
+cut(x, breaks = c(0,5,10,100))
 ```
 
 ### 
@@ -1200,6 +1521,11 @@ cut(x,
     labels = c(...))
 ```
 
+```{r, include = FALSE}
+x <- c(1, 2, 5, 10, 15, 20)
+cut(x, breaks = c(0,5,10,100), labels = c("sm", "md", "lg"))
+```
+
 ### 
 
 Any values outside of the range of the breaks will become `NA`. See the documentation for other useful arguments like `right` and `include.lowest`, which control if the intervals are [a, b) or (a, b] and if the lowest interval should be [a, b] by running `?cut()` in the Console.
@@ -1218,6 +1544,10 @@ Make a new vector `x` and set it to `1:10`.
 x <- ...
 ```
 
+```{r, include = FALSE}
+x <- 1:10
+```
+
 ### 
 
 The function `cumsum()` will cumulate the sum using all the previous integers within the vector
@@ -1234,6 +1564,11 @@ x <- 1:10
 ```{r other-number-functio-18-hint-1, eval = FALSE}
 x <- 1:10
 cumsum(...)
+```
+
+```{r, include = FALSE}
+x <- 1:10
+cumsum(x)
 ```
 
 ### 
@@ -1259,6 +1594,10 @@ Make a new vector named `x` that has the values of `c(1, 2, 3, 4, NA)`.
 x <- ...
 ```
 
+```{r, include = FALSE}
+x <- c(1,2,3,4,NA)
+```
+
 ### 
 
 dplyr provides a number of ranking functions inspired by SQL, but you should always start with dplyr::min_rank(). It uses the typical method for dealing with ties, e.g., 1st, 2nd, 2nd, 4th
@@ -1274,6 +1613,11 @@ x <- c(1, 2, 3, 4, NA)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-2-hint-1, eval = FALSE}
+x <- c(1, 2, 3, 4, NA)
+min_rank(x)
+```
+
+```{r, include = FALSE}
 x <- c(1, 2, 3, 4, NA)
 min_rank(x)
 ```
@@ -1297,6 +1641,11 @@ x <- c(1, 2, 3, 4, NA)
 min_rank(...)
 ```
 
+```{r, include = FALSE}
+x <- c(1, 2, 3, 4, NA)
+min_rank(desc(x))
+```
+
 ### 
 
 If min_rank() doesn’t do what you need, look at the variants `dplyr::row_number()`, `dplyr::dense_rank()`, `dplyr::percent_rank()`, and `dplyr::cume_dist()`. See the documentation for details.
@@ -1312,6 +1661,10 @@ Type in `ranktypes` and hit "Run Code".
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-4-hint-1, eval = FALSE}
+ranktypes
+```
+
+```{r, include = FALSE}
 ranktypes
 ```
 
@@ -1335,6 +1688,12 @@ ranktypes |>
   mutate(row_number = ...)
 ```
 
+```{r, include = FALSE}
+x <- c(1, 2, 3, 4, NA)
+ranktypes |> 
+  mutate(row_number = row_number(x))
+```
+
 ### Exercise 6
 
 Using the same pipe as above, create another variable, within the call to `mutate()`, called `dense_rank` equal to `dense_rank(x)`.
@@ -1350,6 +1709,13 @@ x <- c(1, 2, 3, 4, NA)
 ranktypes |> 
   mutate(row_number = ..., 
          dense_rank = ...)
+```
+
+```{r, include = FALSE}
+x <- c(1, 2, 3, 4, NA)
+ranktypes |> 
+  mutate(row_number = row_number(x),
+         dense_rank = dense_rank(x))
 ```
 
 ### Exercise 7
@@ -1368,6 +1734,14 @@ ranktypes |>
   mutate(row_number = ..., 
          dense_rank = ...,
          percent_rank = ...)
+```
+
+```{r, include = FALSE}
+x <- c(1, 2, 3, 4, NA)
+ranktypes |> 
+  mutate(row_number = row_number(x),
+         dense_rank = dense_rank(x),
+         percent_rank = percent_rank(x))
 ```
 
 ### Exercise 8
@@ -1389,6 +1763,15 @@ ranktypes |>
          cume_dist = ...)
 ```
 
+```{r, include = FALSE}
+x <- c(1, 2, 3, 4, NA)
+ranktypes |> 
+  mutate(row_number = row_number(x),
+         dense_rank = dense_rank(x),
+         percent_rank = percent_rank(x),
+         cume_dist = cume_dist(x))
+```
+
 ### 
 
 You can achieve many of the same results by picking the appropriate ties.method argument to base R’s rank(); you’ll probably also want to set na.last = "keep" to keep NAs as NA.
@@ -1404,6 +1787,10 @@ Type in numbers and hit "Run Code".
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r general-transformati-9-hint-1, eval = FALSE}
+numbers
+```
+
+```{r, include = FALSE}
 numbers
 ```
 
@@ -1428,6 +1815,12 @@ numbers |>
   )
 ```
 
+```{r, include = FALSE}
+numbers |> 
+  mutate(
+    row0 = row_number() - 1)
+```
+
 ### 
 
 row_number() can also be used without any arguments when inside a dplyr verb. In this case, it’ll give the number of the “current” row.
@@ -1446,9 +1839,20 @@ Using the same pipe as above, create another variable, within the call to `mutat
 numbers |> 
   mutate(
     row0 = ... - ..., 
-    three_groups = row0 %% 3
+    three_groups = ... %% ...
   )
 ```
+
+```{r, include = FALSE}
+numbers |> 
+  mutate(
+    row0 = row_number() - 0,
+    three_groups = row0 %% 3)
+```
+
+###
+
+When combined with %% or %/%, `row_number()`` can be a useful tool for dividing data into similarly sized groups
 
 ### Exercise 12
 
@@ -1464,14 +1868,18 @@ Using the same pipe as above, create another variable, within the call to `mutat
 numbers |> 
   mutate(
     row0 = ... - ..., 
-    three_groups = row0 %% 3,
-    three_in_each_group = row0 %/% 3
+    three_groups = ... %% ...,
+    three_in_each_group = ... %/% ...
   )
 ```
 
-### 
-
-When the function `row_number()` is combined with `%%` or `%/%` this can be a useful tool for dividing data into similarly sized groups
+```{r, include = FALSE}
+numbers |> 
+  mutate(
+    row0 = row_number() - 0,
+    three_groups = row0 %% 3,
+    three_in_each_group = row0 %/% 3)
+```
 
 ### Exercise 13
 
@@ -1485,6 +1893,10 @@ Create a new vector `x` and set it to `c(2, 5, 11, 11, 19, 35)`
 
 ```{r general-transformati-13-hint-1, eval = FALSE}
 x <- ...
+```
+
+```{r, include = FALSE}
+x <- c(2, 5, 11, 11, 19, 35)
 ```
 
 ### 
@@ -1506,6 +1918,11 @@ x <- c(2, 5, 11, 11, 19, 35)
 lag(...)
 ```
 
+```{r, include = FALSE}
+x <- c(2, 5, 11, 11, 19, 35)
+lag(x)
+```
+
 ### Exercise 15
 
 Use the function `lead()` taking in `x` as its argument. 
@@ -1521,6 +1938,11 @@ x <- c(2, 5, 11, 11, 19, 35)
 lead(...)
 ```
 
+```{r, include = FALSE}
+x <- c(2, 5, 11, 11, 19, 35)
+lead(x)
+```
+
 ### Exercise 16
 
 Subtract `lag(x)` from  `x`.
@@ -1534,6 +1956,11 @@ x <- c(2, 5, 11, 11, 19, 35)
 ```{r general-transformati-16-hint-1, eval = FALSE}
 x <- c(2, 5, 11, 11, 19, 35)
 x - ...
+```
+
+```{r, include = FALSE}
+x <- c(2, 5, 11, 11, 19, 35)
+x-lag(x)
 ```
 
 ### 
@@ -1553,6 +1980,11 @@ x <- c(2, 5, 11, 11, 19, 35)
 ```{r general-transformati-17-hint-1, eval = FALSE}
 x <- c(2, 5, 11, 11, 19, 35)
 x == ...
+```
+
+```{r, include = FALSE}
+x <- c(2, 5, 11, 11, 19, 35)
+x==lag(x)
 ```
 
 ### 
@@ -1575,6 +2007,10 @@ Type in `times_visited` and hit "Run Code".
 times_visited
 ```
 
+```{r, include = FALSE}
+times_visited
+```
+
 ### 
 
 Sometimes you want to start a new group every time some event occurs. We've computed the time between each event, and figured out that there's a gap that's big enough to qualify.
@@ -1594,6 +2030,11 @@ times_visited |>
   mutate(diff = ...)
 ```
 
+```{r, include = FALSE}
+times_visited |> 
+  mutate(diff = lag(time, default = first(time)))
+```
+
 ### Exercise 20
 
 Using the same pipe as above, create another variable, within the call to `mutate()`, called `has_gap` set to `diff >= 5`.
@@ -1611,6 +2052,16 @@ times_visited |>
     has_gap = ...)
 ```
 
+```{r, include = FALSE}
+times_visited |> 
+  mutate(diff = lag(time, default = first(time)),
+         has_gap = diff >=5)
+```
+
+###
+
+But how do we go from that logical vector to something that we can `group_by()`? `cumsum()` comes to the rescue here.
+
 ### Exercise 21
 
 Using the same pipe as above, create another variable, within the call to `mutate()`, called `group` set to `cumsum(has_gap)`. 
@@ -1627,6 +2078,13 @@ times_visited |>
     diff = ..., 
     has_gap = ...,
     group = ...)
+```
+
+```{r, include = FALSE}
+times_visited |> 
+  mutate(diff = lag(time, default = first(time)),
+         has_gap = diff >=5,
+         group = cumsum(has_gap))
 ```
 
 ### 
@@ -1660,6 +2118,15 @@ repetition |>
   summarize(id = ...)
 ```
 
+```{r, include = FALSE}
+repetition |> 
+  summarize(id = consecutive_id(x))
+```
+
+###
+
+Another approach for creating grouping variables is `consecutive_id()`, which starts a new group every time one of its arguments changes.
+
 ### Exercise 24
 
 Using your previous code, within your call to the `summarize()` function, add the parameters `x` and `y` so that we could include these columns in our plot.
@@ -1673,6 +2140,11 @@ Using your previous code, within your call to the `summarize()` function, add th
 ```{r general-transformati-24-hint-1, eval = FALSE}
 repetition |> 
   summarize(id = ..., x, ...)
+```
+
+```{r, include = FALSE}
+repetition |> 
+  summarize(id = consecutive_id(x), x, y)
 ```
 
 ### Exercise 25
@@ -1691,11 +2163,15 @@ repetition |>
   slice_head(n = ...)
 ```
 
+```{r, include = FALSE}
+repetition |> 
+  summarize(id = consecutive_id(x), x, y) |>
+  slice_head(n=1)
+```
+
 ### 
 
 This keeps the first row from each repeated `x`.
-
-### 
 
 ### Exercise 26
 
@@ -1713,7 +2189,11 @@ repetition |>
   slice_head(n = ..., by = ...)
 ```
 
-### 
+```{r, include = FALSE}
+repetition |> 
+  summarize(id = consecutive_id(x), x, y) |>
+  slice_head(n=1, by = id)
+```
 
 ## Numeric Summaries
 ### 
@@ -1733,6 +2213,10 @@ Type in `flights` and hit "Run Code".
 flights
 ```
 
+```{r, include = FALSE}
+flights
+```
+
 ### Exercise 2
 
 Create a new pipeline. Pipe `flights` to the `summarize()` function. Within the `summarize()` function, create a new variable `mean` and set it to `mean(dep_delay, na.rm = TRUE)`.
@@ -1748,6 +2232,17 @@ flights |>
     mean = ...
   )
 ```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    mean = mean(dep_delay, na.rm = TRUE)
+  )
+```
+
+###
+
+An alternative to `mean()` to use the `median()`, which finds a value that lies in the “middle” of the vector, Depending on the shape of the distribution of the variable you’re interested in, mean or median might be a better measure of center. 
 
 ### Exercise 3
 
@@ -1767,6 +2262,14 @@ flights |>
   )
 ```
 
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    mean = mean(dep_delay, na.rm = TRUE),
+    median = median(dep_delay, na.rm = TRUE)
+  )
+```
+
 ### Exercise 4
 
 Using the same pipe as above, create another variable, within the call to `summarize()`, called `n` and set it to `n()`. 
@@ -1782,6 +2285,15 @@ flights |>
     mean = ...,
     median = ...,
     n = ...
+  )
+```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    mean = mean(dep_delay, na.rm = TRUE),
+    median = median(dep_delay, na.rm = TRUE),
+    n = n()
   )
 ```
 
@@ -1805,9 +2317,19 @@ flights |>
   )
 ```
 
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    mean = mean(dep_delay, na.rm = TRUE),
+    median = median(dep_delay, na.rm = TRUE),
+    n = n(),
+    .by = c(year, month, day)
+  )
+```
+
 ### Exercise 6
 
-Using the same pipe as above, add an argument, within the call to `summarize()`, called `.groups` and set it to `"drop"`. 
+Using the same pipe as above, delete the `.by` argument. Add a new argument, within the call to `summarize()`, called `.groups` and set it to `"drop"`. 
 ```{r numeric-summaries-6, exercise = TRUE}
 
 ```
@@ -1820,10 +2342,23 @@ flights |>
     mean = ...,
     median = ...,
     n = ...,
-    .by = ...,
     .groups = "drop"
   )
 ```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    mean = mean(dep_delay, na.rm = TRUE),
+    median = median(dep_delay, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  )
+```
+
+###
+
+The `.groups` argument controls the grouping structure of the output. The groups can be kept ("keep") or dropped ("drop").
 
 ### Exercise 7
 
@@ -1836,12 +2371,22 @@ Using the same pipe as above, add the `ggplot()` function to the pipeline. Withi
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r numeric-summaries-7-hint-1, eval = FALSE}
-flights |>
+flights |> 
   summarize(
     mean = ...,
     median = ...,
     n = ...,
-    .by = ...,
+    .groups = ...
+  ) |> 
+  ggplot(aes(x = mean, y = median))
+```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    mean = mean(dep_delay, na.rm = TRUE),
+    median = median(dep_delay, na.rm = TRUE),
+    n = n(),
     .groups = "drop"
   ) |> 
   ggplot(aes(x = mean, y = median))
@@ -1863,11 +2408,22 @@ flights |>
     mean = ...,
     median = ...,
     n = ...,
-    .by = ...,
-    .groups = "drop"
+    .groups = ...
   ) |> 
   ggplot(aes(x = ..., y = ...)) + 
   geom_abline(slope = ...)
+```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    mean = mean(dep_delay, na.rm = TRUE),
+    median = median(dep_delay, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) |> 
+  ggplot(aes(x = mean, y = median)) +
+  geom_abline(slope = 1)
 ```
 
 ### Exercise 9
@@ -1886,11 +2442,22 @@ flights |>
     mean = ...,
     median = ...,
     n = ...,
-    .by = ...,
-    .groups = "drop"
+    .groups = ...
   ) |> 
   ggplot(aes(x = ..., y = ...)) + 
   geom_abline(slope = ..., intercept = ...)
+```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    mean = mean(dep_delay, na.rm = TRUE),
+    median = median(dep_delay, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) |> 
+  ggplot(aes(x = mean, y = median)) +
+  geom_abline(slope = 1, intercept = 0)
 ```
 
 ### Exercise 10
@@ -1909,11 +2476,22 @@ flights |>
     mean = ...,
     median = ...,
     n = ...,
-    .by = ...,
-    .groups = "drop"
+    .groups = ...
   ) |> 
   ggplot(aes(x = ..., y = ...)) + 
   geom_abline(slope = ..., intercept = ..., color = ...)
+```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    mean = mean(dep_delay, na.rm = TRUE),
+    median = median(dep_delay, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) |> 
+  ggplot(aes(x = mean, y = median)) +
+  geom_abline(slope = 1, intercept = 0, color = "white")
 ```
 
 ### Exercise 11
@@ -1932,11 +2510,22 @@ flights |>
     mean = ...,
     median = ...,
     n = ...,
-    .by = ...,
-    .groups = "drop"
+    .groups = ...
   ) |> 
   ggplot(aes(x = ..., y = ...)) + 
   geom_abline(slope = ..., intercept = ..., color = ..., linewidth = ...)
+```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    mean = mean(dep_delay, na.rm = TRUE),
+    median = median(dep_delay, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) |> 
+  ggplot(aes(x = mean, y = median)) +
+  geom_abline(slope = 1, intercept = 0, color = "white", linewidth = 2)
 ```
 
 ### 
@@ -1959,12 +2548,24 @@ flights |>
     mean = ...,
     median = ...,
     n = ...,
-    .by = ...,
-    .groups = "drop"
+    .groups = ...
   ) |> 
   ggplot(aes(x = ..., y = ...)) + 
-  geom_abline(slope = ..., intercept = ..., color = ..., linewidth = ...) +
+  geom_abline(slope = ..., intercept = ..., color = ..., linewidth = ...) + 
   ...
+```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    mean = mean(dep_delay, na.rm = TRUE),
+    median = median(dep_delay, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) |> 
+  ggplot(aes(x = mean, y = median)) +
+  geom_abline(slope = 1, intercept = 0, color = "white", linewidth = 2) +
+  geom_point()
 ```
 
 ### 
@@ -1987,6 +2588,13 @@ flights |>
   )
 ```
 
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    max = max(dep_delay, na.rm = TRUE)
+  )
+```
+
 ### 
 
 min() and max() will give you the largest and smallest values.
@@ -2005,6 +2613,14 @@ flights |>
   summarize(
     max = ..., 
     q95 = ...
+  )
+```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    max = max(dep_delay, na.rm = TRUE),
+    q95 = quantile(dep_delay, 0.95, na.rm = TRUE)
   )
 ```
 
@@ -2031,11 +2647,18 @@ flights |>
   )
 ```
 
-### 
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    max = max(dep_delay, na.rm = TRUE),
+    q95 = quantile(dep_delay, 0.95, na.rm = TRUE),
+    .by = c(year, month, day)
+  )
+```
 
 ### Exercise 16
 
-Using the same pipe as above, add an argument, within the call to `summarize()`, called `.groups` and set it to `"drop"`. 
+Using the same pipe as above, delete the `.by` argument. Add an argument, within the call to `summarize()`, called `.groups` and set it to `"drop"`. 
 ```{r numeric-summaries-16, exercise = TRUE}
 
 ```
@@ -2047,8 +2670,16 @@ flights |>
   summarize(
     max = ..., 
     q95 = ...,
-    .by = ...,
     .groups = ...
+  )
+```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    max = max(dep_delay, na.rm = TRUE),
+    q95 = quantile(dep_delay, 0.95, na.rm = TRUE),
+    .groups = "drop"
   )
 ```
 
@@ -2070,6 +2701,13 @@ Create a new pipeline. Pipe `flights` to the `summarize()` function. Within the 
 flights |> 
   summarize(
     distance_sd = ...
+  )
+```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    distance_sd = IQR(distance)
   )
 ```
 
@@ -2095,6 +2733,14 @@ flights |>
   )
 ```
 
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    distance_sd = IQR(distance),
+    n=n()
+  )
+```
+
 ### Exercise 19
 
 Using your previous code, within your call to `summarize()` add the `.by` argument and set it to `c(origin, dest)`.
@@ -2114,11 +2760,18 @@ flights |>
   )
 ```
 
-### 
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    distance_sd = IQR(distance),
+    n=n(),
+    .by = c(origin, dest)
+  )
+```
 
 ### Exercise 20
 
-Using the same pipe as above, add an argument, within the call to `summarize()`, called `.groups` and set it to `"drop"`.
+Using the same pipe as above, delete the `.by` argument. Add an argument, within the call to `summarize()`, called `.groups` and set it to `"drop"`.
 
 ```{r numeric-summaries-20, exercise = TRUE}
 
@@ -2131,7 +2784,15 @@ flights |>
   summarize(
     distance_sd = ...,
     n = n(),
-    .by = ...,
+    .groups = ...
+  )
+```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    distance_sd = IQR(distance),
+    n=n(),
     .groups = "drop"
   )
 ```
@@ -2151,10 +2812,20 @@ flights |>
   summarize(
     distance_sd = ...,
     n = n(),
-    .by = ...,
-    .groups = "drop"
+    .groups = ...
   ) |> 
   filter(...)
+```
+
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    distance_sd = IQR(distance),
+    n=n(),
+    .groups = "drop"
+  ) |>
+  filter(distance_sd >0)
 ```
 
 ### 
@@ -2189,6 +2860,11 @@ flights |>
   filter(...)
 ```
 
+```{r, include= FALSE}
+flights |> 
+  filter(dep_delay < 120)
+```
+
 ### Exercise 24
 
 Using the same pipe as above, add the `ggplot()` function to the pipeline. Within the `ggplot()` function map `x` to `dep_delay` and `group` to `interaction(day, month)`
@@ -2202,6 +2878,12 @@ Using the same pipe as above, add the `ggplot()` function to the pipeline. Withi
 flights |> 
   filter(...) |> 
   ggplot(aes(x = ..., group = ...))
+```
+
+```{r, include= FALSE}
+flights |> 
+  filter(dep_delay < 120) |>
+  ggplot(aes(x=dep_delay, group = interaction(day, month)))
 ```
 
 ### Exercise 25
@@ -2218,6 +2900,13 @@ flights |>
   filter(...) |> 
   ggplot(aes(x = ..., group = ...)) |> 
   geom_freqpoly(...)
+```
+
+```{r, include= FALSE}
+flights |> 
+  filter(dep_delay < 120) |>
+  ggplot(aes(x=dep_delay, group = interaction(day, month))) +
+  geom_freqpoly(binwidth = 5, alpha = 1/5)
 ```
 
 ### 
@@ -2241,6 +2930,12 @@ flights |>
   )
 ```
 
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    first_dep = first(dep_time, na_rm = TRUE))
+```
+
 ### Exercise 27
 
 Using the same pipe as above, create another variable, within the call to `summarize()`, called `fifth_dep` and set it to `nth(dep_time, 5, na_rm = TRUE)`. 
@@ -2257,6 +2952,13 @@ flights |>
     first_dep = ...,
     fifth_dep = ...
   )
+```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    first_dep = first(dep_time, na_rm = TRUE),
+    fifth_dep = nth(dep_time, 5, na_rm = TRUE))
 ```
 
 ### Exercise 28
@@ -2278,6 +2980,14 @@ flights |>
   )
 ```
 
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    first_dep = first(dep_time, na_rm = TRUE),
+    fifth_dep = nth(dep_time, 5, na_rm = TRUE),
+    last_dep = last(dep_time, na_rm = TRUE))
+```
+
 ### Exercise 29
 
 Using your previous code, within your call to `summarize()` add the `.by` argument and set it to `c(year, month, day)`.
@@ -2294,8 +3004,17 @@ flights |>
     first_dep = ...,
     fifth_dep = ...,
     last_dep = ...,
-    .by = c(year, month, day)
+    .by = ...
   )
+```
+
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    first_dep = first(dep_time, na_rm = TRUE),
+    fifth_dep = nth(dep_time, 5, na_rm = TRUE),
+    last_dep = last(dep_time, na_rm = TRUE),
+    .by = c(year, month, day))
 ```
 
 ### 
@@ -2317,6 +3036,11 @@ flights |>
   mutate(y = min_rank(...)) 
 ```
 
+```{r, include = FALSE}
+flights |> 
+  mutate(y=min_rank(sched_dep_time))
+```
+
 ### Exercise 31
 
 Using your previous code, within your call to the `mutate()` function, add another argument called `.by` and set it to `c(year, month, day)`. 
@@ -2332,9 +3056,15 @@ flights |>
   mutate(y = min_rank(...), .by = ...) 
 ```
 
+```{r, include = FALSE}
+flights |> 
+  mutate(y=min_rank(sched_dep_time),
+         .by = c(year, month, day))
+```
+
 ### 
 
-As the names suggest, the summary functions are typically paired with summarize(). However, because of the recycling rules, they can also be usefully paired with mutate()
+As the names suggest, the summary functions are typically paired with `summarize()`. However, because of the recycling rules, they can also be usefully paired with `mutate()`
 
 ### Exercise 32
 
@@ -2353,6 +3083,13 @@ flights |>
   filter(...)
 ```
 
+```{r, include = FALSE}
+flights |> 
+  mutate(y=min_rank(sched_dep_time),
+         .by = c(year, month, day)) |>
+  filter(y %in% c(1, max(y)))
+```
+
 ### 
 
 Extracting values at positions is complementary to filtering on ranks. Filtering gives you all variables, with each observation in a separate row.
@@ -2367,3 +3104,5 @@ This tutorial covered [Chapter 14: Numbers](https://r4ds.hadley.nz/numbers.html)
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
+
+
