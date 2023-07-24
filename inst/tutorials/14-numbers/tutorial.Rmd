@@ -799,11 +799,12 @@ flights |>
 
 ```
 
+
 ```{r, include = FALSE}
+
 flights |> 
   mutate(
-    hour = sched_dep_time %/% 100
-  )
+    hour = sched_dep_time %/% 100)
 
 ```
 
@@ -1138,7 +1139,7 @@ flights |>
   summarize(hour = sched_dep_time %/% 100, prop_cancelled =  
               mean(is.na(dep_time)), n = n(), .by = hour) |>
   filter(hour > 1) |>
-  ggplot(aes(x=hour, y=prop_cancelled)) +
+  ggplot(aes(x = hour, y = prop_cancelled)) +
   geom_line(color = "grey50") +
   geom_point(aes(size = n))
 ```
@@ -2352,7 +2353,7 @@ flights |>
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
-    .groups = "drop"
+    .by = c(year, month, day)
   )
 ```
 
@@ -2387,8 +2388,7 @@ flights |>
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
-    .groups = "drop"
-  ) |> 
+    .by = c(year, month, day)) |> 
   ggplot(aes(x = mean, y = median))
 ```
 
@@ -2414,18 +2414,6 @@ flights |>
   geom_abline(slope = ...)
 ```
 
-```{r, include = FALSE}
-flights |> 
-  summarize(
-    mean = mean(dep_delay, na.rm = TRUE),
-    median = median(dep_delay, na.rm = TRUE),
-    n = n(),
-    .groups = "drop"
-  ) |> 
-  ggplot(aes(x = mean, y = median)) +
-  geom_abline(slope = 1)
-```
-
 ### Exercise 9
 
 Using the same pipe as above, within the `geom_abline()` function, add another argument called `intercept` and set it to `0`.
@@ -2446,18 +2434,6 @@ flights |>
   ) |> 
   ggplot(aes(x = ..., y = ...)) + 
   geom_abline(slope = ..., intercept = ...)
-```
-
-```{r, include = FALSE}
-flights |> 
-  summarize(
-    mean = mean(dep_delay, na.rm = TRUE),
-    median = median(dep_delay, na.rm = TRUE),
-    n = n(),
-    .groups = "drop"
-  ) |> 
-  ggplot(aes(x = mean, y = median)) +
-  geom_abline(slope = 1, intercept = 0)
 ```
 
 ### Exercise 10
@@ -2482,18 +2458,6 @@ flights |>
   geom_abline(slope = ..., intercept = ..., color = ...)
 ```
 
-```{r, include = FALSE}
-flights |> 
-  summarize(
-    mean = mean(dep_delay, na.rm = TRUE),
-    median = median(dep_delay, na.rm = TRUE),
-    n = n(),
-    .groups = "drop"
-  ) |> 
-  ggplot(aes(x = mean, y = median)) +
-  geom_abline(slope = 1, intercept = 0, color = "white")
-```
-
 ### Exercise 11
 
 Using the same pipe as above, within the `geom_abline()` function, add another argument called `linewidth` and set it to `2`.
@@ -2514,18 +2478,6 @@ flights |>
   ) |> 
   ggplot(aes(x = ..., y = ...)) + 
   geom_abline(slope = ..., intercept = ..., color = ..., linewidth = ...)
-```
-
-```{r, include = FALSE}
-flights |> 
-  summarize(
-    mean = mean(dep_delay, na.rm = TRUE),
-    median = median(dep_delay, na.rm = TRUE),
-    n = n(),
-    .groups = "drop"
-  ) |> 
-  ggplot(aes(x = mean, y = median)) +
-  geom_abline(slope = 1, intercept = 0, color = "white", linewidth = 2)
 ```
 
 ### 
@@ -2561,8 +2513,7 @@ flights |>
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
-    .groups = "drop"
-  ) |> 
+    .by = c(year, month, day)) |> 
   ggplot(aes(x = mean, y = median)) +
   geom_abline(slope = 1, intercept = 0, color = "white", linewidth = 2) +
   geom_point()
@@ -2679,8 +2630,7 @@ flights |>
   summarize(
     max = max(dep_delay, na.rm = TRUE),
     q95 = quantile(dep_delay, 0.95, na.rm = TRUE),
-    .groups = "drop"
-  )
+    .by = c(year, month, day))
 ```
 
 ### 
@@ -2797,6 +2747,14 @@ flights |>
   )
 ```
 
+```{r, include = FALSE}
+flights |> 
+  summarize(
+    distance_sd = IQR(distance),
+    n=n(),
+    .by = c(origin, dest))
+```
+
 ### Exercise 21
 
 Using the same pipe as above, add the `filter()` function to the pipeline. Within the `filter()` function add the argument `distance_sd > 0`.
@@ -2823,8 +2781,7 @@ flights |>
   summarize(
     distance_sd = IQR(distance),
     n=n(),
-    .groups = "drop"
-  ) |>
+    .by = c(origin, dest)) |>
   filter(distance_sd >0)
 ```
 
@@ -2879,6 +2836,7 @@ flights |>
   filter(...) |> 
   ggplot(aes(x = ..., group = ...))
 ```
+
 
 ```{r, include= FALSE}
 flights |> 
@@ -2955,6 +2913,7 @@ flights |>
 ```
 
 ```{r, include = FALSE}
+
 flights |> 
   summarize(
     first_dep = first(dep_time, na_rm = TRUE),
@@ -2981,6 +2940,7 @@ flights |>
 ```
 
 ```{r, include = FALSE}
+
 flights |> 
   summarize(
     first_dep = first(dep_time, na_rm = TRUE),
@@ -3084,6 +3044,7 @@ flights |>
 ```
 
 ```{r, include = FALSE}
+
 flights |> 
   mutate(y=min_rank(sched_dep_time),
          .by = c(year, month, day)) |>
