@@ -27,6 +27,12 @@ month_levels <- c(
   "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 )
+
+csv <- "
+month,value
+Jan,12
+Feb,56
+Mar,12"
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -301,16 +307,27 @@ If you ever need to access the set of valid levels directly, you can do so with 
 
 ### Exercise 14
 
-<!-- DK: Really ought to reorganize and split this up so that students have to do some typing. Show what happens, first, when you don't use col_factor(). -->
+<!-- DK: Split this into 4 separate questions.  Define csv in the setup code chunk. 1) Type Run Code for csv so that students know it exists. 2) Print csv, comment on the weird "\n" new line characters. Third. question, run read_csv on it. Third, all col_types = "c", which might be the default. 
+
+csv
+read_csv(csv)
+read_csv(csv, col_types = "c")
+read_csv(csv, col_types = cols(month = "c"))
+read_csv(csv, col_types = cols(month = "f"))
+read_csv(csv, col_types = cols(month = "f")) |> count(month)
+read_csv(csv, col_types = cols(month = col_factor(month_levels)))
+read_csv(csv, col_types = cols(month = col_factor(month_levels))) |>  count(month)
+-->
 
 Hit "Run Code".
 
 ```{r factor-basics-14, exercise = TRUE}
 csv <- "
 month,value
+Feb,12
+Mar,56
 Jan,12
-Feb,56
-Mar,12"
+Feb,14"
 
 df <- read_csv(csv, col_types = cols(month = col_factor(month_levels)))
 df$month
@@ -386,7 +403,7 @@ gss_cat |>
 
 The `<fct>` indicator above `race` indicates that it is a factor variable, not character.
 
-<!-- DK: This is where the chapter stops. We could add more examples working with this data. Or we could work through the exercises from 17.3.1-->
+<!-- This is where the chapter stops. We could add more examples working with this data. Or we could work through the exercises from 17.3.1 -->
 
 ## Modifying factor order
 ### 
@@ -962,7 +979,6 @@ gss_cat |>
 
 ### 
 
-<!-- DK: Better knowledge drop. -->
 
 Read the help page for [`fct_recode()`](https://forcats.tidyverse.org/reference/fct_recode.html) for more details.
 
@@ -1014,6 +1030,8 @@ Pipe `gss_cat` to `mutate()` with `relig = fct_lump_lowfreq(relig)` as its argum
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
+<!-- DK: Missing hint below. -->
+
 ```{r modifying-factor-lev-7-hint-1, eval = FALSE}
 
 ```
@@ -1024,17 +1042,16 @@ Pipe `gss_cat` to `mutate()` with `relig = fct_lump_lowfreq(relig)` as its argum
 
 ### Exercise 8
 
-<!-- DK: This could be split into some a couple of smaller steps. DONE-->
-
-Continue the pipe to `count(relig)`.
+Continue the pipe to the function `count()` with `relig` as its argument.
 
 ```{r modifying-factor-lev-8, exercise = TRUE}
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r modifying-factor-lev-8-hint-1, eval = FALSE}
-gss_cat |>
-  mutate(relig = ...(relig)) |>
+... |>
   count(...)
 ```
 
@@ -1049,6 +1066,8 @@ gss_cat |>
 In this case it’s not very helpful: it is true that the majority of Americans in this survey are Protestant, but we’d probably like to see some more details! 
 
 ### Exercise 9
+
+<!-- DK: Split into two questions. -->
 
 Instead, we can use the `fct_lump_n()` to specify that we want exactly 10 groups. Use the current pipe with two changes. First, replace `fct_lump_lowfreq(relig)` with `fct_lump_n(relig, n = 10)`. Second, add `sort = TRUE` as an argument to `count()`.
 
@@ -1077,7 +1096,7 @@ Read the documentation to learn about [`fct_lump_min()`](https://forcats.tidyver
 ## Ordered factors
 ### 
 
-Ordered factors, created with ordered(), imply a strict ordering and equal distance between levels: the first level is “less than” the second level by the same amount that the second level is “less than” the third level, and so on.
+Ordered factors, created with `ordered()`, imply a strict ordering and equal distance between levels: the first level is “less than” the second level by the same amount that the second level is “less than” the third level, and so on.
 
 ### Exercise 1
 
