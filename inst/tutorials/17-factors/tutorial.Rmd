@@ -30,9 +30,9 @@ month_levels <- c(
 
 csv <- "
 month,value
-Jan,12
-Feb,56
-Mar,12"
+Feb,12
+Mar,56
+Jan,12"
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -317,26 +317,150 @@ read_csv(csv, col_types = cols(month = "f"))
 read_csv(csv, col_types = cols(month = "f")) |> count(month)
 read_csv(csv, col_types = cols(month = col_factor(month_levels)))
 read_csv(csv, col_types = cols(month = col_factor(month_levels))) |>  count(month)
--->
 
-Hit "Run Code".
+DONE-->
+
+The next exercises will be focusing on the variable `csv`. Hit "Run Code" to look at `csv`.
 
 ```{r factor-basics-14, exercise = TRUE}
-csv <- "
-month,value
-Feb,12
-Mar,56
-Jan,12
-Feb,14"
-
-df <- read_csv(csv, col_types = cols(month = col_factor(month_levels)))
-df$month
+csv
 ```
 
-### 
+###
 
-Besides the use of `factor()` and `fct()` as described above, `col_factor()`, when used within `read_csv()` and similar import functions, is the most common way of creating factor variables.
+Note the `\n`. That signifies a new line being formed, but doesn't make `csv` easier to read.
 
+### Exercise 15
+
+Run `read_csv()` with `csv` set as the argument
+
+```{r factor-basics-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-15-hint, eval = FALSE}
+read_csv(...)
+```
+
+```{r, include = FALSE}
+read_csv(csv)
+```
+
+###
+
+`csv` is now much easier to read and understand. We can see what belongs in the month column and the value column, as well as variable types the columns are.
+
+### Exercise 16
+
+Currently, the month column is a character type variable and the value column is a double type variable. Add the arguments `col_types` to `read_csv` and set it equal to `"cc"`
+
+```{r factor-basics-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-16-hint, eval = FALSE}
+read_csv(csv, ...)
+```
+
+```{r, include = FALSE}
+read_csv(csv, col_types = "cc")
+```
+
+###
+
+`col_types = "cc"` changes the variable types of the columns to both be characters. The first `c` in `cc` corresponds to the first column, and so on.
+
+### Exercise 17
+
+Change the value of `col_types` from `"cc"` to `cols(month = "c")` inside of `read_csv()`
+
+```{r factor-basics-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-17-hint, eval = FALSE}
+read_csv(csv, col_types = cols(...))
+```
+
+```{r, include = FALSE}
+read_csv(csv, col_types = cols(month = "c"))
+```
+
+###
+
+### Exercise 18
+
+Change the value of `col_types` to `cols(month = "f"))`
+
+```{r factor-basics-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-18-hint, eval = FALSE}
+read_csv(csv, col_types = cols(...))
+```
+
+```{r, include = FALSE}
+read_csv(csv, col_types = cols(month = "f"))
+```
+
+###
+
+The month variable is now a variable of factor type. Having month as a factor will allow us to perform certain actions on it later on.
+
+### Exercise 19
+
+Continue the current pipe to `count()`. Set the argument to `month`.
+
+```{r factor-basics-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-19-hint, eval = FALSE}
+... |>
+  count(...)
+```
+
+```{r, include = FALSE}
+read_csv(csv, col_types = cols(month = "f")) |> count(month)
+```
+
+###
+
+While the tibble has all the correct information, it's not amazing to read. No one thinks of the months in those order. Luckily, this can be changed.
+
+### Exercise 20
+
+In `read_csv`, change the value of `col_types` to `cols(month = col_factor(month_levels))`
+
+```{r factor-basics-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-20-hint, eval = FALSE}
+read_csv(csv, col_types = ...) |>
+  count(month)
+```
+
+```{r, include = FALSE}
+read_csv(csv, col_types = cols(month = col_factor(month_levels))) |>  count(month)
+```
+
+###
+
+Besides the use of `factor()` and `fct()` as described earlier, `col_factor()`, when used within `read_csv()` and similar import functions, is the most common way of creating factor variables.
 
 ## General Social Survey
 ### 
@@ -646,9 +770,7 @@ plot1
 
 ### 
 
-The subtitle of a plot should be the one sentence conclusion/summary/observation with which you most want viewers to come away. 
-
-<!-- DK: There are two more plots in the section. Here is one. Someone should add them later, but they require some work. -->
+The subtitle of a plot should be the one sentence conclusion/summary/observation with which you most want viewers to come away.
 
 ### 
 
@@ -1030,10 +1152,11 @@ Pipe `gss_cat` to `mutate()` with `relig = fct_lump_lowfreq(relig)` as its argum
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-<!-- DK: Missing hint below. -->
+<!-- DK: Missing hint below. DONE -->
 
 ```{r modifying-factor-lev-7-hint-1, eval = FALSE}
-
+gss_cat |>
+  mutate(relig = ...)
 ```
 
 ### 
@@ -1067,9 +1190,9 @@ In this case it’s not very helpful: it is true that the majority of Americans 
 
 ### Exercise 9
 
-<!-- DK: Split into two questions. -->
+<!-- DK: Split into two questions. DONE -->
 
-Instead, we can use the `fct_lump_n()` to specify that we want exactly 10 groups. Use the current pipe with two changes. First, replace `fct_lump_lowfreq(relig)` with `fct_lump_n(relig, n = 10)`. Second, add `sort = TRUE` as an argument to `count()`.
+Instead, we can use the `fct_lump_n()` to specify that we want exactly 10 groups. Pipe `gss_cat` to `mutate()` with `fct_lump_n(relig, n = 10)` as its argument.
 
 ```{r modifying-factor-lev-9, exercise = TRUE}
 
@@ -1079,8 +1202,22 @@ Instead, we can use the `fct_lump_n()` to specify that we want exactly 10 groups
 
 ```{r modifying-factor-lev-9-hint-1, eval = FALSE}
 gss_cat |>
-  mutate(relig = ...(relig, n = 10)) |>
-  count(relig, ... = TRUE)
+  mutate(relig = ...)
+```
+
+### Exercise 10
+
+Continue the pipe to `count()`. Add `relig` as an argument, as well as `sort = TRUE` to `count()`.
+
+```{r modifying-factor-lev-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-lev-10-hint, eval = FALSE}
+... |>
+  count(relig, ...)
 ```
 
 ```{r include = FALSE}
