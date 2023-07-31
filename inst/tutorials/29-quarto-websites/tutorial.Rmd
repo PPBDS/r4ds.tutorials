@@ -5,8 +5,8 @@ tutorial:
   id: quarto-websites
 output:
   learnr::tutorial:
-    progressive:  true
-    allow_skip::  true
+    progressive: yes
+    'allow_skip:': yes
 runtime: shiny_prerendered
 description: Making a website using Quarto.
 ---
@@ -31,6 +31,10 @@ library(plotly)
 
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
+
+<!-- Make clear whether or not students are doing this in the current RStudio instance or in a new one. -->
+
+<!-- Explain the `/.quarto/` addition to .gitignore. -->
 
 <!-- Show how to use theme() to make the labs elements bigger for the web. -->
 
@@ -88,94 +92,110 @@ Error: unexpected symbol in "cat map"
 
 This tutorial covers material from [Chapter 30 Quarto formats](https://r4ds.hadley.nz/quarto-formats.html) in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. Yet we go into much more detail than that chapter does, especially with regard to the creation and modification of [Quarto websites](https://quarto.org/docs/websites/).
 
-
-
 ## Creating a website
 ### 
 
 <!-- DK: Add some more questions, mostly taking a look at some of the files. Explain what they do!  -->
 
-Let's make a [Quarto](https://quarto.org/docs/websites/) website using RStudio and then connect the R project to Github.
+Let's make a [Quarto](https://quarto.org/docs/websites/) website.
+
 
 ### Exercise 1
 
-For this exercise, first read the five steps involved in the creation of a Quarto website project. Once you have read all the steps, you will see the start of Exercise 2. That is your cue to perform the steps. You will need to terminate this tutorial when you open a new project, but don't worry. None of your work will be lost.  
+Create a Github repo (called "first-website"). Make sure to click the "Add a README file" checkbox. Copy/paste the url for its location at Github.
 
-### 
-
-*Step 1*: Navigate to the `File` menu in your RStudio session
-
-```{r out.width = 500}
-knitr::include_graphics("images/file.png")
+```{r creating-a-website-1}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
 ```
 
 ### 
 
-*Step 2*: Click on `New Project...`.
+Your answer should look something like:
 
-```{r out.width = 500}
-knitr::include_graphics("images/Directory.png")
+```
+https://github.com/davidkane9/first-website
 ```
 
-This will cause the window about terminating the tutorial to appear. Click "Terminate Jobs" as usual.
+It is a good idea to always start a new data science project with a Github repo.
 
-### 
-
-*Step 3*: Click on "New Directory". We will connect to GitHub later.
-
-### 
-
-*Step 4*: Select "Quarto Website".
-
-```{r out.width = 500}
-knitr::include_graphics("images/website.png")
-```
-
-### 
-
-This is the last step! Once you have selected "Quarto Website", it will
-bring you to *one* more page.
-
-```{r out.width = 500}
-knitr::include_graphics("images/first-website-pic.png")
-```
-
-*Step 5*: Please name the directory `first-website`. Make sure that the the box for "Create a git repository" is checked. Ensure that no other boxes are checked.  Click "Create Project". 
-
-### 
-
-RStudio will automatically restart and place you within the `first-website` R project. You should also have a directory called `first-website` in the location in which you store your projects.
-
-### 
-
-Restart this tutorial and continue with Exercise 2.
 
 ### Exercise 2
 
-In the Terminal, run `ls -a` to view a list of all the files in the directory. The `-a` ensures that **a**ll the files are listed, included the "hidden" ones which begin with a dot. CP/CR.
-
-### 
+Connect the `first-website` Github repo to an R project on your computer. Name the R project `first-website` also. Keeping the names of repos/projects alligned makes organization simpler. From the Terminal, run `ls`. CP/CR.
 
 ```{r creating-a-website-2}
 question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
 ```
 
-###
+### 
+
+Your answer should look something like this:
+
+```
+Davids-MBP:first-website dkane$ ls
+README.md               first-website.Rproj
+Davids-MBP:first-website dkane$ 
+```
+
+The default README has an "md" suffix to indicate that it is a **M**ark**d**own document.
+
+
+RStudio will automatically restart and place you within the `first-website` R project. You should also have a directory called `first-website` in the location in which you store your projects.
+
+
+### Exercise 3
+
+The project is empty, except for the README file and the project file. We now add all the files necessary for making a website. From the Terminal (not from the Console), type:
+
+`quarto create-project "."  --type website`
+
+Every detail in this command must be correct. The `quarto` command invokes Quarto. The `create-project` phrase tells Quarto that we want to create a project, of which there are several possible types. The `--type website` argument/value at the end tells Quarto that we want a website type of project. The `"."` indicates that we want Quarto to create the project here, in the directory in which we are currently located. A single period `.` is how we indicate the current directory.
+
+### 
+
+In the Terminal, run `ls -a` to view a list of all the files in the directory. The `-a` ensures that **a**ll the files are listed, included the "hidden" ones which begin with a dot. CP/CR.
+
+
+```{r creating-a-website-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+Your answer should look something like:
+
+```
+Davids-MBP:first-website dkane$ ls -a
+.                       .git                    _quarto.yml             index.qmd
+..                      .gitignore              about.qmd               styles.css
+.Rproj.user             README.md               first-website.Rproj
+Davids-MBP:first-website dkane$ 
+```
+
+### 
 
 In general, we do not touch/manipulate "dot" directories, meaning directories whose names begin with a dot or period. Such directories are meant to be used by the operating system and other programs. For example, the program git uses the `.git` directory to store information about changes in the files in the entire project. 
 
-### Exercise 3
+### Exercise 4
 
 In the Terminal, run `ls` to view a list of the "visible" files in the directory. The "hidden" files will no longer appear. CP/CR.
 
 ### 
 
-```{r creating-a-website-3}
+```{r creating-a-website-4}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -188,17 +208,15 @@ question_text(NULL,
 
 A website is a more complex object than a single Quarto document. It has two main components. First is a "settings" file, `_quarto.yml`, which provides instructions for how the website should be constructed. Second are a collection of Quarto documents, like `index.qmd` and `about.qmd`, which will be rendered into the html files which viewers will see.
 
-### Exercise 4
+<!-- DK: Explain what all the files do. -->
 
-We don't want to put all the files on Github. So, add `*Rproj` to your `.gitignore` file. 
+### Exercise 5
 
-If you don't see a `.gitignore`, it means that you failed to follow the instructions above to ensure that the "Create a git repository" box was checked. Start over.
+We don't want to put all the files on Github. So, add `*Rproj` to your `.gitignore` file. Save the file.
 
-### 
+Run `cat .gitignore` in the Terminal. CP/CR.
 
-Run `cat .gitignore` in the terminal. CP/CR.
-
-```{r creating-a-website-4}
+```{r creating-a-website-5}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -212,15 +230,13 @@ question_text(NULL,
 Good data scientists believe in transparency and reproducibility. We want people --- include "future" us --- to be able to reproduce our work. By default, almost every file belongs on Github. But settings for R projects are both not necessary for replication and often specific to each individual. 
 
 
-### Exercise 5
+### Exercise 6
 
-Commit all the files. Note how the "push" button is greyed out. This is because we have not connected the R project to Github. There is nowhere to "push" the code to.
-
-### 
+Commit all the files. 
 
 Run `git log` in the terminal. CP/CR.
 
-```{r creating-a-website-5}
+```{r creating-a-website-6}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -234,42 +250,7 @@ question_text(NULL,
 The output from the `git log` command is too complex for us to fully parse. If you want to learn more about how to work with git/Github and R, check out [Happy Git with R](https://happygitwithr.com/existing-github-last.html), a very useful resource.
 
 
-### Exercise 6
-
-<!-- DK: Split this up somehow? -->
-
-
-<!-- DK: Lot more teaching could be done! What is the log file? What does it mean? -->
-
-<!--  -->
-
-
-<!-- DK: How can we avoid committing these files until we have edited the .gitigore?  -->
-
-
-
-Let's connect to Github. We are using the **usethis** package, [a library](https://usethis.r-lib.org/), maintained by the nice people at [Posit](https://posit.co/), with lots of handy functions for working with new projects.
-
-From the Console, run `usethis::use_github()`. This will create a new repository on your Github account and connect it to your `first-website` R project. 
-
-### 
-
-Go you to Github account on your favorite browser. (You might automatically be sent there after the `use_github()` command.) Go to the repository section. You should be able to see the new repository (which you just created with the above command) in your Github account. Copy and paste the URL of your `first-website` repo below. The url should be something like: `https://github.com/davidkane9/first-website`. 
-
-```{r creating-a-website-8}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-For the most part, we use the Console and R packages like **usethis** to interact with our projects. But, sometimes, it is useful to "talk to" git directly. We do that from the Terminal.
-
-In previous class work, we have followed the "[Github first](https://happygitwithr.com/new-github-first.html)" mode of development in which the first step is to make a Github repo. When making Quarto websites, however, it is more convenient to use a "[Github last](https://happygitwithr.com/existing-github-last.html)" approach, as above.
-
-### Exercise 9
+### Exercise 7
 
 Now, we are going to set up a [Quarto Pub](quartopub.com) account for hosting the website. 
 
@@ -281,9 +262,39 @@ Now, we are going to set up a [Quarto Pub](quartopub.com) account for hosting th
 
 ### 
 
-Now, we are all set up and can publish, but, we should add some plots and text to the website.
+At the Terminal, type: 
 
-<!-- DK: We should publish what we have before we add more material. -->
+`quarto publish quarto-pub` 
+
+You will then need to hit the Return button twice, accepting the default options for account (your email address) and site name ("first-website"). It should look like this:
+
+```
+Davids-MBP:first-website dkane$ quarto publish quarto-pub
+? Publish with account: › dave.kane@gmail.com
+? Site name: › first-website
+
+[✓] Creating quarto-pub site
+
+Rendering for publish:
+
+[1/2] index.qmd
+[2/2] about.qmd
+
+[✓] Preparing to publish site
+[✓] Uploading files (complete)
+[✓] Deploying published site
+[✓] Published site: https://davidkane.quarto.pub/first-website
+[✓] Account site updated: https://davidkane.quarto.pub
+
+Davids-MBP:first-website dkane$ 
+```
+
+###
+
+A link to your new website should be brought up in a browser.
+
+<!-- DK: Do a lot more here to explain what is going on. Talk about _publish.yaml and _site. -->
+
 
 ## Adding visualizations
 
@@ -375,7 +386,6 @@ Start a pipe with the data set `mtcars` below.
 mtcars |>
 ```
 
-
 ### Exercise 4
 
 Select the columns `mpg` and `wt` using `select()`.
@@ -383,6 +393,7 @@ Select the columns `mpg` and `wt` using `select()`.
 ```{r adding-visualization-4, exercise = TRUE}
 
 ```
+
 <button onclick = "transfer_code(this)">Copy previous code</button>
 ```{r adding-visualization-4-hint-1, eval = FALSE}
 mtcars |> 
@@ -400,6 +411,7 @@ Create a scatterplot with `wt` on the x-axis and `mpg` on the y-axis.
 ```{r adding-visualization-5, exercise = TRUE}
 
 ```
+
 <button onclick = "transfer_code(this)">Copy previous code</button>
 ```{r adding-visualization-5-hint-1, eval = FALSE}
 mtcars |> 
@@ -416,6 +428,7 @@ and `se` to `FALSE` in the arguments.
 ```{r adding-visualization-6, exercise = TRUE}
 
 ```
+
 <button onclick = "transfer_code(this)">Copy previous code</button>
 ```{r adding-visualization-6-hint-1, eval = FALSE}
 mtcars |> 
@@ -432,6 +445,7 @@ Add `theme_clean()` to slightly alter the feel of the graph.
 ```{r adding-visualization-7, exercise = TRUE}
 
 ```
+
 <button onclick = "transfer_code(this)">Copy previous code</button>
 ```{r adding-visualization-7-hint-1, eval = FALSE}
 mtcars |> 
@@ -449,7 +463,9 @@ Use `labs` to add an appropriate title, subtitle, axes labels, and caption to yo
 ```{r adding-visualization-8, exercise = TRUE}
 
 ```
+
 <button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r adding-visualization-8-hint-1, eval = FALSE}
 mtcars |> 
   select(mpg, wt) |> 
@@ -572,11 +588,8 @@ Go to the Git tab, then commit and push your new changes to Github. Include a de
 
 ### 
 
-In the Terminal type `quarto publish quarto-pub`. You will need to type `Yes` when it asks you to, and then press enter twice. 
+In the Terminal type `quarto publish`. You don't need to include `quarto-pub` since that information now appears in the `_publish.yml` file. You will need to hit Return once.
 
-### 
-
-Website creation may take a while, but it might ask you if it can use Quarto Pub CLI, so stay by the computer. When that box pops up, select accept. Or it might just work automagically.
 
 ### 
 
@@ -806,7 +819,7 @@ You only need a few [formatting tricks](https://quarto.org/docs/authoring/markdo
 
 ### Exercise 11
 
-Push all the changes to Git, and issue the `quarto publish quarto-pub` command in the Terminal. You may need to press enter twice.
+Push all the changes to Git, and issue the `quarto publish` command in the Terminal. You need to hit return/enter at least once.
 
 ## Adding new pages
 
@@ -1233,8 +1246,7 @@ Example:
 
 On a new line, type the object `car_plot` to print the plot saved in the .rds. Render the .qmd.
 
-###
-
+### 
 
 In the Terminal, run `grep rds index.qmd`. CP/CR.
 
@@ -1256,7 +1268,6 @@ You should now see the same output as you had before when you had the code to ma
 Any R object can be made into an .rds file. It is most convenient for functions which take a long time to run and so will slow down your website's loading time, e.g. API requests.
 
 ## Images and Comments
-
 We can add graphics and images to Quarto websites many different ways, the easiest being with the package **knitr**.
 
 ### Exercise 1
@@ -1267,15 +1278,15 @@ First, we need to make an image.
 
 In the `car-plot` code chunk, use the function `ggsave()` to make a PNG image of the plot you just made. 
 
-###
+### 
 
 The first argument is the name of the file you want to save the image to, `"car-plot.png"`. 
 
-###
+### 
 
 The next argument is `plot`, set that equal to `car_plot`. 
 
-###
+### 
 
 Render the file. You should see a file named `car-plot.png` appear in your files pane.
 
@@ -1359,7 +1370,6 @@ Comments are very important to add. That way you know exactly what you are doing
 Feel free to include more comments on other pages explaining what you are doing. The way you turn text into comments is cmd + shift + c, with the cursor placed in the relevant text.
 
 ## Interactive Pages
-
 We will be making 3 interactive graphs on 3 separate pages. You can read more about interactive graphs and how to make them [here](http://www.htmlwidgets.org/showcase_dygraphs.html), and [here](https://quarto.org/docs/interactive/widgets/htmlwidgets.html). 
 
 ### 
@@ -1546,7 +1556,7 @@ question_text(NULL,
 	rows = 3)
 ```
 
-###  Exercise 7
+### Exercise 7
 
 In the `plotly.qmd`, change the title in the YAML header to be "Chick Weight"
 
@@ -1554,7 +1564,7 @@ In the `plotly.qmd`, change the title in the YAML header to be "Chick Weight"
 
 Add a code chunk in which you load the libraries **plotly** and **tidyverse**.
 
-###
+### 
 
 In the Terminal, run `cat plotly.qmd`. CP/CR.
 
@@ -1710,6 +1720,7 @@ Save, push everything to Git, and type `quarto publish quarto-pub` in the Termin
 If you don't like how the generic website looks, you can go to the bottom of the `_quarto.yaml` file, where it says `theme: cosmo` and you can change it to [any of these](https://bootswatch.com/). Some good simple themes are: yeti, slate, flatly, darkly, sandstone, and united (all lowercase).
 
 ## Citations
+
 <!-- DK: Switch to @ usage. -->
 
 The Quarto [documentation](https://quarto.org/) provides [details](https://quarto.org/docs/authoring/footnotes-and-citations.html) about how to create academic citations. There are many possible approaches. In this section, we provide a simple introduction.
