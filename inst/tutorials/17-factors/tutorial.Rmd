@@ -15,6 +15,23 @@ description: 'Tutorial for Chapter 17: Factors'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
+
+# Without thishack, we fail on GHA! cols() and col_factor() have conflicting
+# versions in readr, vroom and scales. Of course, we want the readr versions. We
+# could solve this with either:
+
+# library(conflicted)
+# conflict_prefer("cols", "readr") # and so on. Or with:
+
+# library(tidymodels)
+# tidymodels_prefer() # because this applies to tidyverse functions we well
+
+# But that all seems like overkill, given that it all works for students
+# regardless.
+
+cols <- readr::cols
+col_factor <- readr::col_factor
+
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
@@ -455,7 +472,9 @@ read_csv(csv, col_types = ...) |>
 ```
 
 ```{r, include = FALSE}
-read_csv(csv, col_types = cols(month = col_factor(month_levels))) |>  count(month)
+read_csv(csv, 
+         col_types = cols(month = col_factor(month_levels))) |>  
+  count(month)
 ```
 
 ###
