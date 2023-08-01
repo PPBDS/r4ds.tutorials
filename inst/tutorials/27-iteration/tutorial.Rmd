@@ -2172,6 +2172,220 @@ use `list.files()` to list all the files in a directory, then use `purrr::map()`
 
 ## Saving Multiple Outputs
 ###
+(add intro)
+
+### Exercise 1
+
+Run the code in the code chunck below. 
+
+```{r saving-multiple-outp-1, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+```
+
+You'll get an error, indicating `'file' must be a character string or connection`.
+
+###
+
+Sometimes when working with many files at once, it’s not possible to fit all your data into memory at once, and you can’t do `map(files, read_csv)`. One approach to deal with this problem is to load your data into a database.
+
+### Exercise 2
+
+Assign `template` to `readxl::read_excel(paths[[1]])`. Hit `Run Code`.
+
+```{r saving-multiple-outp-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-2-hint, eval = FALSE}
+template <- readxl::read_excel(paths[[1]])
+```
+
+###
+
+Exercise 1 did not work because we don't have csv file. Now, we want to do it by hand.
+
+### Exercise 3
+
+Run the following code again.
+
+```{r saving-multiple-outp-3, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-3-hint, eval = FALSE}
+
+```
+
+###
+
+Note that `dbCreateTable()` doesn’t use the data in template, just the variable names and types. 
+
+### Exercise 4
+
+Now, let's test it by pipe `con` into `tbl("gapminder")`.
+
+```{r saving-multiple-outp-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-4-hint, eval = FALSE}
+con |> tbl("gapminder")
+```
+
+###
+The `gapminder` table is empty now but it has the variables we need with the types we expect.
+
+### Exercise 5
+
+Type `function(path)` in the space below and add `{}` after it. Hit `Run Code`.
+
+```{r saving-multiple-outp-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-5-hint, eval = FALSE}
+function(path){}
+```
+
+###
+
+Now we are building a function that takes a single file path, reads it into R, and adds the result to the gapminder table.
+
+### Exercise 6
+
+In the `{}`, add `df <- readxl::read_excel(path)` and `df$year <- parse_number(basename(path))`.
+
+```{r saving-multiple-outp-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-6-hint, eval = FALSE}
+function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))}
+```
+
+###
+
+### Exercise 7
+
+Add `DBI::dbAppendTable(con, "gapminder", df)` to the call to `function(path)`.
+
+```{r saving-multiple-outp-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-7-hint, eval = FALSE}
+function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  
+  DBI::dbAppendTable(con, "gapminder", df)}
+```
+
+###
+
+### Exercise 8
+
+Assign `append_file` to the function above.
+
+```{r saving-multiple-outp-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-8-hint, eval = FALSE}
+append_file <- function(path) {
+  ...
+  
+  DBI::dbAppendTable(con, "gapminder", df)}
+```
+
+###
+
+### Exercise 9
+
+Pipe `paths` into `map(append_file)`.
+
+```{r saving-multiple-outp-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-9-hint, eval = FALSE}
+paths |> map(append_file)
+```
+
+###
+
+### Exercise 10
+
+Pipe `paths` into `walk(append_file)`.
+
+```{r saving-multiple-outp-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-10-hint, eval = FALSE}
+paths |> walk(append_file)
+```
+
+###
+
+Now we can check if we have all data in our table.
+
+### Exercise 11
+
+Pipe `con` into `tbl("gapminder")`.
+
+```{r saving-multiple-outp-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-11-hint, eval = FALSE}
+con |> 
+  tbl("gapminder")
+```
+
+###
+
+### Exercise 12
+
+Pipe the code above into `count(year)`
+
+```{r saving-multiple-outp-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-12-hint, eval = FALSE}
+con |> 
+  ... |> 
+  count(year)
+```
+
+###
+
 
 
 
