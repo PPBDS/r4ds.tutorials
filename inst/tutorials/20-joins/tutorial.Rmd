@@ -40,6 +40,9 @@ y <- tribble(
      4, "y3"
 )
 
+df1 <- tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))
+df2 <- tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))
+
 parties <- tibble(
   q = 1:4,
   party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03"))
@@ -851,13 +854,18 @@ Create two variables `df1` and `df2` on different lines. Assign `tibble(key = c(
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r how-do-joins-work-9-hint-1, eval = FALSE}
-df1 <-
+df1 <- 
 df2 <- 
+```
+
+```{r, include = FALSE}
+df1 <- tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))
+df2 <- tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))
 ```
 
 ### 
 
-As you can see we have two duplicate keys in both tibbeles.
+As you can see we have two duplicate keys in both tibbles.
 
 ### Exercise 10
 
@@ -874,12 +882,14 @@ Copy the previous code and on a new line create a pipe with `df1` to `inner_join
   inner_join(df2, ...(key))
 ```
 
+```{r, include = FALSE}
+df1 |> 
+  inner_join(df2, join_by(key))
+```
+
 ### 
 
 While the first row in df1 only matches one row in df2, the second and third rows both match two rows. This is sometimes called a many-to-many join, and will cause dplyr to emit a warning. If you are doing this deliberately, you can set relationship = "many-to-many", as the warning suggests.
-
-
-
 
 ## Non-equi joins
 ### 
@@ -899,6 +909,11 @@ To join `x` with `y` using left_join(), start a pipe and specify y as the tibble
 ```{r nonequi-joins-1-hint-1, eval = FALSE}
 x |> 
   left_join(..., ... = "key", keep = ...)
+```
+
+```{r, include = FALSE}
+x |> 
+  left_join(y, by = "key", keep = TRUE)
 ```
 
 ### 
@@ -945,9 +960,13 @@ To make use of the permutations skills that this function has, let's first creat
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r nonequi-joins-4-hint-1, eval = FALSE}
-df <- ...
 df <- tibble(name = ...(...))
 ```
+
+```{r, include=FALSE}
+df <- tibble(name = c("John", "Simon", "Tracy", "Max"))
+```
+
 
 ### 
 
@@ -964,7 +983,15 @@ Copy the previous code and on a new line start a pipe with `df` to `cross_join()
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r nonequi-joins-5-hint-1, eval = FALSE}
-df |> cross_join(df)
+df <- tibble(name = c("John", "Simon", "Tracy", "Max")) 
+df |> 
+  cross_join(...)
+```
+
+```{r, include = FALSE}
+df <- tibble(name = c("John", "Simon", "Tracy", "Max"))
+df |> 
+  cross_join(df)
 ```
 
 ### 
@@ -1001,6 +1028,11 @@ Create a variable `df` and assign  `tibble(id = 1:4, name = c("John", "Simon", "
 df <- tibble(..., name = ...(...))
 ```
 
+```{r, include = FALSE}
+tibble(id = 1:4, name = c("John", "Simon", "Tracy", "Max"))
+```
+
+
 ### 
 
 Compared to cross joins, we can see that with the inequality join, we were able to stop the names from being duplicated and instead got combinations.
@@ -1032,7 +1064,11 @@ Create a tibble `parties` and add columns `q` and pass in `1:4` for it then add 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r nonequi-joins-9-hint-1, eval = FALSE}
-parties <- tibble(q = ..., party = ymd(c()))
+parties <- tibble(q = ..., party = ymd(c(...)))
+```
+
+```{r, include = FALSE}
+parties <- tibble(q = 1:4, party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")))
 ```
 
 ### 
@@ -1041,9 +1077,9 @@ Now that we have the party dates, we now have to have employee birthdays.
 
 ### Exercise 10
 
-Let's now create a new tibble `employees` using `tibble()`. The tibble containes two columns `name` and `birthday`.  Pass in `name = sample(babynames::babynames$name, 100)`, which takes sample of 100 babynames, to `name` then pass `ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)` ,which generates birthdays, to `birthday`. 
+Let's now create a new tibble `employees` using `tibble()`. The tibble contains two columns `name` and `birthday`. Pass in `name = sample(babynames::babynames$name, 100)`, which takes sample of 100 baby names, to `name`. Then pass `ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)`, which generates birthdays, to `birthday`. 
 
-On a line call employees to have a look at the tibble.
+On a new line call employees to have a look at the tibble.
 
 ```{r nonequi-joins-10, exercise = TRUE}
 
@@ -1056,7 +1092,15 @@ On a line call employees to have a look at the tibble.
   name = sample(babynames::...$name, 100),
  ... = ymd(....) + (sample(365, 100, replace = ...) - 1)
 )
-employess
+employees
+```
+
+```{r, include = FALSE}
+employees <- tibble(
+  name = sample(babynames::babynames$name, 100),
+ birthdays = ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)
+)
+employees
 ```
 
 ### 
@@ -1075,7 +1119,21 @@ To join the employees and parties tables, start a pipe with employees and use `l
 
 ```{r nonequi-joins-11-hint-1, eval = FALSE}
 ... |> 
-  left_join(parties, join_by(...(birthday >= party)))
+  left_join(..., join_by(...(birthday >= party)))
+```
+
+```{r, include = FALSE}
+employees <- tibble(
+     name = sample(babynames::babynames$name, 100),
+     birthday = ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)
+)
+
+parties <- tibble(
+     q = 1:4,
+     party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")))
+
+employees |> 
+  left_join(parties, join_by(closest(birthday >= party)))
 ```
 
 ### 
@@ -1084,7 +1142,7 @@ There is, however, one problem with this approach: the folks with birthdays befo
 
 ### Exercise 12
 
-Like mentioned previously this approach only looks for birthday sfatter Januaryt 10th and leave out birthdays before January 10th. To demonstarte this, Copy the previous code and change the join from `left_join()` to `right_join()`.
+Like mentioned previously this approach only looks for birthdays after January 10th and leave out birthdays before January 10th. To demonstrate this, Copy the previous code and change the join from `left_join()` to `right_join()`.
 
 ```{r nonequi-joins-12, exercise = TRUE}
 
@@ -1093,8 +1151,13 @@ Like mentioned previously this approach only looks for birthday sfatter Januaryt
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r nonequi-joins-12-hint-1, eval = FALSE}
-... |> 
-  ...(parties, join_by(...(birthday >= party)))
+employees |> 
+  ...(parties, join_by(closest(birthday >= party)))
+```
+
+```{r, include = FALSE}
+employees |> 
+  right_join(parties, join_by(closest(birthday >= party)))
 ```
 
 ### 
@@ -1123,6 +1186,17 @@ parties2 <- tibble(
 parties2
 ```
 
+```{r, include = FALSE}
+parties2 <- tibble(
+  q = 1:4,
+  party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
+  start = ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03")),
+  end = ymd(c("2022-04-03", "2022-07-11", "2022-10-02", "2022-12-31"))
+)
+parties2
+```
+
+
 ### 
 
 Overlap joins provide three helpers that use inequality joins to make it easier to work with intervals:
@@ -1145,8 +1219,13 @@ Start a pipe with `parties2` to `inner_join()`, we will join `parties2` to itsel
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r nonequi-joins-14-hint-1, eval = FALSE}
+... |> 
+  inner_join(..., join_by(...(start, end, start, end), ...))
+```
+
+```{r, include = FALSE}
 parties2 |> 
-  inner_join(parties2, join_by(...(start, end, start, end), ...))
+  inner_join(parties2, join_by(overlaps(start, end, start, end), q < q))
 ```
 
 ### 
@@ -1164,9 +1243,15 @@ When we ran the previous code, we see other info which we dont need, so let's re
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r nonequi-joins-15-hint-1, eval = FALSE}
-... |> 
-  inner_join(parties2,...(overlaps(..., end, start, ...), q < q)) |> 
-  select(..., end.x, start.y, end.y)
+parties2 |> 
+  inner_join(parties2, join_by(overlaps(start, end, start, end), q < q)) |> 
+  select(..., ..., ..., ...)
+```
+
+```{r, include = FALSE}
+parties2 |> 
+  inner_join(parties2, join_by(overlaps(start, end, start, end), q < q)) |>
+  select(start.x, end.x, start.y, end.y)
 ```
 
 ### 
@@ -1175,7 +1260,7 @@ Ooops, there is an overlap, so let’s fix that problem and continue:
 
 ### Exercise 16
 
-Go back to exercise 13 and copy your answer from there and paste it here, change the name of the tibbel to`parties3` and change the 2nd data in `end` to `"2022-07-10"`.
+Go back to exercise 13 and copy your answer from there and paste it here, change the name of the tibble to`parties3` and change the 2nd data in `end` to `"2022-07-10"`.
 
 ```{r nonequi-joins-16, exercise = TRUE}
 
@@ -1190,6 +1275,16 @@ Go back to exercise 13 and copy your answer from there and paste it here, change
   ... = ymd(c("2022-01-01", "2022-04-04", ..., "2022-10-03")),
   end = ymd(c(..., "2022-07-10", ..., "2022-12-31"))
 )
+```
+
+```{r, include = FALSE}
+parties4 <- tibble(
+  q = 1:4,
+  party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
+  start = ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03")),
+  end = ymd(c("2022-04-03", "2022-07-10", "2022-10-02", "2022-12-31"))
+)
+parties2
 ```
 
 ### 
@@ -1209,6 +1304,12 @@ Let's join `employees` and `parties3` by first creating a pipe with `employees` 
 ```{r nonequi-joins-17-hint-1, eval = FALSE}
 ... |> 
       inner_join(parties3, ...(between(birthday, start, end)), unmatched = "...")
+```
+
+```{r, include = FALSE}
+employees |> 
+      inner_join(parties3, 
+                 join_by(between(birthday, start, end)), unmatched = "error")
 ```
 
 ### 
