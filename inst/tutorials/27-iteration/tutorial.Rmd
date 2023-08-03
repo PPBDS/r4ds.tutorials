@@ -97,15 +97,18 @@ gapminder_1952 <- readxl::read_excel("data/gapminder/1997.xlsx")
 gapminder_1957 <- readxl::read_excel("data/gapminder/2002.xlsx")
 gapminder_2007 <- readxl::read_excel("data/gapminder/2007.xlsx")
 
-paths <- list.files("data/gapminder", pattern = "[.]xlsx$", full.names = TRUE)
+paths <- list.files("data/gapminder", 
+                    pattern = "[.]xlsx$", 
+                    full.names = TRUE)
 
 # DK: Had to comment out the creation of this object since it was causing a
-# weird error during Github checks. Let's discuss.
+# weird error during Github checks. Let's look at it next time. Why does this
+# code work with Run Document but not with R CMD check.
 
-# gapminder <- paths |> 
-#   set_names(basename) |> 
-#   map(readxl::read_excel) |> 
-#   list_rbind(names_to = "year") |> 
+# gapminder <- paths |>
+#   set_names(basename) |>
+#   map(readxl::read_excel) |>
+#   list_rbind(names_to = "year") |>
 #   mutate(year = parse_number(year))
 
 process_file <- function(path) {
@@ -116,6 +119,12 @@ process_file <- function(path) {
     mutate(id = tolower(id)) |> 
     pivot_longer(jan:dec, names_to = "month")
 }
+
+df_types <- function(df) {
+  tibble(
+    col_name = names(df), 
+    col_type = map_chr(df, vctrs::vec_ptype_full),
+    n_miss = map_int(df, \(x) sum(is.na(x))))}
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -129,6 +138,8 @@ process_file <- function(path) {
 <!-- Avoid group_by() if possible. .by/by in the next function should work. -->
 
 <!-- Add `paths` creation to setup code chunk. -->
+
+<!-- DK: Add "test chunks" for most questions. -->
 
 ## Introduction
 ### 
@@ -193,11 +204,6 @@ This is a simple tibble, now you wish to count the number of observations and co
 Type `df` and hit "Run Code".
 
 ```{r modifying-multiple-c-3, exercise = TRUE}
-
-```
-
-
-```{r modifying-multiple-c-3-hint-1, eval = FALSE}
 
 ```
 
@@ -353,14 +359,9 @@ Copy the previous code. Now, add `across(a:d, median)` to the call to `summarise
 ```{r modifying-multiple-c-9-hint-1, eval = FALSE}
 df |> 
   summarise(n = n(),
-            ...(a:d, ...))
-```
-
-```{r, include=FALSE}
-df |> 
-  summarise(n = n(),
             across(a:d, median))
 ```
+
 
 <!-- DK: Do not hard code exercise numbers. Use "as above" or "as previously." -->
 
@@ -1645,6 +1646,7 @@ paths |>
   mutate(year = parse_number(year))
 ```
 
+
 ###
 
 `parse_number` parses the first number it finds, dropping any non-numeric characters before the first number and all characters after the first number. The grouping mark specified by the locale is ignored inside the number.
@@ -1849,7 +1851,317 @@ paths |>
 
 This is an example of doing one round of iteration with a complex function.
 
+### Exercise 35
 
+Pipe `paths` into `map(readxl::read_excel)`
+
+```{r reading-multiple-fil-35, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-35-hint, eval = FALSE}
+paths |> 
+  map(readxl::read_excel)
+```
+
+###
+
+Recall that this code helps to load all files needed.
+
+With a homogeneous data, we are able to go from `map()` straight to `list_rbind()`. However, when the data frames are heterogeneous, `list_rbind()` either fails or yields a data frame that’s not very useful. In this case, we can create a handy `df_types` function that returns a tibble with one row for each column.
+
+### Exercise 36
+
+Type `tibble()` and hit `Run Code`.
+
+```{r reading-multiple-fil-36, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-36-hint, eval = FALSE}
+tibble()
+```
+
+### Exercise 37
+
+Let's add the argument `col_name` with value `names(df)` to the call to `tibble()`.
+
+```{r reading-multiple-fil-37, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-37-hint, eval = FALSE}
+tibble(
+    col_name = names(df))
+```
+
+###
+
+Recall that this argument `col_name` retrieve/set column names.
+
+### Exercise 38
+
+Then, add the second argument, `col_type`, then set its value to be `map_chr(df, vctrs::vec_ptype_full)`.
+
+```{r reading-multiple-fil-38, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-38-hint, eval = FALSE}
+tibble(
+    col_name = names(df), 
+    col_type = map_chr(df, vctrs::vec_ptype_full))
+```
+
+###
+
+`col_type` specifies which types the columns in your imported data frame should have.
+
+`map_chr()` returns a character vector, which is then specified by `vctrs::vec_ptype_full`. 
+
+###
+
+`vec_ptype_full()` displays the full type of the vector.
+
+### Exercise 39
+
+Add a new argument `n_miss` to the previous code, with value `map_int(df, \(x) sum(is.na(x)))`.
+
+```{r reading-multiple-fil-39, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-39-hint, eval = FALSE}
+tibble(
+    col_name = names(df), 
+    col_type = map_chr(df, vctrs::vec_ptype_full),
+    n_miss = map_int(df, \(x) sum(is.na(x))))
+```
+
+###
+
+<!-- add some knowledge drop abt `map_int(df, \(x) sum(is.na(x)))`... my brain is numb at this point but i'll come back later -->
+
+### Exercise 40
+
+To make the above code into a function, type `function(df) {}` in front of `tibble()`, remember to put`tibble()` inside `{}`.
+
+```{r reading-multiple-fil-40, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-40-hint, eval = FALSE}
+function(df) {
+  tibble(
+    col_name = names(df), 
+    col_type = map_chr(df, vctrs::vec_ptype_full),
+    n_miss = map_int(df, \(x) sum(is.na(x))))}
+```
+
+###
+
+The previous chapter gave a detailed break down of how a new function is defined.
+
+### Exercise 41
+
+Assign the new function a name as `df_types`.
+
+```{r reading-multiple-fil-41, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-41-hint, eval = FALSE}
+... <- function(df) {
+  tibble(
+    col_name = names(df), 
+    col_type = map_chr(df, vctrs::vec_ptype_full),
+    n_miss = map_int(df, \(x) sum(is.na(x))))}
+```
+
+###
+
+This assignment will make life easier for us later on!
+
+### Exercise 42
+
+Type `df_types()` and an argument `gapminder`, hit `Run Code`, see what happens.
+
+```{r reading-multiple-fil-42, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-42-hint, eval = FALSE}
+df_types(gapminder)
+```
+
+###
+
+You should have a 6x3 tibble!
+
+###
+
+There are two additiolnal functions worth mentioning.
+
+`map_if()` allows you to selectively modify elements of a list based on their values.
+
+`map_at()` allows you to selectively modify elements based on their names.
+
+### Exercise 43
+
+Pipe `paths` into `map()`.
+
+```{r reading-multiple-fil-43, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-43-hint, eval = FALSE}
+paths |> 
+  map()
+```
+
+###
+
+`map()` has a downside: it succeeds or fails as a whole. It will either successfully read all of the files in a directory or fail with an error, reading zero files. 
+
+### Exercise 44
+
+Add an argument `possibly()` to the call to `map()`.
+
+```{r reading-multiple-fil-44, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-44-hint, eval = FALSE}
+paths |> 
+  map(possibly())
+```
+
+###
+
+`possibly()` is a function operator: it takes a function and returns a function with modified behavior. 
+
+In particular, `possibly()` changes a function from erroring to returning a value that you specify。
+
+### Exercise 45
+
+Add arguments `\(path) readxl::read_excel(path)` and `NULL` to the call to `possibly()`.
+
+```{r reading-multiple-fil-45, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-45-hint, eval = FALSE}
+paths |> 
+  map(possibly(\(path) readxl::read_excel(path), NULL))
+```
+
+###
+
+`possibly()` consists of two main values: `.f` and `otherwise`.
+
+'.f` is a function to modify.
+
+`otherwise` is a default value to use when an error occurs.
+
+### Exercise 46
+
+Assign the above code to variable `files`.
+
+```{r reading-multiple-fil-46, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-46-hint, eval = FALSE}
+... <- paths |> 
+  map(possibly(\(path) readxl::read_excel(path), NULL))
+```
+
+
+### Exercise 47
+
+Pipe `files` into `list_rbind()`.
+
+```{r reading-multiple-fil-47, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-47-hint, eval = FALSE}
+files |> list_rbind()
+```
+
+###
+
+This works particularly well here because `list_rbind()`, like many tidyverse functions, automatically ignores `NULLs`.
+
+### Exercise 48
+
+With function `map_vec()`, add arguments `files` and `is.null` to the call. 
+
+```{r reading-multiple-fil-48, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-48-hint, eval = FALSE}
+map_vec(files, is.null)
+```
+
+
+### Exercise 49
+
+Assign `failed` as a new variable of the previous code.
+
+```{r reading-multiple-fil-49, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r reading-multiple-fil-49-hint, eval = FALSE}
+failed <- map_vec(files, is.null)
+```
+
+### Exercise 50
+
+Hit `Run Code`.
+
+```{r reading-multiple-fil-50, exercise = TRUE}
+paths[failed]
+```
+
+
+###
+
+You should see paths that failed.
+
+Then call the import function again for each failure and figure out what went wrong.
 
 ###
 
@@ -1858,6 +2170,11 @@ This is an example of doing one round of iteration with a complex function.
 Just a recap, there are three basic steps:
 
 use `list.files()` to list all the files in a directory, then use `purrr::map()` to read each of them into a list, then use `purrr::list_rbind()` to combine them into a single data frame. We'll then discuss how you can handle situations of increasing heterogeneity, where you can't do exactly the same thing to every file.
+
+## Saving Multiple Outputs
+###
+
+
 
 ## Summary
 ### 

@@ -22,10 +22,16 @@ knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
-# Portland heatwave. Source:  https://projects.oregonlive.com/weather/pdx_temps.csv -
+# Portland heatwave. Original source (note that this file is still being
+# updated):  https://projects.oregonlive.com/weather/pdx_temps.csv
+
+# But, to save space in the package so that we meet the CRAN 5mb guideline, we
+# use a version on Github.
+
+url <- "https://raw.githubusercontent.com/PPBDS/r4ds.tutorials/main/data-raw/portlandtemp.csv"
 
 portland_data <- 
-  read_csv("data/portlandtemp.csv",
+  read_csv(url,
            col_types = cols(date = col_date(format = ""),
                    tmax = col_double(),
                    tmin = col_double())) |> 
@@ -714,7 +720,7 @@ Next, we will start adding the scatterplot. Add the layer `geom_point`. Remember
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r portland-heatwave-in-6-hint-1, eval = FALSE}
-...+
+... +
   geom_point()
 ```
 
@@ -733,7 +739,7 @@ Within `geom_point`, add the argument alpha and set it to .05. Furthermore, set 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r portland-heatwave-in-7-hint-1, eval = FALSE}
-...+
+... +
   geom_point(alpha = .05,
              size = .9)
 ```
@@ -772,7 +778,7 @@ Within the second `geom_point`, we must filter the data. First, use the argument
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r portland-heatwave-in-9-hint-1, eval = FALSE}
-...+
+... +
   geom_point(data = filter(portland_data, 
                     recent_high != FALSE))
 ```
@@ -792,7 +798,7 @@ We will now change the color of those three dots. Within `geom_point()`, add a n
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r portland-heatwave-in-10-hint-1, eval = FALSE}
-...+
+... +
   geom_point(data = filter(portland_data, 
                     recent_high != FALSE),
                     color = "#C1392B")
@@ -855,7 +861,7 @@ Copy and paste your code from Exercise 12. Add another layer, `scale_x_continuou
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r portland-heatwave-in-13-hint-1, eval = FALSE}
-...+
+... +
   scale_x_continuous(breaks = months$yday)
 ```
 
