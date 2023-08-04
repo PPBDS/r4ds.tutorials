@@ -18,6 +18,9 @@ library(tutorial.helpers)
 library(tidyverse)
 library(nycflights13)
 
+library(socviz)
+library(ggthemes)
+
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
@@ -1366,7 +1369,6 @@ Let’s begin with a simple example of labeling a numeric vector as either `“+
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r conditional-transfor-1-hint, eval = FALSE}
 x <- c(-3:3, ...)
@@ -1614,6 +1616,488 @@ if_else(TRUE, "a", 1)
 ###
 
 This should output `#> Error in if_else(): #> ! Can't combine true <character> and false <double>.`
+
+## Public Project
+### 
+
+<!-- Missing: Questions about the two libraries (socviz and ggtheme). Also -->
+
+We will be making a plot about the gap in life expactancy in the US. 
+
+```{r fig.width = 10}
+final_plot <- 
+  oecd_sum |> 
+  drop_na() |> 
+  ggplot(mapping = aes(x = year, y = diff, fill = hi_lo)) +
+      geom_col() + 
+      guides(fill = "none") +
+      theme_minimal() +
+      labs(x = NULL, 
+           y = "Difference in Years",
+           title = "The US Life Expectancy Gap",
+           subtitle = "Difference between US and OECD average life expectancies,\n1960-2015",
+           caption = "Data: OECD. After a chart by Christopher Ingraham,\nWashington Post, December 27th 2017.") +
+      theme(plot.title = element_text(face = "bold",
+                                      size = 20,
+                                      margin = margin(b = 5)),
+            plot.subtitle = element_text(face = "italic",
+                                         size = 15,
+                                         margin = margin(b = 10)),
+            plot.caption = element_text(face = "italic",
+                                        margin = margin(t = 5)),
+            axis.title.y = element_text(face = "bold"),
+            axis.text = element_text(face = "bold"))
+
+final_plot
+```
+
+### Exercise 1
+
+We will first explore the data set we will be using for the first graph. Run `oecd_sum` in the code chunk below.
+
+```{r the-us-life-expectan-1, exercise = TRUE}
+
+```
+
+```{r the-us-life-expectan-1-hint-1, eval = FALSE}
+oecd_sum
+```
+
+### 
+
+The data set is from the Organisation for Economic Co-operation and Development, otherwise known as OECD. 
+
+### Exercise 2
+
+We will explore the `oecd_sum` data set further. Go onto this website [here](https://kjhealy.github.io/socviz/reference/oecd_sum.html). Copy and paste what the hi_lo and diff variables represent.
+
+```{r the-us-life-expectan-2}
+  question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+This dataset focuses specifically on the USA in relation to OECD stats.
+
+### Exercise 3
+
+We will be building a plot mapping the USA's average life expectancy compared to the OECD's from 1960 to 2015. Start by building a pipe with the data set. Use the function `select()`. Within select, input `-other, -usa`. 
+
+```{r the-us-life-expectan-3, exercise = TRUE}
+
+```
+
+```{r the-us-life-expectan-3-hint-1, eval = FALSE}
+oecd_sum |> 
+  select(-other, -usa)
+```
+
+We do not need to know the life expectancy in OECD countries or in the US. We simply need to know the difference in life expectancy, which is already calculated for us. 
+
+### Exercise 4
+
+Continue the pipe with ggplot. Within `ggplot()`, set the argument `mapping` to equal `aes()`. Within `aes()`, map `year` to the x-axis and `diff` to the y-axis.
+
+```{r the-us-life-expectan-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-4-hint-1, eval = FALSE}
+oecd_sum |> 
+  select(...) |> 
+  ggplot(mapping = aes(x = ...,
+                       y = ...))
+```
+
+### 
+
+Remember: simply mapping variables to the x and y axis will create an empty plot. You must add a geom layer to visualize the data.
+
+### Exercise 5
+
+Continue building your plot. Reminder, since you are building the plot layer by layer, you must use `+`. Within `aes`, set the `fill` argument to `hi_lo`.
+
+```{r the-us-life-expectan-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-5-hint-1, eval = FALSE}
+oecd_sum |> 
+  select(...) |> 
+  ggplot(mapping = aes(x = ...,
+                       y = ...,
+                       fill = ...))
+```
+
+### 
+
+This will allow the bars to be a different colour if the US' life expectancy is below/above the OECD's.
+
+### Exercise 6
+
+Add the `geom_col()` layer.
+
+```{r the-us-life-expectan-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-6-hint-1, eval = FALSE}
+oecd_sum |> 
+  select(...) |> 
+  ggplot(mapping = aes(x = ...,
+                       y = ...,
+                       fill = ...)) +
+    geom_col()
+```
+
+### 
+
+We choose to use `geom_col()` instead of `geom_bar()` since we already have the math done for how big the difference is between the US's life expectancy and OECD's in the `diff` column.
+
+### Exercise 7
+
+Add the layer `guides(fill = "none")`
+
+```{r the-us-life-expectan-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-7-hint-1, eval = FALSE}
+oecd_sum |> 
+  select(...) |> 
+  ggplot(mapping = aes(x = ...,
+                       y = ...,
+                       fill = ...)) +
+    geom_col() +
+    guides(fill = "none")
+```
+
+### 
+
+`guides(fill = "none")` tells ggplot to drop the legend that would be generated automatically when the `fill` argument is used, when we have no need for it. The other way to accomplish this would be to do `theme(legend.position = "none")`.
+
+### Exercise 8
+
+Add the theme `theme_minimal()`.
+
+```{r the-us-life-expectan-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-8-hint-1, eval = FALSE}
+oecd_sum |> 
+  select(...) |> 
+  ggplot(mapping = aes(x = ...,
+                       y = ...,
+                       fill = ...)) +
+    geom_col() +
+    guides(fill = "none") +
+    theme_minimal()
+```
+
+### 
+
+This is part of the ggplot2 package. Explore the themes on the ggplot2 package [here](https://www.shanelynn.ie/themes-and-colours-for-r-ggplots-with-ggthemr/).
+
+### Exercise 9
+
+Add the `labs()` layer to give your plot the appropriate `title`, `subtitle`, `caption`, etc. Reminder: this is the plot we are trying to create:
+
+```{r}
+final_plot
+```
+
+```{r the-us-life-expectan-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-9-hint-1, eval = FALSE}
+oecd_sum |> 
+  select(...) |> 
+  ggplot(mapping = aes(x = ...,
+                       y = ...,
+                       fill = ...)) +
+    geom_col() +
+    guides(fill = FALSE) +
+    theme_minimal() +
+    labs(title = ...,
+         subtitle = ...,
+         caption = ...,
+         x = ...,
+         y = ...)
+```
+
+### Exercise 10
+
+Skim through [this documentation here](https://ggplot2-book.org/themes.html). We will be using these functions to modify the font of the graph and make it bold. What are the four element functions that can be used in `theme()`? 
+
+```{r the-us-life-expectan-10}
+question_text(NULL,
+	message = "element_text(), element_line(), element_rect(), element_blank()",
+	answer(NULL,
+	correct = TRUE),
+	allow_retry = FALSE,
+	incorrect = NULL,
+	rows = 6)
+```
+
+### 
+
+We will primarily be using `element_text()`.
+
+### Exercise 11
+
+Summarize in your own words what the function `element_text()` does.
+```{r the-us-life-expectan-11}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Text for button",
+	incorrect = NULL)
+```
+
+### 
+
+Note: the only family fonts that will reliably work are "serif", "sans", and "mono". The usage of any other is not guaranteed to work.
+
+### Exercise 12
+
+We will now use `theme(plot.title = ...)` to change the plot title. Set the argument `face` to "bold".
+
+```{r the-us-life-expectan-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-12-hint-1, eval = FALSE}
+... +
+  theme(plot.title = element_text(face ="bold")
+```
+
+### Exercise 13
+
+Add the `size` argument within `element_text()`. Set the size to 20.
+
+```{r the-us-life-expectan-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-13-hint-1, eval = FALSE}
+... +
+  theme(plot.title = element_text(face = "bold",
+                                  size = 20)
+```
+
+### 
+
+This aligns with the typical font sizes you have on your laptop.
+
+### Exercise 14
+
+We will adjust the margins to increase readability. Margins act as a buffer around each individual text block. Add the argument `margin` and then set it to `margin(b = 5)`
+
+```{r the-us-life-expectan-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-14-hint-1, eval = FALSE}
+... +
+  theme(plot.title = element_text(face = ...,
+                                  size = ...,
+                                  margin = margin(b = 5))
+```
+
+### 
+
+`b` stands for the "bottom" margin. 
+
+### Exercise 15
+
+We will now format the subtitle. Within the big `theme()` function, add a new argument titled `plot.subtitle`. Set it equal to element_text(). Note: there will be an error if you attempt to run this since there is no arguments within element_text().
+
+```{r the-us-life-expectan-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-15-hint-1, eval = FALSE}
+... +
+  theme(plot.title = element_text(face = ...,
+                                  size = ...,
+                                  margin = ...),
+        plot.subtitle = element_text())
+```
+
+
+### Exercise 16
+
+Add the argument `face` to element_text(). Set it equal to "italic".
+
+```{r the-us-life-expectan-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-16-hint-1, eval = FALSE}
+...,
+plot.subtitle = element_text(face = "italic")
+```
+
+
+### Exercise 17
+
+Change the font size to 15.
+
+```{r the-us-life-expectan-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-17-hint-1, eval = FALSE}
+...,
+plot.subtitle = element_text(face = "italic",
+                             size = 15)
+```
+
+
+### Exercise 18
+
+From here, set the bottom margin to 10 to create space between the subtitle and the graph.
+
+```{r the-us-life-expectan-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-18-hint-1, eval = FALSE}
+...,
+plot.subtitle = element_text(face = "italic",
+                             size = 15,
+                             margin = margin(b = 10))
+```
+
+### 
+
+The margin is measured in pixels.
+
+### Exercise 19
+
+We will now modify the caption to make it italic, and also create some space between the caption and the graph. Add the `plot.caption =` argument within `theme()`. Set it to element_text(). 
+
+```{r the-us-life-expectan-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-19-hint-1, eval = FALSE}
+...,
+plot.subtitle = element_text(face = "italic",
+                             size = 15,
+                             margin = margin(b = 10)),
+plot.caption = element_text()
+```
+
+
+### Exercise 20
+
+Make the font italic.
+
+```{r the-us-life-expectan-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-20-hint-1, eval = FALSE}
+...,
+plot.caption = element_text(face = "italic")
+```
+
+### Exercise 21
+
+Set the top margin to 5. We do this by using `margin = margin(t = 5)`.
+
+```{r the-us-life-expectan-21, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-21-hint-1, eval = FALSE}
+...,
+plot.caption = element_text(face = "italic",
+                            margin = margin(t = 5))
+```
+
+### 
+
+"t" stands for the top margin.
+
+### Exercise 22
+
+We will now simply set the y-axis title to be bold. Add axis.title.y as an argument to theme(). Set it equal to element_text(), and then face = "bold".
+
+```{r the-us-life-expectan-22, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-22-hint-1, eval = FALSE}
+axis.title.y = element_text(face = "bold")
+```
+
+### 
+
+Any code that modifies the axes will have the prefix "axis" instead of "plot".
+
+### Exercise 23
+
+Last but not least, we will modify the axes ticks to be bold, so they are more easily readable. Add `axis.text` to within the `theme()` argument. Set it equal to `element_text()`. Make the font bold.
+
+```{r the-us-life-expectan-23, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r the-us-life-expectan-23-hint-1, eval = FALSE}
+axis.text = element_text(face = "bold"))
+```
+
+Reminder: your final graph should look like this.
+
+```{r}
+final_plot
+```
+
 
 ## Summary
 ### 

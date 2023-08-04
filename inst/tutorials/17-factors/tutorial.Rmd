@@ -15,6 +15,23 @@ description: 'Tutorial for Chapter 17: Factors'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
+
+# Without thishack, we fail on GHA! cols() and col_factor() have conflicting
+# versions in readr, vroom and scales. Of course, we want the readr versions. We
+# could solve this with either:
+
+# library(conflicted)
+# conflict_prefer("cols", "readr") # and so on. Or with:
+
+# library(tidymodels)
+# tidymodels_prefer() # because this applies to tidyverse functions we well
+
+# But that all seems like overkill, given that it all works for students
+# regardless.
+
+cols <- readr::cols
+col_factor <- readr::col_factor
+
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
@@ -27,6 +44,13 @@ month_levels <- c(
   "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 )
+
+csv <- "
+month,value
+Feb,12
+Mar,56
+Feb,14
+Jan,12"
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -88,6 +112,10 @@ Hit "Run Code" to create the variable `x1`.
 x1 <- c("Dec", "Apr", "Jan", "Mar")
 ```
 
+```{r include = FALSE}
+x1 <- c("Dec", "Apr", "Jan", "Mar")
+```
+
 ### 
 
 Note that `x1` is a character variable. This can lead to all sorts of problems given that months are a good example of a categorical variable, given that there are exactly 12 possible values.
@@ -106,6 +134,10 @@ Run `sort()` on `x1`.
 sort(...)
 ```
 
+```{r include = FALSE}
+sort(x1)
+```
+
 ### 
 
 Because `x1` is a character variable, this sorts alphabetically, which is not what we want. We would prefer that the sort order correspond to the order in which months appear in the calendar.
@@ -115,6 +147,10 @@ Because `x1` is a character variable, this sorts alphabetically, which is not wh
 Hit "Run Code" to create the `x2` variable, another character vector. But note the misspelling of "Jan" as "Jam".
 
 ```{r factor-basics-5, exercise = TRUE}
+x2 <- c("Dec", "Apr", "Jam", "Mar")
+```
+
+```{r include = FALSE}
 x2 <- c("Dec", "Apr", "Jam", "Mar")
 ```
 
@@ -150,6 +186,10 @@ Run `factor(x1, levels = month_levels)`.
 factor(x1, ... = month_levels)
 ```
 
+```{r include = FALSE}
+factor(x1, levels = month_levels)
+```
+
 ### 
 
 The function `factor()` is a part of base R, not **forcats**. It creates a factor variable. Notice how, in addition to the values of `x1` being printed, as they are when we print a character variable, we also see the levels, printed out in order.
@@ -168,6 +208,10 @@ Wrap `factor(x1, levels = month_levels)` within a call to `sort()`.
 sort(...(x1, levels = ...))
 ```
 
+```{r include = FALSE}
+sort(factor(x1, levels = month_levels))
+```
+
 ### 
 
 Instead of being sorted in alphabetical order, as before, the values are sorted in the order of the levels, which is almost always what we want when sorting months.
@@ -184,6 +228,10 @@ Run `factor(x2, levels = month_levels)`.
 
 ```{r factor-basics-9-hint-1, eval = FALSE}
 ...(x2, ... = month_levels)
+```
+
+```{r include = FALSE}
+factor(x2, levels = month_levels)
 ```
 
 ### 
@@ -223,6 +271,10 @@ Run `factor()` and `x1`.
 factor(...)
 ```
 
+```{r include = FALSE}
+factor(x1)
+```
+
 ### 
 
 Because we did not provide a `levels` argument, the values for the levels will be taken from the values of the `x1` vector, sorted in alphabetical order.
@@ -239,6 +291,10 @@ Run `fct()` and `x1`.
 
 ```{r factor-basics-12-hint-1, eval = FALSE}
 fct(...)
+```
+
+```{r include = FALSE}
+fct(x1)
 ```
 
 ### 
@@ -259,31 +315,159 @@ Take the code from the previous exercise use it as an argument to the function `
 levels(fct(...))
 ```
 
+```{r include = FALSE}
+levels(fct(x1))
+```
+
 ### 
 
 If you ever need to access the set of valid levels directly, you can do so with `levels()`.
 
 ### Exercise 14
 
-<!-- DK: Really ought to reorganize and split this up so that students have to do some typing. Show what happens, first, when you don't use col_factor(). -->
-
-Hit "Run Code".
+The next exercises will be focusing on the variable `csv`. Hit "Run Code" to look at `csv`.
 
 ```{r factor-basics-14, exercise = TRUE}
-csv <- "
-month,value
-Jan,12
-Feb,56
-Mar,12"
-
-df <- read_csv(csv, col_types = cols(month = col_factor(month_levels)))
-df$month
+csv
 ```
 
-### 
+###
 
-Besides the use of `factor()` and `fct()` as described above, `col_factor()`, when used within `read_csv()` and similar import functions, is the most common way of creating factor variables.
+Note the `\n`. That signifies a new line being formed, but doesn't make `csv` easier to read.
 
+### Exercise 15
+
+Run `read_csv()` with `csv` set as the argument
+
+```{r factor-basics-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-15-hint, eval = FALSE}
+read_csv(...)
+```
+
+```{r, include = FALSE}
+read_csv(csv)
+```
+
+###
+
+`csv` is now much easier to read and understand. We can see what belongs in the month column and the value column, as well as variable types the columns are.
+
+### Exercise 16
+
+Currently, the month column is a character type variable and the value column is a double type variable. Add the arguments `col_types` to `read_csv` and set it equal to `"cc"`
+
+```{r factor-basics-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-16-hint, eval = FALSE}
+read_csv(csv, ...)
+```
+
+```{r, include = FALSE}
+read_csv(csv, col_types = "cc")
+```
+
+###
+
+`col_types = "cc"` changes the variable types of the columns to both be characters. The first `c` in `cc` corresponds to the first column, and so on.
+
+### Exercise 17
+
+Change the value of `col_types` from `"cc"` to `cols(month = "c")` inside of `read_csv()`
+
+```{r factor-basics-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-17-hint, eval = FALSE}
+read_csv(csv, col_types = cols(...))
+```
+
+```{r, include = FALSE}
+read_csv(csv, col_types = cols(month = "c"))
+```
+
+###
+
+### Exercise 18
+
+Change the value of `col_types` to `cols(month = "f"))`
+
+```{r factor-basics-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-18-hint, eval = FALSE}
+read_csv(csv, col_types = cols(...))
+```
+
+```{r, include = FALSE}
+read_csv(csv, col_types = cols(month = "f"))
+```
+
+###
+
+The month variable is now a variable of factor type. Having month as a factor will allow us to perform certain actions on it later on.
+
+### Exercise 19
+
+Continue the current pipe to `count()`. Set the argument to `month`.
+
+```{r factor-basics-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-19-hint, eval = FALSE}
+... |>
+  count(...)
+```
+
+```{r, include = FALSE}
+read_csv(csv, col_types = cols(month = "f")) |> count(month)
+```
+
+###
+
+While the tibble has all the correct information, it's not amazing to read. No one thinks of the months in those order. Luckily, this can be changed.
+
+### Exercise 20
+
+In `read_csv`, change the value of `col_types` to `cols(month = col_factor(month_levels))`
+
+```{r factor-basics-20, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r factor-basics-20-hint, eval = FALSE}
+read_csv(csv, col_types = ...) |>
+  count(month)
+```
+
+```{r, include = FALSE}
+read_csv(csv, 
+         col_types = cols(month = col_factor(month_levels))) |>  
+  count(month)
+```
+
+###
+
+Besides the use of `factor()` and `fct()` as described earlier, `col_factor()`, when used within `read_csv()` and similar import functions, is the most common way of creating factor variables.
 
 ## General Social Survey
 ### 
@@ -299,6 +483,10 @@ Type `gss_cat` and hit "Run Code."
 ```
 
 ```{r general-social-surve-1-hint-1, eval = FALSE}
+gss_cat
+```
+
+```{r include = FALSE}
 gss_cat
 ```
 
@@ -337,11 +525,16 @@ gss_cat |>
   ...(race)
 ```
 
+```{r include = FALSE}
+gss_cat |>
+  count(race)
+```
+
 ### 
 
 The `<fct>` indicator above `race` indicates that it is a factor variable, not character.
 
-<!-- DK: This is where the chapter stops. We could add more examples working with this data. Or we could work through the exercises from 17.3.1-->
+<!-- This is where the chapter stops. We could add more examples working with this data. Or we could work through the exercises from 17.3.1 -->
 
 ## Modifying factor order
 ### 
@@ -374,6 +567,10 @@ Run `glimpse()` on `gss_cat`.
 
 ```{r modifying-factor-ord-1-hint-1, eval = FALSE}
 glimpse(...)
+```
+
+```{r include = FALSE}
+glimpse(gss_cat)
 ```
 
 ### 
@@ -415,7 +612,7 @@ gss_cat |>
 
 ### 
 
-The result is a tibble with one row for each level of `relig`. (Older R code will often use the `group_by()` function when calculating statistics for each level of a factor. You should avoid this approac. Use the `.by` argument to `summarize()` and similar functions.)
+The result is a tibble with one row for each level of `relig`. (Older R code will often use the `group_by()` function when calculating statistics for each level of a factor. You should avoid this approach. Use the `.by` argument to `summarize()` and similar functions.)
 
 ### Exercise 4
 
@@ -560,9 +757,9 @@ It is almost always better to complete your data transformations before starting
 
 Finish the plot by adding a title, subtitle, and axis labels. Remember that the plot looks like this:
 
-```{r plot1-answer}
+```{r modifying-factor-ord-10-example}
 plot1
-``` 
+```
 
 ```{r modifying-factor-ord-10, exercise = TRUE}
 
@@ -578,30 +775,180 @@ plot1
        ... = "Religious Affiliation")
 ```
 
-###
+### 
 
-The subtitle of a plot should be the one sentence conclusion/summary/observation with which you most want viewers to come away. 
+The subtitle of a plot should be the one sentence conclusion/summary/observation with which you most want viewers to come away.
 
-<!-- DK: There are two more plots in the section. Here is one. Someone should add them later, but they require some work. -->
+### 
+
+Let's create this graph now.
 
 ```{r make-plot2}
 plot2 <- gss_cat |>
   filter(!is.na(age)) |> 
   count(age, marital) |>
-  group_by(age) |>
   mutate(
-    prop = n / sum(n)
-  ) |> 
+    prop = n / sum(n),
+    .by = age) |> 
   ggplot(aes(x = age, 
              y = prop, 
              color = fct_reorder2(marital, age, prop))) +
     geom_line(linewidth = 1) +
     scale_color_brewer(palette = "Set1") + 
-    labs(color = "marital") 
+    labs(color = "Marital", x = "Age", y = "Proportion")
+
+plot2
 ```
 
+### Exercise 11
 
+Pipe gss_cat to `filter()`, with the argument set as `!is.na(age)`
 
+```{r modifying-factor-ord-11, exercise = TRUE}
+
+```
+
+```{r modifying-factor-ord-11-hint-1, eval = FALSE}
+gss_cat |>
+  filter(...)
+```
+
+### 
+
+This will remove all rows with a `NA` response to `age`, allowing for easier calculations in the future.
+
+### Exercise 12
+
+Continue the pipe to `count()`, with `age` and `marital` set as the arguments
+
+```{r modifying-factor-ord-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-12-hint-1, eval = FALSE}
+... |>
+  count(age, ...)
+```
+
+### Exercise 13
+
+Continue the pipe to `mutate().` Create the variable `prop` and set it `n/sum(n)`
+
+```{r modifying-factor-ord-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-13-hint-1, eval = FALSE}
+... |>
+  mutate(... = n/sum(n))
+```
+
+### Exercise 14
+
+Add the argument `.by` within the `mutate()` function. Set `.by` to `age`
+
+```{r modifying-factor-ord-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-14-hint-1, eval = FALSE}
+... |>
+  mutate(prop = n/sum(n), .by = ...)
+```
+
+### 
+
+Adding the `.by` argument allows us to sort the tibble by age for the mutate function.
+
+### Exercise 15
+
+Add `ggplot()` to the current pipe. Set `x` to `age`, `y` to `prop` and `color` to `marital`
+
+```{r modifying-factor-ord-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-15-hint-1, eval = FALSE}
+... |>
+  ggplot(aes(x = ..., y = ..., color = ...))
+```
+
+### Exercise 16
+
+Continue the pipe to `geom_line()`. Inside the function, set `linewidth` to 1.
+
+```{r modifying-factor-ord-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-16-hint-1, eval = FALSE}
+... |>
+  geom_line(linewidth = ...)
+```
+
+### Exercise 17
+
+Continue the pipe with `scale_color_brewer()`, with the argument `palette` set to "Set1".
+
+```{r modifying-factor-ord-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-17-hint-1, eval = FALSE}
+... |>
+  scale_color_brewer(... = "Set1")
+```
+
+### Exercise 18
+
+Finish the pipe with `labs()` giving an appropriate axes and legend titles.
+
+```{r modifying-factor-ord-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-18-hint-1, eval = FALSE}
+... |>
+  labs(x = ..., y = ..., color = ...)
+```
+
+### 
+
+This graph is confusing to read as the colors assigned to the lines don't match up well with the legend. We can use `fct_reorder2()` to solve this problem.
+
+### Exercise 19
+
+In the `ggplot()` function, change `color` from `marital` to `fct_reorder2(marital, age, prop)`
+
+```{r modifying-factor-ord-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-ord-19-hint-1, eval = FALSE}
+... |>
+  ggplot(aes(x = age, y = prop, color = fct_reorder2(marital, age, prop))) |>
+  ...
+```
+
+### 
+
+Rearranging the legend makes the plot easier to read because the legend colors now match the order of the lines on the far right of the plot. `fct_reorder2(f, x, y)` reorders the factor `f` by the `y` values associated with the largest `x` values.
 
 ## Modifying factor levels
 ### 
@@ -620,6 +967,11 @@ Pipe `gss_cat` to `count(partyid)`
 ```{r modifying-factor-lev-1-hint-1, eval = FALSE}
 ... |> 
   count(...)
+```
+
+```{r include = FALSE}
+gss_cat |> 
+  count(partyid)
 ```
 
 ### 
@@ -738,9 +1090,24 @@ Continue the pipe to `count(partyid)` to confirm that the recoding has worked.
   count(partyid)
 ```
 
+```{r include = FALSE}
+gss_cat |>
+  mutate(
+    partyid = fct_recode(partyid,
+      "Republican, strong"    = "Strong republican",
+      "Republican, weak"      = "Not str republican",
+      "Independent, near rep" = "Ind,near rep",
+      "Independent, near dem" = "Ind,near dem",
+      "Democrat, weak"        = "Not str democrat",
+      "Democrat, strong"      = "Strong democrat",
+      "Other"                 = "No answer",
+      "Other"                 = "Don't know",
+      "Other"                 = "Other party")) |>
+  count(partyid)
+```
+
 ### 
 
-<!-- DK: Better knowledge drop. -->
 
 Read the help page for [`fct_recode()`](https://forcats.tidyverse.org/reference/fct_recode.html) for more details.
 
@@ -782,29 +1149,29 @@ Read the help page for [`fct_collapse()`](https://forcats.tidyverse.org/referenc
 
 ### Exercise 7
 
-<!-- DK: This could be split into some a couple of smaller steps. -->
+Sometimes you just want to lump together the small groups to make a plot or table simpler. That’s the job of the `fct_lump_*()` family of functions.
 
-Sometimes you just want to lump together the small groups to make a plot or table simpler. That’s the job of the `fct_lump_*()` family of functions. `fct_lump_lowfreq()` is a simple starting point that progressively lumps the smallest groups categories into “Other”, always keeping “Other” as the smallest category.
-
-Pipe `gss_cat` to `mutate()` with `relig = fct_lump_lowfreq(relig)` as its argument. Pipe the result to `count(relig)`.
+Pipe `gss_cat` to `mutate()` with `relig = fct_lump_lowfreq(relig)` as its argument.
 
 ```{r modifying-factor-lev-7, exercise = TRUE}
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+
 ```{r modifying-factor-lev-7-hint-1, eval = FALSE}
 gss_cat |>
-  mutate(relig = ...(relig)) |>
-  count(...)
+  mutate(relig = ...)
 ```
 
 ### 
 
-In this case it’s not very helpful: it is true that the majority of Americans in this survey are Protestant, but we’d probably like to see some more details! 
+`fct_lump_lowfreq()` is a simple starting point that progressively lumps the smallest groups categories into “Other”, always keeping “Other” as the smallest category.
 
 ### Exercise 8
 
-Instead, we can use the `fct_lump_n()` to specify that we want exactly 10 groups. Use the current pipe with two changes. First, replace `fct_lump_lowfreq(relig)` with `fct_lump_n(relig, n = 10)`. Second, add `sort = TRUE` as an argument to `count()`.
+Continue the pipe to the function `count()` with `relig` as its argument.
 
 ```{r modifying-factor-lev-8, exercise = TRUE}
 
@@ -813,9 +1180,54 @@ Instead, we can use the `fct_lump_n()` to specify that we want exactly 10 groups
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r modifying-factor-lev-8-hint-1, eval = FALSE}
+... |>
+  count(...)
+```
+
+```{r include = FALSE}
 gss_cat |>
-  mutate(relig = ...(relig, n = 10)) |>
-  count(relig, ... = TRUE)
+  mutate(relig = fct_lump_lowfreq(relig)) |>
+  count(relig)
+```
+
+### 
+
+In this case it’s not very helpful: it is true that the majority of Americans in this survey are Protestant, but we’d probably like to see some more details! 
+
+### Exercise 9
+
+Instead, we can use the `fct_lump_n()` to specify that we want exactly 10 groups. Pipe `gss_cat` to `mutate()` with `fct_lump_n(relig, n = 10)` as its argument.
+
+```{r modifying-factor-lev-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-lev-9-hint-1, eval = FALSE}
+gss_cat |>
+  mutate(relig = ...)
+```
+
+### Exercise 10
+
+Continue the pipe to `count()`. Add `relig` as an argument, as well as `sort = TRUE` to `count()`.
+
+```{r modifying-factor-lev-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r modifying-factor-lev-10-hint, eval = FALSE}
+... |>
+  count(relig, ...)
+```
+
+```{r include = FALSE}
+gss_cat |>
+  mutate(relig = fct_lump_n(relig, n = 10)) |>
+  count(relig, sort = TRUE)
 ```
 
 ### 
@@ -825,7 +1237,7 @@ Read the documentation to learn about [`fct_lump_min()`](https://forcats.tidyver
 ## Ordered factors
 ### 
 
-Ordered factors, created with ordered(), imply a strict ordering and equal distance between levels: the first level is “less than” the second level by the same amount that the second level is “less than” the third level, and so on.
+Ordered factors, created with `ordered()`, imply a strict ordering and equal distance between levels: the first level is “less than” the second level by the same amount that the second level is “less than” the third level, and so on.
 
 ### Exercise 1
 
@@ -835,11 +1247,13 @@ Run this code
 ordered(c("a", "b", "c"))
 ```
 
+```{r include = FALSE}
+ordered(c("a", "b", "c"))
+```
+
 ### 
 
 You can recognize ordered factors when printing because they use `<` between the factor levels. We don't recommend using ordered factors unless you have a compelling reason for doing so.
-
-
 
 ## Summary
 ### 
