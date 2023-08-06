@@ -128,6 +128,9 @@ df_types <- function(df) {
 
 by_clarity <- diamonds |> 
   group_nest(clarity)
+
+carat_histogram <- function(df) {
+  ggplot(df, aes(x = carat)) + geom_histogram(binwidth = 0.1)}
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -2572,10 +2575,230 @@ walk2(..., by_clarity$path, ...)
 
 ### 
 
+### Exercise 23
+
+Type `function(df)` and `{}` after it. Hit `Run Code`.
+
+```{r saving-multiple-outp-23, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-23-hint, eval = FALSE}
+function(df) {}
+```
+
+###
+
+Remember, this is an approach to create a function.
+
+### Exercise 24
+
+Add function `ggplot()` to the call to `function(df) {}`.
+
+```{r saving-multiple-outp-24, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-24-hint, eval = FALSE}
+function(df) {
+  ggplot()}
+```
+
+###
+
+`ggplot()` initializes a ggplot object. It can be used to declare the input data frame for a graphic and to specify the set of plot aesthetics intended to be common throughout all subsequent layers unless specifically overridden.
+
+### Exercise 25
+
+Add arguments `df` and `aes(x = carat)` to the call to `ggplot()`.
+
+```{r saving-multiple-outp-25, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-25-hint, eval = FALSE}
+function(...) {
+  ggplot(df, aes(...length()))}
+```
+
+###
+
+Remember that the first argument is data (`df`), the second argument is `mapping = aes`.
+
+### Exercise 26
+
+Add another function, `geom_histogram()` to `function(df){}`. Make sure to connect the two functions with `+`.
+
+```{r saving-multiple-outp-26, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-26-hint, eval = FALSE}
+function(df) {
+  ggplot(...) + geom_histogram()}
+```
+
+###
+
+`geom_histogram()`
+
+### Exercise 27
+
+Add argument `binwidth` to `geom_histogram()` and set the vaue to `0.1`.
+
+```{r saving-multiple-outp-27, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-27-hint, eval = FALSE}
+function(df) {
+  ggplot(df, aes(x = carat)) + geom_histogram(binwidth = 0.1)}
+```
+
+###
+
+### Exercise 28
+
+Assign `carat_histogram` as the name of the function.
+
+```{r saving-multiple-outp-28, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-28-hint, eval = FALSE}
+carat_histogram <- function(df) {
+  ggplot(...) + geom_histogram(...)}
+```
+
+###
+
+### Exercise 29
+
+Now we can use `map()` to create a list of many plots and their eventual file paths. 
+
+Pipe `by_clarify` into `mutate()`. Add arguments `plot = map(data, carat_histogram)` and `path = str_glue("clarity-{clarity}.png")` to the function.
+
+
+```{r saving-multiple-outp-29, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-29-hint, eval = FALSE}
+by_clarity |> 
+  mutate(
+    plot = map(data, carat_histogram),
+    path = str_glue("clarity-{clarity}.png")
+  )
+```
+
+###
+
+This step is similar to what we did earlier. 
+
+### Exercise 30
+
+Assign name `by_clarify` to the code above.
+
+```{r saving-multiple-outp-30, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-30-hint, eval = FALSE}
+by_clarity <- by_clarity |> 
+  mutate(
+    plot = map(data, carat_histogram),
+    path = str_glue("clarity-{clarity}.png")
+  )
+```
+
+###
+
+### Exercise 31
+
+Type `walk2()` then add arguments `by_clarity$path` and `by_clarity$plot`.
+
+```{r saving-multiple-outp-31, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-31-hint, eval = FALSE}
+walk2(
+  by_clarity$path,
+  by_clarity$plot)
+```
+
+###
+
+### Exercise 32
+
+Add `\(path, plot)` and `ggsave()` to the call to `walk2()`.
+
+```{r saving-multiple-outp-32, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-32-hint, eval = FALSE}
+walk2(
+  by_clarity$path,
+  by_clarity$plot,
+  \(path, plot) ggsave())
+```
+
+###
+
+### Exercise 33
+
+Add arguments `path, plot, width = 6, height = 6` to `ggsave()`.
+
+```{r saving-multiple-outp-33, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outp-33-hint, eval = FALSE}
+walk2(
+  by_clarity$path,
+  by_clarity$plot,
+  \(path, plot) ggsave(path, plot, width = 6, height = 6)
+```
+
+###
+
+Remember that `ggsave()` is a convenient function for saving a plot. It defaults to saving the last plot that you displayed, using the size of the current graphics device. It also guesses the type of graphics device from the extension.
+
+
 ## Summary
 ### 
 
 This tutorial covered [Chapter 27: Iteration](https://r4ds.hadley.nz/iteration.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
+
+###
+
+In this chapter, you’ve seen how to use explicit iteration to solve three problems that come up frequently when doing data science: manipulating multiple columns, reading multiple files, and saving multiple outputs. 
+
+But in general, iteration is a super power: if you know the right iteration technique, you can easily go from fixing one problem to fixing all the problems. 
+
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
