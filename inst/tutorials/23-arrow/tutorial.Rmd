@@ -26,25 +26,6 @@ pq_path <- "data/seattle-library-checkouts"
 
 ```
 
-
-```{r dowload-the-data, include = FALSE, cache=TRUE}
-dir.create("data", showWarnings = FALSE)
-
-curl::multi_download(
-  "https://r4ds.s3.us-west-2.amazonaws.com/seattle-library-checkouts.csv",
-  "data/seattle-library-checkouts.csv",
-  resume = TRUE
-)
-
-seattle_csv <- open_dataset(
-  sources = "data/seattle-library-checkouts.csv",
-  format = "csv"
-)
-
-```
-
-
-
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
 ```
 
@@ -55,8 +36,6 @@ seattle_csv <- open_dataset(
 <!-- DK: file.remove() all the files which you had the student create. -->
 
 <!-- DK: Stick a bunch of comments here about the complexity of this tutorial, given the data that has to be downloaded.  -->
-
-<!-- DK: Fix Introduction and Summary. -->
 
 
 ## Introduction
@@ -150,9 +129,21 @@ In general, it’s hard to know what will work best, so in the early stages of y
 
 ### Exercise 5
 
-The reason that this tutorial took so long to start running is because it was downloading a 9 GB csv file which contains 41,389,465 rows that tell you how many times each book was checked out each month from April 2005 to October 2022 from the Seattle library system. That csv file is named `seattle-library-checkouts.csv` and has been placed in the `data` directory.
+Press `"Run Code"`. This will download a 9 GB CSV file which will take about 5 minutes to download so go check you email or read some more of the chapter and come back in 5 minutes.
 
-<!-- Maybe add an exercise to confirm that the file has downloaded? Not sure that this can work. -->
+```{r getting-the-data-5, exercise = TRUE}
+dir.create("data", showWarnings = FALSE)
+
+curl::multi_download(
+  "https://r4ds.s3.us-west-2.amazonaws.com/seattle-library-checkouts.csv",
+  "data/seattle-library-checkouts.csv",
+  resume = TRUE
+)
+```
+
+###
+
+This dataset contains 41,389,465 rows that tell you how many times each book was checked out each month from April 2005 to October 2022.
  
 ## Opening a dataset
 ###
@@ -161,7 +152,7 @@ Let’s start by taking a look at the data. At 9 GB, this file is large enough t
 
 ### Exercise 1
 
-Write `seattle_csv` gets `open_dataset()`. Within `open_dataset()`, add the argument `sources = "data/seattle-library-checkouts.csv"`
+Set `seattle_csv` to `open_dataset()`. Within `open_dataset()`, add the argument `sources = "data/seattle-library-checkouts.csv"`
 
 ```{r opening-a-dataset-1, exercise = TRUE}
 
@@ -174,7 +165,6 @@ Write `seattle_csv` gets `open_dataset()`. Within `open_dataset()`, add the argu
 ```
 
 ```{r, include=FALSE}
-# Add this back in if it is quick.
 # seattle_csv <- open_dataset(
 #  sources = "data/seattle-library-checkouts.csv"
 # )
@@ -182,9 +172,7 @@ Write `seattle_csv` gets `open_dataset()`. Within `open_dataset()`, add the argu
 
 ###
 
-<!-- DK: Does this make sense? -->
-
-In this chapter, we’ll continue to use the tidyverse, particularly **dplyr**, but we’ll pair it with the **arrow** package which is designed specifically for working with large data. Later in the chapter, we’ll also see some connections between **arrow** and **duckdb**, so we’ll also need **dbplyr** and **duckdb**.
+In this chapter, we’ll continue to use the tidyverse, particularly dplyr, but we’ll pair it with the arrow package which is designed specifically for working with large data. Later in the chapter, we’ll also see some connections between arrow and duckdb, so we’ll also need dbplyr and duckdb.
 
 ### Exercise 2
 
@@ -270,7 +258,7 @@ seattle_csv
 ```
 
 ```{r, include=FALSE}
-seattle_csv
+# seattle_csv
 ```
 
 ###
@@ -293,8 +281,8 @@ seattle_csv |>
 ```
 
 ```{r, include=FALSE}
-seattle_csv |>
-  count(CheckoutYear, wt = Checkouts)
+# seattle_csv |> 
+#   count(CheckoutYear, wt = Checkouts)
 ```
 
 ###
@@ -317,9 +305,9 @@ seattle_csv |>
 ```
 
 ```{r, include=FALSE}
-seattle_csv |>
-  count(CheckoutYear, wt = Checkouts) |>
-  arrange(CheckoutYear)
+# seattle_csv |> 
+#   count(CheckoutYear, wt = Checkouts) |> 
+#   arrange(CheckoutYear)
 ```
 
 ###
@@ -342,10 +330,10 @@ Finish off the pipe with `collect()`.
 ```
 
 ```{r, include=FALSE}
-seattle_csv |>
-  count(CheckoutYear, wt = Checkouts) |>
-  arrange(CheckoutYear) |>
-  collect()
+# seattle_csv |> 
+#   count(CheckoutYear, wt = Checkouts) |> 
+#   arrange(CheckoutYear) |> 
+#   collect()
 ```
 
 ###
