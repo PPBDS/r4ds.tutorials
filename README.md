@@ -19,7 +19,7 @@ have some experience working with the tools provided by the
 package. As long as you have completed the “Getting Started” tutorial
 from that package, you should be fine.
 
-The main audience for these tutorials is intructors teaching
+The main audience for these tutorials is instructors teaching
 introductory data science and their students. Instructors want students
 to, for example, read Chapter 8 of [*R for Data Science
 (2e)*](https://r4ds.hadley.nz/) (or something similar), typing in the
