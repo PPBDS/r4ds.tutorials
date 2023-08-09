@@ -178,7 +178,6 @@ library(tidyverse)
 Recall that we have already learnt a number of tools that perform the same action for multiple "things." For example, `facet_wrap()` and `facet_grid()` draws a plot for each subset.
 
 
-
 ### Exercise 2
 
 Hit "Run Code" to create the `df` tibble.
@@ -309,7 +308,7 @@ Copy and paste the previous code, then add `med_c = median(c)` and `med_d = medi
 ```{r modifying-multiple-c-7-hint-1, eval = FALSE}
 df |> 
   summarise(n = n(),
-            med_a = median(a),
+            ... = ...length(),
             med_b = median(b),
             ... = ...,
             med_d = median(...))
@@ -362,6 +361,12 @@ Copy the previous code. Now, add `across(a:d, median)` to the call to `summarise
 ```{r modifying-multiple-c-9-hint-1, eval = FALSE}
 df |> 
   summarise(n = n(),
+            across(..., median))
+```
+
+```{r include = FALSE}
+df |> 
+  summarise(n = n(),
             across(a:d, median))
 ```
 
@@ -404,6 +409,11 @@ df2 |>
   summarise()
 ```
 
+```{r include = FALSE}
+df2 |> 
+  summarise()
+```
+
 ### 
 
 Remember that when it comes to grouping, we always prefer `.by` instead of `group_by()` where possible.
@@ -423,6 +433,10 @@ df2 |>
   summarise (.by = grp)
 ```
 
+```{r include = FALSE}
+df2 |> 
+  summarise (.by = grp)
+```
 ### 
 
 A reminder that `.cols` function uses the same specifications as `select()`, so you can use functions like `starts_with()` and `ends_with()` to select columns based on their name.
@@ -438,11 +452,16 @@ Copy the previous code. Add `across (everything(), median)` to the call to `summ
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r modifying-multiple-c-13-hint-1, eval = FALSE}
+... |> 
+  summarise (.by = ...,
+             across(everything(), ...))
+```
+
+```{r include = FALSE}
 df2 |> 
   summarise (.by = grp,
              across(everything(), median))
 ```
-
 ### 
 
 You should get a 2 x 5 table.
@@ -525,6 +544,10 @@ df_miss |>
   summarize ()
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  summarize ()
+```
 ### Exercise 16
 
 Copy the previous code. Add `across(a:d, median)` and `n = n()` to the call to `summarise ()`.
@@ -537,10 +560,15 @@ Copy the previous code. Add `across(a:d, median)` and `n = n()` to the call to `
 
 ```{r modifying-multiple-c-16-hint-1, eval = FALSE}
 df_miss |> 
-  summarize (across(a:d, median), 
+  summarize (across(..., ...), 
              n = n())
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  summarize (across(a:d, median), 
+             n = n())
+```
 ### 
 
 You should get a 1 x 5 table with N/A as median for variables `a`, `b`, and `c`.
@@ -568,6 +596,10 @@ df_miss |>
   summarize()
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  summarize()
+```
 ### Exercise 18
 
 Copy the previous code. Add `across()` and `n = n()` to the call to `summarise ()`.
@@ -584,6 +616,11 @@ df_miss |>
             n = n())
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  summarise(across(),
+            n = n())
+```
 ### Exercise 19
 
 Continue with the previous code. add argument `a:d` and `function(x) median(x, na.rm = TRUE)` to the function `across`.
@@ -595,12 +632,18 @@ Continue with the previous code. add argument `a:d` and `function(x) median(x, n
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r modifying-multiple-c-19-hint-1, eval = FALSE}
+... |> 
+  summarise(...(a:d, 
+                   function(x) median(x, na.rm = ...)),
+            n = n())
+```
+
+```{r include = FALSE}
 df_miss |> 
   summarise(across(a:d, 
                    function(x) median(x, na.rm = TRUE)),
             n = n())
 ```
-
 ### 
 
 Now you should get a 1 x 5 table with all medians as numerical numbers.
@@ -625,6 +668,12 @@ df_miss |>
   )
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  summarise(across(a:d, 
+                   function(x) median(x, na.rm = TRUE)),
+            n = n())
+```
 ### 
 
 The above showcases a less verbose way by replacing `function` with `\`.
@@ -645,10 +694,15 @@ Copy and paste your code from exercise 18.
 
 ```{r modifying-multiple-c-21-hint-1, eval = FALSE}
 df_miss |> 
-  summarise(across(),
+  ...(across(),
             n = n())
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  summarise(across(),
+            n = n())
+```
 ### Exercise 22
 
 Add a new argument, `a:d` and `list()`, to the function `across`.
@@ -661,11 +715,15 @@ Add a new argument, `a:d` and `list()`, to the function `across`.
 
 ```{r modifying-multiple-c-22-hint-1, eval = FALSE}
 df_miss |> 
-  summarise(across(a:d, 
-                   list()),
+  summarise(...(a:d, ...),
             n = n())
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  summarise(across(a:d, list()),
+            n = n())
+```
 ### 
 
 You supply multiple functions by using a named list to `.fns`.
@@ -682,13 +740,19 @@ Add arguments `median = \(x) median(x, na.rm = TRUE)` and `n_miss = \(x) sum(is.
 
 ```{r modifying-multiple-c-23-hint-1, eval = FALSE}
 df_miss |> 
-  summarize( across (a:d, 
+  summarize(across (a:d, 
                      list (median = \(x) median(x, na.rm = TRUE),
                            n_miss = \(x) sum(is.na(x)))),
              n = n())
-
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  summarize(across (a:d, 
+                     list (median = \(x) median(x, na.rm = TRUE),
+                           n_miss = \(x) sum(is.na(x)))),
+             n = n())
+```
 ### 
 
 Recall that `sum(is.na(x))` gives you the total number of missing values in x. Here, we also use the new function `\(x)` that calls `sum()` with the desired arguments.
@@ -725,13 +789,21 @@ Add `.names = "{.fn}_{.col}"` to the call to `across()`.
 
 ```{r modifying-multiple-c-25-hint-1, eval = FALSE}
 df_miss |> 
+  summarize(... (a:d, 
+                    list (...,
+                          n_miss = ...elt()),
+                    .names = ...),
+             n = n())
+```
+
+```{r include = FALSE}
+df_miss |> 
   summarize( across (a:d, 
                      list (median = \(x) median(x, na.rm = TRUE),
                            n_miss = \(x) sum(is.na(x))),
                      .names = "{.fn}_{.col}"),
              n = n())
 ```
-
 ### 
 
 You should see a 1 x 9 table. Now, compare your table to the table produced in Exercise 24. What did you notice?
@@ -775,6 +847,10 @@ df_miss |>
   mutate()
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  mutate()
+```
 ### 
 
 The `.names` argument is particularly important when you use `across()` with `mutate()`.
@@ -795,6 +871,11 @@ df_miss |>
                 \(x) coalesce(x, 0)))
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  mutate(across(a:d, 
+                \(x) coalesce(x, 0)))
+```
 ### 
 
 Recall that argument `coalesce()` replace NAs with 0.
@@ -828,6 +909,11 @@ df_miss |>
     across(a:d, \(x) abs(x), .names = "{.col}_abs"))
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  mutate(
+    across(a:d, \(x) abs(x), .names = "{.col}_abs"))
+```
 ### 
 
 Now, you should get a 5 x 8 table, with 4 new columns `a_abs`, `b_abs`, `c_abs` and `d_abs`.
@@ -845,6 +931,10 @@ df_miss |>
   filter()
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  filter()
+```
 ### 
 
 `across()` is a great match for `summarize()` and `mutate()`, but it's more awkward to use with `filter()`.
@@ -866,6 +956,10 @@ df_miss |>
   filter(if_any())
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  filter(if_any())
+```
 ### 
 
 `if_any()` is the same as using `|` in-between the arguments.
@@ -885,6 +979,10 @@ df_miss |>
   filter(if_any(a:d, is.na))
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  filter(if_any(a:d, is.na))
+```
 ### 
 
 The code above is the same as `df_miss |> filter(is.na(a) | is.na(b) | is.na(c) | is.na(d))`.
@@ -905,9 +1003,13 @@ Copy and past the previous code. Change `if_any` to `if_all`, see what happens.
 
 ```{r modifying-multiple-c-33-hint, eval = FALSE}
 df_miss |> 
-  filter(if_any(a:d, is.na))
+  filter(if_all(...))
 ```
 
+```{r include = FALSE}
+df_miss |> 
+  filter(if_all(a:d, is.na))
+```
 You will get a 0 x 4 table!
 
 ### Exercise 34
@@ -947,6 +1049,10 @@ df_date |>
   expand_dates()
 ```
 
+```{r include = FALSE}
+df_date |> 
+  expand_dates()
+```
 ### 
 
 This should give you a 2 x 5 table with `date_year`, `date_month`, and `date_day` broken down.
@@ -985,6 +1091,11 @@ diamonds |>
   summarize_means()
 ```
 
+```{r include = FALSE}
+diamonds |> 
+  group_by(cut) |> 
+  summarize_means()
+```
 ### 
 
 We mentioned that where possible, `.by` should be sued instead of `group_by()`. However here we encounter a situation where it is not possible to use `.by`.
@@ -1003,10 +1114,15 @@ Now, add argument `c(carat, x:z)` to the function `summarize_means()`.
 
 ```{r modifying-multiple-c-38-hint, eval = FALSE}
 diamonds |> 
+  ...(cut) |> 
+  summarize_means(c(...))
+```
+
+```{r include = FALSE}
+diamonds |> 
   group_by(cut) |> 
   summarize_means(c(carat, x:z))
 ```
-
 ### 
 
 Another interesting function associated with `across()` is `pivot_longer()`, which makes data sets longer by increasing the number of rows and decreasing the number of columns.
@@ -1058,6 +1174,9 @@ Type in `df_paired` and hit `Run Code`.
 df_paired
 ```
 
+```{r include = FALSE}
+df_paired
+```
 ### 
 
 Now you should see the tibble you have created!
@@ -1078,6 +1197,10 @@ df_paired |>
   pivot_longer()
 ```
 
+```{r include = FALSE}
+# df_paired |> 
+#   pivot_longer()
+```
 You will receive an error message, because we haven't put in any arguments. `cols` must select at least one column.
 
 ### 
@@ -1099,6 +1222,10 @@ df_paired |>
   pivot_longer(everything())
 ```
 
+```{r include = FALSE}
+df_paired |> 
+  pivot_longer(everything())
+```
 ### 
 
 Remember that the `cols` argument specifies which columns to pivot and `everything()` specifies that we want to pivot every column.
@@ -1115,10 +1242,15 @@ Add a second argument, `names_to = c("group", ".value")` to the call to `pivot_l
 
 ```{r modifying-multiple-c-44-hint, eval = FALSE}
 df_paired |> 
-  pivot_longer(everything(),
-               names_to = c("group", ".value"))
+  pivot_longer(...,
+               names_to = c(...))
 ```
 
+```{r include = FALSE}
+# df_paired |>
+#   pivot_longer(everything(),
+#                names_to = c("group", ".value"))
+```
 ### 
 
 `names_to()` is used to create variables from the column names. Here, we creates two new columns: `group` and `.value`.
@@ -1135,18 +1267,22 @@ Finally let's add argument `names_sep = "_"` to the call to `pivot_longer()`.
 
 ```{r modifying-multiple-c-45-hint, eval = FALSE}
 df_paired |> 
-  pivot_longer(everything(),
+  pivot_longer(...,
                names_to = c("group", ".value"),
                names_sep = "_")
 ```
 
+```{r include = FALSE}
+df_paired |> 
+  pivot_longer(everything(),
+               names_to = c("group", ".value"),
+               names_sep = "_")
+```
 ### 
 
 The `names_sep` argument tell `pivot_longer()` what separates a `group` value from a  `.value` in each of the column names. Here, that's an underscore `_`.
 
 ### 
-
-<!-- Quetion: how to break this part down... -->
 
 Here's a quick summary of the above mentioned functions:
 
@@ -1170,7 +1306,6 @@ In this section, you'll learn how to use `purrr::map()` to do something to every
 Hit `Run Code` to open the following excel data file.
 
 ```{r reading-multiple-fil-1, exercise = TRUE}
-data2019 <- readxl::read_excel("data/y2019.xlsx")
 ```
 
 ### 
@@ -1215,6 +1350,10 @@ Now, you can connect the excels together using `dplyr::bind_rows()`. Type `bind_
 bind_rows()
 ```
 
+```{r include = FALSE}
+bind_rows()
+```
+
 ### Exercise 4
 
 Add `data2019`, `data2020`, `data2021` and `data2022` to the call to `bind_rows()`
@@ -1229,6 +1368,8 @@ Add `data2019`, `data2020`, `data2021` and `data2022` to the call to `bind_rows(
 bind_rows(data2019, data2020, data2021, data2022)
 ```
 
+```{r include = FALSE}
+```
 ### 
 
 What we did above is a doable- when there's only 4 data sets. It also violates our rule for not copy-paste more than 3 times.
@@ -1313,6 +1454,8 @@ type `files[]` and hit `Run Code`, see what happens. Note that we are using `[]`
 files[]
 ```
 
+```{r include = FALSE}
+```
 ### 
 
 Remember that after you have data frames in a list, you can use `files[[i]]` to extract the ith element in the list.
@@ -1320,7 +1463,7 @@ Remember that after you have data frames in a list, you can use `files[[i]]` to 
 
 ### Exercise 7
 
-Type `map()` in the code chucnk, then hit `Run Code`.
+Type `map()` in the code chunk, then hit `Run Code`.
 
 ```{r reading-multiple-fil-7, exercise = TRUE}
 
@@ -1350,6 +1493,9 @@ Add argument `paths` and `readxl::read_excel` to the call to `map()`.
 map(paths, readxl::read_excel)
 ```
 
+```{r include = FALSE}
+map(paths, readxl::read_excel)
+```
 ### 
 
 The `map()` vector takes the format fo `map(x, f)`, it is a way to make good use of the `path` vector. 
