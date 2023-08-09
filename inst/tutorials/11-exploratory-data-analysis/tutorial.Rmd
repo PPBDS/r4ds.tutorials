@@ -1,12 +1,12 @@
 ---
 title: Exploratory data analysis
-author: David Kane
+author: David Kane and Srihith Garlapati
 tutorial:
   id: exploratory-data-analysis
 output:
   learnr::tutorial:
     progressive: yes
-    allow_skip: yes 
+    allow_skip: yes
 runtime: shiny_prerendered
 description: 'Tutorial for Chapter 11: Exploratory data analysis'
 ---
@@ -14,10 +14,10 @@ description: 'Tutorial for Chapter 11: Exploratory data analysis'
 ```{r setup, include = FALSE}
 library(learnr)
 library(tutorial.helpers)
+
 library(tidyverse)
 library(tidymodels)
 library(hexbin)
-library(tidymodels)
 
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
@@ -112,9 +112,6 @@ p5 <- diamonds_aug |>
 
 <!-- DK: Always load the libraries. -->
 
-<!-- DK: Why not make every plot look professional. -->
-
-<!-- DK: Create plot object, like p2, and then show it twice, at start and end of the exercises which create the plot. -->
 
 ## Introduction
 ### 
@@ -129,7 +126,7 @@ In this section, we will learn about variation or basically the tendency of valu
 
 ### Exercise 1
 
-Load in the `tidyverse` package using `library()`.
+Load in the **tidyverse** package using `library()`.
 
 ```{r variation-1, exercise = TRUE}
 
@@ -469,26 +466,31 @@ The function, `coord_cartesian()`, also has an `xlim` argument for when you need
 
 Pipe `diamonds` to `filter()` and filter `y` to be less than `3`.
 
+
 ```{r variation-18, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r variation-18-hint-1, eval = FALSE}
 diamonds |> 
   filter(y < ...)
 ```
 
+```{r, include=FALSE}
+diamonds |> 
+  filter(y < 3)
+```
+
+
 ### 
 
-The `y` variable measures one of the three dimensions of these diamonds, in `mm`. We know that diamonds can’t have a width of `0mm`, so these values must be incorrect. 
+The `y` variable measures one of the three dimensions of these diamonds, in `mm`. We know that diamonds can’t have a width of 0 mm, so these values must be incorrect. 
+
 
 ### Exercise 19
 
-<!-- SG: I don't know how to word this properly -->
-
-Within `filter()`, add `|` and also filter `y` to be greater than `20`.
+Modify the pipe by adding, to the `filter()` command,  `|` and `y` greater than `20`.
 
 ```{r variation-19, exercise = TRUE}
 
@@ -500,6 +502,12 @@ Within `filter()`, add `|` and also filter `y` to be greater than `20`.
 diamonds |> 
   filter(y < 3 | y > ...)
 ```
+
+```{r, include=FALSE}
+diamonds |> 
+  filter(y < 3 | y > 20)
+```
+
 
 ### 
 
@@ -536,6 +544,7 @@ Add `arrange()` to the pipeline. Within `arrange()`, add the variable `y`
 ```
 
 This arranges the data by the width of the diamonds. By doing EDA, we have discovered missing data that was coded as `0`, which we never would have found by simply searching for `NAs`. Going forward we might choose to re-code these values as `NAs` in order to prevent misleading calculations. We might also suspect that measurements of `32mm` and `59mm` are implausible: those diamonds are over an inch long, but don’t cost hundreds of thousands of dollars!
+
 
 ## Unusual Values
 ### 
@@ -1302,8 +1311,6 @@ The function, `fct_reorder()`, is useful for 1d displays where the factor is map
 
 ### Exercise 20
 
-<!-- SG: Is this the correct wording? -->
-
 Within `ggplot()`, within `aes()`, swap the aesthetic mappings of `x` and `y`.
 
 ```{r covariation-20, exercise = TRUE}
@@ -1760,17 +1767,19 @@ Replace `geom_point()` with `geom_bin2d()`.
 
 geom_bin2d() and geom_hex() divide the coordinate plane into 2d bins and then use a fill color to display how many points fall into each bin. geom_bin2d() creates rectangular bins.
 
+
 ### Exercise 8
 
-Run `install.packages("hexbin")` in the Console and Copy/Paste the results here.
+Load in the `hexbin` package using `library()`. 
 
-```{r covariation-with-2-n-8}
-question_text(NULL,
-	message = "Place correct answer here.",
-	answer(NULL, correct = TRUE),
-	allow_retry = FALSE,
-	incorrect = NULL,
-	rows = 6)
+```{r covariation-with-2-n-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-with-2-n-8-hint-1, eval = FALSE}
+library(...)
 ```
 
 ### 
@@ -1779,7 +1788,7 @@ The function `geom_hex()` creates hexagonal bins. You will need to install the [
 
 ### Exercise 9
 
-Load in the `hexbin` package using `library()`. 
+Replace `geom_bin2d()` in the pipeline with `geom_hex()`. 
 
 ```{r covariation-with-2-n-9, exercise = TRUE}
 
@@ -1788,20 +1797,6 @@ Load in the `hexbin` package using `library()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r covariation-with-2-n-9-hint-1, eval = FALSE}
-library(...)
-```
-
-### Exercise 10
-
-Replace `geom_bin2d()` in the pipeline with `geom_hex()`. 
-
-```{r covariation-with-2-n-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-with-2-n-10-hint-1, eval = FALSE}
 smaller |> 
   ggplot(aes(x = carat, y = price)) +
   ...
@@ -1812,9 +1807,24 @@ smaller |>
 Another option is to bin one continuous variable so it acts like a categorical variable. Then you can use one of the techniques for visualizing the combination of a categorical and a continuous variable that you learned about. For example, you could bin carat and then for each group, display a boxplot.
 
 
-### Exercise 11
+### Exercise 10
 
 Replace `geom_hex()` with `geom_boxplot()` in the previous pipeline.
+
+```{r covariation-with-2-n-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r covariation-with-2-n-10-hint-1, eval = FALSE}
+... +
+  geom_boxplot()
+```
+
+### Exercise 11
+
+Within `geom_boxplot()`, using `aes()`, set the `group` argument to `cut_width(carat, 0.1)`. 
 
 ```{r covariation-with-2-n-11, exercise = TRUE}
 
@@ -1824,12 +1834,16 @@ Replace `geom_hex()` with `geom_boxplot()` in the previous pipeline.
 
 ```{r covariation-with-2-n-11-hint-1, eval = FALSE}
 ... +
-  geom_boxplot()
+  geom_boxplot(aes(group = ...))
 ```
+
+### 
+
+cut_width(x, width), as used above, divides x into bins of width width. By default, boxplots look roughly the same (apart from number of outliers) regardless of how many observations there are, so it’s difficult to tell that each boxplot summaries a different number of points.
 
 ### Exercise 12
 
-Within `geom_boxplot()`, using `aes()`, set the `group` argument to `cut_width(carat, 0.1)`. 
+Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs()` to the pipeline. 
 
 ```{r covariation-with-2-n-12, exercise = TRUE}
 
@@ -1838,25 +1852,6 @@ Within `geom_boxplot()`, using `aes()`, set the `group` argument to `cut_width(c
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r covariation-with-2-n-12-hint-1, eval = FALSE}
-... +
-  geom_boxplot(aes(group = ...))
-```
-
-### 
-
-cut_width(x, width), as used above, divides x into bins of width width. By default, boxplots look roughly the same (apart from number of outliers) regardless of how many observations there are, so it’s difficult to tell that each boxplot summaries a different number of points.
-
-### Exercise 13
-
-Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs()` to the pipeline. 
-
-```{r covariation-with-2-n-13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-with-2-n-13-hint-1, eval = FALSE}
 ... + 
   labs(
     title = ...,
@@ -1879,7 +1874,7 @@ p4
 
 In this section, we will discuss how to find and display patterns in your datasets. 
 
-###
+### 
 
 By the end of this section, we will be creating this plot:
 
@@ -1907,11 +1902,11 @@ First, let's load in the `tidymodels` package by using `library()`.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r patterns-and-models-1-hint, eval = FALSE}
+```{r patterns-and-models-1-hint-1, eval = FALSE}
 library(...)
 ```
 
-###
+### 
 
 If a systematic relationship exists between two variables it will appear as a pattern in the data. If you spot a pattern, you can ask yourself the following questions:
 
@@ -1935,11 +1930,11 @@ Create a new variable `diamonds3` and set it equal to `diamonds`.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r patterns-and-models-2-hint, eval = FALSE}
+```{r patterns-and-models-2-hint-1, eval = FALSE}
 diamonds3 <- diamonds
 ```
 
-###
+### 
 
 Patterns in your data provide clues about relationships, i.e., they reveal covariation. If you think of variation as a phenomenon that creates uncertainty, covariation is a phenomenon that reduces it.
 
@@ -1953,14 +1948,14 @@ Using your previous code, pipe `diamonds` to `mutate()`. Within `mutate()`, crea
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r patterns-and-models-3-hint, eval = FALSE}
+```{r patterns-and-models-3-hint-1, eval = FALSE}
 diamonds3 <- diamonds |> 
   mutate(
     log_price = ...
   )
 ```
 
-###
+### 
 
 If two variables covary, you can use the values of one variable to make better predictions about the values of the second. If the covariation is due to a causal relationship (a special case), then you can use the value of one variable to control the value of the second.
 
@@ -1974,7 +1969,7 @@ Within `mutate()`, create another variable called `log_carat` and set it equal t
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r patterns-and-models-4-hint, eval = FALSE}
+```{r patterns-and-models-4-hint-1, eval = FALSE}
 diamonds3 <- diamonds |> 
   mutate(
     log_price = log(price),
@@ -1982,7 +1977,7 @@ diamonds3 <- diamonds |>
   )
 ```
 
-###
+### 
 
 We will be using this dataset to make a model that predicts `price` from`carat` and then computes the residuals (the difference between the predicted value and the actual value).
 
@@ -1996,11 +1991,11 @@ Create a new variable called `diamonds_fit` and set it equal to `linear_reg()`.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r patterns-and-models-5-hint, eval = FALSE}
+```{r patterns-and-models-5-hint-1, eval = FALSE}
 diamonds_fit <- ...
 ```
 
-###
+### 
 
 Models are a tool for extracting patterns out of data. For example, consider the diamonds data. It’s hard to understand the relationship between cut and price, because cut and carat, and carat and price are tightly related.
 
@@ -2014,12 +2009,12 @@ Using your previous code, pipe `linear_reg()` with the following code `fit(log_p
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r patterns-and-models-6-hint, eval = FALSE}
+```{r patterns-and-models-6-hint-1, eval = FALSE}
 diamonds_fit <- linear_reg() |> 
   ...
 ```
 
-###
+### 
 
 The functon [`linear_reg()`](https://parsnip.tidymodels.org/reference/linear_reg.html) defines a model that can predict numeric values from predictors using a linear function. This function can fit regression models.There are different ways to fit this model, and the method of estimation is chosen by setting the model `engine`.
 
@@ -2033,11 +2028,11 @@ Create a new variable called `diamonds_aug` and set it equal to `augment(diamond
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r patterns-and-models-7-hint, eval = FALSE}
+```{r patterns-and-models-7-hint-1, eval = FALSE}
 diamonds_aug <- ...
 ```
 
-###
+### 
 
 The residuals give us a view of the price of the diamond, once the effect of carat has been removed.
 
@@ -2051,12 +2046,12 @@ Using your previous code, pipe `augment(diamonds_fit, new_data = diamonds3)` wit
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r patterns-and-models-8-hint, eval = FALSE}
+```{r patterns-and-models-8-hint-1, eval = FALSE}
 diamonds_aug <- augment(diamonds_fit, new_data = diamonds) |>
   ...
 ```
 
-###
+### 
 
 Note that instead of using the raw values of `price` and `carat`, we log transform them first, and fit a model to the log-transformed values. Then, we exponentiate the residuals to put them back in the scale of raw prices.
 
@@ -2070,12 +2065,12 @@ With a new pipeline, pipe `diamonds_aug` with `ggplot()`.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r patterns-and-models-9-hint, eval = FALSE}
+```{r patterns-and-models-9-hint-1, eval = FALSE}
 diamonds_aug |> 
   ggplot()
 ```
 
-###
+### 
 
 Note that this plot is empty
 
@@ -2089,7 +2084,7 @@ Within `ggplot()`, using `aes()`, set the `x` argument to the `carat` variable.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r patterns-and-models-10-hint, eval = FALSE}
+```{r patterns-and-models-10-hint-1, eval = FALSE}
 diamonds_aug |> 
   ggplot(aes(x = ...))
 ```
@@ -2104,7 +2099,7 @@ Within `ggplot()`, using `aes()`, set the `y` argument to the `.resid` variable.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r patterns-and-models-11-hint, eval = FALSE}
+```{r patterns-and-models-11-hint-1, eval = FALSE}
 diamonds_aug |> 
   ggplot(aes(x = carat, y = ...))
 ```
@@ -2119,12 +2114,12 @@ Add `geom_point()` to the pipeline.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r patterns-and-models-12-hint, eval = FALSE}
+```{r patterns-and-models-12-hint-1, eval = FALSE}
 ... +
   geom_point()
 ```
 
-###
+### 
 
 Once you’ve removed the strong relationship between carat and price, you can see what you expect in the relationship between cut and price: relative to their size, better quality diamonds are more expensive.
 
@@ -2138,11 +2133,11 @@ Replace `geom_point()` from the previous pipeline and change it to `geom_boxplot
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r patterns-and-models-13-hint, eval = FALSE}
+```{r patterns-and-models-13-hint-1, eval = FALSE}
 
 ```
 
-###
+### 
 
 A boxplot is the best way to see the relationship between the type of diamond cut and the price of the diamond. 
 
@@ -2156,7 +2151,7 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs(
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r patterns-and-models-14-hint, eval = FALSE}
+```{r patterns-and-models-14-hint-1, eval = FALSE}
 ... +
   labs(
     title = ...,
@@ -2166,7 +2161,7 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs(
   )
 ```
 
-###
+### 
 
 Reminder this is what our plot should look like.
 
