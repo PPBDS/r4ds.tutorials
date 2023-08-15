@@ -26,8 +26,8 @@ options(tutorial.exercise.timelimit = 60,
         tutorial.storage = "local") 
 
 labels_tib <- tibble(
-  x = 1:10,
-  y = cumsum(x^2)
+  start = 1:10,
+  end = cumsum(start^2)
 )
 
 labels_graphic = ggplot(mpg, aes(x = displ, y = hwy)) +
@@ -84,6 +84,7 @@ compact <- mpg |> filter(class == "compact")
 ## Introduction
 ### 
 
+
 This tutorial covers [Chapter 12: Communication](https://r4ds.hadley.nz/communication.html)  from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. In this tutorial we will be making use of three core packages from *ggplot2*: [**scales**](https://scales.r-lib.org/) to override the default breaks, [**ggrepel**](https://ggrepel.slowkow.com), and [**patchwork**](https://patchwork.data-imaginist.com). Some key commands that you will be making use of are [`quote()`](https://rdrr.io/r/base/substitute.html) which simply returns its argument, [`geom_label_repel()`](https://rdrr.io/cran/ggrepel/man/geom_text_repel.html) which adds text directly to the plot, and [`label_dollar()`](https://scales.r-lib.org/reference/label_dollar.html) which formats numbers as currency. 
 
 ## Labels
@@ -113,6 +114,10 @@ Let's first load in the package **tidyverse** using the `library()` function.
 library(...)
 ```
 
+```{r include = FALSE}
+library(tidyverse)
+```
+
 ### 
 
 Let's start with the basics and make a plot with well-formatted labels.
@@ -125,9 +130,11 @@ Now, let's explore the dataset that we want to create a plot on. Type in `mpg` a
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r labels-2-hint-1, eval = FALSE}
+mpg
+```
+
+```{r include = FALSE}
 mpg
 ```
 
@@ -137,7 +144,7 @@ The `mpg` dataset provides fuel economy data from 1999 and 2008 for 38 popular m
 
 ### Exercise 3
 
-Create a new pipeline. Pipe `mpg` to the `ggplot()` function. Within the `ggplot()` function, map `x` to the `displ` variable and `y` to the hwy variable using the `aes()` function.
+Pipe `mpg` to `ggplot()`. 
 
 ```{r labels-3, exercise = TRUE}
 
@@ -147,14 +154,21 @@ Create a new pipeline. Pipe `mpg` to the `ggplot()` function. Within the `ggplot
 
 ```{r labels-3-hint-1, eval = FALSE}
 mpg |> 
-  ggplot(aes(x = ..., y = ...))
+  ...
+```
+
+```{r include = FALSE}
+mpg |> 
+  ggplot()
 ```
 
 ### 
 
+Note: This plot is empty.
+
 ### Exercise 4
 
-Using your previous code, add the `geom_point()` function to the pipeline.
+Within `ggplot()`, using `aes()`, set the `x` argument to the `displ` variable.
 
 ```{r labels-4, exercise = TRUE}
 
@@ -163,13 +177,18 @@ Using your previous code, add the `geom_point()` function to the pipeline.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r labels-4-hint-1, eval = FALSE}
-... +
-  geom_point()
+mpg |> 
+  ggplot(aes(x = ...)) 
+```
+
+```{r include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ))
 ```
 
 ### Exercise 5
 
-Using your previous code, within the `geom_point()` function, map the argument `color` to the variable `class` using the `aes()` function. 
+Within `ggplot()`, using `aes()`, set the `y` argument to the `hwy` variable.
 
 ```{r labels-5, exercise = TRUE}
 
@@ -178,17 +197,18 @@ Using your previous code, within the `geom_point()` function, map the argument `
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r labels-5-hint-1, eval = FALSE}
-... +
-  geom_point(aes(color = ...))
+mpg |> 
+  ggplot(aes(x = ..., y = ...))
 ```
 
-### 
-
-Now that we have a basic dot plot. We need to add a trend line that can allow us to see the trend of the points very clearly.
+```{r include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy))
+```
 
 ### Exercise 6
 
-Using your previous code, add the `geom_smooth()` function to the pipeline.
+Add `geom_point()` to the pipeline.
 
 ```{r labels-6, exercise = TRUE}
 
@@ -198,12 +218,18 @@ Using your previous code, add the `geom_smooth()` function to the pipeline.
 
 ```{r labels-6-hint-1, eval = FALSE}
 ... +
-  geom_smooth()
+  geom_point()
+```
+
+```{r include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+  geom_point()
 ```
 
 ### Exercise 7
 
-Using your previous code, within your call to the function `geom_smooth()` add the argument called `se` and set it to `FALSE`. This removes the gray background of the line.
+Within `geom_point()`, using `aes()`, set the `color` argument to the `class` variable. 
 
 ```{r labels-7, exercise = TRUE}
 
@@ -213,18 +239,22 @@ Using your previous code, within your call to the function `geom_smooth()` add t
 
 ```{r labels-7-hint-1, eval = FALSE}
 ... +
-  geom_smooth(se = ...)
+  geom_point(aes(color = ...))
+```
+
+```{r include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+  geom_point(aes(color = class)) 
 ```
 
 ### 
 
-Our graphic is currently exploratory, let's turn it into an expository graphic with some good labels.
+Now that we have a basic dot plot. We need to add a trend line that can allow us to see the trend of the points very clearly.
 
 ### Exercise 8
 
-Using your previous code, add a `labs()` function to the pipeline and add a `title`, `subtitle`, `x` axis title, `y` axis title, `color` title, and a `caption`. 
-
-(Hint the `caption` should be the following: `"Data from fueleconomy.gov"`)
+Add `geom_smooth()` to the pipeline.
 
 ```{r labels-8, exercise = TRUE}
 
@@ -233,6 +263,56 @@ Using your previous code, add a `labs()` function to the pipeline and add a `tit
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r labels-8-hint-1, eval = FALSE}
+... +
+  geom_smooth()
+```
+
+```{r include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+  geom_point(aes(color = class)) +
+  geom_smooth()
+```
+
+### Exercise 9
+
+Within `geom_smooth()`, add the `se` argument and set it to `FALSE`. 
+
+```{r labels-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r labels-9-hint-1, eval = FALSE}
+... +
+  geom_smooth(se = ...)
+```
+
+```{r include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+  geom_point(aes(color = class)) +
+  geom_smooth(se = FALSE)
+```
+
+### 
+
+The `se` argument removes the gray background of the line made through the function `geom_smooth()`. Our graphic is currently exploratory, let's turn it into an expository graphic with some good labels.
+
+### Exercise 10
+
+Add a `title`, `subtitle`, `x` axis title, `y` axis title, legend title(`color`), and a `caption` by adding `labs()` to the pipeline. 
+
+(Hint the `caption` should be the following: `"Data from fueleconomy.gov"`)
+
+```{r labels-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r labels-10-hint-1, eval = FALSE}
 ... +
   labs(
     title = ...,
@@ -244,11 +324,24 @@ Using your previous code, add a `labs()` function to the pipeline and add a `tit
   )
 ```
 
+```{r include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+  geom_point(aes(color = class)) +
+  geom_smooth(se = FALSE) + 
+  labs(
+    x = "Engine displacement (L)",
+    y = "Highway fuel economy (mpg)",
+    color = "Car type",
+    title = "Fuel efficiency generally decreases with engine size",
+    subtitle = "Two seaters (sports cars) are an exception because of their light weight",
+    caption = "Data from fueleconomy.gov"
+  )
+```
+
 ### 
 
 The purpose of a plot title is to summarize the main finding. Avoid titles that just describe what the plot is, e.g., “A scatterplot of engine displacement vs. fuel economy”. The argument, `subtitle`, adds additional detail in a smaller font beneath the `title` and the argument, `caption`, adds text at the bottom right of the plot, often used to describe the source of the data.
-
-### 
 
 Reminder: The graphic should look something like this
 
@@ -256,44 +349,9 @@ Reminder: The graphic should look something like this
 labels_graphic
 ```
 
-### Exercise 9
-
-It’s also possible to use mathematical equations instead of text strings. Let's take a look at a tibble called `labels_tib`. Type in `labels_tib` and hit "Run Code". 
-
-```{r labels-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r labels-9-hint-1, eval = FALSE}
-labels_tib
-```
-
-### 
-
-We can use mathematical equations instead of textstrings for the labels if we switch `""` for the function `quote()`
-
-### Exercise 10
-
-Create a new pipeline. Pipe `labels_tib` to the function `ggplot()`. Within this function, map `x` to `x` and `y` to `y` using the `aes()` function.
-
-```{r labels-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r labels-10-hint-1, eval = FALSE}
-labels_tib |> 
-  ggplot(aes(x = ..., y = ...))
-```
-
-### 
-
 ### Exercise 11
 
-Using your previous code, add the `geom_point()` function to the pipeline.
+Type in `labels_tib` and hit "Run Code". 
 
 ```{r labels-11, exercise = TRUE}
 
@@ -302,13 +360,20 @@ Using your previous code, add the `geom_point()` function to the pipeline.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r labels-11-hint-1, eval = FALSE}
-... +
-  geom_point()
+labels_tib
 ```
+
+```{r include = FALSE}
+labels_tib
+```
+
+### 
+
+The tibble, `labels_tib`, is a premade tibble that we will be using to show that it is also possible to use mathematical equations instead of `textstrings` for the labels if we switch `""` for the function `quote()`
 
 ### Exercise 12
 
-Using your previous code, add the `labs()` function to the pipeline. Within the `labs()` function, set the `x` axis title to `quote(x[i])`.
+Pipe `labels_tib` to the function `ggplot()`. 
 
 ```{r labels-12, exercise = TRUE}
 
@@ -317,17 +382,22 @@ Using your previous code, add the `labs()` function to the pipeline. Within the 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r labels-12-hint-1, eval = FALSE}
-... +
-  labs(
-    x = ...
-  )
+labels_tib |> 
+  ...
+```
+
+```{r include = FALSE}
+labels_tib |> 
+  ggplot()
 ```
 
 ### 
 
+Note that this plot is empty.
+
 ### Exercise 13
 
-Using your previous code, within your call to the `labs()` function add the `y` axis title and set it to `quote(sum(x[i] ^ 2, i == 1, n))`. 
+Within this function, using `aes()`, set the `x` argument to the `start` variable.
 
 ```{r labels-13, exercise = TRUE}
 
@@ -336,6 +406,95 @@ Using your previous code, within your call to the `labs()` function add the `y` 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r labels-13-hint-1, eval = FALSE}
+labels_tib |> 
+  ggplot(aes(x = ...))
+```
+
+```{r include = FALSE}
+labels_tib |> 
+  ggplot(aes(x = start))
+```
+
+### Exercise 14
+
+Within this function, using `aes()`, set the `y` argument to the `end` variable.
+
+```{r labels-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r labels-14-hint-1, eval = FALSE}
+labels_tib |> 
+  ggplot(aes(x = start, y = ...))
+```
+
+```{r include = FALSE}
+labels_tib |> 
+  ggplot(aes(x = start, y = end))
+```
+
+### Exercise 15
+
+Using your previous code, add the `geom_point()` function to the pipeline.
+
+```{r labels-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r labels-15-hint-1, eval = FALSE}
+... +
+  geom_point()
+```
+
+```{r include = FALSE}
+labels_tib |> 
+  ggplot(aes(x = start, y = end)) + 
+  geom_point()
+```
+
+### Exercise 16
+
+Set the `x` axis title to `quote(x[i])` by adding `labs()` to the pipeline
+
+```{r labels-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r labels-16-hint-1, eval = FALSE}
+... +
+  labs(
+    x = ...
+  )
+```
+
+### 
+
+```{r include = FALSE}
+labels_tib |> 
+  ggplot(aes(x = start, y = end)) + 
+  geom_point() +
+  labs(
+    x = quote(x[i])
+  )
+```
+
+### Exercise 17
+
+Within `labs()`, set the `y` axis title to `quote(sum(x[i] ^ 2, i == 1, n))`. 
+
+```{r labels-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r labels-17-hint-1, eval = FALSE}
 ... +
   labs(
     x = ...,
@@ -343,17 +502,31 @@ Using your previous code, within your call to the `labs()` function add the `y` 
   )
 ```
 
-### Exercise 14
+```{r include = FALSE}
+labels_tib |> 
+  ggplot(aes(x = start, y = end)) + 
+  geom_point() +
+  labs(
+    x = quote(x[i]),
+    y = quote(sum(x[i] ^ 2, i == 1, n))
+  )
+```
+
+### Exercise 18
 
 Type in `?plotmath` in the Console and learn more about what kind of syntax you can input into the `quote()` function. Copy/paste an interesting syntax and a meaning to the textbox below and hit "Submit".
 
-```{r labels-14}
+```{r labels-18}
 question_text(NULL,
 	message = "Place correct answer here.",
 	answer(NULL, correct = TRUE),
 	allow_retry = FALSE,
 	incorrect = NULL,
 	rows = 6)
+```
+
+```{r include = FALSE}
+?plotmath #In the Console
 ```
 
 ## Annotations
@@ -3581,7 +3754,7 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title using `labs()`.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r layout-6-hint, eval = FALSE}
+```{r layout-6-hint-1, eval = FALSE}
 ... + 
   labs(
     title = ...,
@@ -3591,7 +3764,7 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title using `labs()`.
   )
 ```
 
-###
+### 
 
 Let's also create the second plot and then place them beside each other.
 
@@ -3605,7 +3778,7 @@ Create a new variable, `p2` and set it equal to `mpg`.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r layout-7-hint, eval = FALSE}
+```{r layout-7-hint-1, eval = FALSE}
 p2 <- mpg
 ```
 
@@ -3619,7 +3792,7 @@ With your previous code, start a new pipeline with `mpg` and `ggplot()`. Within 
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r layout-8-hint, eval = FALSE}
+```{r layout-8-hint-1, eval = FALSE}
 p2 <- mpg |> 
   ggplot(aes(x = ...))
 ```
@@ -3634,7 +3807,7 @@ Within `ggplot()`, using `aes()`, also map `y` to `hwy`.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r layout-9-hint, eval = FALSE}
+```{r layout-9-hint-1, eval = FALSE}
 p2 <- mpg |> 
   ggplot(aes(x = ..., y = ...))
 ```
@@ -3649,7 +3822,7 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title using `labs()`.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r layout-10-hint, eval = FALSE}
+```{r layout-10-hint-1, eval = FALSE}
 ... +
   labs(
     title = ...,
@@ -3659,7 +3832,7 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title using `labs()`.
   )
 ```
 
-###
+### 
 
 To place two plots next to each other, you can simply add them to each other. Note that you first need to create the plots and save them as objects (in the following example they’re called `p1` and `p2`). Then, you place them next to each other with `+`.
 
@@ -3673,11 +3846,11 @@ Type `p1 + p2` and hit "Run Code".
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r layout-11-hint, eval = FALSE}
+```{r layout-11-hint-1, eval = FALSE}
 p1 + ...
 ```
 
-###
+### 
 
 It’s important to note that in the above code chunk we did not use a new function from the **patchwork** package. Instead, the package added a new functionality to the `+` operator.
 
