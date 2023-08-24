@@ -36,6 +36,7 @@ plot_geom <- penguins |>
 ```
 
 <!-- DK: Add test chunks. -->
+<!-- PC: Test chunks are not needed for many of them due to much of this tutorial being focused on creating pre-made graphs -->
 
 <!-- Introduction should include key packages and commands, and then be repeated in the Summary -->
 
@@ -83,7 +84,7 @@ Load the **palmerpenguins** package using `library()`.
 ```
 
 ```{r creating-first-ggplo-1-hint-1, eval = FALSE}
-library(palmerpenguins)
+library(...)
 ```
 
 ### 
@@ -119,7 +120,7 @@ Run the `library()` command with `ggthemes` as the argument.
 ```
 
 ```{r creating-first-ggplo-3-hint-1, eval = FALSE}
-library(ggthemes)
+library(...)
 ```
 
 ### 
@@ -161,8 +162,6 @@ When we run `glimpse(penguins)`, we see so many records or I shall say observati
 
 ### Exercise 6
 
-<!-- Teach what a pipe is  -->
-
 The key command for making plots is `ggplot()` from the **ggplot2** package. Run `ggplot(data = penguins)`.
 
 ```{r creating-first-ggplo-6, exercise = TRUE}
@@ -175,7 +174,7 @@ ggplot(data = penguins)
 
 ###
 
-You should see a blank, grey square. R has set up the area in which it can place a plot, but we have yet to give it anything to plot.
+You should see a blank, grey square. R has set up the area in which it can place a plot, but we have yet to tell it what to plot.
 
 ### 
 
@@ -193,8 +192,6 @@ Run `sqrt(16)`
 sqrt(16)
 ```
 
-### 
-
 ### Exercise 8
 
 Run `16 |> sqrt()`
@@ -209,7 +206,7 @@ Run `16 |> sqrt()`
 
 ### 
 
-The difference between the previous code was it that we are using the pipe operator `|>` which takes anything from the left side and plugs it into the function in the right side.
+The difference between the previous code was it that we are using the pipe operator `|>` which takes anything from the left side and plugs it into the function in the right side. It is preferred to use pipes in your code as it makes the progression of the variable you're using much more clear.
 
 ### Exercise 9
 
@@ -224,13 +221,12 @@ Type `penguins` with the pipe operator `|>` and plug it into `ggplot()` like thi
 
 ```{r creating-first-ggplo-9-hint-1, eval = FALSE}
 penguins |>
-  ggplot()
+  ...
 ```
 
 ### 
 
 penguins which is the input is being plugged into the function `ggplot()` which gives the same output as `ggplot(data = penguins)`. While Indentation may not affect code, it is a good habit to do because it helps go through the code much faster.
-
 
 ### Exercise 10
 
@@ -243,7 +239,7 @@ Copy the previous code and within `ggplot()`, run `mapping = aes(x = flipper_len
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-10-hint-1, eval = FALSE}
-... |>
+penguins |>
   ggplot(... = aes(x = ...))
 ```
 
@@ -262,14 +258,13 @@ Copy the previous code, within the `aes()` set `y` equal to `body_mass_g` and ru
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-11-hint-1, eval = FALSE}
-...|>
-  ggplot(mapping = aes(x = ..., y = ...))
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, y = ...))
 ```
 
 ###
 
 To display the data points we need to add a geometric object(geom). We can define a `geom`: the geometrical object that a plot uses to represent data. These geometric objects are made available in ggplot2 with functions that start with `geom_`. 
-
 
 ### Exercise 12
 
@@ -282,9 +277,9 @@ The function `geom_point()` adds a layer of points to your plot, which creates a
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-12-hint-1, eval = FALSE}
-...|>
-  +
-  geom_point()
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g)) +
+  ...
 ```
 
 ### 
@@ -302,9 +297,10 @@ Edit your code so that, within the call to `ggplot()`, you add `color = species`
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-13-hint-1, eval = FALSE}
-... |>
-  ggplot(... = aes(x = flipper_length_mm, y = ..., ... = species))+
-  
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
+                       color = ...)) +
+  geom_point()
 ```
 
 ### 
@@ -325,8 +321,10 @@ Add `geom_smooth()` layer using `+`, and set `method` to `lm` within the functio
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-14-hint-1, eval = FALSE}
-... |>
-  +
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
+                       color = ...)) +
+  geom_point() +
   geom_smooth(... = "lm")
 ```
 
@@ -334,11 +332,9 @@ Add `geom_smooth()` layer using `+`, and set `method` to `lm` within the functio
 
 `geom_smooth()`: used to add a smooth curve to a scatterplot, which can help identify trends and patterns in data by fitting a line or smoothing function. It offers different smoothing methods like linear or polynomial regression and loess smoothing
 
-
 ### Exercise 15
 
 We have added new lines to the plot, but it does not match the plot in beginning, which displayed only one line for the entire data set instead of separate lines for each penguin species. To do so, delete the `color` aesthetic within `ggplot()` and add it to `geom_point` by running `geom_point(mapping = aes(color = species))`. This allows each point to represent certain penguin species on the island. 
-
 
 ```{r creating-first-ggplo-15, exercise = TRUE}
 
@@ -347,9 +343,11 @@ We have added new lines to the plot, but it does not match the plot in beginning
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-15-hint-1, eval = FALSE}
-... |>
-  +
-  geom_point(mapping = ...(color = species))
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
+                       color = ...)) +
+  geom_point(mapping = ...(color = ...)) +
+  geom_smooth(method = "lm")
 ```
 
 ### 
@@ -367,9 +365,12 @@ Not all individuals perceive colors differently due to color blindness or other 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-16-hint-1, eval = FALSE}
-... |>
-  +
-  geom_point(mapping = ...(color = species, ... = species))
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
+                       color = ...)) +
+  geom_point(mapping = aes(color = species, ... = species)) +
+  geom_smooth(method = "lm")
+  
 ```
 
 ### 
@@ -388,8 +389,11 @@ Now that we have the data points, lets add the title, substitle, labels and etc.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-17-hint-1, eval = FALSE}
-... |>
-  +
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
+                       color = ...)) +
+  geom_point(mapping = aes(color = species, ... = species)) +
+  geom_smooth(method = "lm") + 
   labs( ... = "Body mass and flipper length")
 ```
 
@@ -409,10 +413,13 @@ Copy the previous code, lets add the subtitle by running `subtitle = "Dimensions
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-18-hint-1, eval = FALSE}
-...|>
-  +
-  labs( ... = "Body mass and flipper length",
-        subtitle = "...")
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
+                       color = ...)) +
+  geom_point(mapping = aes(color = species, ... = species)) +
+  geom_smooth(method = "lm") +
+  labs(title = "Body mass and flipper length", 
+       subtitle = "...")
 ```
 
 ### 
@@ -421,7 +428,7 @@ The labs() function can also be used with the ggtitle() function to modify the p
 
 ### Exercise 19
 
-Lets modify the x and y axises, type a comma and then run `x` and set it to `"Flipper Length (mm)"`  Type another comma and a `y`, then set it equal to "Body mass (g)" in quotes.
+Lets modify the x and y axises, type a comma and then run `x` and set it to `"Flipper Length (mm)"`  Type another comma and a `y`, then set it equal to `"Body mass (g)"` in quotes.
 
 ```{r creating-first-ggplo-19, exercise = TRUE}
 
@@ -430,11 +437,13 @@ Lets modify the x and y axises, type a comma and then run `x` and set it to `"Fl
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-19-hint-1, eval = FALSE}
-
-... |>
-  +
-  labs( ... = "Body mass and flipper length"+
-          subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
+                       color = ...)) +
+  geom_point(mapping = aes(color = species, ... = species)) +
+  geom_smooth(method = "lm") +
+  labs(title = "Body mass and flipper length" +
+       subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
         x = ..., y = ...)
 ```
 
@@ -458,14 +467,16 @@ You might see that it looks the same as the one in the beginning but we forgot o
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplo-21-hint-1, eval = FALSE}
-... |>
-  +
-  labs( ... = "Body mass and flipper length"+
-        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
-        x = ..., 
-        y = ...,
-        color = "Species", 
-        shape = "Species")
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
+                       color = ...)) +
+  geom_point(mapping = aes(color = species, ... = species)) +
+  geom_smooth(method = "lm") +
+  labs(title = "Body mass and flipper length" +
+       subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+       x = "Flipper Length (mm)", y = "Body Mass (g)", 
+       color = ..., 
+       shape = ...)
 ```
 
 Reminder: This is what our graph should look like
@@ -474,10 +485,8 @@ Reminder: This is what our graph should look like
 intro_p
 ```
 
-### 
-
 ## Geom point
-### 
+###
 
 To practice the new skills we learned from the plot we made in the previous exercises, we will make another plot which displays the relationship between `bill_depth_mm` and `bill_length_mm`.
 
@@ -512,8 +521,6 @@ Before we create our plot, we need to get our data, so load the `palmerpenguins`
 
 ```
 
-
-
 ```{r geom-point-1-hint-1, eval = FALSE}
 library(palmerpenguins)
 ```
@@ -529,8 +536,6 @@ Run `penguins` with the pipe operator `|>` and plug it into `ggplot()`.
 ```{r geom-point-2, exercise = TRUE}
 
 ```
-
-
 
 ```{r geom-point-2-hint-1, eval = FALSE}
 ... |>
@@ -571,8 +576,8 @@ Within `aes()`, set `y` to `bill_depth_mm` and run it.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-point-4-hint-1, eval = FALSE}
-... |>
-  ggplot(mapping = aes(x = ..., y = ...))
+penguins |>
+  ggplot(mapping = aes(x = bill_length_mm, y = ...))
 ```
 
 ### 
@@ -591,8 +596,8 @@ To add the data points, add the `geom_point()` layer using `+`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-point-5-hint-1, eval = FALSE}
-... |> 
-  +
+penguins |>
+  ggplot(mapping = aes(x = bill_length_mm, y = bill_depth_mm)) + 
   geom_point()
 ```
 
@@ -612,10 +617,11 @@ In `ggplot()`, within `aes()`, run `color = species`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-point-6-hint-1, eval = FALSE}
-... |>
+penguins |>
   ggplot(mapping = aes(x = bill_length_mm, 
-                       y = ..., 
-                       ... = species))
+                       y = bill_depth_mm, 
+                       ... = species)) +
+  geom_point()
 ```
 
 ### 
@@ -635,7 +641,6 @@ Add the `geom_smooth()` layer and within it, set `method` to `lm`.
 ```{r geom-point-7-hint-1, eval = FALSE}
 
 ... |>
-  +
   geom_smooth(... = "lm")
 ```
 
@@ -654,9 +659,9 @@ Add the `color` aesthetic within `ggplot()` to `geom_point()` by running `geom_p
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-point-8-hint-1, eval = FALSE}
-...|> 
-  +
-  geom_point(mapping = ...(color = species))
+... + 
+  geom_point(mapping = ...(color = species)) +
+  geom_smooth(method = "lm")
 ```
 
 ### 
@@ -674,10 +679,7 @@ In addition to color, we can also map species to the shape aesthetic. Map the `s
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-point-9-hint-1, eval = FALSE}
-penguins |>
-  ggplot(
-  mapping = aes(x = bill_length_mm, y = bill_depth_mm, color = species)
-) +
+... +
   geom_point(mapping = aes(color = ..., shape = ...)) +
   geom_smooth(method = "lm")
 ```
@@ -698,8 +700,7 @@ Now that we have the data points, lets add the title, subtitle, labels and etc. 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-point-10-hint-1, eval = FALSE}
-... |>
-  +
+... +
   labs(title = "Penguins Beak's Length and Depth", 
        subtitle = ...,
        x = ... , 
@@ -713,10 +714,7 @@ Reminder: This is what your graph should look like
 
 ```{r}
 exercise_scatterplot_p
-
 ```
-
-### 
 
 ## Geom Bar
 ### 
@@ -734,7 +732,7 @@ library(palmerpenguins)
 
 geom_bar_p <- penguins |>
   ggplot(aes(x = island, fill = species)) +
-    geom_bar(position = "fill")+
+    geom_bar(position = "fill") +
     labs(title = "Percentage of Penguins in Different Islands",
          subtitle = "The Adelie species is the species on Torgersen",
          x = "Island",
@@ -752,10 +750,8 @@ Lets load the **palmerpenguins** package using `library()`.
 
 ```
 
-
-
 ```{r geom-bar-1-hint-1, eval = FALSE}
-library(palmerpenguins)
+library(...)
 ```
 
 ### 
@@ -775,7 +771,7 @@ Run `penguins` and pipe it to a `ggplot()` call.
 
 ```{r geom-bar-2-hint-1, eval = FALSE}
 penguins |>
-  ggplot()
+  ...
 ```
 
 ### 
@@ -794,7 +790,7 @@ Within `ggplot()`, set `x` to `island` inside of `aes()`
 
 ```{r geom-bar-3-hint-1, eval = FALSE}
 ... |>
-  ...(aes(x = island))
+  ggplot(aes(x = ...))
 ```
 
 ### 
@@ -813,9 +809,8 @@ To make the bar graph, add `geom_bar()` using `+` and run it.`
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-bar-4-hint-1, eval = FALSE}
-... |>
-  +
-  geom_...()
+... +
+  geom_bar()
 ```
 
 ### 
@@ -834,7 +829,8 @@ Lets integrate another categorical variable, so set `fill` to `species` within `
 
 ```{r geom-bar-5-hint-1, eval = FALSE}
 ... |>
-  ...(aes(x = ..., fill = species))
+  ggplot(aes(x = island, fill = ...)) +
+    geom_bar(position = "fill")
 ```
 
 ### 
@@ -852,9 +848,8 @@ Let's find the percentages of each penguins species on each island, so run `posi
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-bar-6-hint-1, eval = FALSE}
-... |>
-  +
-  geom_...(postion = "fill")
+... +
+  geom_bar(... = "fill")
 ```
 
 ### 
@@ -872,14 +867,13 @@ Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-bar-7-hint-1, eval = FALSE}
-penguins |>
-  +
-  labs(title = "",
-       subtitle = "",
-       x = "",
-       y = "",
-       caption = "",
-       fill = "")
+... +
+  labs(title = "...",
+       subtitle = "...",
+       x = "...",
+       y = "...",
+       caption = "...",
+       fill = "...")
 ```
 
 Reminder : This is what our graph should look like.
@@ -887,8 +881,6 @@ Reminder : This is what our graph should look like.
 ```{r}
 geom_bar_p
 ```
-
-### 
 
 ## Geom Histogram
 ### 
@@ -903,10 +895,8 @@ Lets load the **palmerpenguins** package using `library()`.
 
 ```
 
-
-
 ```{r geom-histogram-1-hint-1, eval = FALSE}
-library(palmerpenguins)
+library(...)
 ```
 
 ### 
@@ -925,14 +915,12 @@ Run `penguins` and pipe it to a `ggplot()` call.
 
 ```{r geom-histogram-2-hint-1, eval = FALSE}
 penguins |> 
-  ggplot()
+  ...
 ```
 
 ### 
 
 `geom_histogram()` creates a histogram: geom_histogram is used to create histograms, which are used to visualize the distribution of a single continuous variable. Histograms show the frequency of values within a certain range, which are typically represented by bins along the x-axis.
-
-
 
 ### Exercise 3
 
@@ -946,8 +934,7 @@ Within ggplot(), set `x` to `body_mass_g` inside of aesthetics
 
 ```{r geom-histogram-3-hint-1, eval = FALSE}
 ...|> 
-  ggplot(aes(x = body_mass_g)
-
+  ggplot(...(x = ...)
 ```
 
 ### 
@@ -966,8 +953,7 @@ Add the `geom_histogram()` layer using `+` to make the plot.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-histogram-4-hint-1, eval = FALSE}
-... |> 
-  +
+... + 
   geom_...()
 ```
 
@@ -986,16 +972,13 @@ Within `geom_histogram()`, set `binwidth` to 20.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-histogram-5-hint-1, eval = FALSE}
-... |>
-  +
-  geom_...(binwidth = ...)
+... +
+  geom_histogram(binwidth = ...)
 ```
 
 ### 
 
 The `binwidth` parameter controls the width of the bins: The `binwidth` parameter controls the width of the bins used in the histogram. By default, `geom_histogram()` uses a `binwidth` of 30. Compared to the previews histogram, the 20 bin width is too narrow, resulting in too many bars, making it difficult to determine the shape of the distribution. 
-
-
 
 ### Exercise 6
 
@@ -1008,9 +991,8 @@ Now, set `binwidth` to 200 and see the difference.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-histogram-6-hint-1, eval = FALSE}
-penguins |> 
-  ggplot(aes(x = body_mass_g))+
-  geom_...(binwidth = ...)
+... +
+  geom_histogram(binwidth = ...)
 ```
 
 ### 
@@ -1028,15 +1010,23 @@ Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-histogram-7-hint-1, eval = FALSE}
-... |>
-  +
-  labs(title = "",
-       subtitle = "",
-       x = "",
-       y = "")
+... +
+  labs(title = "...",
+       subtitle = "...",
+       x = "...",
+       y = "...")
 ```
 
-### 
+Reminder: Your graph should look like this:
+
+```{r}
+histogram_example <- penguins |> 
+  ggplot(aes(x = body_mass_g)) +
+  geom_histogram(binwidth = 200)
+
+histogram_example
+```
+
 
 ## Geom Density
 ### 
@@ -1059,7 +1049,6 @@ density_p <- penguins |>
        fill = "Species",
        color = "Species")
 density_p
-
 ```
 
 ### Exercise 1
@@ -1070,10 +1059,8 @@ Lets load the **palmerpenguins** package using `library()`.
 
 ```
 
-
-
 ```{r geom-density-1-hint-1, eval = FALSE}
-library(palmerpenguins)
+library(...)
 ```
 
 ### 
@@ -1088,11 +1075,9 @@ Run `penguins` and pipe it to a `ggplot()` call.
 
 ```
 
-
-
 ```{r geom-density-2-hint-1, eval = FALSE}
 penguins |>
-  ggplot()
+  ...
 ```
 
 ### 
@@ -1111,7 +1096,7 @@ In ggplot, set `x` to `body_mass_g` within `aes()`
 
 ```{r geom-density-3-hint-1, eval = FALSE}
 ...|>
-  ggplot(...(x = body_mass_g))
+  ggplot(...(x = ...))
 ```
 
 ### 
@@ -1129,8 +1114,7 @@ Now add the `geom_density()` call.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-density-4-hint-1, eval = FALSE}
-... |>
-  +
+... +
   geom_density()
 ```
 
@@ -1152,7 +1136,8 @@ The previous graph shows the distribution for all the species combined, so now l
 
 ```{r geom-density-5-hint-1, eval = FALSE}
 ... |>
-  ggplot(aes(x = ..., color = ...))
+  ggplot(aes(x = body_mass_g, color = ...)) +
+  geom_density
 ```
 
 ### 
@@ -1171,7 +1156,8 @@ Run `fill = species` within `aes()` in `ggplot()`.
 
 ```{r geom-density-6-hint-1, eval = FALSE}
 ... |>
-  ggplot(aes(x = ..., color = ..., fill = ...))
+  ggplot(aes(x = body_mass_g, color = species, fill = ...)) +
+  geom_density
 ```
 
 ### 
@@ -1190,8 +1176,7 @@ To make the graph transparent, run `alpha = 0.5` within `geom_density()` call.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-density-7-hint-1, eval = FALSE}
-penguins |>
-  ggplot(aes(x = ..., color = ..., fill = ...))+
+... +
   geom_density(alpha = ...)
 ```
 
@@ -1212,16 +1197,13 @@ Finally set an appropriate title, subtitle, axes labels, and caption for the gra
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-density-8-hint-1, eval = FALSE}
-... |>
-  +
+... +
   labs(title = "Distribution of Body Mass by Penguin Species",
        ... = "Bill Length (mm)",
-       y = ...,
+       y = "...",
        fill = "Species",
        ... = "Species")
 ```
-
-### 
 
 Reminder: This is what your graph should look like.
 
@@ -1250,10 +1232,8 @@ Lets load the **palmerpenguins** package using `library()`.
 
 ```
 
-
-
 ```{r geom-boxplot-1-hint-1, eval = FALSE}
-library(palmerpenguins)
+library(...)
 ```
 
 ### 
@@ -1291,7 +1271,7 @@ In `ggplot()` within `aes()`, set `x` to `species`.
 
 ```{r geom-boxplot-3-hint-1, eval = FALSE}
 ... |>
-  ggplot(aes(x = species))
+  ggplot(...(x = ...))
 ```
 
 ### 
@@ -1311,7 +1291,7 @@ In `ggplot()`,set `y` to `body_mass_g`.
 
 ```{r geom-boxplot-4-hint-1, eval = FALSE}
 ... |>
-  ggplot(...(x = ..., y = body_mass_g))
+  ggplot(aes(x = species, y = ...))
 ```
 
 ### 
@@ -1330,15 +1310,13 @@ Add `geom_boxplot()` layer using `+` to demonstrate the distribution of body mas
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-boxplot-5-hint-1, eval = FALSE}
-... |>
-  +
+... +
   geom_boxplot()
 ```
 
 ### 
 
 By default, `geom_boxplot()` does not display the underlying data points that fall outside of the whiskers (i.e., the outliers). However, it can be useful to visualize these points, especially if they are few in number or if they represent important values. One way to do this is to add the `outlier.color` and `outlier.shape` arguments to `geom_boxplot()`, which will display the outlier points in a different color and shape.
-
 
 ### Exercise 6
 
@@ -1351,8 +1329,7 @@ Finally set an appropriate title, subtitle, axes labels, and caption for the gra
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-boxplot-6-hint-1, eval = FALSE}
-... |>
-  +
+... +
   labs(title = "...",
        subtitle = "...",
        x = "Species",
@@ -1405,7 +1382,7 @@ Lets load the **palmerpenguins** package using `library()`.
 
 
 ```{r facet-wrap-1-hint-1, eval = FALSE}
-library(palmerpenguins)
+library(...)
 ```
 
 ### 
@@ -1462,7 +1439,7 @@ Let's specify the `y`, so within `ggplot()`, run `aes(y = body_mass_g)`.
 
 ```{r facet-wrap-4-hint-1, eval = FALSE}
 ...|>
-  ggplot(aes(y = ...))
+  ggplot(aes(x = flipper_length_mm, y = ...))
 ```
 
 ### 
@@ -1480,8 +1457,7 @@ Add the `geom_point()` using `+`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r facet-wrap-5-hint-1, eval = FALSE}
-... |>
-  +
+... +
   geom_point()
 ```
 
@@ -1498,9 +1474,8 @@ Within `geom_point()`, add another aesthetic layer and run `color = species`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r facet-wrap-6-hint-1, eval = FALSE}
-... |>
-  +
-  geom_point(aes(color= species))
+... +
+  geom_point(...(color = ...))
 ```
 
 ### 
@@ -1518,9 +1493,8 @@ Within `geom_point()`, run `shape = species` in `aes()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r facet-wrap-7-hint-1, eval = FALSE}
-... |>
-  + 
-  geom_point(...(x = ..., y = ...))
+... + 
+  geom_point(aes(color = species, shape = ...))
 ```
 
 ### 
@@ -1539,8 +1513,7 @@ To facet your plot by a single variable, run `facet_wrap()`. The first argument 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r facet-wrap-8-hint-1, eval = FALSE}
-...|>
-  +
+... +
   facet_wrap(...)
 ```
 
@@ -1559,9 +1532,8 @@ Finally set an appropriate title, subtitle, axes labels, and caption for the gra
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r facet-wrap-9-hint-1, eval = FALSE}
-...|> +
-  labs(x = "Flipper Length(mm)",
-       y = "Body Mass(g)")
+... +
+  labs(x = "Flipper Length(mm)", y = "Body Mass(g)")
 ```
 
 ### 
@@ -1587,10 +1559,8 @@ Before we save a plot we need to make on so start a pipe with `penguins` datset 
 
 ```
 
-
-
 ```{r saving-plots-1-hint-1, eval = FALSE}
-penguins |>
+... |>
   ggplot()
 ```
 
@@ -1610,7 +1580,7 @@ Add `aes()` within `ggplot()` and specify `x` to `flipper_length_mm` and `y` to 
 
 ```{r saving-plots-2-hint-1, eval = FALSE}
 ... |>
-  ggplot(aes(x=..., y=...))
+  ggplot(aes(x = ..., y = ...))
 ```
 
 ### 
@@ -1628,8 +1598,7 @@ To finish the plot, add `geom_point` function with `+`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r saving-plots-3-hint-1, eval = FALSE}
-... |>
-  +
+... +
   geom_point()
 ```
 
@@ -1648,15 +1617,14 @@ Here comes the last part, define the whole plot to a variable `plot_geom` using 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r saving-plots-4-hint-1, eval = FALSE}
-plot_geom <- ... |>
-                  ggplot()+
+... <- penguins |>
+                  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
                   geom_point()
 ```
 
 ### 
 
 When you save plots using `ggsave()`, it will save your plot to your working directory.
-
 
 ### Exercise 5
 
@@ -1669,7 +1637,7 @@ Here is the part where we save the plot, so type `ggsave()` and within it set `f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r saving-plots-5-hint-1, eval = FALSE}
-ggsave(filename = ..., plot = ...)
+ggsave(filename = ..., plot = plot_geom)
 ```
 
 ### 
@@ -1680,8 +1648,6 @@ If you don’t specify the width and height they will be taken from the dimensio
 ### 
 
 Congratulations! You have successfully completed all the material in the chapter. However, when it comes to plotting, practice makes perfect. So, keep improving your skills by engaging in more plotting exercises. The more you practice, the more confident and proficient you will become. The more you immerse yourself in the world of data visualization, the more you will refine your skills and develop an intuitive sense for creating impactful and informative plots.
-
-
 
 ## Summary
 ### 
