@@ -49,6 +49,12 @@ introductory data science course.
 
 ## Installation
 
+To install the package from CRAN:
+
+``` r
+install.packages("r4ds.tutorials")
+```
+
 You can install the development version from
 [GitHub](https://github.com/) with:
 

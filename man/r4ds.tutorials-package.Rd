@@ -12,12 +12,13 @@ Tutorials for R for Data Science by Hadley Wickham, Mine Çetinkaya-Rundel, and 
 Useful links:
 \itemize{
   \item \url{https://ppbds.github.io/r4ds.tutorials/}
-  \item Report bugs at \url{https://github.com/ppbds/r4ds.tutorials/issues}
+  \item \url{https://github.com/PPBDS/r4ds.tutorials}
+  \item Report bugs at \url{https://github.com/PPBDS/r4ds.tutorials/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: David Kane \email{dave.kane@gmail.com} (\href{https://orcid.org/0000-0002-6660-3934}{ORCID})
+\strong{Maintainer}: David Kane \email{dave.kane@gmail.com} (\href{https://orcid.org/0000-0002-6660-3934}{ORCID}) [copyright holder]
 
 }
 \keyword{internal}
