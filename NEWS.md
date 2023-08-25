@@ -1,4 +1,6 @@
-# r4ds.tutorials (development version)
+# r4ds.tutorials 0.1.0
+
+* Intial CRAN release
 
 * Switch to CRAN version of tutorial.helpers.
 
