@@ -6,7 +6,7 @@
 \alias{r4ds.tutorials-package}
 \title{r4ds.tutorials: Tutorials for R for Data Science}
 \description{
-Tutorials for R for Data Science by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. In an ideal world, students would read the book and type in all the associated R commands themselves. Sadly, that often does not happen. These tutorials allow students to demonstrate (and their instructors to be sure) that all work has been completed. See the tutorial.helpers package for a background discussion of the tool and approach.
+When assigned "R for Data Science" by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund, students should read the book and type in all the associated R commands themselves. Sadly, that never happens. These tutorials allow students to demonstrate (and their instructors to be sure) that all work has been completed. See Kane (2023) \url{https://ppbds.github.io/tutorial.helpers/articles/instructions.html} from the 'tutorial.helpers' package for a background discussion.
 }
 \seealso{
 Useful links:
