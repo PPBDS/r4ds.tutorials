@@ -4,7 +4,7 @@
 \name{r4ds.tutorials-package}
 \alias{r4ds.tutorials}
 \alias{r4ds.tutorials-package}
-\title{r4ds.tutorials: Tutorials for R for Data Science}
+\title{r4ds.tutorials: Tutorials for "R for Data Science"}
 \description{
 When assigned "R for Data Science" (Wickham, Çetinkaya-Rundel, and Grolemund (2023, ISBN: 1492097402)), students should read the book and type in all the associated R commands themselves. Sadly, that never happens. These tutorials allow students to demonstrate (and their instructors to be sure) that all work has been completed. See Kane (2023) \url{https://ppbds.github.io/tutorial.helpers/articles/instructions.html} from the 'tutorial.helpers' package for a background discussion.
 }
