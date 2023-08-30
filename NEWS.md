@@ -1,4 +1,4 @@
-# r4ds.tutorials 0.1.3
+# r4ds.tutorials 0.1.4
 
 * Initial CRAN release.
 
