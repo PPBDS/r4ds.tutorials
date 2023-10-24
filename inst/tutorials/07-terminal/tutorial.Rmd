@@ -5,8 +5,8 @@ tutorial:
   id: terminal
 output:
   learnr::tutorial:
-    progressive:  true
-    allow_skip::  true
+    progressive: yes
+    'allow_skip:': yes
 runtime: shiny_prerendered
 description: Terminal Tutorial
 ---
@@ -21,62 +21,8 @@ options(tutorial.exercise.timelimit = 60,
         tutorial.storage = "local") 
 ```
 
+<!-- Lots of opportunities for knowledge drops. See Chapter 7 in R4DS. -->
 
-<!-- Note that Relative and absolute paths are discussed in Chapter 7 of R4DS. This should be the chapter 7 tutorial.  -->
-
-<!-- Davids-MBP-10:wildcards davidkane$ ls a -->
-<!-- ls: a: No such file or directory -->
-<!-- Davids-MBP-10:wildcards davidkane$ ls a* -->
-<!-- apple.txt -->
-<!-- Davids-MBP-10:wildcards davidkane$ ls *a* -->
-<!-- apple.txt       banana.txt -->
-<!-- Davids-MBP-10:wildcards davidkane$  -->
-
-<!-- Then ls > files.txt -->
-
-<!-- Davids-MBP-10:wildcards davidkane$ ls $R_HOME > files.txt -->
-<!-- Davids-MBP-10:wildcards davidkane$ cat files.txt -->
-<!-- COPYING -->
-<!-- Info.plist -->
-<!-- R -->
-<!-- Rscript -->
-<!-- SVN-REVISION -->
-<!-- bin -->
-<!-- doc -->
-<!-- etc -->
-<!-- fontconfig -->
-<!-- include -->
-<!-- lib -->
-<!-- library -->
-<!-- man1 -->
-<!-- modules -->
-<!-- share -->
-<!-- tests -->
-<!-- Davids-MBP-10:wildcards davidkane$ grep i files.txt  -->
-<!-- Info.plist -->
-<!-- Rscript -->
-<!-- bin -->
-<!-- fontconfig -->
-<!-- include -->
-<!-- lib -->
-<!-- library -->
-<!-- Davids-MBP-10:wildcards davidkane$ grep R files.txt  -->
-<!-- R -->
-<!-- Rscript -->
-<!-- SVN-REVISION -->
-<!-- Davids-MBP-10:wildcards davidkane$ grep ^R files.txt  -->
-<!-- R -->
-<!-- Rscript -->
-<!-- Davids-MBP-10:wildcards davidkane$ grep t files.txt  -->
-<!-- Info.plist -->
-<!-- Rscript -->
-<!-- etc -->
-<!-- fontconfig -->
-<!-- tests -->
-<!-- Davids-MBP-10:wildcards davidkane$ grep t$ files.txt  -->
-<!-- Info.plist -->
-<!-- Rscript -->
-<!-- Davids-MBP-10:wildcards davidkane$  --> 
 
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -88,20 +34,25 @@ options(tutorial.exercise.timelimit = 60,
 ## Introduction
 ### 
 
+This tutorial covers material which is not actually in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. But the material is in keeping with the spirit of that book. Some of the material from [Chapter 7 Workflow: scripts and projects](https://r4ds.hadley.nz/workflow-scripts) appears here.
+
+This tutorial introduces the structure and uses of the Terminal from within RStudio. The older, more general term for the terminal is the "command line." All modern operating systems provide a command line, from which sophisticated users can modify files and directories, using commands like `pwd`, `ls`, `touch`, `mkdir`, `mv`, `rm`, and `cd`. We also discuss regular expressions as well as some of the metacharacters (like, `*`, `^` and `$`) from which they are constructed.
+
+### 
+
+Note that a default Windows installation is different from Mac or Linux. If you are using Windows, you must first install RTools. Download the latest version from [here](https://cran.r-project.org/bin/windows/Rtools/). Currently, the Rtools43 installer is what you want. The link is in the sixth paragraph of [this page](https://cran.r-project.org/bin/windows/Rtools/rtools43/rtools.html).
+
+
+## Terminal
+### 
+
 The Terminal tab is next to the Console tab within the Console pane in the lower left portion of RStudio. (Yes, it is a bit confusing that we call the entire structure the Console **pane** even though only one part of it is the Console **tab**.) We use the Console tab to talk to R. We use the Terminal tab to talk directly with the computer. Sadly, the Console and the Terminal speak different languages.
-
-###
-
-This tutorial will introduce the structure and uses of the Terminal. (Note that a default Windows installation is different from Mac or Linux. If you are using Windows, you must first install RTools. Download the latest version from [here](https://cran.r-project.org/bin/windows/Rtools/). Currently, the Rtools43 installer is what you want. The link is in the sixth paragraph of [this page](https://cran.r-project.org/bin/windows/Rtools/rtools43/rtools.html).)
-
 
 ### Exercise 1
 
 Hit return two times in the Terminal to see what happens. The terminal has a string of characters ending in a $ before your cursor, called the **prompt**. After a command has been executed, a prompt will be generated on a new line to let you know that Terminal is ready for a new command.  Copy and paste the three (blank) lines from the Terminal as your answer below. We do a lot of **c**opy/**p**asting of **c**ommands/**r**esponses, so we abbreviate those instructions as CP/CR.
 
-### 
-
-```{r introduction-1}
+```{r terminal-1}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -118,9 +69,8 @@ The prompt acts as a quick way to tell you where in the computer you are. Termin
 
 Let's figure out which folder we are in. To see your current location within your computer, type the command `pwd` (**p**resent **w**orking **d**irectory) in the Terminal. Hitting return runs the command. Copy and paste all commands and results associated with this exercise below, as you will do for all the following exercises.  
 
-### 
 
-```{r introduction-2}
+```{r terminal-2}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -143,9 +93,7 @@ include_graphics("images/pwd.png")
 
 Let's see a **l**i**s**t of what is where we are, i.e. in our working directory. Run `ls`. CP/CR.
 
-### 
-
-```{r introduction-3}
+```{r terminal-3}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -162,9 +110,7 @@ Note how, if you do not give any more information, `ls` assumes that you want a 
 
 Let's create a file called `my.txt`. Run `touch my.txt`. Run `ls` to confirm that the new file exists inside the working directory. CP/CR.
 
-### 
-
-```{r introduction-4}
+```{r terminal-4}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -179,12 +125,10 @@ question_text(NULL,
 
 ### Exercise 5
 
-Let's **m**a**k**e a **dir**ectory called `my-class`. Run `mkdir my-class`. Run `ls` to confirm that the new directory exists inside the working directory. Copy and paste the work.
-
-### 
+Let's **m**a**k**e a **dir**ectory called `my-class`. Run `mkdir my-class`. Run `ls` to confirm that the new directory exists inside the working directory. CP/CR.
 
  
-```{r introduction-5}
+```{r terminal-5}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -201,9 +145,7 @@ question_text(NULL,
 
 Let's rename `my.txt` to `fake.txt`.  Run `mv my.txt fake.txt`. CP/CR. 
 
-### 
-
-```{r introduction-6}
+```{r terminal-6}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -214,15 +156,14 @@ question_text(NULL,
 
 ### 
 
-`mv` stands for **m**o**v**e. The first argument is the file we want to move, the second argument is the location (both the path, if applicable, and file name) we want to move it to. Here the places have the same folder location --- the current working directory, or `.` --- but different names. We will move things to different directories with `mv` later. 
+`mv` stands for **m**o**v**e. The first argument is the file we want to move, the second argument is the location (both the path, if applicable, and filename) we want to move it to. Here the places have the same folder location --- the current working directory, or `.` --- but different names. We will move things to different directories with `mv` later. 
 
 ### Exercise 7
 
-Let's **r**e**m**ove the file `fake.txt`. Run `rm fake.txt`. 
+Let's **r**e**m**ove the file `fake.txt`. Run `rm fake.txt`. CP/CR.
 
-### 
 
-```{r introduction-7}
+```{r terminal-7}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -231,15 +172,13 @@ question_text(NULL,
     rows = 3)
 ```
 
-**Be careful** with the `rm` command in Terminal. Unlike moving files to Trash on your laptop, it is **irreversible**. If you delete certain special files, it could cause damage the programs or your computer. 
+**Be careful** with the `rm` command in the Terminal. Unlike moving files to Trash on your laptop, it is (usually) **irreversible**. 
 
 ### Exercise 8
 
-Let's remove the directory `my-class`. Run `rm -r my-class`. 
+Let's remove the directory `my-class`. Run `rm -r my-class`. CP/CR.
 
-### 
-
-```{r introduction-8}
+```{r terminal-8}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -261,7 +200,6 @@ You will practice using paths both inside and outside the working directory. You
 
 By default, the Terminal in RStudio starts with a working directory which is the same as the folder in which the current R project resides, i.e., the folder with the `.Rproj` file in it. Run `pwd` to return your current working directory. CP/CR.
 
-### 
 
 ```{r paths-1}
 question_text(NULL,
@@ -274,13 +212,12 @@ question_text(NULL,
 
 ### 
 
-The Files pane (bottom right corner) in RStudio shows the contents of the default working directory, generally the project directory. Towards the top, you will see a series of directories, separated by `>`, on your computer beginning with the Home icon. This should match the path generated by `pwd`. 
+The Files pane (bottom right corner) in RStudio shows the contents of the default working directory, generally the project directory. Towards the top, you will see a series of directories, separated by `>`, on your computer. beginning with the Home icon. This should match the path generated by `pwd`. 
 
 ### Exercise 2
 
-Use `mkdir` to make a directory named `paths` inside your working directory. CP/CR.
+Use `mkdir` to make a directory named `paths` inside your current working directory. CP/CR.
 
-### 
 
 ```{r paths-2}
 question_text(NULL,
@@ -299,7 +236,6 @@ As above, if you do not give any more information, the new directory is created 
 
 Let's **c**hange the working **d**irectory to `paths`. Run `cd paths`.  Run `pwd` to confirm that you have changed the working directory. CP/CR.
 
-### 
 
 ```{r paths-3}
 question_text(NULL,
@@ -310,11 +246,14 @@ question_text(NULL,
     rows = 3)
 ```
 
+### 
+
+<!-- DK: Knowledge. -->
+
 ### Exercise 4
 
 Use `mkdir` to make a directory  called `lessons` inside `paths`. CP/CR.
 
-### 
 
 ```{r paths-4}
 question_text(NULL,
@@ -333,7 +272,6 @@ Because we have changed working directories, the new directory is now created di
 
 Let's make a directory within `lessons` called `fruits`. Run `mkdir lessons/fruits`. Run `ls lessons` to check to see if `fruits` exists inside. CP/CR.
 
-### 
 
 ```{r paths-5}
 question_text(NULL,
@@ -350,9 +288,9 @@ We could not, as before, simply name the folder we wanted to create because then
 
 ### Exercise 6
 
-Let's change our working directory to `fruits`. Run `cd lessons/fruits`. As you are typing this command, type only the `f` in `fruits` and then press the tab key (twice may be necessary on some computers). Pressing tab autocompletes the name of a file or directory.
+Let's change our working directory to `fruits`. Run `cd lessons/fruits`. As you are typing this command, type only the `f` in `fruits` and then press the tab key (twice may be necessary on some computers). Pressing tab autocompletes the name of a file or directory. CP/CR.
 
-### 
+
 
 ```{r paths-6}
 question_text(NULL,
@@ -449,8 +387,6 @@ It would be tedious to have to use `..` every time we wanted to refer to anywher
 
 Let's go back to the default working directory. Go to Exercise 2 to find the absolute path of the default working directory. Run `cd` with this as an argument. For example: `cd /Users/user-name/Desktop/sample/default-working-directory`. CP/CR.
 
-### 
-
 ```{r paths-11}
 question_text(NULL,
     answer(NULL, correct = TRUE),
@@ -464,11 +400,12 @@ question_text(NULL,
 
 <!-- DK: This could be broken up into several different questions, showing the different options which we currently only discuss. -->
 
-Let's move the file `does-not-belong` so that it is directly inside of the working directory. Run `mv paths/lessons/fruits/does-not-belong .`. Recall that the first argument is the place from where we want to move the file. The second argument is the place where we want to move the file to. This might be just a file name, if we are giving the file a new name in the current directory. Or it might be a path and file name combination. 
+Let's move the file `does-not-belong` so that it is directly inside of the working directory. Run `mv paths/lessons/fruits/does-not-belong .`. Recall that the first argument is the place from where we want to move the file. The second argument is the place where we want to move the file to. This might be just a filename, if we are giving the file a new name in the current directory. Or it might be a path and filename combination. 
+
+### 
 
 Recall that `.` is shorthand for the present working directory. So this command just moves the file from where it is, to where we are now, without changing the files name. CP/CR.
 
-### 
 
 ```{r paths-12}
 question_text(NULL,
@@ -481,7 +418,7 @@ question_text(NULL,
 
 ### 
 
-If we are moving a file or directory without changing the name, we do not need to add the name in the second argument because `mv` will retain the name by default. `mv paths/lessons/fruits/does-not-belong ./does-not-belong` is equivalent to the command you ran because `./` means the same thing as `.`, but it allows you to add a file name as well. It is also possible to change the name of a file as we move it.
+If we are moving a file or directory without changing the name, we do not need to add the name in the second argument because `mv` will retain the name by default. `mv paths/lessons/fruits/does-not-belong ./does-not-belong` is equivalent to the command you ran because `./` means the same thing as `.`, but it allows you to add a filename as well. It is also possible to change the name of a file as we move it.
 
 ### Exercise 13
 
@@ -672,7 +609,7 @@ question_text(NULL,
 
 ### 
 
-Other than the `.`, avoid beginning file names with special characters or including spaces. These are more difficult to work with in Terminal. 
+Other than the `.`, avoid beginning filenames with special characters or including spaces. These are more difficult to work with in Terminal. 
 
 ### Exercise 3
 
@@ -803,7 +740,7 @@ question_text(NULL,
 
 ### 
 
-Like `mv`, `cp` can change a file name. Like `mv`, if the destination file name is omitted, `cp` will retain the same name by default. 
+Like `mv`, `cp` can change a filename. Like `mv`, if the destination filename is omitted, `cp` will retain the same name by default. 
 
 ### Exercise 10
 
@@ -1025,18 +962,17 @@ question_text(NULL,
 
 Good work. 
 
-## Wildcards and grep
+## Wildcards
 ### 
 
-You will learn how to search for files and search through individual files.
+You will learn how to search for files by using **wildcards** to form **regular expressions**.
 
 ### Exercise 1
 
-Use `pwd` to confirm that you are in your default working directory. Make a directory directly inside the working directory, named `wildcards`. CP/CR.
+Use `pwd` to confirm that you are in your default working directory. Make a directory named `wildcards`. CP/CR.
 
-### 
 
-```{r wildcards-and-grep-1}
+```{r wildcards-1}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1044,37 +980,36 @@ question_text(NULL,
     incorrect = NULL,
     rows = 3)
 ```
+
+### 
+
+The `mkdir` command does not produce any output. To confirm that it had the desired effect, you could run `ls`.
+
+
 
 ### Exercise 2
 
-Change your working directory to `wildcards`. Make three text files in `wildcards`, named `hat.txt`, `cat.txt`, and `ate.txt`. CP/CR.
+Change your working directory to `wildcards` using `cd`. Confirm the change with `pwd`. CP/CR.
 
-### 
-
-```{r wildcards-and-grep-2}
+```{r wildcards-2}
 question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
 ```
 
 ### 
 
-`touch` can take multiple arguments, making a file for each one. `touch hat.txt car.txt ate.txt` is equivalent to running `touch` three times. 
+Keep track of your current location. There is a difference between being in the directory above `wildcards` and being inside of `wildcards`. Right now, you are inside `wildcard`.
 
 ### Exercise 3
 
-Terminal commands allow the use of **wildcards**. A wildcard `*` represents zero or more of any character, and it is used to work with similarly named files as a group. 
+Using `touch`, Make three text files named `hat.txt`, `cat.txt`, and `ate.txt`. CP/CR.
 
-### 
 
-Let's generate a list of all our files which contain the letter `a`. First simply try to run `ls a`. You will get an error message because there is no file named `a` in the working directory.
-
-### 
-
-```{r wildcards-and-grep-3}
+```{r wildcards-3}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1085,15 +1020,18 @@ question_text(NULL,
 
 ### 
 
-Though we have been using `ls` to view the content of directories, `ls` can also take files as an argument and make a list of them. 
+`touch` can take multiple arguments, making a file for each one. `touch hat.txt cat.txt ate.txt` is equivalent to running `touch` three times. 
 
 ### Exercise 4
 
-Let's try again. Run `ls a*`. Terminal will only return `ate.txt`. Because you  put `*` only after `a`, Terminal returned only  files that began with `a`. CP/CR.
+Terminal commands allow the use of **wildcards**. A wildcard `*` represents zero or more of any character, and it is used to work with similarly named files as a grouping. 
 
 ### 
 
-```{r wildcards-and-grep-4}
+Let's generate a list of all our files whose names contain the letter `a`. First simply try to run `ls a`. You will get an error message --- "No such file or directory" --- because there is no file named `a` in the working directory. CP/CR.
+
+
+```{r wildcards-4}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1104,15 +1042,32 @@ question_text(NULL,
 
 ### 
 
-Though wildcards can be strings of any length, position matters.
+Though we have been using `ls` to return all the content of a directory, `ls` can also take a name as an argument, as above. 
 
 ### Exercise 5
 
-Now run `ls *a*`. This should return `hat.txt`, `cat.txt`, and `ate.txt`. CP/CR.
+Let's try again. Run `ls a*`. The only return will be `ate.txt`. Because you  put `*` after `a`, `ls` returns only files that began with `a`. The "star" wildcard --- `*` --- matches anything. CP/CR. 
+
+
+```{r wildcards-5}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
 
 ### 
 
-```{r wildcards-and-grep-5}
+Though `*` will match strings of any length, its positioning matters. `a*` is not the same thing as `*a`. The first matches any string (i.e., any filename) which starts with `a`. The second matches any string which ends with `a`.
+
+### Exercise 6
+
+Now run `ls *a*`. This should return `hat.txt`, `cat.txt`, and `ate.txt`. CP/CR.
+
+
+```{r wildcards-6}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1123,31 +1078,12 @@ question_text(NULL,
 
 Note that these **regular expressions** are case-sensitive. A regular expression is a "pattern" which you can use for many purposes, including as a search criteria. 
 
-### Exercise 6
-
-Now let's try to make a list of all the file whose names before the suffix end in `t`. Run `ls *t.*` This should return `hat.txt` and `cat.txt`. CP/CR.
-
-### 
-
-```{r wildcards-and-grep-6}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-Often you need to think critically about which regular expression works best for your purpose. 
-
-
 ### Exercise 7
 
-Let's save the output of our list of all the filenames that contained `a` to a new file called `afiles.txt`. Keep pressing the `up` arrow key to navigate through your previous commands until you get to the command you used above: `ls *a*`. Then add ` > afiles.txt` and run the command. CP/CR.
+Now let's try to make a list of all the files whose names before the suffix end in `t`. Run `ls *t.*` CP/CR.
 
-### 
 
-```{r wildcards-and-grep-7}
+```{r wildcards-7}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1158,15 +1094,15 @@ question_text(NULL,
 
 ### 
 
-You can use your `up` and `down` arrow keys to navigate command history. The `>` outs the result of the lefthand side command into the righthand side location.
+This should return `hat.txt` and `cat.txt`. Read this regular expression --- `*t.*` --- as matching any string which includes a `t` followed directly by a period, regardless of any characters which are also included, before or after. `ate.txt` is not matched because the `t` and the `.` are separated by `e`.
+
 
 ### Exercise 8
 
-Wildcards can be used with more than `ls`. Let's move `hat.txt` and `cat.txt` together into one directory. Make a new directory called `suess`. Run `mv *t.* suess`. CP/CR.
+Let's save the output of our list of all the filenames that contained `a` to a new file called `afiles.txt`. Keep pressing the **up** arrow key to navigate through your previous commands until you get to the command you used above: `ls *a*`. Then add ` > afiles.txt` and run the command. CP/CR.
 
-### 
 
-```{r wildcards-and-grep-8}
+```{r wildcards-8}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1175,13 +1111,143 @@ question_text(NULL,
     rows = 3)
 ```
 
+### 
+
+You can use your `up` and `down` arrow keys to navigate command history. The `>` symbol outputs the result of the left-hand side command into the right-hand side location.
+
 ### Exercise 9
 
-Use `cd` and `..` to return to the default working directory. Make a directory called `grepping`
+Wildcards can be used with more than `ls`. Let's move `hat.txt` and `cat.txt` together into one directory. Make a new directory called `suess` within the `wildcards* directory in which you are currently located. Run `ls`. CP/CR
+
+
+```{r wildcards-9}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+The `wildcards` directory, in which you are currently located, now includes 5 items, one of which is the `suess` directory.
+
+
+### Exercise 10
+
+Run `ls -l`. CP/CR
+
+```{r wildcards-10}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
 
 ### 
 
-```{r wildcards-and-grep-9}
+The `-l` option provides a **l**ong-format listing of the contents of the directory, including information about the type of content (file versus directory) and creation date/times.
+
+### Exercise 11
+
+Run `ls *t.*`. CP/CR.
+
+```{r wildcards-11}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Before moving or otherwise acting on a group of files, we often want to ensure that we have the correct grouping. Running `ls` with the appropriate regular expression is an easy way to test.
+
+
+### Exercise 12
+
+Use the previous command (since we have confirmed that it generates the list of files we want to move) but replace `ls` with `mv` and then add `suess`, which indicates the location to which we want to move the files. In other words, run `mv *t.* suess`. CP/CR.
+
+```{r wildcards-12}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+The `mv` command, like `mkdir`, does not produce any output. You need to check by hand to ensure it has done what you wanted.
+
+### Exercise 13
+
+Run `ls -R`. CP/CR.
+
+```{r wildcards-13}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+The `-R` option to the `ls` command stands for **r**ecursive. We see, not simply the contents of the current directory (two files and the `seuss` directory) but also the contents of the `suess` directory itself.
+
+### Exercise 14
+
+Use `cd ..` to move out of the `wildcards` directory, one level up. Run `pwd`. CP/CR.
+
+```{r wildcards-14}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+In order to delete a directory, you can not be located within that directory. We want to delete (that is, "remove") the `wildcards` directory since we always want to clean up any temporary files/directories which we have created. 
+
+### Exercise 15
+
+Run `rm wildcards`. That command will fail because "wildcards: is a directory". You can't just `rm` directories in the same way that you `rm` files. Instead, you need to use `rm -r`, where the `-r` indicates **r**ecursive. Run `rm -r wildcards`. CP/CR.
+
+
+```{r wildcards-15}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Note that both `wildcards` and `wildcards/` refer to the same entity, the `wildcards` directory. The Terminal often "adds" a forward slash (`/`) to the end of directory names to indicate that the object is a directory, not simply a file.
+
+
+## grep
+### 
+
+In the previous section, we used **wildcards** to create **regular expressions** in order to generate lists of filenames which matched a specific patter. In this section, we will use `grep` to look for words inside of files. Fortunately, wildcards and regular expressions work the same with `grep`.
+
+### Exercise 1
+
+Make a directory called `grepping` using `mkdir`. Run `ls`. CP/CR.
+
+
+```{r grep-1}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1194,13 +1260,36 @@ question_text(NULL,
 
 We call this folder `grepping` rather than `grep` because it is bad to name files or directories the same thing as commands. 
 
-### Exercise 10
+### Exercise 2
 
-Use `mv` and `.` to move `afiles.txt` to `grepping`. Remember that `afiles.txt` is in `wildcards`. 
+`cd` into the `grepping` directory. Run this command:
+
+`echo "hat.txt
+cat.txt
+ate.txt
+" > files.txt`
+
+Run `cat files.txt`. CP/CR.
+
+```{r grep-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
 
 ### 
 
-```{r wildcards-and-grep-10}
+The `echo` command simply "echoes" back what argument you pass it. In this case, we want to fill `files.txt` with the same list of filenames which we used before. Note that we have included an extra blank line at the end. It is always a good idea for text files to end with a blank line.  
+
+
+### Exercise 3
+
+Let's search the text file for lines containing the letter "a". Run `grep a files.txt`. CP/CR. 
+
+```{r grep-3}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1211,15 +1300,163 @@ question_text(NULL,
 
 ### 
 
-Have you been using Tab autocomplete to write your paths? If not, try it here. 
+Remember to use the *tab* key to take advantage of auto-completion. Don't type! Tab complete! 
+
+This should return all three lines from the file, which are the names of the three files we initially created. The blank line is not returned because it does not include an "a".
+
+`grep` is used to search for a string of characters within a text file. When it finds a match, it prints the line. You can put the regular expression, in this case `a`, in quotes but that is not required.
+
+
+### Exercise 4
+
+Let's search through `files.txt` for lines that begin with the letter "a". Run `grep ^a files.txt`. CP/CR.
+
+```{r grep-4}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+This should return the line with `ate.txt`. 
+
+`^` is put at the beginning of a regular expression to indicate that the expression must occur at the beginning of the string. A dollar sign --- `$` --- at the end of a regular expression indicates that the expression must occur at the end of the string. 
+
+We will not attempt the previous search we made of these files with the wildcards because it is difficult, though possible, to search for strings with special characters like `.` with `grep`. 
+
+### Exercise 5
+
+Run `ls $R_HOME` to make a list of the contents of the R home directory. CP/CR. 
+
+```{r grep-5}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+`$R_HOME` is an evironment variable which should behave similarly regardless of your computer. There should be several directories and files in this listing, including `COPYING` and `tests`.
+
+
+### Exercise 6
+
+Add `>` to `ls $R_HOME` to save this output to a new file named `RHOME.txt` located withing the `grepping` directory. That is, run 
+
+`ls $R_HOME > RHOME.txt`
+
+CP/CR. 
+
+
+```{r grep-6}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+The `>` symbol is known as the "output redirection operator." Because all the output has been sent into `RHOME.txt`, this command produces no output.
+
+### Exercise 7
+
+Run `wc RHOME.txt`. The `wc` command stands for **w**ord **c**ount. CP/CR.
+
+```{r grep-7}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+The first number returned by `wc` is the number of lines in the file. The second is the total number of words.
+
+### Exercise 8
+
+Use `grep` to search `RHOME.txt` for lines that contain `R`. That is, run:
+
+`grep R RHOME.txt`
+
+CP/CR.
+
+```{r grep-8}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+A mistyped `grep` command can cause the Terminal to get stuck and not generate a new prompt. If this happens, navigate to the top of the Terminal page and click the dropdown menu where Terminal says busy. Press Interrupt Terminal Command to generate a new prompt and start again. 
+
+### Exercise 9
+
+Use `grep` and `^` to search `RHOME.txt` for lines that begin with `R`. That is, run:
+
+`grep ^R RHOME.txt`
+
+CP/CR.
+
+```{r grep-9}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+`^` and `$` are called metacharacters. It is sometimes useful to put quotes around a regular expression which includes metacharacters.
+
+### Exercise 10
+
+Use `grep` and `$` to search `RHOME.txt` for lines that end with `c`. That is, run:
+
+`grep c$ RHOME.txt`
+
+CP/CR.
+
+```{r grep-10}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+This should return two lines: `doc` and `etc`. (Your computer set up might be different, so don't worry if your answer is different.)
 
 ### Exercise 11
 
-Let's search the text file for lines containing the letter "a". Run `grep a grepping/afiles.txt` This should return all three lines. 
+Use `grep` to search `RHOME.txt` for lines than contain the string `ib`. That is, run:
 
-### 
+`grep ib RHOME.txt`
 
-```{r wildcards-and-grep-11}
+CP/CR
+
+```{r grep-11}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1230,128 +1467,13 @@ question_text(NULL,
 
 ### 
 
-`grep` is used to search for a string of characters within a text file. When it finds a match, it prints the line. The regular expression can be put in quotes but does not have to. 
-
+An even more powerful version of `grep` is known as `egrep`. Learning more about `egrep` is beyond the scope of this tutorial.
 
 ### Exercise 12
 
-Let's search through the text file for lines that begin with the letter "a". Run `grep ^a grepping/afiles.txt`. This should return the line with `ate.txt`. 
+Use `cd ..` change the working directory to your default working directory. Run `pwd`. CP/CR.
 
-### 
-
-```{r wildcards-and-grep-12}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-### 
-
-`^` is put at the beginning of a regular expression to indicate that the expression must occur at the beginning of the string. `$` is likewise put at the end of a regular expression to indicate that the expression must occur at the end of the string. 
-
-We will not attempt the third search we made of these files with the wildcards because it is difficult, though possible, to search for strings with special characters like `.` with `grep`. 
-
-
-### Exercise 13
-
-Use `ls` and the environmental variable `$R_HOME` to make a list of the contents of `$R_HOME` and use `>` to save this ouput to a new file named `rfiles.txt`. Use `cat` to print this file. 
-
-### 
-
-```{r wildcards-and-grep-13}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-### Exercise 14
-
-Use `grep` to search `rfiles.txt` for lines that contain `R`. This should return two lines.
-
-### 
-
-```{r wildcards-and-grep-14}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-### 
-
- 
-A mistyped grep command can cause terminal to get stuck and not generate a new prompt. If this happens, navigate to the top of the Terminal page and click the dropdown where Terminal says busy. Press Interrupt Terminal Command to generate a new prompt and start again. 
-
-### Exercise 15
-
-Use `grep` and `^` to search `rfiles.txt` for lines that begin with `R`. This should retrn two lines 
-
-### 
-
-```{r wildcards-and-grep-15}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-### 
-
-`^` and `$` are called metacharacters. 
-
-### Exercise 16
-
-Use `grep` and `$` to search `rfiles.txt` for lines that end with `c`. Remember that `$` comes at the end. This should return one line.
-
-### 
-
-```{r wildcards-and-grep-16}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-### 
-
-Several metacharacters exist which can be used for more specific searches.
-
-### Exercise 17
-
-Use `grep` to search `rfiles.txt` for lines than contain the string `ib`. This should return two lines.
-
-### 
-
-```{r wildcards-and-grep-17}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-### 
-
-An even more powerful version of `grep` is known as `egrep` and is on the Terminal of most operating systems. 
-
-### Exercise 18
-
-Use `cd` change the working directory to your default working directory. Use the absolute path from Exercise 1 if needed. 
-
-```{r wildcards-and-grep-18}
+```{r grep-12}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1364,11 +1486,11 @@ question_text(NULL,
 
 If you keep your R projects in the same place on your computer, only the last directory in the path for your default working directory will change between projects. 
 
-### Exercise 19
+### Exercise 13
 
-Use `rm -r`to remove `wildcards` and `grepping` at the same time. Like touch, `rm` can take multiple arguments. 
+Use `rm -r` to remove `grepping`. CP/CR.
 
-```{r wildcards-and-grep-19}
+```{r grep-13}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1377,9 +1499,15 @@ question_text(NULL,
     rows = 3)
 ```
 
+## Summary
 ### 
 
-Good work. 
+This tutorial covered material which is not actually in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. But the material is in keeping with the spirit of that book. Some of the material from [Chapter 7 Workflow: scripts and projects](https://r4ds.hadley.nz/workflow-scripts) appeared here.
+
+This tutorial has introduce the structure and uses of the Terminal from within RStudio. The older, more general term for the terminal is the "command line." All modern operating systems provide a command line, from which sophisticated users can modify files and directories, using commands like `pwd`, `ls`, `touch`, `mkdir`, `mv`, `rm`, and `cd`. We also discussed regular expressions as well as some of the metacharacters (like, `*`, `^` and `$`) from which they are constructed.
+
+Want to learn more about the command line and related topics? Read [*The Unix Workbench*](https://seankross.com/the-unix-workbench/) by Sean Kross.
+
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
