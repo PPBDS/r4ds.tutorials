@@ -885,11 +885,24 @@ geom_bar_p
 ## Geom Histogram
 ### 
 
-To visualize the distribution of a continuous variable, we will be using `geom_histogram()` and it is very useful when you want to understand the deviation of data.
+To visualize the distribution of a continuous variable, we will be using `geom_histogram()`. We will construct this plot:
+
+```{r}
+hist_p <- penguins |> 
+  ggplot(aes(x = body_mass_g)) +
+  geom_histogram(binwidth = 200) +
+  labs(title = "Weight for Penguins for the Palmer Peninsula",
+       subtitle = "There is a 'bump' on the right tail because Gentoo penguins are much larger",
+       x = "Weight (grams)",
+       y = "Number of Penguins",
+       caption = "palmerpenguins R package")
+
+hist_p
+```
 
 ### Exercise 1
 
-Lets load the **palmerpenguins** package using `library()`.
+Load the **palmerpenguins** package using `library()`.
 
 ```{r geom-histogram-1, exercise = TRUE}
 
@@ -899,9 +912,13 @@ Lets load the **palmerpenguins** package using `library()`.
 library(...)
 ```
 
+```{r, include=FALSE}
+library(palmerpenguins)
+```
+
 ### 
 
-A continuous variable is a variable that can take on any value within a certain range or interval. It can be measured on a continuous scale, such as time, distance, weight, height, temperature, or any other quantity that can be measured on a numerical scale.
+A continuous variable is a variable that can take on any value within a certain range or interval. Examples include time, distance, weight, height, temperature, or any other quantity that can be measured on a numerical scale.
 
 ### Exercise 2
 
@@ -912,19 +929,25 @@ Run `penguins` and pipe it to a `ggplot()` call.
 ```
 
 
-
 ```{r geom-histogram-2-hint-1, eval = FALSE}
 penguins |> 
   ...
 ```
 
+```{r, include=FALSE}
+penguins |> 
+  ggplot()
+```
+
+There is no output but a blank square.
+
 ### 
 
-`geom_histogram()` creates a histogram: geom_histogram is used to create histograms, which are used to visualize the distribution of a single continuous variable. Histograms show the frequency of values within a certain range, which are typically represented by bins along the x-axis.
+`geom_histogram()` creates a histogram, used to visualize the distribution of a single continuous variable. Histograms show the frequency of values within a certain range, which are typically represented by bins along the x-axis.
 
 ### Exercise 3
 
-Within ggplot(), set `x` to `body_mass_g` inside of aesthetics
+Within ggplot(), set `x` to `body_mass_g` inside of `aes()`.
 
 ```{r geom-histogram-3, exercise = TRUE}
 
@@ -937,9 +960,16 @@ Within ggplot(), set `x` to `body_mass_g` inside of aesthetics
   ggplot(...(x = ...)
 ```
 
+```{r, include=FALSE}
+penguins |> 
+  ggplot(aes(x = body_mass_g))
+```
+
+This just adds the x-axis to out plot. We have still not told `ggplot()` which type of plot --- which "geom" --- we want to use.
+
 ### 
 
-You can add a density curve to the histogram: You can add a density curve to the histogram to show the underlying distribution of the data. To do this, you can use the stat_density function.The `..density..` aesthetic is used to scale the histogram bars to be a density instead of a count, and the `alpha` parameter is used to make the bars semi-transparent so that the density curve is visible.
+You can add a density curve to the histogram: You can add a density curve to the histogram to show the underlying distribution of the data. To do this, you can use the stat_density function. The `..density..` aesthetic is used to scale the histogram bars to be a density instead of a count, and the `alpha` parameter is used to make the bars semi-transparent so that the density curve is visible.
 
 
 ### Exercise 4
@@ -957,9 +987,15 @@ Add the `geom_histogram()` layer using `+` to make the plot.
   geom_...()
 ```
 
+```{r, include=FALSE}
+penguins |> 
+  ggplot(aes(x = body_mass_g)) +
+  geom_histogram()
+```
+
 ### 
 
-You can adjust the position of the bars: By default, `geom_histogram()` positions the bars to touch each other. However, you can adjust the position of the bars using the position parameter.
+You can adjust the position of the bars using the position parameter.
 
 ### Exercise 5
 
@@ -976,9 +1012,17 @@ Within `geom_histogram()`, set `binwidth` to 20.
   geom_histogram(binwidth = ...)
 ```
 
+```{r, include=FALSE}
+penguins |> 
+  ggplot(aes(x = body_mass_g)) +
+  geom_histogram(binwidth = 20)
+```
+
 ### 
 
-The `binwidth` parameter controls the width of the bins: The `binwidth` parameter controls the width of the bins used in the histogram. By default, `geom_histogram()` uses a `binwidth` of 30. Compared to the previews histogram, the 20 bin width is too narrow, resulting in too many bars, making it difficult to determine the shape of the distribution. 
+<!-- DK: Confusing use of bins and binwidth. -->
+
+The `binwidth` parameter controls the width of the bins: The `binwidth` parameter controls the width of the bins used in the histogram. By default, `geom_histogram()` uses 30 `bins`, adjusting the `bindwidth` to match. Compared to the previews histogram, the 20 binwidth is too narrow, resulting in too many bars, making it difficult to determine the shape of the distribution. 
 
 ### Exercise 6
 
@@ -995,9 +1039,15 @@ Now, set `binwidth` to 200 and see the difference.
   geom_histogram(binwidth = ...)
 ```
 
+```{r, include=FALSE}
+penguins |> 
+  ggplot(aes(x = body_mass_g)) +
+  geom_histogram(binwidth = 200)
+```
+
 ### 
 
-Looking at this histogram, we can see that it is much better because we can actually define the shape and see the distribution.
+This histogram is much better because we can actually see the shape of the distribution.
 
 ### Exercise 7
 
@@ -1017,14 +1067,22 @@ Now use `labs()` to set an appropriate title, subtitle, axes labels, and caption
        y = "...")
 ```
 
+```{r, include=FALSE}
+penguins |> 
+  ggplot(aes(x = body_mass_g)) +
+  geom_histogram(binwidth = 200) +
+  labs(title = "Weight for Penguins for the Palmer Peninsula",
+       subtitle = "There is a 'bump' on the right tail because Gentoo penguins are much larger",
+       x = "Weight (grams)",
+       y = "Number of Penguins",
+       caption = "palmerpenguins R package")
+```
+
 Reminder: Your graph should look like this:
 
-```{r}
-histogram_example <- penguins |> 
-  ggplot(aes(x = body_mass_g)) +
-  geom_histogram(binwidth = 200)
 
-histogram_example
+```{r}
+hist_p
 ```
 
 
