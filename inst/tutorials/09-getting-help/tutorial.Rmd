@@ -5,8 +5,8 @@ tutorial:
   id: getting-help
 output:
   learnr::tutorial:
-    progressive:  true
-    allow_skip::  true
+    progressive: yes
+    'allow_skip:': yes
 runtime: shiny_prerendered
 description: Getting help on forums by using reprex
 ---
@@ -28,25 +28,34 @@ options(tutorial.exercise.timelimit = 60,
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-
-
-<!-- Need an entire new section about AI use. -->
-
-
-<!-- Add this as a knowledge drop: Watch Jenny Bryan. https://reprex.tidyverse.org/articles/learn-reprex.html -->
-
-
 ## Introduction
-###
+### 
 
 This tutorial covers material from [Chapter 9  Workflow: getting help](https://r4ds.hadley.nz/workflow-help.html) in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. This tutorial will give you a basic understanding of how to search for help and create reproducible examples. The most important lesson is to make extensive use of generative artificial intelligence, generally via large language models (LLMs) like [ChatGPT](https://chat.openai.com/) or [Bard](https://bard.google.com/chat).
 
 
-
-## Google is your friend
+## AI
 ###
 
-If you get stuck, start with Google. Typically adding “R” to a query is enough to restrict it to relevant results: if the search isn’t useful, it often means that there aren’t any R-specific results available.
+Before 2023, the most common approaches to seeking help with R code involved web searches and regular expressions. Those approaches can still be useful, which is why we explain them in the sections which follow. But, the rise of generative artificial intelligence, usually via large language models (LLMs) like [ChatGPT](https://chat.openai.com/) or [Bard](https://bard.google.com/chat), has radically changed how most skilled programmers seek help. We now ask the AI. Some tips for doing so include:
+
+* Show the AI the code which is giving you trouble. The best approach for doing so is probably a reproducible example, as discussed below. But just copying/pasting from your editor will also work well.
+
+* Ask the AI to solve the problem you have, rather than simply showing it the code which is giving you trouble. Its answer may be better than the initial approach which you attempted.
+
+###
+
+If AI is so important, then why do all the tutorials in this package make no use of it?
+
+* The purpose of these tutorials is to give you a solid grounding in the R language. The best way to do that is to have you type, line-by-line, lots of R code. AI usage is unnecessary for that task.
+
+* Nothing prevents you from using AI to complete these tutorials. Indeed, if you are stuck on a tricky question, we encourage the use of AI! But, the exercises are all designed to make the use of AI less efficient than simply doing the exercises on your own.
+
+
+## Google is your friend
+### 
+
+If you get stuck, start with Google. Typically adding “R” to a query is enough to restrict it to relevant results. If the search result isn’t useful, it often means that there aren’t any R-specific results available.
 
 ### Exercise 1
 
@@ -61,13 +70,13 @@ question_text(NULL,
 	rows = 3)
 ```
 
-###
+### 
 
 Google is particularly useful for error messages. If you get an error message and you have no idea what it means, try googling it! Chances are that someone else has been confused by it in the past, and there will be help somewhere on the web. (If the error message isn’t in English, run Sys.setenv(LANGUAGE = "en") and re-run the code; you’re more likely to find help for English error messages.)
 
 ### Exercise 2
 
-Adding package names like “tidyverse” or “ggplot2” will help narrow down the results to code that will feel more familiar to you as well, e.g., “how to make a boxplot in R” vs. “how to make a boxplot in R with ggplot2”. Copy the url for top result to this new search.
+Adding package names like “tidyverse” or “ggplot2” will help narrow down the results to code that will feel more familiar to you. Consider “how to make a boxplot in R” vs. “how to make a boxplot in R with ggplot2”. Copy the url for top result to this new search.
 
 ```{r google-is-your-frien-2}
 question_text(NULL,
@@ -78,7 +87,7 @@ question_text(NULL,
 	rows = 3)
 ```
 
-###
+### 
 
 If Google doesn’t help, try [Stack Overflow](https://stackoverflow.com/). Start by spending a little time searching for an existing answer, including [R], to restrict your search to questions and answers that use R.
 
@@ -97,17 +106,16 @@ question_text(NULL,
 	rows = 3)
 ```
 
-###
+### 
 
 It's basically like Stack Overflow but specifically focused on R.
-
 
 
 ### Exercise 4
 
 The documentation for R is excellent. You can access it with using either `?` or the `help()` command. Run `help(geom_point)` in the Console, then copy-paste the "Description" section into the space below.
 
-```{r searching-4}
+```{r google-is-your-frien-4}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -120,7 +128,9 @@ Sometimes, you may need to use a double question mark --- `??function_name` --- 
 
 
 ## Making a reprex
-###
+### 
+
+<!-- DK: make this more like the reprex example in the chapter? -->
 
 If your googling doesn’t find anything useful, it’s a really good idea to prepare a reprex, short for minimal **repr**oducible **ex**ample. A good reprex makes it easier for other people to help you, and often you’ll figure out the problem yourself in the course of making it. 
 
@@ -134,18 +144,15 @@ Create a simple plot using the `ggplot()` function by setting `data` to `mtcars`
 
 **This code will fail** when you press "Run Code."
 
-```{r reprex-1, exercise = TRUE}
-
-```
-
-```{r reprex-1-hint-1, eval = FALSE}
-ggplot(data = ..., aes(x = ..., y = ...)) +
+```{r making-a-reprex-1, exercise = TRUE}
+ggplot(data = mtcars, 
+       mapping = aes(x = cyl, y = mpga)) +
   geom_col()
 ```
 
 ### 
 
-Let's use this error as the basis for our RStudio Community post.
+Let's use this error as the basis for creating a reproducible example.
 
 ### Exercise 2
 
@@ -155,7 +162,7 @@ We'll do this by bringing our code into an R Script file.
 
 ### 
 
-Copy the code created in the previous exercise and paste it into a new R Script file. This R Script should be in your regular R project folder. Save your R Script file and name it `script.R`.
+Copy the code created in the previous exercise and paste it into a new R Script file. This R Script should be in your current R project folder. Save your R Script file and name it `script.R`.
 
 ### 
 
@@ -167,7 +174,7 @@ You can restart R to unload the old libraries and start from scratch.
 
 Run `list.files()` in the Console, then copy-paste the command and the result below.
 
-```{r reprex-2}
+```{r making-a-reprex-2}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -184,15 +191,15 @@ This is because an R Script file is like an independent environment: there's no 
 
 ### Exercise 3
 
-As you can see, there is an error, but not the one we want.
+As you can see, there is an error, but not the one we saw when running this code interactively.
 
-Instead, it's an error with us not loading **tidyverse** and as such not loading the `ggplot()` function into our R script.
+Instead, it's an error about us not loading **tidyverse** and as such not having the `ggplot()` function available in our R script.
 
-This is why its important to include any necessary libraries (or files) in your example or people trying to help you will be missing key components of your code.
+This is why its important to include any necessary libraries in your example or people trying to help you will be missing key components of your code.
 
 ### 
 
-Let's fix that. Load **tidyverse** using the `library()` command at the top of your R Script file.
+Let's fix that. Load **tidyverse** using the `library()` command at the top of `script.R`.
 
 Then run the code and make sure that you're getting an `object not found` error rather than a `ggplot() not found` error.
 
@@ -200,7 +207,7 @@ Then run the code and make sure that you're getting an `object not found` error 
 
 Run `readLines("script.R")` in the Console, then copy-paste the command and the result here.
 
-```{r reprex-3}
+```{r making-a-reprex-3}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -227,9 +234,9 @@ If you don't get the same error, you just answered your own question: the proble
 
 ### 
 
-Run `data()` in your console and copy and paste the first three datasets that appear.
+Run `data()` in your console and copy and paste the names of the first three datasets that appear.
 
-```{r reprex-4}
+```{r making-a-reprex-4}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -246,22 +253,6 @@ All of these datasets are built into R, so people can easily help you when looki
 
 The end goal when you ask a question is that the helper doesn't have to do *anything* to answer your question. They don't have to load it into R, they don't have to run the program, they can just look at your code and say "here is where you messed up".
 
-### 
-
-Think about it like saying that 2 + 10 * 10 = 120. This is incorrect, but it's hard to *immediately* tell what's wrong.
-
-### 
-
-Meanwhile, going through it step by step...
-
-**2 + 10 = 12**  
-
-**12 * 10 = 120**
-
-This shows the incorrect step. Showing the steps you took and their results is a crucial part in making your examples easy to understand.
-
-### 
-
 In terms of programming, we need to show the errors and warnings that we got when we ran the code. We can do this by using the **`reprex`** package.
 
 ### 
@@ -272,7 +263,7 @@ Load the `reprex` library into your R session by using the `library()` command i
 
 Run `search()` in the console and copy and paste the output below. `"package:reprex"` should be included in it.
 
-```{r reprex-5}
+```{r making-a-reprex-5}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -287,9 +278,7 @@ A `reprex`, or **reproducible example**, is a code snippet that contains the out
 
 ### Exercise 6
 
-Now let's create a reprex. There next 3 exercises will show you 3 different ways to create a reprex. 
-
-Select all the text in your Script file. Then go to "Addins" at the top of RStudio. 
+Now let's create a reprex. Select all the text in your Script file. Then go to "Addins" at the top of RStudio. 
 
 ### 
 
@@ -301,7 +290,7 @@ Then click Render.
 
 Your Reprex is now copied to your clipboard. You can also see it in the "Viewer" tab in the bottom right. Simply paste it below. 
 
-```{r reprex-6}
+```{r making-a-reprex-6}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -310,7 +299,7 @@ question_text(NULL,
 	rows = 3)
 ```
 
-###
+### 
 
 Notice that when you go to "Render Reprex", you can tailor your reprex for different places. For example, you can tailor it for GitHub, or you can tailor it as a Slack Message. Keep this in mind when creating your reprex depending on where you want to post it and ask your question. 
 
@@ -324,7 +313,7 @@ Copy all of the code in `script.R` onto your clipboard  then run `reprex()` in t
 
 This should have copied the reprex onto your clipboard. Paste the reprex text below.
 
-```{r reprex-7}
+```{r making-a-reprex-7}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -337,234 +326,13 @@ question_text(NULL,
 
 This makes it much easier to create a reprex automatically, but it doesn't allow you to set the source. It's only going to pull the code from the clipboard, so make sure to double-check your reprex before you start to do anything.
 
-### Exercise 8
-
-Finally, we can create a reprex by enclosing our code within a function.
-
-### 
-
-In `script.R`, enclose all of the code (including the library calls) in curly brackets and by the `reprex()` function like the example below. Run the function to create your reprex.
-
-```{r}
-reprex({...})
-```
-
-### 
-
-Paste your finished reprex into the box below.
-
-```{r reprex-8}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-### 
-
-Remember, reprex is useful for when you want to show the output of code but still make it easy to copy-paste. All of these reprex examples are designed to be easily copy pasted into your own R session, so make sure not to just screenshot the reprex into your question and make it harder to copy-paste.
-
-### Exercise 9
-
-Let's publish your reprex for the world to see.
-
-### 
-
-Visit [this RStudio Community thread](https://community.rstudio.com/t/another-thread-for-students-in-kanes-data-science-bootcamp-to-post-example-questions/168002) and reply to the thread by clicking the "Reply" button. You will have to create an RStudio Community account.
-
-### 
-
-Copy-paste in your reprex as well as a short description like "I can't figure out this error" into your reply, then hit "Reply" and submit your post. Keep in mind [this warning](https://community.rstudio.com/t/re-thread-for-student-to-practice-posting-questions-please-do-not-answer-them/107716) from our friend at RStudio "to keep the window open for a few seconds after they've pasted they answer into the window." This prevents RStudio from thinking you are a bot.
-
-
-### 
-
-At the bottom right of your published post you should see a "Share Link" button. Press that button, then copy the resulting link into the space below.
-
-
-```{r reprex-9}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-### 
-
-
-
 See [here](https://www.garrickadenbuie.com/blog/shrtcts-reprex-to-issue/) to learn more about reprex, its features, and some shortcuts. 
 
 [This video](https://reprex.tidyverse.org/articles/learn-reprex.html) is another very useful resource.
 
-### 
-
-Congratulations on creating a reprex and successfully asking a question in RStudio Community.
-
-Now that we've created a reprex and asked our question, let's flip sides.
-
-## Reprex issues
-###
-
-Just to show you how painful it is for the answer when the questioner doesn't reprex correctly, let's walk through how a bad question can cause problems for the people trying to solve it.
-
-### Exercise 1
-
-The first issue we'll be going through is posting an image instead of the actual code.
-
-### 
-
-Let's try to fix the issue that [this amazing person](https://github.com/AnmayG/demo-issue-repo/issues/1) found. You can also find this issue by going to the "Issues" page at [https://github.com/AnmayG/demo-issue-repo](https://github.com/AnmayG/demo-issue-repo) and opening the first issue from the bottom.
-
-### 
-
-Copy the code in the issue into the box below, then add the `aes()` function into `ggplot()` so that the code works and displays a working graph. Feel free to tinker a little.
-
-```{r reprex-issues-1, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r reprex-issues-1-hint-1, eval = FALSE}
-library(tidyverse)
-ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width)) +
-  geom_point()
-```
-
-### 
-
-This likely was a **pain** to do. Manually typing every single command into the box is not fun.
-
-This is the perfect example of what you should **not** do if you have a project because people who want to help you need to put in way too much effort. 
-
-And the worst part is that the people trying to help you can't see your error message either, so they have to bring it all the way into their code, type out every single command, run it, find the problem, fix the problem and *then* answer your question. That's too much work, and it means that nobody will answer the question from the getgo.
-
-### Exercise 2
-
-The second issue we'll look at is a case where somebody copy-pasted from the Console.
-
-### 
-
-[The second issue](https://github.com/AnmayG/demo-issue-repo/issues/2) can be found by opening the second issue from the bottom.
-
-### 
-
-This one's a little bit nicer, so copy-paste the code into the box below and fix it by adding the `geom_point()` function to the pipe.
-
-```{r reprex-issues-2, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r reprex-issues-2-hint-1, eval = FALSE}
-
-```
-
-### 
-
-This one was a *lot* nicer since you could actually copy-paste the code, but it's not perfect. 
-
-There was a lot of junk that we had to clean up like the output from the tidyverse package and the arrows on the left. 
-
-### 
-
-Keep in mind that the final goal when we post a question is that the helper can take one look at it and answer within minutes, not have to bring it into their own session.
-
-### Exercise 3
-
-The next issue you'll solve is one where they didn't load their library into the example.
-
-### 
-
-[The third issue](https://github.com/AnmayG/demo-issue-repo/issues/3) can be found at [https://github.com/AnmayG/demo-issue-repo/issues/3](https://github.com/AnmayG/demo-issue-repo/issues/3).
-
-### 
-
-This person has a much nicer example, but it doesn't actually have the correct error. We're going to need to do some investigating on this one.
-
-### 
-
-Copy the code inside the issue into the space below, then add the `y = Sepal.Width` argument to the `aes()` function next to the `x = Sepal.Width`.
-
-```{r reprex-issues-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r reprex-issues-3-hint-1, eval = FALSE}
-
-```
-
-### 
-
-This one was a good example, but they just missed one thing: the library call. That hid the actual error from us, and we needed to do our own investigating by manually parsing through the code. It made things harder since we couldn't just read the error message to tell what was wrong.
-
-Not only that, but what if the `ggplot()` they were using was completely different from what we know? Their issue could have been completely separate, but instead we had to rely on our **past knowledge** about the package, possibly giving us the wrong answer.
-
-### Exercise 4
-
-This is the last question with an incorrect reprex about not loading in the required variables.
-
-### 
-
-[The fourth issue](https://github.com/AnmayG/demo-issue-repo/issues/7) can be found at [https://github.com/AnmayG/demo-issue-repo/issues/7](https://github.com/AnmayG/demo-issue-repo/issues/7).
-
-### 
-
-This is a similar error to the last exercise since we can't see the actual problem, but it's even worse. We don't have *any* context about what the problem is since we don't have the code for `iris_modified`. We can't see anything.
-
-### 
-
-This is [one of the more common errors](https://community.rstudio.com/t/ggplot-not-working-in-r-markdown-html-document/112037) when people share their code because they think that the problem is somewhere else, like their graph. 
-
-However, the variables and how you reached them are a key part of sharing code, and not including it makes your question basically worthless.
-
-### Exercise 5
-
-That's enough horror about bad questions, let's look at what the ideal question would look like.
-
-### 
-
-[The fifth issue](https://github.com/AnmayG/demo-issue-repo/issues/9) can be found at [https://github.com/AnmayG/demo-issue-repo/issues/9](https://github.com/AnmayG/demo-issue-repo/issues/9).
-
-### 
-
-This is the perfect example because it has an error message, shows you what libraries it's importing, and can be easily copy-pasted into your own code.
-
-### 
-
-Copy the code into the space below and change the `fill` argument to `y`.
-
-```{r reprex-issues-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r reprex-issues-5-hint-1, eval = FALSE}
-
-```
-
-### 
-
-This is the ideal question format and it makes it easy for people to see the different issues with the code, allowing them to solve it easily as well. 
-
-
-By making sure to include these parts, you make it easier for the people trying to help you and also attract more attention to your question since it's easy to understand and solve.
-
-### 
-
-Congratulations on completing this tutorial.
 
 ## Investing in yourself
-###
+### 
 
 You should also spend some time preparing yourself to solve problems before they occur. Investing a little time in learning R each day will pay off handsomely in the long run.
 
@@ -594,9 +362,8 @@ question_text(NULL,
 	rows = 3)
 ```
 
-
 ## Summary
-###
+### 
 
 This tutorial covered material from [Chapter 9  Workflow: getting help](https://r4ds.hadley.nz/workflow-help.html) in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. This tutorial gave you a basic understanding of how to search for help and create reproducible examples. The most important lesson was to make extensive use of generative artificial intelligence, generally via large language models (LLMs) like [ChatGPT](https://chat.openai.com/) or [Bard](https://bard.google.com/chat).
 
