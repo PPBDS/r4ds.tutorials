@@ -38,15 +38,12 @@ polling_data <- read_csv("data/vis4_polling_data.csv",
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- This tutorial is a bit of a mess. It includes lots of random junk. It does not follow the chapter too closely. But what should it do? Maybe the junk (various old plots) are good? Maybe the chapter stuff is less good? Probably best is to do both. Have a questions which cover all the material in the chapter and then, at the end of various sections, make some longer plots which require the new functions/tricks we have just learned. -->
+
 <!-- Last student took 70 minutes, so there is room to add a graduation exercise. -->
-
-<!-- Fix introduction/summary. -->
-
-<!-- Have students load up all libraries, wherever you like. -->
 
 <!-- Note that the later material sucks! There are not enough knowledge drops.  -->
 
-<!-- This was a bit too long. Also, much if it is sloppy! Need to revisit. -->
 
 <!-- Change elements of theme.. -->
 
@@ -54,136 +51,228 @@ polling_data <- read_csv("data/vis4_polling_data.csv",
 
 <!-- Make the plots cooler! Add links to  https://ggplot2-book.org/. And https://socviz.co/. Or maybe put these in case studies. Love this one: https://socviz.co/groupfacettx.html#histograms. -->
 
-<!--  Delete entire sections of you don't like them! Put in more ### as continue buttons. Drop some knowledge at the end of each exercise.  Always start by looking at the data with just print the data name (trains) or glimpse() or summary() or skim(). Always use select() for each question to keep just the variables you need. Nothing wrong with an arbitrary filter() in the pipe. Nothing wrong with using a simple mutate() to create a new variable, like change height to inches.  
+<!--  Delete entire sections of you don't like them! Put in more ### as continue buttons. Drop some knowledge at the end of each exercise.  Always start by looking at the data with just print the data name (trains) or glimpse() or summary(). Always use select() for each question to keep just the variables you need. Nothing wrong with an arbitrary filter() in the pipe. Nothing wrong with using a simple mutate() to create a new variable, like change height to inches.  
 -->
 
 ## Introduction
 ### 
 
-This tutorial covers [Chapter 10: Layers](https://r4ds.hadley.nz/layers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to use [**ggplot2**](https://ggplot2.tidyverse.org/) and related packages to create persuasive graphics. 
+This tutorial covers [Chapter 10: Layers](https://r4ds.hadley.nz/layers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to use [**ggplot2**](https://ggplot2.tidyverse.org/) and related packages to create persuasive graphics. Key functions include [`geom_smooth()`](https://ggplot2.tidyverse.org/reference/geom_smooth.html),  [`geom_histogram()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html), and  [`facet_wrap()`](https://ggplot2.tidyverse.org/reference/facet_wrap.html).
 
 
-## Aesthetic mappings: Simple `geom_point()`
+## Aesthetic mappings
 ### 
+
+We’ll start with a deeper dive into aesthetic mappings. 
 
 ### Exercise 1
 
-Run `glimpse()` on `mpg`.
+Load up the **tidyverse** library.
 
-```{r aesthetic-mappings-simple-geom-1, exercise = TRUE}
 
-```
-
-```{r aesthetic-mappings-simple-geom-1-hint-1, eval = FALSE}
-glimpse(...)
-```
-
-### 
-
-The mpg data frame bundled with the ggplot2 package contains 234 observations on 38 car models
-
-### 
-
-### Exercise 2
-
-Load the **tidyverse** library because that will be used with the mpg data
-
-```{r aesthetic-mappings-simple-geom-2, exercise = TRUE}
+```{r aesthetic-mappings-1, exercise = TRUE}
 
 ```
 
-```{r aesthetic-mappings-simple-geom-2-hint-1, eval = FALSE}
+```{r aesthetic-mappings-1-hint-1, eval = FALSE}
 library(...)
 ```
 
+```{r aesthetic-mappings-1-test, include = FALSE}
+library(tidyverse)
+```
+
 ### 
 
-“The greatest value of a picture is when it forces us to notice what we never expected to see.” — John Tukey
+> “The greatest value of a picture is when it forces us to notice what we never expected to see.” — John Tukey
+
+### Exercise 2
+
+Run `glimpse()` on `mpg`.
+
+```{r aesthetic-mappings-2, exercise = TRUE}
+
+```
+
+```{r aesthetic-mappings-2-hint-1, eval = FALSE}
+glimpse(...)
+```
+
+```{r aesthetic-mappings-2-test, include = FALSE}
+glimpse(mpg)
+```
+
+### 
+
+The `mpg` tibble bundled with the **ggplot2** package contains 234 observations on 38 car models. The key variables for us include:
+
+* **displ**: A car’s engine size, in liters. A numerical variable.
+
+* **hwy**: A car’s fuel efficiency on the highway, in miles per gallon (mpg). A car with a low fuel efficiency consumes more fuel than a car with a high fuel efficiency when they travel the same distance. A numerical variable.
+
+* **class**: Type of car. A categorical variable.
+
 
 ### Exercise 3
 
-Run `ggplot()` on `mpg`.
+Run `ggplot()`, setting the first argument, `data`, equal to `mpg`.
 
-```{r aesthetic-mappings-simple-geom-3, exercise = TRUE}
+```{r aesthetic-mappings-3, exercise = TRUE}
 
 ```
 
-```{r aesthetic-mappings-simple-geom-3-hint-1, eval = FALSE}
-ggplot(...)
+```{r aesthetic-mappings-3-hint-1, eval = FALSE}
+ggplot(data = ...)
 ```
 
-Note that this just creates an empty area in which a plot can be placed.
+```{r aesthetic-mappings-3-test, include = FALSE}
+ggplot(data = mpg)
+```
 
 ### 
 
-**ggplot2** is an R package for creating customizable, high-quality data visualizations using a layered grammar of graphics approach. Often used to see the data through different types of graphs.
+Note that this just creates an empty area in which a plot can be placed. Because `data` is the first argument, we don't need to include it. We get the same result with `ggplot(mpg)`.
+
 
 ### Exercise 4
 
-Continue the code by adding the `aes()` function within the call to `ggplot()`, setting the `x` argument to `displ` and the `y` argument to equal `hwy`.  
+Continue the code by setting the `mapping` argument equal to the `aes()` function, setting the `x` argument to `displ` and the `y` argument to equal `hwy`.  
 
-```{r aesthetic-mappings-simple-geom-4, exercise = TRUE}
+```{r aesthetic-mappings-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r aesthetic-mappings-simple-geom-4-hint-1, eval = FALSE}
+```{r aesthetic-mappings-4-hint-1, eval = FALSE}
 ggplot(mpg, aes(x = ..., 
                 ... = hwy))
 ```
 
+```{r aesthetic-mappings-4-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy))
+```
+
 ### 
 
-We want to visualize the relationship between the car's engine size and how it correlates to the car's fuel efficiency on the highway
+We want to visualize the relationship between the car's engine size and fuel efficiency on the highway. Because we have not added a geom, no data is plotted. But the axes are now labelled because R knows the range of the `displ` and `hwy` variables.
 
-### 
 
 ### Exercise 5
 
-Add `geom_point()` --- don't forget the `+` after the class to `ggplot()` --- to see the actual data.
+Add `geom_point()` --- don't forget the `+` after the call to `ggplot()` --- to see the actual data.
 
-```{r aesthetic-mappings-simple-geom-5, exercise = TRUE}
+```{r aesthetic-mappings-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r aesthetic-mappings-simple-geom-5-hint-1, eval = FALSE}
+```{r aesthetic-mappings-5-hint-1, eval = FALSE}
 ggplot(mpg, aes(x = displ, 
                 y = hwy)) +
   ...()
 ```
 
-### 
-
-### Exercise 6
-
-Let's add some color to this graph. Set the `color` argument within `aes()` to `class`. This will separate each color based on the `class` of the car.
-
-```{r aesthetic-mappings-simple-geom-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r aesthetic-mappings-simple-geom-6-hint-1, eval = FALSE}
-ggplot(mpg, aes(x = ..., 
-                y = ..., 
-                color = ...)) +
+```{r aesthetic-mappings-5-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy)) +
   geom_point()
 ```
 
 ### 
 
-Learn more about the `ggplot()` function by checking out its [help page](https://ggplot2.tidyverse.org/reference/ggplot.html).
+A scatter plot like this is the most common way to look at data. If there is a lot of overlap among the data points, then you may want to use [`geom_jitter()`](https://ggplot2.tidyverse.org/reference/geom_jitter.html).
+
+
+### Exercise 6
+
+Set the `color` argument within `aes()` to `class`. Each point will have a color based on the `class` of the car.
+
+```{r aesthetic-mappings-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r aesthetic-mappings-6-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy, 
+                color = ...)) +
+  geom_point()
+```
+
+```{r aesthetic-mappings-6-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy,
+                color = class)) +
+  geom_point()
+```
 
 ### 
 
-## Aesthetic mappings: Advanced `geom_point()`
+The plot is much richer, even though it isn't any larger, because we have used color to incorporate information about the type of car. Notice how the SUVs cluster in the lower right. Their engines are (mostly) bigger, and they all get more gas mileage.
+
+### Exercise 7
+
+Replace the `color` argument with the `shape` argument within `aes()`. See the value to `class`, as before. Each point will have a shape based on the `class` of the car.
+
+```{r aesthetic-mappings-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r aesthetic-mappings-7-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy, 
+                shape = ...)) +
+  geom_point()
+```
+
+```{r aesthetic-mappings-7-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy,
+                shape = class)) +
+  geom_point()
+```
+
+When class is mapped to shape, we get two warnings:
+
+````
+1: The shape palette can deal with a maximum of 6 discrete values because more than 6 becomes difficult to discriminate; you have 7. Consider specifying shapes manually if you must have them.
+
+2: Removed 62 rows containing missing values (geom_point()).
+````
+ 
 ### 
 
-When you are working with data sets that have over a thousand data points, you will have [overplotting](https://r-graphics.org/recipe-scatter-overplot). In this section, you will learn to minimize the overplotting by changing the size of each point.
+Since ggplot2 will only use six shapes at a time, by default, additional groups will go unplotted when you use the shape aesthetic. The second warning is related – there are 62 SUVs in the dataset and they’re not plotted.
+
+### Exercise 8
+
+Replace the `color` argument with the `shape` argument within `aes()`. See the value to `class`, as before. Each point will have a shape based on the `class` of the car.
+
+```{r aesthetic-mappings-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r aesthetic-mappings-8-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy, 
+                shape = ...)) +
+  geom_point()
+```
+
+```{r aesthetic-mappings-8-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy,
+                shape = class)) +
+  geom_point()
+```
 
 ### 
 
@@ -206,15 +295,15 @@ point_p2 <- ggplot(data = diamonds,
 point_p2
 ```
 
-### Exercise 1
+### Exercise 9
 
 Type `?diamonds` to look at the help page for the `diamonds` tibble. If you cannot run it in your code chunk below, run it in your Console. Remember to load `library(tidyverse)` beforehand.
 
-```{r aesthetic-mappings-advanced-ge-1, exercise = TRUE}
+```{r aesthetic-mappings-9, exercise = TRUE}
 
 ```
 
-```{r aesthetic-mappings-advanced-ge-1-hint-1, eval = FALSE}
+```{r aesthetic-mappings-9-hint-1, eval = FALSE}
 ?diamonds
 ```
 
@@ -222,11 +311,11 @@ Type `?diamonds` to look at the help page for the `diamonds` tibble. If you cann
 
 The `diamonds` dataset is a collection of data that contains information about diamonds, including their carat weight, cut, color, clarity, and price for analysis and modeling purposes.
 
-### Exercise 2
+### Exercise 10
 
 Explore the `diamonds` dataset. Since we are looking at the "carats" and "clarity" categories, copy and paste the definitions for "carats" and "clarity" below.
 
-```{r aesthetic-mappings-advanced-ge-2}
+```{r aesthetic-mappings-10}
   question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -235,30 +324,30 @@ Explore the `diamonds` dataset. Since we are looking at the "carats" and "clarit
     rows = 3)
 ```
 
-### Exercise 3
+### Exercise 11
 
 Start a new pipe with `diamonds`. Select the columns `carat`, `price`, and `clarity`.
 
-```{r aesthetic-mappings-advanced-ge-3, exercise = TRUE}
+```{r aesthetic-mappings-11, exercise = TRUE}
 
 ```
 
-```{r aesthetic-mappings-advanced-ge-3-hint-1, eval = FALSE}
+```{r aesthetic-mappings-11-hint-1, eval = FALSE}
 diamonds |>
   select(..., ..., ...)
 ```
 
-### Exercise 4
+### Exercise 12
 
 Continue your pipe and add `ggplot()`. Map `price` to the x-axis and `carat` to the y-axis.
 
-```{r aesthetic-mappings-advanced-ge-4, exercise = TRUE}
+```{r aesthetic-mappings-12, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r aesthetic-mappings-advanced-ge-4-hint-1, eval = FALSE}
+```{r aesthetic-mappings-12-hint-1, eval = FALSE}
 ... |>
   ggplot(mapping = aes(x = ...,
                        y = ...))
@@ -268,21 +357,21 @@ Continue your pipe and add `ggplot()`. Map `price` to the x-axis and `carat` to 
 
 If you want to add any themes to your plots check out: [**ggplot2**](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html) contains all aesthetic specifications that are possible for the data. In addition, [**ggplot2: elegant graphics**](https://ggplot2-book.org/) provides all possible aesthetics that any user will use.
 
-### Exercise 5
+### Exercise 13
 
 Add the `geom_point()` layer. Within `aes()` set `clarity` to `color`.
 
-```{r aesthetic-mappings-advanced-ge-5, exercise = TRUE}
+```{r aesthetic-mappings-13, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r aesthetic-mappings-advanced-ge-5-hint-1, eval = FALSE}
+```{r aesthetic-mappings-13-hint-1, eval = FALSE}
 geom_point() is a layer so use + to add it
 ```
 
-```{r aesthetic-mappings-advanced-ge-5-hint-2, eval = FALSE}
+```{r aesthetic-mappings-13-hint-2, eval = FALSE}
 ... |>
   ggplot(mapping = aes(x = ...,
                        y = ...,
@@ -294,17 +383,17 @@ geom_point() is a layer so use + to add it
 
 `ggplot()` contains two specific uses: color and shape. We often use color when we are dealing with a vast amount of data. When compared to color, shape can only use up to 6 discrete values, meaning that we cannot utilize shape to its fullest with more data.
 
-### Exercise 6
+### Exercise 14
 
 There are several ways to minimize overplotting. One such way is through the use of `alpha`. In `geom_point()` set `alpha` to 0.5.
 
-```{r aesthetic-mappings-advanced-ge-6, exercise = TRUE}
+```{r aesthetic-mappings-14, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r aesthetic-mappings-advanced-ge-6-hint-1, eval = FALSE}
+```{r aesthetic-mappings-14-hint-1, eval = FALSE}
 ... +
   geom_point(alpha = ...)
 ```
@@ -313,17 +402,17 @@ There are several ways to minimize overplotting. One such way is through the use
 
 With the use of alpha we can control the transparency of the dots.
 
-### Exercise 7
+### Exercise 15
 
 Now, within `geom_point()` set `size` to .25.
 
-```{r aesthetic-mappings-advanced-ge-7, exercise = TRUE}
+```{r aesthetic-mappings-15, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r aesthetic-mappings-advanced-ge-7-hint-1, eval = FALSE}
+```{r aesthetic-mappings-15-hint-1, eval = FALSE}
 ... +
   geom_point(alpha = ...,
              size = ...)
@@ -333,21 +422,21 @@ Now, within `geom_point()` set `size` to .25.
 
 Size controls the diameter of the points. The default diameter size is 1.
 
-### Exercise 8
+### Exercise 16
 
 Use the layer `scale_x_log10()` function to make the scale of the plot logarithmic.
 
-```{r aesthetic-mappings-advanced-ge-8, exercise = TRUE}
+```{r aesthetic-mappings-16, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r aesthetic-mappings-advanced-ge-8-hint-1, eval = FALSE}
+```{r aesthetic-mappings-16-hint-1, eval = FALSE}
 Remembder you are adding a layers here so use +
 ```
 
-```{r aesthetic-mappings-advanced-ge-8-hint-2, eval = FALSE}
+```{r aesthetic-mappings-16-hint-2, eval = FALSE}
 ... +
   scale_x_log10()
 ```
@@ -356,7 +445,7 @@ Remembder you are adding a layers here so use +
 
 Remember: a logarithmic scale means that each increment increases by a factor of the base of the logarithm. In our case, that's base 10. We want to implement the use of a logarithmic scale here because we want to be able to visualize all of our data without having any of it too close to each other.
 
-### Exercise 9
+### Exercise 17
 
 To finish your plot, use `labs()` to give the graph a title, subtitle, axis labels, legend label, and caption of your choosing. To set the legend label, use the argument `color`.
 
@@ -366,13 +455,13 @@ Reminder: This is what your plot should look like.
 point_p2
 ```
 
-```{r aesthetic-mappings-advanced-ge-9, exercise = TRUE}
+```{r aesthetic-mappings-17, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r aesthetic-mappings-advanced-ge-9-hint-1, eval = FALSE}
+```{r aesthetic-mappings-17-hint-1, eval = FALSE}
 ... +
   labs(...,
        color = "Clarity",
@@ -1339,7 +1428,7 @@ Now you should see the New Zealand data plotted out based on the spatial data. W
 ## Summary
 ### 
 
-This tutorial covered [Chapter 10: Layers](https://r4ds.hadley.nz/layers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You learned how to use [**ggplot2**](https://ggplot2.tidyverse.org/) and related packages to create persuasive graphics.
+This tutorial covered [Chapter 10: Layers](https://r4ds.hadley.nz/layers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You learned how to use [**ggplot2**](https://ggplot2.tidyverse.org/) and related packages to create persuasive graphics. Key functions included [`geom_smooth()`](https://ggplot2.tidyverse.org/reference/geom_smooth.html),  [`geom_histogram()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html), and  [`facet_wrap()`](https://ggplot2.tidyverse.org/reference/facet_wrap.html).
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
