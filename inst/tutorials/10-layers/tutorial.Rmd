@@ -248,11 +248,11 @@ When class is mapped to shape, we get two warnings:
  
 ### 
 
-Since ggplot2 will only use six shapes at a time, by default, additional groups will go unplotted when you use the shape aesthetic. The second warning is related – there are 62 SUVs in the dataset and they’re not plotted.
+Since `ggplot()` will only use six shapes at a time, by default, additional groups will go unplotted when you use the shape aesthetic. The second warning is related – there are 62 SUVs in the dataset and they’re not plotted.
 
 ### Exercise 8
 
-Replace the `color` argument with the `shape` argument within `aes()`. See the value to `class`, as before. Each point will have a shape based on the `class` of the car.
+Replace the `color` argument with the `size` argument within `aes()`. Set the value to `class`, as before. Each point will be sized based on the `class` of the car.
 
 ```{r aesthetic-mappings-8, exercise = TRUE}
 
@@ -263,1048 +263,178 @@ Replace the `color` argument with the `shape` argument within `aes()`. See the v
 ```{r aesthetic-mappings-8-hint-1, eval = FALSE}
 ggplot(mpg, aes(x = displ, 
                 y = hwy, 
-                shape = ...)) +
+                size = ...)) +
   geom_point()
 ```
 
 ```{r aesthetic-mappings-8-test, include = FALSE}
 ggplot(mpg, aes(x = displ, 
                 y = hwy,
-                shape = class)) +
+                size = class)) +
   geom_point()
 ```
 
+You should see a warning message:
+
+````
+Using size for a discrete variable is not advised. 
+````
+
 ### 
 
-Let's make this scatterplot using `geom_point()`.
+Mapping an unordered discrete (categorical) variable, like `class`, to an ordered aesthetic, like `size` is generally not a good idea because it implies a ranking that does not in fact exist, hence the warning.
 
-```{r aesthetic-mappings-advanced-0}
-point_p2 <- ggplot(data = diamonds,
-                   mapping = aes(x = price,
-                                 y = carat,
-                                 color = clarity)) +
-  geom_point(size = .25, alpha = .5) +
-  scale_x_log10() +
-  labs(title = "Diamond Carat and Price",
-       subtitle = "3+ carat diamonds are rare and of low quality",
-       x = "Price",
-       y =  "Carat",
-       color = "Clarity",
-       caption = "Source: R datasets")
-
-point_p2
-```
 
 ### Exercise 9
 
-Type `?diamonds` to look at the help page for the `diamonds` tibble. If you cannot run it in your code chunk below, run it in your Console. Remember to load `library(tidyverse)` beforehand.
+Replace the `color` argument with the `alpha` argument within `aes()`. Set the value to `class`, as before. Each point will have a transparency based on the `class` of the car.
 
 ```{r aesthetic-mappings-9, exercise = TRUE}
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r aesthetic-mappings-9-hint-1, eval = FALSE}
-?diamonds
+ggplot(mpg, aes(x = displ, 
+                y = hwy, 
+                alpha = ...)) +
+  geom_point()
 ```
+
+```{r aesthetic-mappings-9-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy,
+                alpha = class)) +
+  geom_point()
+```
+
+You should see a warning message, as above
+
+````
+Using alpha for a discrete variable is not advised. 
+````
 
 ### 
 
-The `diamonds` dataset is a collection of data that contains information about diamonds, including their carat weight, cut, color, clarity, and price for analysis and modeling purposes.
+Once you map an aesthetic, ggplot2 takes care of the rest. It selects a reasonable scale to use with the aesthetic, and it constructs a legend that explains the mapping between levels and values. For x and y aesthetics, ggplot2 does not create a legend, but it creates an axis line with tick marks and a label. The axis line provides the same information as a legend; it explains the mapping between locations and values.
+
 
 ### Exercise 10
 
-Explore the `diamonds` dataset. Since we are looking at the "carats" and "clarity" categories, copy and paste the definitions for "carats" and "clarity" below.
+You can also set the visual properties of your geom manually as an argument of your geom function (outside of aes()) instead of relying on a variable mapping to determine the appearance. Remove the `alpha` argument from your code and add `color = "blue"` **within** the class to `geom_point()`.
 
-```{r aesthetic-mappings-10}
-  question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-### Exercise 11
-
-Start a new pipe with `diamonds`. Select the columns `carat`, `price`, and `clarity`.
-
-```{r aesthetic-mappings-11, exercise = TRUE}
-
-```
-
-```{r aesthetic-mappings-11-hint-1, eval = FALSE}
-diamonds |>
-  select(..., ..., ...)
-```
-
-### Exercise 12
-
-Continue your pipe and add `ggplot()`. Map `price` to the x-axis and `carat` to the y-axis.
-
-```{r aesthetic-mappings-12, exercise = TRUE}
+```{r aesthetic-mappings-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r aesthetic-mappings-12-hint-1, eval = FALSE}
-... |>
-  ggplot(mapping = aes(x = ...,
-                       y = ...))
+```{r aesthetic-mappings-10-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = ..., 
+                y = hwy)) + 
+  geom_point(color = "...")
+```
+
+```{r aesthetic-mappings-10-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy)) + 
+  geom_point(color = "blue")
 ```
 
 ### 
 
-If you want to add any themes to your plots check out: [**ggplot2**](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html) contains all aesthetic specifications that are possible for the data. In addition, [**ggplot2: elegant graphics**](https://ggplot2-book.org/) provides all possible aesthetics that any user will use.
+Here, the color doesn’t convey information about a variable, but only changes the appearance of the plot. You’ll need to pick a value that makes sense for that aesthetic:
 
-### Exercise 13
+* The name of a color as a character string, e.g., color = "blue".
+* The size of a point in mm, e.g., size = 1.
+* The shape of a point as a number, e.g, shape = 1. More details [here](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html?q=shape#sec:shape-spec).
 
-Add the `geom_point()` layer. Within `aes()` set `clarity` to `color`.
+## Geometric objects
+### 
 
-```{r aesthetic-mappings-13, exercise = TRUE}
+So far we have discussed aesthetics that we can map or set in a scatterplot, when using a point geom. You can learn more about all possible aesthetic mappings in the aesthetic specifications [vignette](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html).
+
+### Exercise 1
+
+To change the geom in your plot, change the geom function that you add to `ggplot()`. Let's start with the plot which we were just working with, but with `color = "blue"` removed from the call to `geom_point()`. 
+
+```{r geometric-objects-1, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r aesthetic-mappings-13-hint-1, eval = FALSE}
-geom_point() is a layer so use + to add it
+```{r geometric-objects-1-hint-1, eval = FALSE}
+ggplot(..., aes(x = displ, 
+                y = hwy)) + 
+  geom_point()
 ```
 
-```{r aesthetic-mappings-13-hint-2, eval = FALSE}
-... |>
-  ggplot(mapping = aes(x = ...,
-                       y = ...,
-                       color = ...)) +
+```{r geometric-objects-1-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy)) + 
   geom_point()
 ```
 
 ### 
 
-`ggplot()` contains two specific uses: color and shape. We often use color when we are dealing with a vast amount of data. When compared to color, shape can only use up to 6 discrete values, meaning that we cannot utilize shape to its fullest with more data.
-
-### Exercise 14
-
-There are several ways to minimize overplotting. One such way is through the use of `alpha`. In `geom_point()` set `alpha` to 0.5.
-
-```{r aesthetic-mappings-14, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r aesthetic-mappings-14-hint-1, eval = FALSE}
-... +
-  geom_point(alpha = ...)
-```
-
-### 
-
-With the use of alpha we can control the transparency of the dots.
-
-### Exercise 15
-
-Now, within `geom_point()` set `size` to .25.
-
-```{r aesthetic-mappings-15, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r aesthetic-mappings-15-hint-1, eval = FALSE}
-... +
-  geom_point(alpha = ...,
-             size = ...)
-```
-
-### 
-
-Size controls the diameter of the points. The default diameter size is 1.
-
-### Exercise 16
-
-Use the layer `scale_x_log10()` function to make the scale of the plot logarithmic.
-
-```{r aesthetic-mappings-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r aesthetic-mappings-16-hint-1, eval = FALSE}
-Remembder you are adding a layers here so use +
-```
-
-```{r aesthetic-mappings-16-hint-2, eval = FALSE}
-... +
-  scale_x_log10()
-```
-
-### 
-
-Remember: a logarithmic scale means that each increment increases by a factor of the base of the logarithm. In our case, that's base 10. We want to implement the use of a logarithmic scale here because we want to be able to visualize all of our data without having any of it too close to each other.
-
-### Exercise 17
-
-To finish your plot, use `labs()` to give the graph a title, subtitle, axis labels, legend label, and caption of your choosing. To set the legend label, use the argument `color`.
-
-Reminder: This is what your plot should look like.
-
-```{r}
-point_p2
-```
-
-```{r aesthetic-mappings-17, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r aesthetic-mappings-17-hint-1, eval = FALSE}
-... +
-  labs(...,
-       color = "Clarity",
-       ...)
-```
-
-### 
-
-Now we know how to minimize the over plotting, it will come in handy in future graphs. Another way to minimize the over plotting is through `geom_jitter()`.
-
-## Geometric Objects with `geom_smooth()`
-### 
-
-In this exercise, we will map Joe Biden's approval rating until June 30th, the first ~6 months of his term. We will explore different types of `geom_smooth()` in this section.
-
-### 
-
-We will be attempting to recreate this plot below.
-
-<!-- DK: Too long subtitle. Did not explain use of "\n". Don't mention year this is from. -->
-
-```{r}
-biden_p <- ggplot(data = polling_data, 
-       mapping = aes(x = createddate,
-                     y = rate,
-                     color = approval_type)) +
-  geom_point(alpha = 0.5) + 
-  geom_smooth(method = "gam",
-              formula = y ~ s(x, bs = "cs"),
-              se = TRUE) +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  theme(legend.position="bottom") +
-  labs(x = "Month",
-       y = "Percent",
-       title = "Biden's Approval Rating From Jan 22 to Jun 30",
-       subtitle = "While Biden's approval rating has stayed relatively static, his disapproval rating \nhas been rising.",
-       color = "",
-       caption = "Source: Five Thirty Eight Data")
-
-biden_p
-```
-
-### Exercise 1
-
-We will first explore the file that contains this data. Run `summary()` on `polling_data` in the console below.
-
-```{r geometric-objects-with-geomsmo-1, exercise = TRUE}
-
-```
-
-```{r geometric-objects-with-geomsmo-1-hint-1, eval = FALSE}
-summary(...)
-```
-
-### 
-
-This data was taken from the fivethirtyeight website. 
+Every geom function in **ggplot2** takes a mapping argument, either defined locally in the geom layer or globally in the `ggplot()` layer. However, not every aesthetic works with every geom. You could set the shape of a point, but you couldn’t set the “shape” of a line. If you try, **ggplot2** will silently ignore that aesthetic mapping. 
 
 ### Exercise 2
 
-Write down the name of the three variables.
+Replace `geom_point()` with `geom_smooth()`. Both plots contain the same `x` variable, the same `y` variable, and both describe the same data. But the plots are not identical. Each plot uses a different geometric object, geom, to represent the data.
 
-```{r geometric-objects-with-geomsmo-2}
-question_text(NULL,
-	message = "createddate, rate, approval_type",
-	answer(NULL,
-	correct = TRUE),
-	allow_retry = FALSE,
-	incorrect = NULL,
-	rows = 6)
+```{r geometric-objects-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-2-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy)) + 
+  ...()
+```
+
+```{r geometric-objects-2-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy)) + 
+  geom_smooth()
 ```
 
 ### 
-
-`createddate` stands for the day the poll was finished. `rate` is the % of approval or disapproval, and `approval_type` indicates whether or not the rate is approval or disapproval.
 
 ### Exercise 3
 
-We will get started building the plot. Start the function `ggplot()`, and set the argument `data` to `polling_data`.
-
-```{r geometric-objects-with-geomsmo-3, exercise = TRUE}
-
-```
-
-```{r geometric-objects-with-geomsmo-3-hint-1, eval = FALSE}
-ggplot(data = ...)
-```
-
-### 
-
-Remember: you should not see a plot here as you have not mapped anything, nor do you have a geom layer. 
-
-### Exercise 4
-
-Now, map `createddate` to the x-axis, and map `rate` to the y-axis.
-
-```{r geometric-objects-with-geomsmo-4, exercise = TRUE}
+```{r geometric-objects-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geometric-objects-with-geomsmo-4-hint-1, eval = FALSE}
-ggplot(data = polling_data,
-       mapping = aes(x = ...,
-                     y = ...))
+```{r geometric-objects-3-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy, 
+                linetype = ...)) + 
+  geom_smooth()
+```
+
+```{r geometric-objects-3-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy, linetype = drv)) + 
+  geom_smooth()
 ```
 
 ### 
 
-`createddate` is a date column, and `rate` is a double column.
-
-### Exercise 5
-
-We want to be able to see both Joe Biden's approval and disapproval rate. Therefore, we'll change the color of the dots depending on whether the dot represents an approval/disapproval rating. Set `color` to `approval_type`.
-
-```{r geometric-objects-with-geomsmo-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomsmo-5-hint-1, eval = FALSE}
-ggplot(data = polling_data,
-       mapping = aes(x = createddate,
-                     y = rate,
-                     color = ...))
-```
-
+## Facets
 ### 
 
-Every geom function in ggplot2 takes a mapping argument, either defined locally in the geom layer or globally in the `ggplot()` layer. However, not every aesthetic works with every geom. Now we're ready to start building the plot.
-
-### Exercise 6
-
-Next, we will add the points to the graph. Add the layer `geom_point()`.
-
-```{r geometric-objects-with-geomsmo-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomsmo-6-hint-1, eval = FALSE}
-ggplot(data = polling_data,
-       mapping = aes(x = createddate,
-                     y = rate,
-                     color = approval_type)) +
-  ...()
-```
-
+## Statistical transformations    
 ### 
 
-Currently, we have a bit of overplotting. We will rectify this in the next code chunk.
-
-### Exercise 7
-
-In the `geom_point()` layer set the argument `alpha` to 0.5.
-
-```{r geometric-objects-with-geomsmo-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomsmo-7-hint-1, eval = FALSE}
-ggplot(data = ...,
-       mapping = aes(x = ...,
-                     y = ...,
-                     color = ...)) +
-  geom_point(alpha = ...)
-```
-
+## Position adjustments
 ### 
-
-Good! Now you should be able to see more distinct points.
-
-### Exercise 8
-
-We want to see the trend line for Biden's approval/disapproval ratings throughout his term. Add the layer of `geom_smooth().`
-
-```{r geometric-objects-with-geomsmo-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomsmo-8-hint-1, eval = FALSE}
-... + 
-  ...()
-```
-
-### 
-
-If you just add this layer, you will get a few warning messages. We will fix this in the following exercises. If you place mappings in a geom function, `ggplot2` will treat them as local mappings for the layer. It will use these mappings to extend or overwrite the global mappings for that layer only. This makes it possible to display different aesthetics in different layers.
-
-### Exercise 9
-
-Within `geom_smooth()`, set the `method` argument to "gam". We use "gam" since there is a large quantity of data points.
-
-```{r geometric-objects-with-geomsmo-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomsmo-9-hint-1, eval = FALSE}
-... + 
-  geom_smooth(method = ...)
-```
-
-### 
-
-"gam" stands for **generalized additive model**. It is a modified form of a linear model. If you are curious to learn more, [GAMs in R](https://noamross.github.io/gams-in-r-course/chapter1) is a good resource.
-
-### Exercise 10
-
-Within `geom_smooth()` set `formula` to `y ~ s(x, bs = "cs")`.
-
-```{r geometric-objects-with-geomsmo-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomsmo-10-hint-1, eval = FALSE}
-... + 
-  geom_smooth(method = "gam",
-              formula = ...)
-```
-
-### 
-
-Just like `y ~ x` indicates a relationship between x and y, `y ~ s(x, bs = "cs")` indicates a "generalized additive model" relationship. With a generalized additive model we are able to handle large data.
-
-### Exercise 11
-
-Set `se = TRUE`.
-
-```{r geometric-objects-with-geomsmo-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomsmo-11-hint-1, eval = FALSE}
-... + 
-  geom_smooth(method = "gam",
-              formula = y ~ s(x, bs = "cs"),
-              se = ...)
-```
-
-### 
-
-With `se` we are able to create a margin of error that makes our data more accurate.
-
-### Exercise 12
-
-Next, we want to change the labels on the graph so they are in percentage format. Use scale_y_continuous to do so. Set the `labels` argument to `scales::percent_format(accuracy = 1)`.
-
-```{r geometric-objects-with-geomsmo-12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomsmo-12-hint-1, eval = FALSE}
-...+
-  scale_y_continuous(labels = ...)
-```
-
-### 
-
-We use scale_y_continuous when we want to modify the y-axis for continuous data. [This documentation here](https://ggplot2.tidyverse.org/reference/scale_continuous.html) will tell you more, and all the possible arguments you can use with `scale_y_continuous`
-
-### Exercise 13
-
-Currently our legend is to the right of the graph. Let's change the way that we see our legend. Add `theme()` to the pipe and set `legend.position` to "bottom".
-
-```{r geometric-objects-with-geomsmo-13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomsmo-13-hint-1, eval = FALSE}
-+ 
-  theme(...="bottom")
-```
-
-### 
-
-With the help of `legend.position`. We have the ability to set it to the `left`, `right`, `top`, and `bottom` based on how we would like to see it within our graph.
-
-### Exercise 14
-
-Finally, use `labs()` to add an appropriate heading, subtitle, caption, etc. 
-
-Reminder - your graph should look like this:
-
-```{r}
-biden_p
-```
-
-```{r geometric-objects-with-geomsmo-14, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomsmo-14-hint-1, eval = FALSE}
-... +
-  labs(x = ...,
-       y = ...,
-       title = ...,
-       subtitle = ...,
-       color = ...,
-       caption = ...)
-```
-
-### 
-
-Good! Now you have a plot of Biden's approval rating for the first six months of his term.
-
-## Geometric Objects with `geom_histogram()` and `geom_boxplot()`
-### 
-
-Let's create the following histogram.
-
-```{r}
-hist_p <- mpg |> 
-  mutate(year = as.character(year)) |> 
-  ggplot(aes(cty, fill = year)) +
-  geom_histogram(bins = 6,
-                 color = "black") +
-  labs(title = "Histogram of City Fuel Efficiency in 1999 and 2008 Models", 
-       subtitle = "1999 had more models of high city fuel efficiency", 
-       x = "City MPG", 
-       y = "Count",
-       fill = "Year",
-       caption = "Source: EPA") 
-
-hist_p
-```
-
-### Exercise 1
-
-Run `?mpg` in the code chunk below. 
-
-```{r geometric-objects-with-geomhis-1, exercise = TRUE}
-
-```
-
-This dataset is about fuel economy of cars from the Environmental Protection Agency.
-
-### Exercise 2
-
-Run `glimpse()` on the mpg data set. Take a look at the different variables available.
-
-```{r geometric-objects-with-geomhis-2, exercise = TRUE}
-
-```
-
-```{r geometric-objects-with-geomhis-2-hint-1, eval = FALSE}
-glimpse(...)
-```
-
-### 
-
-The variables that we care about are `year` and `cty`. Year indicates the year of manufacture, and `cty` indicates the city miles per gallon.
-
-### Exercise 3
-
-Use the `$` to extract the column `year` as a vector.
-
-```{r geometric-objects-with-geomhis-3, exercise = TRUE}
-
-```
-
-```{r geometric-objects-with-geomhis-3-hint-1, eval = FALSE}
-mpg$...
-```
-
-### 
-
-Notice that there are only two different years, 1999 and 2008.
-
-### Exercise 4
-
-Start a new pipe with `mpg`. Use `mutate()` and the function `as.character()` to change the `year` column from a numeric variable to a character variable.
-
-```{r geometric-objects-with-geomhis-4, exercise = TRUE}
-
-```
-
-```{r geometric-objects-with-geomhis-4-hint-1, eval = FALSE}
-...  |> 
-  mutate(... = as.character(...))
-```
-
-### 
-
-We make this change so that we can use year as a fill color when we plot. We use the `as.character()` function to convert an object into its character representation for textual manipulation or analysis.
-
-### Exercise 5
-
-Select the columns `year` and `cty`.
-
-```{r geometric-objects-with-geomhis-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomhis-5-hint-1, eval = FALSE}
-...  |> 
-  select(..., ...)
-```
-
-### Exercise 6
-
-Continue your pipe and add `ggplot()`. Map `cty` to the x-axis and `year` to `fill`.
-
-```{r geometric-objects-with-geomhis-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomhis-6-hint-1, eval = FALSE}
-... |> 
-  ggplot(aes(x = ..., fill = ...))
-```
-
-### 
-
-We don't have to use `mapping = aes()` because it is in the variable spot for mapping, meaning we don't have to specify `mapping = aes()`. Again, you should not see anything. The `geom` layer is what displays objects on the plot.
-
-### Exercise 7
-
-Now, we will add a geom layer. Add the layer `geom_histogram()`. 
-
-```{r geometric-objects-with-geomhis-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomhis-7-hint-1, eval = FALSE}
-geom_histogram() is a layer so use + to add it
-```
-
-```{r geometric-objects-with-geomhis-7-hint-2, eval = FALSE}
-...|> 
-  ... +
-  ...()
-```
-
-### 
-
-You may notice that there are too many "bins" for our liking. There can be too many bins if the number chosen for a histogram or other visualizations is too high compared to the size of data, which results in loss of clarity. We'll change this now.
-
-### Exercise 8
-
-Within `geom_histogram()` set the number of `bins` to 6.
-
-```{r geometric-objects-with-geomhis-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomhis-8-hint-1, eval = FALSE}
-... +
-  geom_histogram(bins = ...)
-```
-
-You can change the width of each bin with the `binwidth` argument. We won't be doing that now, but you can do that in future plots. Read more about [**binwidth**](https://r-graphics.org/recipe-quick-histogram) and how it can be used.
-
-### Exercise 9
-
-Within `geom_histogram()` set  `color` to `"black"`. 
-
-```{r geometric-objects-with-geomhis-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomhis-9-hint-1, eval = FALSE}
-... +
-  geom_histogram(bins = 6, 
-                 color = ...)
-```
-
-Remember, `color` only changes the outline of the bars. If you want to change the fill, use `fill`. 
-
-### Exercise 10
-
-To finish your plot, use `labs()` to give the graph a title, subtitle, axis labels, legend labels, and caption of your choosing. To change the legend labels use the argument `fill`. 
-
-```{r geometric-objects-with-geomhis-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomhis-10-hint-1, eval = FALSE}
-... +
-  labs(..., 
-       fill = "Year",
-       ...)
-```
-
-Reminder: This is what your graph should look like. 
-
-```{r show-hist-p}
-hist_p
-```
-
-<!-- DK: Fix above. -->
-
-### 
-
-In the previous graph we used `color` to change the legend labels, while here we used `fill`. The argument within labels matches the argument you use within `ggplot()`. `color` is used for objects like lines and points. `fill` is used for larger shapes. 
-
-Are you satisfied with the way we have made the bin sizes? Do the axes labels make this easy to understand? We will do better later. 
-
-[**Histograms**](https://socviz.co/groupfacettx.html#histograms) contain many more vast resources with items that contain comparing distributions in a new way.
-
-### Exercise 11
-
-Let's try the same data for before but with a `geom_boxplot()` instead of a `geom_histogram()`. Box plots compute the five-number summary of the distribution and then display that summary as a specially formatted box.
-
-```{r geometric-objects-with-geomhis-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r geometric-objects-with-geomhis-11-hint-1, eval = FALSE}
-... +
-  ...()
-```
-
-### 
-
-ggplot2 provides a vast amount of opportunities, however, there are a countless number of plots that can be made through different geoms and extensions. Check out [**possible options**](https://exts.ggplot2.tidyverse.org/gallery/) for any future implementations or possibilities. 
-
-## Facets and Statistical Transformations with `geom_col()`, `facet_wrap()`, and `facet_grid()`
-### 
-
-Let's make the same plot, using a related function, `geom_col()`. Unlike `geom_bar()`, you have to specify the value for the y-axis when using this function. 
-
-```{r make-col-p}
-col_p <- mpg |> 
-  select(drv, fl, class) |>
-  summarize(total = n(),
-            .by = c(drv, fl, class)) |> 
-  ggplot(aes(x = fl, 
-             y = total, 
-             fill = class)) +
-    geom_col() +
-    facet_wrap(~ drv,
-               labeller = as_labeller(car_names)) +
-    labs(title = "The Fuel Type Of Cars Based On Their Class Type",
-         subtitle = "Higher Proportion of 4 Wheel and Front Wheel Drive Participants",
-         x = "Fuel Type",
-         y = "Number of Participants",
-         fill = "Class")
-col_p
-```
-
-### Exercise 1
-
-Start a pipe with `mpg`. Select the columns `drv`, `fl` and `class`. 
-
-```{r facets-and-statistical-transfo-1, exercise = TRUE}
-
-```
-
-```{r facets-and-statistical-transfo-1-hint-1, eval = FALSE}
-mpg |> 
-  select(..., ..., ...)
-```
-
-### Exercise 2
-
-Copy/paste the previous code. Use `summarize()` to create a new table with the column `total` which is equal to the function `n()`. 
-
-```{r facets-and-statistical-transfo-2, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facets-and-statistical-transfo-2-hint-1, eval = FALSE}
-... |> 
-  summarize(total = ...)
-```
-
-```{r facets-and-statistical-transfo-2-hint-2, eval = FALSE}
-... |> 
-  summarize(total = n())
-```
-
-### Exercise 3
-
-Add a `.by` argument to `summarize()` with the values set to `drv`, `fl`, and `class`. You need to place these three values with a vector using `c()`. 
-
-```{r facets-and-statistical-transfo-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facets-and-statistical-transfo-3-hint-1, eval = FALSE}
-... |> 
-  summarize(total = n(),
-            .by = c(..., ..., ...))  
-```
-
-### Exercise 4
-
-Continue your pipe with `ggplot()`. Map the variable `fl` to the x-axis. Map `total` to the `y` axis. Add the layer `geom_col()`.
-
-```{r facets-and-statistical-transfo-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facets-and-statistical-transfo-4-hint-1, eval = FALSE}
-ggplot(aes(x = ..., 
-           y = ...) +
-  ...()
-```
-
-### 
-
-`geom_col()` will automatically take the three to four values for each `fl` in the `total` column and stack them to form one bar. This behavior is from the fact that the `position` argument for `geom_col()` is set by default to "stack". 
-
-### Exercise 5
-
-Now, map `class` to `fill`.
-
-```{r facets-and-statistical-transfo-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facets-and-statistical-transfo-5-hint-1, eval = FALSE}
-ggplot(data = ... , 
-          aes(x = ..., 
-              y = ...,
-              fill = ...) +
-  geom_col()
-```
-
-### Exercise 6
-
-Add the layer `facet_wrap()` and facet by the variable `drv`. 
-
-```{r facets-and-statistical-transfo-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facets-and-statistical-transfo-6-hint-1, eval = FALSE}
-... + 
-  facet_wrap(~ ...)
-```
-
-### 
-
-The `facet_wrap()` function arranges the panels in a grid, wrapping them onto multiple rows and columns. It is useful for visualizing and comparing subsets of data simultaneously.
-
-### Exercise 7
-
-<!-- DK: Check that this works. -->
-
-We want to change the labels of the facet_wrap that we just created. We can do this by setting `labeller` to `as_labeller(car_names)`. Note: `car_names` has already been created for you.
-
-```{r facets-and-statistical-transfo-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facets-and-statistical-transfo-7-hint-1, eval = FALSE}
-facet_wrap(~ drv,
-           ... = as_labeller(...)) +
-```
-
-### 
-
-Through the `as_labeller()` function we are able to change the labels of `facet_wrap()`.
-
-### Exercise 8
-
-To finish your plot, use `labs()` to give the graph a title, subtitle, axes labels, legend labels, and caption of your choosing.
-
-Reminder: This is what your plot should look like.
-
-```{r}
-col_p
-```
-
-```{r facets-and-statistical-transfo-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r facets-and-statistical-transfo-8-hint-1, eval = FALSE}
-... +
-  labs(..., 
-       fill = "...",
-       ...)
-```
-
-### 
-
-Through this we are able to view our data with a `facet_wrap` which splits a plot into subplots that each display one subset of the data based on a categorical variable.
-
-## Statistical Transformations and Position Adjustments with `geom_bar()`
-### 
-
-Let's create this graph using `geom_bar()`.
-
-```{r}
-bar_p <- ggplot(data = midwest, 
-                   mapping = aes(x = state, 
-                                 fill = category)) + 
-  geom_bar(alpha = 1/5, 
-           position = "dodge") + 
-  labs(title = "Categories found in each state",
-       subtitle = "The 5 states in the midwest with each category present.",
-       x = "State",
-       y = "Count",
-       fill = "Category")
-
-bar_p
-```
-
-### Exercise 1
-
-Run `glimpse()` on the `midwest` data set. 
-
-```{r statistical-transformations-an-1, exercise = TRUE}
-
-```
-
-```{r statistical-transformations-an-1-hint-1, eval = FALSE}
-...(midwest)
-```
-
-### 
-
-### Exercise 2
-
-Add `ggplot()` and map `state` to the x axis of the `midwest` data and set `fill` to `category`.
-
-```{r statistical-transformations-an-2, exercise = TRUE}
-
-```
-
-```{r statistical-transformations-an-2-hint-1, eval = FALSE}
-ggplot(data = ..., 
-       mapping = aes(x =..., 
-                     fill =...))
-```
-
-### 
-
-Here we have used `state` data on the x axis and the count on the y axis is automatically implemented. Within a bar graph, we only input the x variable due to the y variable automatically being created usually as count. Through this we can see count within each `state` in the `midwest` data.
-
-### Exercise 3
-
-Add the layer `geom_bar()`.
-
-```{r statistical-transformations-an-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r statistical-transformations-an-3-hint-1, eval = FALSE}
-... +
-  geom_bar()
-```
-
-### 
-
-`geom_bar()` displays the frequency or count of a categorical variable as bars of equal width. By default, `geom_bar()` counts the number of occurrences of each category and maps them to the height of the bars.
-
-### Exercise 4
-
-Within `geom_bar()`, set `alpha` to 1/5, `position` to `"dodge"`.
-
-```{r statistical-transformations-an-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r statistical-transformations-an-4-hint-1, eval = FALSE}
-... + geom_bar(alpha = ..., 
-               position = ...)
-```
-
-### Exercise 5
-
-Finally, use `labs()` to give the graph a title, subtitle, axis labels, legend labels, and caption of your choosing.
-
-```{r statistical-transformations-an-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r statistical-transformations-an-5-hint-1, eval = FALSE}
-... +
-  labs(..., 
-       fill = "...",
-       ...)
-```
-
-Reminder: This is what your plot should look like.
-
-```{r make-bar-p}
-bar_p
-```
-
-### 
-
-We like using bar charts here because they bin your data and then plot bin counts, the number of points that fall in each bin.
-
-### 
-
-For more information on other stat_summary plots besides bar graphs check out [Statistical transformations](https://r4ds.hadley.nz/layers.html#statistical-transformations) from [Chapter 10: Layers](https://r4ds.hadley.nz/layers.html) in [*R for Data Science (2e)*](https://r4ds.hadley.nz/).
 
 ## Coordinate Systems
 ### 
@@ -1424,6 +554,1061 @@ Finally let us use the `coord_quickmap()` which sets the aspect ratio correctly 
 ### 
 
 Now you should see the New Zealand data plotted out based on the spatial data. We can visualize more data through `coord_polar()`. Take a look at the use of [`coord_polar()`](https://r4ds.hadley.nz/layers.html#coordinate-systems)
+
+
+## The layered grammar of graphics
+### 
+
+````
+ggplot(data = <DATA>) + 
+  <GEOM_FUNCTION>(
+     mapping = aes(<MAPPINGS>),
+     stat = <STAT>, 
+     position = <POSITION>
+  ) +
+  <COORDINATE_FUNCTION> +
+  <FACET_FUNCTION>
+````
+
+
+
+
+
+<!-- DK: Maybe turn these into a graduation exercise with one repo, one qmd which contains the three plots, then publish them? -->
+
+## Plot 1
+### 
+
+Let's make this scatterplot using `geom_point()`.
+
+```{r aesthetic-mappings-advanced-0}
+point_p2 <- ggplot(data = diamonds,
+                   mapping = aes(x = price,
+                                 y = carat,
+                                 color = clarity)) +
+  geom_point(size = .25, alpha = .5) +
+  scale_x_log10() +
+  labs(title = "Diamond Carat and Price",
+       subtitle = "3+ carat diamonds are rare and of low quality",
+       x = "Price",
+       y =  "Carat",
+       color = "Clarity",
+       caption = "Source: R datasets")
+
+point_p2
+```
+
+### Exercise 1
+
+Type `?diamonds` to look at the help page for the `diamonds` tibble. If you cannot run it in your code chunk below, run it in your Console. Remember to load `library(tidyverse)` beforehand.
+
+```{r plot-1-1, exercise = TRUE}
+
+```
+
+```{r plot-1-1-hint-1, eval = FALSE}
+?diamonds
+```
+
+### 
+
+The `diamonds` dataset is a collection of data that contains information about diamonds, including their carat weight, cut, color, clarity, and price for analysis and modeling purposes.
+
+### Exercise 2
+
+Explore the `diamonds` dataset. Since we are looking at the "carats" and "clarity" categories, copy and paste the definitions for "carats" and "clarity" below.
+
+```{r plot-1-2}
+  question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### Exercise 3
+
+Start a new pipe with `diamonds`. Select the columns `carat`, `price`, and `clarity`.
+
+```{r plot-1-3, exercise = TRUE}
+
+```
+
+```{r plot-1-3-hint-1, eval = FALSE}
+diamonds |>
+  select(..., ..., ...)
+```
+
+### Exercise 4
+
+Continue your pipe and add `ggplot()`. Map `price` to the x-axis and `carat` to the y-axis.
+
+```{r plot-1-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-1-4-hint-1, eval = FALSE}
+... |>
+  ggplot(mapping = aes(x = ...,
+                       y = ...))
+```
+
+### 
+
+If you want to add any themes to your plots check out: [**ggplot2**](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html) contains all aesthetic specifications that are possible for the data. In addition, [**ggplot2: elegant graphics**](https://ggplot2-book.org/) provides all possible aesthetics that any user will use.
+
+### Exercise 5
+
+Add the `geom_point()` layer. Within `aes()` set `clarity` to `color`.
+
+```{r plot-1-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-1-5-hint-1, eval = FALSE}
+geom_point() is a layer so use + to add it
+```
+
+```{r plot-1-5-hint-2, eval = FALSE}
+... |>
+  ggplot(mapping = aes(x = ...,
+                       y = ...,
+                       color = ...)) +
+  geom_point()
+```
+
+### 
+
+`ggplot()` contains two specific uses: color and shape. We often use color when we are dealing with a vast amount of data. When compared to color, shape can only use up to 6 discrete values, meaning that we cannot utilize shape to its fullest with more data.
+
+### Exercise 6
+
+There are several ways to minimize overplotting. One such way is through the use of `alpha`. In `geom_point()` set `alpha` to 0.5.
+
+```{r plot-1-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-1-6-hint-1, eval = FALSE}
+... +
+  geom_point(alpha = ...)
+```
+
+### 
+
+With the use of alpha we can control the transparency of the dots.
+
+### Exercise 7
+
+Now, within `geom_point()` set `size` to .25.
+
+```{r plot-1-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-1-7-hint-1, eval = FALSE}
+... +
+  geom_point(alpha = ...,
+             size = ...)
+```
+
+### 
+
+Size controls the diameter of the points. The default diameter size is 1.
+
+### Exercise 8
+
+Use the layer `scale_x_log10()` function to make the scale of the plot logarithmic.
+
+```{r plot-1-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-1-8-hint-1, eval = FALSE}
+Remembder you are adding a layers here so use +
+```
+
+```{r plot-1-8-hint-2, eval = FALSE}
+... +
+  scale_x_log10()
+```
+
+### 
+
+Remember: a logarithmic scale means that each increment increases by a factor of the base of the logarithm. In our case, that's base 10. We want to implement the use of a logarithmic scale here because we want to be able to visualize all of our data without having any of it too close to each other.
+
+### Exercise 9
+
+To finish your plot, use `labs()` to give the graph a title, subtitle, axis labels, legend label, and caption of your choosing. To set the legend label, use the argument `color`.
+
+Reminder: This is what your plot should look like.
+
+```{r}
+point_p2
+```
+
+```{r plot-1-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-1-9-hint-1, eval = FALSE}
+... +
+  labs(...,
+       color = "Clarity",
+       ...)
+```
+
+### 
+
+Now we know how to minimize the over plotting, it will come in handy in future graphs. Another way to minimize the over plotting is through `geom_jitter()`.
+
+## Plot 2
+### 
+
+In this exercise, we will map Joe Biden's approval rating until June 30th, the first ~6 months of his term. We will explore different types of `geom_smooth()` in this section.
+
+### 
+
+We will be attempting to recreate this plot below.
+
+<!-- DK: Too long subtitle. Did not explain use of "\n". Don't mention year this is from. -->
+
+```{r}
+biden_p <- ggplot(data = polling_data, 
+       mapping = aes(x = createddate,
+                     y = rate,
+                     color = approval_type)) +
+  geom_point(alpha = 0.5) + 
+  geom_smooth(method = "gam",
+              formula = y ~ s(x, bs = "cs"),
+              se = TRUE) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  theme(legend.position="bottom") +
+  labs(x = "Month",
+       y = "Percent",
+       title = "Biden's Approval Rating From Jan 22 to Jun 30",
+       subtitle = "While Biden's approval rating has stayed relatively static, his disapproval rating \nhas been rising.",
+       color = "",
+       caption = "Source: Five Thirty Eight Data")
+
+biden_p
+```
+
+### Exercise 1
+
+We will first explore the file that contains this data. Run `summary()` on `polling_data` in the console below.
+
+```{r plot-2-1, exercise = TRUE}
+
+```
+
+```{r plot-2-1-hint-1, eval = FALSE}
+summary(...)
+```
+
+### 
+
+This data was taken from the fivethirtyeight website. 
+
+### Exercise 2
+
+Write down the name of the three variables.
+
+```{r plot-2-2}
+question_text(NULL,
+	message = "createddate, rate, approval_type",
+	answer(NULL,
+	correct = TRUE),
+	allow_retry = FALSE,
+	incorrect = NULL,
+	rows = 6)
+```
+
+### 
+
+`createddate` stands for the day the poll was finished. `rate` is the % of approval or disapproval, and `approval_type` indicates whether or not the rate is approval or disapproval.
+
+### Exercise 3
+
+We will get started building the plot. Start the function `ggplot()`, and set the argument `data` to `polling_data`.
+
+```{r plot-2-3, exercise = TRUE}
+
+```
+
+```{r plot-2-3-hint-1, eval = FALSE}
+ggplot(data = ...)
+```
+
+### 
+
+Remember: you should not see a plot here as you have not mapped anything, nor do you have a geom layer. 
+
+### Exercise 4
+
+Now, map `createddate` to the x-axis, and map `rate` to the y-axis.
+
+```{r plot-2-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-2-4-hint-1, eval = FALSE}
+ggplot(data = polling_data,
+       mapping = aes(x = ...,
+                     y = ...))
+```
+
+### 
+
+`createddate` is a date column, and `rate` is a double column.
+
+### Exercise 5
+
+We want to be able to see both Joe Biden's approval and disapproval rate. Therefore, we'll change the color of the dots depending on whether the dot represents an approval/disapproval rating. Set `color` to `approval_type`.
+
+```{r plot-2-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-2-5-hint-1, eval = FALSE}
+ggplot(data = polling_data,
+       mapping = aes(x = createddate,
+                     y = rate,
+                     color = ...))
+```
+
+### 
+
+Every geom function in ggplot2 takes a mapping argument, either defined locally in the geom layer or globally in the `ggplot()` layer. However, not every aesthetic works with every geom. Now we're ready to start building the plot.
+
+### Exercise 6
+
+Next, we will add the points to the graph. Add the layer `geom_point()`.
+
+```{r plot-2-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-2-6-hint-1, eval = FALSE}
+ggplot(data = polling_data,
+       mapping = aes(x = createddate,
+                     y = rate,
+                     color = approval_type)) +
+  ...()
+```
+
+### 
+
+Currently, we have a bit of overplotting. We will rectify this in the next code chunk.
+
+### Exercise 7
+
+In the `geom_point()` layer set the argument `alpha` to 0.5.
+
+```{r plot-2-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-2-7-hint-1, eval = FALSE}
+ggplot(data = ...,
+       mapping = aes(x = ...,
+                     y = ...,
+                     color = ...)) +
+  geom_point(alpha = ...)
+```
+
+### 
+
+Good! Now you should be able to see more distinct points.
+
+### Exercise 8
+
+We want to see the trend line for Biden's approval/disapproval ratings throughout his term. Add the layer of `geom_smooth().`
+
+```{r plot-2-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-2-8-hint-1, eval = FALSE}
+... + 
+  ...()
+```
+
+### 
+
+If you just add this layer, you will get a few warning messages. We will fix this in the following exercises. If you place mappings in a geom function, `ggplot2` will treat them as local mappings for the layer. It will use these mappings to extend or overwrite the global mappings for that layer only. This makes it possible to display different aesthetics in different layers.
+
+### Exercise 9
+
+Within `geom_smooth()`, set the `method` argument to "gam". We use "gam" since there is a large quantity of data points.
+
+```{r plot-2-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-2-9-hint-1, eval = FALSE}
+... + 
+  geom_smooth(method = ...)
+```
+
+### 
+
+"gam" stands for **generalized additive model**. It is a modified form of a linear model. If you are curious to learn more, [GAMs in R](https://noamross.github.io/gams-in-r-course/chapter1) is a good resource.
+
+### Exercise 10
+
+Within `geom_smooth()` set `formula` to `y ~ s(x, bs = "cs")`.
+
+```{r plot-2-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-2-10-hint-1, eval = FALSE}
+... + 
+  geom_smooth(method = "gam",
+              formula = ...)
+```
+
+### 
+
+Just like `y ~ x` indicates a relationship between x and y, `y ~ s(x, bs = "cs")` indicates a "generalized additive model" relationship. With a generalized additive model we are able to handle large data.
+
+### Exercise 11
+
+Set `se = TRUE`.
+
+```{r plot-2-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-2-11-hint-1, eval = FALSE}
+... + 
+  geom_smooth(method = "gam",
+              formula = y ~ s(x, bs = "cs"),
+              se = ...)
+```
+
+### 
+
+With `se` we are able to create a margin of error that makes our data more accurate.
+
+### Exercise 12
+
+Next, we want to change the labels on the graph so they are in percentage format. Use scale_y_continuous to do so. Set the `labels` argument to `scales::percent_format(accuracy = 1)`.
+
+```{r plot-2-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-2-12-hint-1, eval = FALSE}
+...+
+  scale_y_continuous(labels = ...)
+```
+
+### 
+
+We use scale_y_continuous when we want to modify the y-axis for continuous data. [This documentation here](https://ggplot2.tidyverse.org/reference/scale_continuous.html) will tell you more, and all the possible arguments you can use with `scale_y_continuous`
+
+### Exercise 13
+
+Currently our legend is to the right of the graph. Let's change the way that we see our legend. Add `theme()` to the pipe and set `legend.position` to "bottom".
+
+```{r plot-2-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-2-13-hint-1, eval = FALSE}
++ 
+  theme(...="bottom")
+```
+
+### 
+
+With the help of `legend.position`. We have the ability to set it to the `left`, `right`, `top`, and `bottom` based on how we would like to see it within our graph.
+
+### Exercise 14
+
+Finally, use `labs()` to add an appropriate heading, subtitle, caption, etc. 
+
+Reminder - your graph should look like this:
+
+```{r}
+biden_p
+```
+
+```{r plot-2-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-2-14-hint-1, eval = FALSE}
+... +
+  labs(x = ...,
+       y = ...,
+       title = ...,
+       subtitle = ...,
+       color = ...,
+       caption = ...)
+```
+
+### 
+
+Good! Now you have a plot of Biden's approval rating for the first six months of his term.
+
+## Plot 3
+### 
+
+Let's create the following histogram.
+
+```{r}
+hist_p <- mpg |> 
+  mutate(year = as.character(year)) |> 
+  ggplot(aes(cty, fill = year)) +
+  geom_histogram(bins = 6,
+                 color = "black") +
+  labs(title = "Histogram of City Fuel Efficiency in 1999 and 2008 Models", 
+       subtitle = "1999 had more models of high city fuel efficiency", 
+       x = "City MPG", 
+       y = "Count",
+       fill = "Year",
+       caption = "Source: EPA") 
+
+hist_p
+```
+
+### Exercise 1
+
+Run `?mpg` in the code chunk below. 
+
+```{r plot-3-1, exercise = TRUE}
+
+```
+
+This dataset is about fuel economy of cars from the Environmental Protection Agency.
+
+### Exercise 2
+
+Run `glimpse()` on the mpg data set. Take a look at the different variables available.
+
+```{r plot-3-2, exercise = TRUE}
+
+```
+
+```{r plot-3-2-hint-1, eval = FALSE}
+glimpse(...)
+```
+
+### 
+
+The variables that we care about are `year` and `cty`. Year indicates the year of manufacture, and `cty` indicates the city miles per gallon.
+
+### Exercise 3
+
+Use the `$` to extract the column `year` as a vector.
+
+```{r plot-3-3, exercise = TRUE}
+
+```
+
+```{r plot-3-3-hint-1, eval = FALSE}
+mpg$...
+```
+
+### 
+
+Notice that there are only two different years, 1999 and 2008.
+
+### Exercise 4
+
+Start a new pipe with `mpg`. Use `mutate()` and the function `as.character()` to change the `year` column from a numeric variable to a character variable.
+
+```{r plot-3-4, exercise = TRUE}
+
+```
+
+```{r plot-3-4-hint-1, eval = FALSE}
+...  |> 
+  mutate(... = as.character(...))
+```
+
+### 
+
+We make this change so that we can use year as a fill color when we plot. We use the `as.character()` function to convert an object into its character representation for textual manipulation or analysis.
+
+### Exercise 5
+
+Select the columns `year` and `cty`.
+
+```{r plot-3-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-3-5-hint-1, eval = FALSE}
+...  |> 
+  select(..., ...)
+```
+
+### Exercise 6
+
+Continue your pipe and add `ggplot()`. Map `cty` to the x-axis and `year` to `fill`.
+
+```{r plot-3-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-3-6-hint-1, eval = FALSE}
+... |> 
+  ggplot(aes(x = ..., fill = ...))
+```
+
+### 
+
+We don't have to use `mapping = aes()` because it is in the variable spot for mapping, meaning we don't have to specify `mapping = aes()`. Again, you should not see anything. The `geom` layer is what displays objects on the plot.
+
+### Exercise 7
+
+Now, we will add a geom layer. Add the layer `geom_histogram()`. 
+
+```{r plot-3-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-3-7-hint-1, eval = FALSE}
+geom_histogram() is a layer so use + to add it
+```
+
+```{r plot-3-7-hint-2, eval = FALSE}
+...|> 
+  ... +
+  ...()
+```
+
+### 
+
+You may notice that there are too many "bins" for our liking. There can be too many bins if the number chosen for a histogram or other visualizations is too high compared to the size of data, which results in loss of clarity. We'll change this now.
+
+### Exercise 8
+
+Within `geom_histogram()` set the number of `bins` to 6.
+
+```{r plot-3-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-3-8-hint-1, eval = FALSE}
+... +
+  geom_histogram(bins = ...)
+```
+
+You can change the width of each bin with the `binwidth` argument. We won't be doing that now, but you can do that in future plots. Read more about [**binwidth**](https://r-graphics.org/recipe-quick-histogram) and how it can be used.
+
+### Exercise 9
+
+Within `geom_histogram()` set  `color` to `"black"`. 
+
+```{r plot-3-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-3-9-hint-1, eval = FALSE}
+... +
+  geom_histogram(bins = 6, 
+                 color = ...)
+```
+
+Remember, `color` only changes the outline of the bars. If you want to change the fill, use `fill`. 
+
+### Exercise 10
+
+To finish your plot, use `labs()` to give the graph a title, subtitle, axis labels, legend labels, and caption of your choosing. To change the legend labels use the argument `fill`. 
+
+```{r plot-3-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-3-10-hint-1, eval = FALSE}
+... +
+  labs(..., 
+       fill = "Year",
+       ...)
+```
+
+Reminder: This is what your graph should look like. 
+
+```{r show-hist-p}
+hist_p
+```
+
+<!-- DK: Fix above. -->
+
+### 
+
+In the previous graph we used `color` to change the legend labels, while here we used `fill`. The argument within labels matches the argument you use within `ggplot()`. `color` is used for objects like lines and points. `fill` is used for larger shapes. 
+
+Are you satisfied with the way we have made the bin sizes? Do the axes labels make this easy to understand? We will do better later. 
+
+[**Histograms**](https://socviz.co/groupfacettx.html#histograms) contain many more vast resources with items that contain comparing distributions in a new way.
+
+### Exercise 11
+
+Let's try the same data for before but with a `geom_boxplot()` instead of a `geom_histogram()`. Box plots compute the five-number summary of the distribution and then display that summary as a specially formatted box.
+
+```{r plot-3-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-3-11-hint-1, eval = FALSE}
+... +
+  ...()
+```
+
+### 
+
+ggplot2 provides a vast amount of opportunities, however, there are a countless number of plots that can be made through different geoms and extensions. Check out [**possible options**](https://exts.ggplot2.tidyverse.org/gallery/) for any future implementations or possibilities. 
+
+## Plot 4
+### 
+
+Let's make the same plot, using a related function, `geom_col()`. Unlike `geom_bar()`, you have to specify the value for the y-axis when using this function. 
+
+```{r make-col-p}
+col_p <- mpg |> 
+  select(drv, fl, class) |>
+  summarize(total = n(),
+            .by = c(drv, fl, class)) |> 
+  ggplot(aes(x = fl, 
+             y = total, 
+             fill = class)) +
+    geom_col() +
+    facet_wrap(~ drv,
+               labeller = as_labeller(car_names)) +
+    labs(title = "The Fuel Type Of Cars Based On Their Class Type",
+         subtitle = "Higher Proportion of 4 Wheel and Front Wheel Drive Participants",
+         x = "Fuel Type",
+         y = "Number of Participants",
+         fill = "Class")
+col_p
+```
+
+### Exercise 1
+
+Start a pipe with `mpg`. Select the columns `drv`, `fl` and `class`. 
+
+```{r plot-4-1, exercise = TRUE}
+
+```
+
+```{r plot-4-1-hint-1, eval = FALSE}
+mpg |> 
+  select(..., ..., ...)
+```
+
+### Exercise 2
+
+Copy/paste the previous code. Use `summarize()` to create a new table with the column `total` which is equal to the function `n()`. 
+
+```{r plot-4-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-4-2-hint-1, eval = FALSE}
+... |> 
+  summarize(total = ...)
+```
+
+```{r plot-4-2-hint-2, eval = FALSE}
+... |> 
+  summarize(total = n())
+```
+
+### Exercise 3
+
+Add a `.by` argument to `summarize()` with the values set to `drv`, `fl`, and `class`. You need to place these three values with a vector using `c()`. 
+
+```{r plot-4-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-4-3-hint-1, eval = FALSE}
+... |> 
+  summarize(total = n(),
+            .by = c(..., ..., ...))  
+```
+
+### Exercise 4
+
+Continue your pipe with `ggplot()`. Map the variable `fl` to the x-axis. Map `total` to the `y` axis. Add the layer `geom_col()`.
+
+```{r plot-4-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-4-4-hint-1, eval = FALSE}
+ggplot(aes(x = ..., 
+           y = ...) +
+  ...()
+```
+
+### 
+
+`geom_col()` will automatically take the three to four values for each `fl` in the `total` column and stack them to form one bar. This behavior is from the fact that the `position` argument for `geom_col()` is set by default to "stack". 
+
+### Exercise 5
+
+Now, map `class` to `fill`.
+
+```{r plot-4-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-4-5-hint-1, eval = FALSE}
+ggplot(data = ... , 
+          aes(x = ..., 
+              y = ...,
+              fill = ...) +
+  geom_col()
+```
+
+### Exercise 6
+
+Add the layer `facet_wrap()` and facet by the variable `drv`. 
+
+```{r plot-4-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-4-6-hint-1, eval = FALSE}
+... + 
+  facet_wrap(~ ...)
+```
+
+### 
+
+The `facet_wrap()` function arranges the panels in a grid, wrapping them onto multiple rows and columns. It is useful for visualizing and comparing subsets of data simultaneously.
+
+### Exercise 7
+
+<!-- DK: Check that this works. -->
+
+We want to change the labels of the facet_wrap that we just created. We can do this by setting `labeller` to `as_labeller(car_names)`. Note: `car_names` has already been created for you.
+
+```{r plot-4-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-4-7-hint-1, eval = FALSE}
+facet_wrap(~ drv,
+           ... = as_labeller(...)) +
+```
+
+### 
+
+Through the `as_labeller()` function we are able to change the labels of `facet_wrap()`.
+
+### Exercise 8
+
+To finish your plot, use `labs()` to give the graph a title, subtitle, axes labels, legend labels, and caption of your choosing.
+
+Reminder: This is what your plot should look like.
+
+```{r}
+col_p
+```
+
+```{r plot-4-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-4-8-hint-1, eval = FALSE}
+... +
+  labs(..., 
+       fill = "...",
+       ...)
+```
+
+### 
+
+Through this we are able to view our data with a `facet_wrap` which splits a plot into subplots that each display one subset of the data based on a categorical variable.
+
+## Plot 5
+### 
+
+Let's create this graph using `geom_bar()`.
+
+```{r}
+bar_p <- ggplot(data = midwest, 
+                   mapping = aes(x = state, 
+                                 fill = category)) + 
+  geom_bar(alpha = 1/5, 
+           position = "dodge") + 
+  labs(title = "Categories found in each state",
+       subtitle = "The 5 states in the midwest with each category present.",
+       x = "State",
+       y = "Count",
+       fill = "Category")
+
+bar_p
+```
+
+### Exercise 1
+
+Run `glimpse()` on the `midwest` data set. 
+
+```{r plot-5-1, exercise = TRUE}
+
+```
+
+```{r plot-5-1-hint-1, eval = FALSE}
+...(midwest)
+```
+
+### 
+
+### Exercise 2
+
+Add `ggplot()` and map `state` to the x axis of the `midwest` data and set `fill` to `category`.
+
+```{r plot-5-2, exercise = TRUE}
+
+```
+
+```{r plot-5-2-hint-1, eval = FALSE}
+ggplot(data = ..., 
+       mapping = aes(x =..., 
+                     fill =...))
+```
+
+### 
+
+Here we have used `state` data on the x axis and the count on the y axis is automatically implemented. Within a bar graph, we only input the x variable due to the y variable automatically being created usually as count. Through this we can see count within each `state` in the `midwest` data.
+
+### Exercise 3
+
+Add the layer `geom_bar()`.
+
+```{r plot-5-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-5-3-hint-1, eval = FALSE}
+... +
+  geom_bar()
+```
+
+### 
+
+`geom_bar()` displays the frequency or count of a categorical variable as bars of equal width. By default, `geom_bar()` counts the number of occurrences of each category and maps them to the height of the bars.
+
+### Exercise 4
+
+Within `geom_bar()`, set `alpha` to 1/5, `position` to `"dodge"`.
+
+```{r plot-5-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-5-4-hint-1, eval = FALSE}
+... + geom_bar(alpha = ..., 
+               position = ...)
+```
+
+### Exercise 5
+
+Finally, use `labs()` to give the graph a title, subtitle, axis labels, legend labels, and caption of your choosing.
+
+```{r plot-5-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r plot-5-5-hint-1, eval = FALSE}
+... +
+  labs(..., 
+       fill = "...",
+       ...)
+```
+
+Reminder: This is what your plot should look like.
+
+```{r make-bar-p}
+bar_p
+```
+
+### 
+
+We like using bar charts here because they bin your data and then plot bin counts, the number of points that fall in each bin.
+
+### 
+
+For more information on other stat_summary plots besides bar graphs check out [Statistical transformations](https://r4ds.hadley.nz/layers.html#statistical-transformations) from [Chapter 10: Layers](https://r4ds.hadley.nz/layers.html) in [*R for Data Science (2e)*](https://r4ds.hadley.nz/).
+
 
 ## Summary
 ### 
