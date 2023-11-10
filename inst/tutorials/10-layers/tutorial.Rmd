@@ -15,6 +15,7 @@ description: 'Tutorial for Chapter 10: Layers'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
+library(ggridges)
 library(maps)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
@@ -56,6 +57,8 @@ polling_data <- read_csv("data/vis4_polling_data.csv",
 
 ## Introduction
 ### 
+
+*This is a ROUGH, UNFINISHED, draft.*
 
 This tutorial covers [Chapter 10: Layers](https://r4ds.hadley.nz/layers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to use [**ggplot2**](https://ggplot2.tidyverse.org/) and related packages to create persuasive graphics. Key functions include [`geom_smooth()`](https://ggplot2.tidyverse.org/reference/geom_smooth.html),  [`geom_histogram()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html), and  [`facet_wrap()`](https://ggplot2.tidyverse.org/reference/facet_wrap.html).
 
@@ -379,7 +382,7 @@ ggplot(mpg, aes(x = displ,
 
 ### 
 
-Every geom function in **ggplot2** takes a mapping argument, either defined locally in the geom layer or globally in the `ggplot()` layer. However, not every aesthetic works with every geom. You could set the shape of a point, but you couldn’t set the “shape” of a line. If you try, **ggplot2** will silently ignore that aesthetic mapping. 
+Every geom function in **ggplot2** takes a mapping argument, either defined locally in the geom layer or globally in the `ggplot()` layer. 
 
 ### Exercise 2
 
@@ -405,7 +408,12 @@ ggplot(mpg, aes(x = displ,
 
 ### 
 
+Not every aesthetic works with every geom. You could set the shape of a point, but you couldn’t set the “shape” of a line. If you try, **ggplot2** will silently ignore that aesthetic mapping. 
+
+
 ### Exercise 3
+
+You can set the linetype of a line. `geom_smooth()` will draw a different line, with a different linetype, for each unique value of the variable that you map to linetype. Within the call to `aes()`, add `linetype = drv`.
 
 ```{r geometric-objects-3, exercise = TRUE}
 
@@ -421,20 +429,314 @@ ggplot(mpg, aes(x = displ,
 ```
 
 ```{r geometric-objects-3-test, include = FALSE}
-ggplot(mpg, aes(x = displ, y = hwy, linetype = drv)) + 
+ggplot(mpg, aes(x = displ, 
+                y = hwy, 
+                linetype = drv)) + 
   geom_smooth()
 ```
 
 ### 
 
-## Facets
+Here, `geom_smooth()` separates the cars into three lines based on their drv value, which describes a car’s drive train. One line describes all of the points that have a `4` value, one line describes all of the points that have an `f` value, and one line describes all of the points that have an `r` value. Here, `4` stands for four-wheel drive, `f` for front-wheel drive, and `r` for rear-wheel drive.
+
+### Exercise 4
+
+Replace `linetype = drv` with `color = drv` within `aes()`.
+
+
+```{r geometric-objects-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-4-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy, 
+                ... = drv)) + 
+  geom_smooth()
+```
+
+```{r geometric-objects-4-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy, 
+                color = drv)) + 
+  geom_smooth()
+```
+
 ### 
 
-## Statistical transformations    
+The `geom_smooth()` geom is applied to each category of color separately. With one call to a geom, we get three different plots, all on the same graph.
+
+### Exercise 5
+
+If this sounds strange, we can make it clearer by overlaying the lines on top of the raw data. To do this, simply add a call to `geom_point()` in between `ggplot()` and `geom_smooth()`. Don't forget to separate different lines with `+`.
+
+
+```{r geometric-objects-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-5-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy, 
+                color = drv)) + 
+  ...() +
+  geom_smooth()
+```
+
+```{r geometric-objects-5-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy, 
+                color = drv)) + 
+  geom_point() +
+  geom_smooth()
+```
+
 ### 
 
-## Position adjustments
+We are still get the same warning as before:
+
+> `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+
+In essence, R is reminding you are the default values it is using for the `method` and `formula` arguments. You should probably provide those values youself, if only to assure R (and future readers of your code) that this is what you want.
+
+
+### Exercise 6
+
+The `aes()` values cascade across all the geom's, unless and until we change them ouselves. To see this, add `aes(linetype = drv)` to the call to `geom_smooth()`.
+
+```{r geometric-objects-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-6-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy, 
+                color = drv)) + 
+  ... +
+  geom_smooth(...(linetype = ...))
+```
+
+```{r geometric-objects-6-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy, 
+                color = drv)) + 
+  geom_point() +
+  geom_smooth(aes(linetype = drv))
+```
+
 ### 
+
+Many geoms, like `geom_smooth()`, use a single geometric object to display multiple rows of data. For these geoms, you can set the `group` aesthetic to a categorical variable to draw multiple objects. 
+
+### Exercise 7
+
+The explore the use of the `group` aesthetic, begin with our standard plot, which runs `geom_smooth()` with `aes(x = displ, y = hwy)` and no other arguments.
+
+```{r geometric-objects-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-7-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy)) +
+  ...()
+```
+
+```{r geometric-objects-7-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy)) +
+  geom_smooth()
+```
+
+### 
+
+### Exercise 8
+
+ggplot2 will draw a separate object for each unique value of the grouping variable. In practice, ggplot2 will automatically group the data for these geoms whenever you map an aesthetic to a discrete variable (as in the linetype example).
+
+```{r geometric-objects-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-8-hint-1, eval = FALSE}
+
+```
+
+```{r geometric-objects-8-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_smooth(aes(group = drv))
+```
+
+### 
+
+ It is convenient to rely on this feature because the group aesthetic by itself does not add a legend or distinguishing features to the geoms.
+
+### Exercise 9
+
+```{r geometric-objects-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-9-hint-1, eval = FALSE}
+
+```
+
+```{r geometric-objects-9-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_smooth(aes(color = drv), show.legend = FALSE)
+```
+
+### 
+
+### Exercise 10
+
+```{r geometric-objects-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-10-hint-1, eval = FALSE}
+
+```
+
+```{r geometric-objects-10-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy)) + 
+  geom_point(aes(color = class)) + 
+  geom_smooth()
+```
+
+### 
+
+### Exercise 11
+
+To explore some of these concepts, let's construct this plot:
+
+```{r}
+geom_p <- ggplot(mpg, aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_point(
+    data = mpg |> filter(class == "2seater"), 
+    color = "red"
+  ) +
+  geom_point(
+    data = mpg |> filter(class == "2seater"), 
+    shape = "circle open", size = 3, color = "red"
+  )
+
+geom_p
+```
+
+Begin with
+
+
+```{r geometric-objects-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-11-hint-1, eval = FALSE}
+
+```
+
+```{r geometric-objects-11-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy)) + 
+  geom_point()
+```
+
+### 
+
+### Exercise 12
+
+```{r geometric-objects-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-12-hint-1, eval = FALSE}
+
+```
+
+```{r geometric-objects-12-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_point(
+    data = mpg |> filter(class == "2seater"), 
+    color = "red"
+  )
+```
+
+### 
+
+### Exercise 13
+
+```{r geometric-objects-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-13-hint-1, eval = FALSE}
+
+```
+
+```{r geometric-objects-13-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_point(
+    data = mpg |> filter(class == "2seater"), 
+    color = "red"
+  ) +
+  geom_point(
+    data = mpg |> filter(class == "2seater"), 
+    shape = "circle open", size = 3, color = "red"
+  )
+```
+
+### 
+
+Geoms are the fundamental building blocks of ggplot2. You can completely transform the look of your plot by changing its geom, and different geoms can reveal different features of your data. 
+
+### Exercise 14
+
+```{r geometric-objects-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-14-hint-1, eval = FALSE}
+
+```
+
+```{r geometric-objects-14-test, include = FALSE}
+
+```
+
+### 
+
+<!-- ## Facets -->
+<!-- ###  -->
+
+<!-- ## Statistical transformations     -->
+<!-- ###  -->
+
+<!-- ## Position adjustments -->
+<!-- ###  -->
 
 ## Coordinate Systems
 ### 
