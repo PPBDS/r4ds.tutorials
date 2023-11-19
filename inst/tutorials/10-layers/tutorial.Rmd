@@ -1,6 +1,6 @@
 ---
 title: Layers
-author: David Kane and Mann Talati
+author: David Kane
 tutorial:
   id: layers
 output:
@@ -39,9 +39,9 @@ polling_data <- read_csv("data/vis4_polling_data.csv",
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- This tutorial is a bit of a mess. It includes lots of random junk. It does not follow the chapter too closely. But what should it do? Maybe the junk (various old plots) are good? Maybe the chapter stuff is less good? Probably best is to do both. Have a questions which cover all the material in the chapter and then, at the end of various sections, make some longer plots which require the new functions/tricks we have just learned. -->
+<!-- This tutorial is a bit of a mess. We need to add the code from the missing sections. And then we need to decide what to do with the extra plots. -->
 
-<!-- Last student took 70 minutes, so there is room to add a graduation exercise. -->
+
 
 <!-- Note that the later material sucks! There are not enough knowledge drops.  -->
 
@@ -729,11 +729,232 @@ Geoms are the fundamental building blocks of ggplot2. You can completely transfo
 
 ### 
 
-<!-- ## Facets -->
-<!-- ###  -->
+## Facets
+### 
 
-<!-- ## Statistical transformations     -->
-<!-- ###  -->
+Facets, created with functions like `facet_wrap()` and `facet_grid()`, are the easiest way to create plot "multiples," copies of the same plot for each value of a third variable.
+
+### Exercise 1
+
+Start with our usual basic scatter plot, `displ` versus `hwy` from the `mpg` tibble.
+
+```{r facets-1, exercise = TRUE}
+
+```
+
+```{r facets-1-hint-1, eval = FALSE}
+ggplot(mpg, aes(... = displ, 
+                y = ...)) + 
+  ...()
+```
+
+```{r facets-1-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy)) + 
+  geom_point()
+```
+
+### 
+
+To facet your plot by a single variable, use `facet_wrap()`. The first argument of `facet_wrap()` is a formula, which you create with `~` followed by a variable name. The variable that you pass to `facet_wrap()` should be categorical, i.e., either character or factor.
+
+
+### Exercise 2
+
+Add `facet_wrap(~cyl)` to the end of your plot code. Don't forget the `+` after `geom_point()`.
+
+
+```{r facets-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r facets-2-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy)) + 
+  geom_point() + 
+  facet_wrap(~ ...)
+```
+
+```{r facets-2-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy)) + 
+  geom_point() + 
+  facet_wrap(~cyl)
+```
+
+### 
+
+[`facet_wrap()`](https://ggplot2.tidyverse.org/reference/facet_wrap.html) wraps a 1d sequence of panels into 2d. This is generally a better use of screen space than `facet_grid()` because most displays are roughly rectangular.
+
+### Exercise 3
+
+To facet your plot with the combination of two variables, switch from `facet_wrap()` to `facet_grid()`. The first argument of `facet_grid()` is also a formula, but now it’s a double sided formula: rows ~ cols. 
+
+Replace `facet_wrap(~cyl)` with `facet_grid(drv ~ cyl)`.
+
+
+```{r facets-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r facets-3-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy)) + 
+  geom_point() + 
+  facet_...(... ~ cyl)
+```
+
+```{r facets-3-test, include = FALSE}
+ggplot(mpg, aes(x = displ, 
+                y = hwy)) + 
+  geom_point() + 
+  facet_grid(drv ~ cyl)
+```
+
+### 
+
+By default each of the facets share the same scale and range for x and y axes. This is useful when you want to compare data across facets but it can be limiting when you want to visualize the relationship within each facet better. 
+
+### Exercise 4
+
+Setting the scales argument in a faceting function to "free" will allow for different axis scales across both rows and columns, "free_x" will allow for different scales across rows, and "free_y" will allow for different scales across columns.
+
+Add `scales = "free_y"` to the call to `facet_grid()`. Don't forget the comma after `drv ~ cyl`.
+
+```{r facets-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r facets-4-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  facet_grid(drv ~ cyl, ... = ...)
+```
+
+```{r facets-4-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  facet_grid(drv ~ cyl, scales = "free_y")
+```
+
+### 
+
+[`facet_wrap()`](https://ggplot2.tidyverse.org/reference/facet_wrap.html) and 
+[`facet_grid()`](https://ggplot2.tidyverse.org/reference/facet_grid.html) include lots of useful arguments, but note that the names of those arguments are not always consistent, for historical reasons. Consider `nrow` from `facet_wrap()` versus `rows` from `facet_grid()`.
+
+## Statistical transformations
+###
+
+### Exercise 1
+
+
+```{r statistical-transformations-1, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r statistical-transformations-1-hint, eval = FALSE}
+
+```
+
+```{r statistical-transformations-1-test, include = FALSE}
+diamonds
+```
+
+###
+
+### Exercise 2
+
+
+```{r statistical-transformations-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r statistical-transformations-2-hint, eval = FALSE}
+
+```
+
+```{r statistical-transformations-2-test, include = FALSE}
+ggplot(diamonds, aes(x = cut)) + 
+  geom_bar()
+```
+
+###
+
+### Exercise 3
+
+
+```{r statistical-transformations-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r statistical-transformations-3-hint, eval = FALSE}
+
+```
+
+```{r statistical-transformations-3-test, include = FALSE}
+diamonds |>
+  count(cut)
+```
+
+###
+
+### Exercise 4
+
+
+```{r statistical-transformations-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r statistical-transformations-4-hint, eval = FALSE}
+
+```
+
+```{r statistical-transformations-4-test, include = FALSE}
+diamonds |>
+  count(cut) |>
+  ggplot(aes(x = cut, y = n)) +
+  geom_bar(stat = "identity")
+```
+
+###
+
+### Exercise 5
+
+
+```{r statistical-transformations-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r statistical-transformations-5-hint, eval = FALSE}
+
+```
+
+```{r statistical-transformations-5-test, include = FALSE}
+ggplot(diamonds, aes(x = cut, y = after_stat(prop), group = 1)) + 
+  geom_bar()
+```
+
+###
+
+
+
+
 
 <!-- ## Position adjustments -->
 <!-- ###  -->
@@ -861,6 +1082,10 @@ Now you should see the New Zealand data plotted out based on the spatial data. W
 ## The layered grammar of graphics
 ### 
 
+<!-- DK: There is more text, but no code, in this chapter. Maybe add some simple copy/paste questions and then include that extra text? Or maybe take one of the examples and use it here, while discussing the grammar of graphics? -->
+
+Consider this overview:
+
 ````
 ggplot(data = <DATA>) + 
   <GEOM_FUNCTION>(
@@ -872,9 +1097,12 @@ ggplot(data = <DATA>) +
   <FACET_FUNCTION>
 ````
 
+Our new template takes seven parameters, the bracketed words that appear in the template. In practice, you rarely need to supply all seven parameters to make a graph because ggplot2 will provide useful defaults for everything except the data, the mappings, and the geom function.
 
 
+### 
 
+The seven parameters in the template compose the grammar of graphics, a formal system for building plots. The [grammar of graphics](https://vita.had.co.nz/papers/layered-grammar.pdf) is based on the insight that you can uniquely describe any plot as a combination of a dataset, a geom, a set of mappings, a stat, a position adjustment, a coordinate system, a faceting scheme, and a theme.
 
 <!-- DK: Maybe turn these into a graduation exercise with one repo, one qmd which contains the three plots, then publish them? -->
 

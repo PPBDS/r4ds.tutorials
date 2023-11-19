@@ -110,14 +110,13 @@ p5 <- diamonds_aug |>
 <!-- https://socviz.co/ -->
 <!-- https://clauswilke.com/dataviz/ -->
 
-<!-- DK: Always load the libraries. -->
+<!-- Split up some of these Sections into smaller parts, one for several of the subsections in the chapter, like  A categorical and a numerical variable -->
 
 
 ## Introduction
 ### 
 
-
-This tutorial covers [Chapter 11: Exploratory data analysis](https://r4ds.hadley.nz/eda.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. We will be making use of the [**ggplot2**](https://ggplot2.tidyverse.org/) package and the [**dplyr**](https://dplyr.tidyverse.org/) to learn about Variation and Patterns. Some key commands that we will be making use of is [`coord_cartesian()`](https://ggplot2.tidyverse.org/reference/coord_cartesian.html) which sets limits on the coordinate system and will zoom the plot, [`geom_freqpoly()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html) which visualizes the distribution of a single continuous variable by dividing the x axis into bins and counts the number of observations in each bin, [`fct_reorder()`](https://forcats.tidyverse.org/reference/fct_reorder.html), [`geom_tile()`](https://ggplot2.tidyverse.org/reference/geom_tile.html), and [`geom_count()`](https://ggplot2.tidyverse.org/reference/geom_count.html) which is a variant of `geom_point()` that counts the number of observations at each location, that maps the count to point area. 
+This tutorial covers [Chapter 11: Exploratory data analysis](https://r4ds.hadley.nz/eda.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. We will be making use of the [**ggplot2**](https://ggplot2.tidyverse.org/) and the [**dplyr**](https://dplyr.tidyverse.org/) packages to learn about variation and patterns. Some key commands include [`coord_cartesian()`](https://ggplot2.tidyverse.org/reference/coord_cartesian.html), [`geom_freqpoly()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html), [`fct_reorder()`](https://forcats.tidyverse.org/reference/fct_reorder.html), [`geom_tile()`](https://ggplot2.tidyverse.org/reference/geom_tile.html), and [`geom_count()`](https://ggplot2.tidyverse.org/reference/geom_count.html). 
 
 ## Variation
 ### 
@@ -136,11 +135,11 @@ Load in the **tidyverse** package using `library()`.
 library(...)
 ```
 
-```{r include = FALSE}
+```{r variation-1-test, include = FALSE}
 library(tidyverse)
 ```
 
-###
+### 
 
 In this tutorial, we’ll combine what you’ve learned about the **dplyr** package and the **ggplot2** package to interactively ask questions, answer them with data, and then ask new questions.
 
@@ -157,13 +156,13 @@ Type in `diamonds` and hit "Run Code"
 diamonds
 ```
 
-```{r include = FALSE}
+```{r variation-2-test, include = FALSE}
 diamonds
 ```
 
 ### 
 
-The `diamonds` dataset contains the prices and other attributes of almost 54,000 diamonds, such as the `price`, `carat`, `cut`, `color`, and so on.
+The `diamonds` dataset contains the prices and other attributes of `r nrow(diamonds)` diamonds, such as the `price`, `carat`, `cut`, `color`, and so on.
 
 ### Exercise 3
 
@@ -178,12 +177,12 @@ diamonds |>
   ...
 ```
 
-```{r include = FALSE}
+```{r variation-3-test, include = FALSE}
 diamonds |>
   ggplot()
 ```
 
-Note that this plot is blank.
+Note that this plot is blank. `ggplot()` has simply created an empty plot object which, when printed, shows as a blank recatangle.
 
 ### 
 
@@ -204,7 +203,7 @@ diamonds |>
   ggplot(aes(x = ...))
 ```
 
-```{r include = FALSE}
+```{r variation-4-test, include = FALSE}
 diamonds |>
   ggplot(aes(x = carat))
 ```
@@ -228,7 +227,7 @@ Add `geom_histogram()` to the pipeline.
   geom_histogram()
 ```
 
-```{r include = FALSE}
+```{r variation-5-test, include = FALSE}
 diamonds |>
   ggplot(aes(x = carat)) + 
   geom_histogram()
@@ -253,7 +252,7 @@ Within `geom_histogram()`, add the `binwidth` argument and set it equal to `0.5`
   geom_histogram(binwidth = ...)
 ```
 
-```{r include = FALSE}
+```{r variation-6-test, include = FALSE}
 diamonds |>
   ggplot(aes(x = carat)) + 
   geom_histogram(binwidth = 0.5)
@@ -277,7 +276,7 @@ Create a new variable called `smaller` and set it equal to `diamonds`.
 smaller <- ...
 ```
 
-```{r include = FALSE}
+```{r variation-7-test, include = FALSE}
 smaller <- diamonds
 ```
 
@@ -304,7 +303,7 @@ smaller <- diamonds |>
   filter(carat < ...)
 ```
 
-```{r include = FALSE}
+```{r variation-8-test, include = FALSE}
 smaller <- diamonds |>
   filter(carat < 3)
 ```
@@ -328,7 +327,7 @@ smaller |>
   ...
 ```
 
-```{r include = FALSE}
+```{r variation-9-test, include = FALSE}
 smaller |>
   ggplot()
 ```
@@ -358,7 +357,7 @@ smaller |>
   ggplot(aes(x = ...))
 ```
 
-```{r include = FALSE}
+```{r variation-10-test, include = FALSE}
 smaller |>
   ggplot(aes(x = carat))
 ```
@@ -382,7 +381,7 @@ Add `geom_histogram()` to the pipeline.
   geom_histogram()
 ```
 
-```{r include = FALSE}
+```{r variation-11-test, include = FALSE}
 smaller |>
   ggplot(aes(x = carat)) +
   geom_histogram()
@@ -411,7 +410,7 @@ Within `geom_histogram()`, set the `binwidth` argument to `0.01`.
   geom_histogram(binwidth = ...)
 ```
 
-```{r include = FALSE}
+```{r variation-12-test, include = FALSE}
 smaller |>
   ggplot(aes(x = carat)) +
   geom_histogram(binwidth = 0.01)
@@ -444,7 +443,7 @@ diamonds |>
   ...
 ```
 
-```{r include = FALSE}
+```{r variation-13-test, include = FALSE}
 diamonds |> 
   ggplot()
 ```
@@ -538,17 +537,15 @@ Pipe `diamonds` to `filter()` and filter `y` to be less than `3`.
 
 ```
 
-
 ```{r variation-18-hint-1, eval = FALSE}
 diamonds |> 
   filter(y < ...)
 ```
 
-```{r, include=FALSE}
+```{r variation-18-test, include = FALSE}
 diamonds |> 
   filter(y < 3)
 ```
-
 
 ### 
 
@@ -570,11 +567,10 @@ diamonds |>
   filter(y < 3 | y > ...)
 ```
 
-```{r, include=FALSE}
+```{r variation-19-test, include = FALSE}
 diamonds |> 
   filter(y < 3 | y > 20)
 ```
-
 
 ### 
 
@@ -704,6 +700,8 @@ diamonds2 <- diamonds |>
 Here we replaced the unusual values with missing values. Here, we use the `mutate()` function to replace the variable with a modified copy. We used the `if_else()` function to replace unusual values with `NA`:
 
 ### Exercise 4
+
+<!-- DK: Bad directions. -->
 
 Add `ggplot()` to the pipeline.
 
@@ -836,6 +834,8 @@ nycflights13::flights |>
 Data cleaning is just one application of EDA: you ask questions about whether your data meets your expectations or not. To do data cleaning, you’ll need to deploy all the tools of EDA: visualization, transformation, and modelling.
 
 ### Exercise 11
+
+<!-- DK: Explain %% and %/%. -->
 
 Within `mutate()`, create the `sched_min` variable and set it equal to `sched_dep_time %% 100`.
 
@@ -1039,6 +1039,10 @@ diamonds |>
   ...
 ```
 
+```{r covariation-1-test, include = FALSE}
+
+```
+
 ### 
 
 Covariation is the tendency for the values of two or more variables to vary together in a related way. The best way to spot covariation is to visualize the relationship between two or more variables.
@@ -1056,6 +1060,10 @@ Within `ggplot()`, using `aes()`, set the `x` argument to the variable `price`.
 ```{r covariation-2-hint-1, eval = FALSE}
 diamonds |> 
   ggplot(aes(x = ...))
+```
+
+```{r covariation-2-test, include = FALSE}
+
 ```
 
 ### 
@@ -1077,9 +1085,13 @@ Add `geom_freqpoly()` to the pipeline.
   geom_freqpoly()
 ```
 
+```{r covariation-3-test, include = FALSE}
+
+```
+
 ### 
 
-The function, `geom_freqpoly()`, visualizes the distribution of a single continuous variable by dividing the x-axis into bins and counting the number of observations in each bin. Frequency polygons display he counts with lines. Frequency polygons are more suitable when you want to compare the distribution across the levels of a categorical variable.
+The function, `geom_freqpoly()`, visualizes the distribution of a single continuous variable by dividing the x-axis into bins and counting the number of observations in each bin. Frequency polygons display the counts with lines. Frequency polygons are more suitable when you want to compare the distribution across the levels of a categorical variable.
 
 ### Exercise 4
 
@@ -1094,6 +1106,10 @@ Within `geom_freqpoly()`, using `aes()`, set the `color` argument to the `cut` v
 ```{r covariation-4-hint-1, eval = FALSE}
 ... + 
   geom_freqpoly(aes(color = ...))
+```
+
+```{r covariation-4-test, include = FALSE}
+
 ```
 
 ### 
@@ -1115,6 +1131,10 @@ Within `geom_freqpoly()`, add the `binwidth` argument and set it equal to `500`.
   geom_freqpoly(aes(color = cut), binwidth = ...)
 ```
 
+```{r covariation-5-test, include = FALSE}
+
+```
+
 ### Exercise 6
 
 Within `geom_freqpoly()`, add the `linewidth` argument and set it equal to `0.75`. 
@@ -1128,6 +1148,10 @@ Within `geom_freqpoly()`, add the `linewidth` argument and set it equal to `0.75
 ```{r covariation-6-hint-1, eval = FALSE}
 ... + 
   geom_freqpoly(aes(color = cut), binwidth = 500, linewidth = ...)
+```
+
+```{r covariation-6-test, include = FALSE}
+
 ```
 
 ### 
@@ -1148,6 +1172,10 @@ Within `ggplot()`, within `aes()`, set the `y` argument to `after_stat(density)`
 diamonds |> 
   ggplot(aes(x = price, y = ...) + 
   geom_freqpoly(aes(color = cut), binwidth = 500, linewidth = 0.75)
+```
+
+```{r covariation-7-test, include = FALSE}
+
 ```
 
 ### 
@@ -1174,6 +1202,10 @@ Add a `title`, `subtitle`, `x` axis title, a `y` axis title, and a legend title 
   )
 ```
 
+```{r covariation-8-test, include = FALSE}
+
+```
+
 ### 
 
 There’s something rather surprising about this plot - it appears that fair diamonds (the lowest quality) have the highest average price! But maybe that’s because frequency polygons are a little hard to interpret - there’s a lot going on in this plot. A visually simpler plot for exploring this relationship is using side-by-side boxplots.
@@ -1191,9 +1223,11 @@ diamonds |>
   ggplot()
 ```
 
-### 
+```{r covariation-9-test, include = FALSE}
 
-Note that this plot is blank.
+```
+
+
 
 ### Exercise 10
 
@@ -1208,6 +1242,10 @@ Within `ggplot()`, using `aes()`, set the `x` argument to the `cut` variable.
 ```{r covariation-10-hint-1, eval = FALSE}
 diamonds |> 
   ggplot(aes(x = ...))
+```
+
+```{r covariation-10-test, include = FALSE}
+
 ```
 
 ### 
@@ -1229,6 +1267,10 @@ diamonds |>
   ggplot(aes(x = cut, y = ...))
 ```
 
+```{r covariation-11-test, include = FALSE}
+
+```
+
 ### Exercise 12
 
 Add `geom_boxplot()` to the pipeline.
@@ -1242,6 +1284,10 @@ Add `geom_boxplot()` to the pipeline.
 ```{r covariation-12-hint-1, eval = FALSE}
 ... +
   geom_boxplot()
+```
+
+```{r covariation-12-test, include = FALSE}
+
 ```
 
 ### 
@@ -1268,6 +1314,10 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs(
   )
 ```
 
+```{r covariation-13-test, include = FALSE}
+
+```
+
 ### 
 
 `cut` is an ordered factor: fair is worse than good, which is worse than very good and so on. Many categorical variables don’t have such an intrinsic order, so you might want to reorder them to make a more informative display. One way to do that is with `fct_reorder()`. Let's use a new dataset.
@@ -1284,6 +1334,10 @@ Type in `mpg` and hit "Run Code".
 
 ```{r covariation-14-hint-1, eval = FALSE}
 mpg
+```
+
+```{r covariation-14-test, include = FALSE}
+
 ```
 
 ### 
@@ -1305,9 +1359,11 @@ mpg |>
   ggplot()
 ```
 
-### 
+```{r covariation-15-test, include = FALSE}
 
-Note that this plot is blank. 
+```
+
+
 
 ### Exercise 16
 
@@ -1322,6 +1378,10 @@ Within `ggplot()`, using `aes()`, set the `x` argument to the `class` variable.
 ```{r covariation-16-hint-1, eval = FALSE}
 mpg |> 
   ggplot(aes(x = ...))
+```
+
+```{r covariation-16-test, include = FALSE}
+
 ```
 
 ### Exercise 17
@@ -1339,6 +1399,10 @@ mpg |>
   ggplot(aes(x = class, y = ...))
 ```
 
+```{r covariation-17-test, include = FALSE}
+
+```
+
 ### Exercise 18
 
 Add `geom_boxplot()` to the pipeline.
@@ -1352,6 +1416,10 @@ Add `geom_boxplot()` to the pipeline.
 ```{r covariation-18-hint-1, eval = FALSE}
 ... + 
   geom_boxplot()
+```
+
+```{r covariation-18-test, include = FALSE}
+
 ```
 
 ### 
@@ -1369,6 +1437,10 @@ Within `ggplot()`, within `aes()`, set the `x` argument to `fct_reorder(class, h
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r covariation-19-hint-1, eval = FALSE}
+
+```
+
+```{r covariation-19-test, include = FALSE}
 
 ```
 
@@ -1390,6 +1462,10 @@ Within `ggplot()`, within `aes()`, swap the aesthetic mappings of `x` and `y`.
 mpg |> 
   ggplot(aes(x = ..., y = ...)) + 
   ...
+```
+
+```{r covariation-20-test, include = FALSE}
+
 ```
 
 ### 
@@ -1416,7 +1492,9 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs(
   )
 ```
 
-### 
+```{r covariation-21-test, include = FALSE}
+
+```
 
 Reminder this is what our plot should look like: 
 
@@ -1424,7 +1502,7 @@ Reminder this is what our plot should look like:
 p2
 ```
 
-## Covariation with Two Categorical Variables
+## Covariation with two categorical variables
 ### 
 
 In this section we will learn how to visualize the covariation between categorical variables. 
@@ -1434,7 +1512,6 @@ In this section we will learn how to visualize the covariation between categoric
 By the end of this section, we will be creating this plot:
 
 ```{r}
-
 p3 <- diamonds |> 
   count(color, cut) |>  
   ggplot(aes(x = color, y = cut)) +
@@ -1447,41 +1524,44 @@ p3 <- diamonds |>
   )
 
 p3
-
 ```
 
 ### Exercise 1
 
 With a new pipeline, pipe the `diamonds` dataset to `ggplot()`.
 
-```{r covariation-with-two-1, exercise = TRUE}
+```{r covariation-with-two-categoric-1, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-two-1-hint-1, eval = FALSE}
+```{r covariation-with-two-categoric-1-hint-1, eval = FALSE}
 diamonds |> 
   ggplot()
 ```
 
-### 
+```{r covariation-with-two-categoric-1-test, include = FALSE}
 
-Note that this plot is empty.
+```
 
 ### Exercise 2
 
 Within `ggplot()`, using `aes()`, set the `x` argument to the `cut` variable.
 
-```{r covariation-with-two-2, exercise = TRUE}
+```{r covariation-with-two-categoric-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-two-2-hint-1, eval = FALSE}
+```{r covariation-with-two-categoric-2-hint-1, eval = FALSE}
 diamonds |> 
   ggplot(aes(x = ...))
+```
+
+```{r covariation-with-two-categoric-2-test, include = FALSE}
+
 ```
 
 ### 
@@ -1492,15 +1572,19 @@ To visualize the covariation between categorical variables, you’ll need to cou
 
 Within `ggplot()`, using `aes()`, set the `y` argument to the `color` variable.
 
-```{r covariation-with-two-3, exercise = TRUE}
+```{r covariation-with-two-categoric-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-two-3-hint-1, eval = FALSE}
+```{r covariation-with-two-categoric-3-hint-1, eval = FALSE}
 diamonds |> 
   ggplot(aes(x = cut, y = ...))
+```
+
+```{r covariation-with-two-categoric-3-test, include = FALSE}
+
 ```
 
 ### 
@@ -1511,15 +1595,19 @@ One way to visualize two categorical variables is by using the function `geom_co
 
 Add `geom_count()` to the pipeline.
 
-```{r covariation-with-two-4, exercise = TRUE}
+```{r covariation-with-two-categoric-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-two-4-hint-1, eval = FALSE}
+```{r covariation-with-two-categoric-4-hint-1, eval = FALSE}
 ... + 
   geom_count()
+```
+
+```{r covariation-with-two-categoric-4-test, include = FALSE}
+
 ```
 
 ### 
@@ -1530,18 +1618,22 @@ The size of each circle in the plot displays how many observations occurred at e
 
 Let's make our plot fancy by adding a `title`, `subtitle`, `x` axis title, a `y` axis title by adding `labs()` to the pipeline.
 
-```{r covariation-with-two-5, exercise = TRUE}
+```{r covariation-with-two-categoric-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-two-5-hint-1, eval = FALSE}
+```{r covariation-with-two-categoric-5-hint-1, eval = FALSE}
 ... + 
   labs(title = ...,
        subtitle = ..., 
        x = ...,
        y = ...)
+```
+
+```{r covariation-with-two-categoric-5-test, include = FALSE}
+
 ```
 
 ### 
@@ -1552,15 +1644,19 @@ Another approach for exploring the relationship between these variables is compu
 
 With a new pipeline, pipe the `diamonds` dataset to `count()`. Within `count` add the variables `color` and `cut`. 
 
-```{r covariation-with-two-6, exercise = TRUE}
+```{r covariation-with-two-categoric-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-two-6-hint-1, eval = FALSE}
+```{r covariation-with-two-categoric-6-hint-1, eval = FALSE}
 diamonds |> 
   count(color, ...)
+```
+
+```{r covariation-with-two-categoric-6-test, include = FALSE}
+
 ```
 
 ### 
@@ -1571,49 +1667,57 @@ Now, let's visualize this with `geom_tile()` and the fill aesthetic.
 
 Add `ggplot()` to the pipeline.
 
-```{r covariation-with-two-7, exercise = TRUE}
+```{r covariation-with-two-categoric-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-two-7-hint-1, eval = FALSE}
+```{r covariation-with-two-categoric-7-hint-1, eval = FALSE}
 ... +
   ggplot()
 ```
 
-### 
+```{r covariation-with-two-categoric-7-test, include = FALSE}
 
-Note that this plot is empty.
+```
 
 ### Exercise 8
 
 Within `ggplot()`, using `aes()`, set the `x` argument to the `color` variable.
 
-```{r covariation-with-two-8, exercise = TRUE}
+```{r covariation-with-two-categoric-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-two-8-hint-1, eval = FALSE}
+```{r covariation-with-two-categoric-8-hint-1, eval = FALSE}
 ... +
   ggplot(aes(x = ...))
+```
+
+```{r covariation-with-two-categoric-8-test, include = FALSE}
+
 ```
 
 ### Exercise 9
 
 Within `ggplot()`, using `aes()`, set the `y` argument to the `cut` variable. 
 
-```{r covariation-with-two-9, exercise = TRUE}
+```{r covariation-with-two-categoric-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-two-9-hint-1, eval = FALSE}
+```{r covariation-with-two-categoric-9-hint-1, eval = FALSE}
 ... + 
   ggplot(aes(x = color, y = ...))
+```
+
+```{r covariation-with-two-categoric-9-test, include = FALSE}
+
 ```
 
 ### 
@@ -1624,30 +1728,38 @@ If the categorical variables are unordered, you might want to use the [**seriati
 
 Add `geom_tile()` to the pipeline.
 
-```{r covariation-with-two-10, exercise = TRUE}
+```{r covariation-with-two-categoric-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-two-10-hint-1, eval = FALSE}
+```{r covariation-with-two-categoric-10-hint-1, eval = FALSE}
 ... + 
   geom_tile()
+```
+
+```{r covariation-with-two-categoric-10-test, include = FALSE}
+
 ```
 
 ### Exercise 11
 
 Within `geom_tile()`, using `aes()`, set the `fill` argument to the `n` variable.
 
-```{r covariation-with-two-11, exercise = TRUE}
+```{r covariation-with-two-categoric-11, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-two-11-hint-1, eval = FALSE}
+```{r covariation-with-two-categoric-11-hint-1, eval = FALSE}
 ... + 
   geom_tile(aes(fill = ...))
+```
+
+```{r covariation-with-two-categoric-11-test, include = FALSE}
+
 ```
 
 ### 
@@ -1658,31 +1770,31 @@ For larger plots, you might want to try the [**heatmaply**](https://cran.r-proje
 
 Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs()` to the pipeline.
 
-```{r covariation-with-two-12, exercise = TRUE}
+```{r covariation-with-two-categoric-12, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-two-12-hint-1, eval = FALSE}
+```{r covariation-with-two-categoric-12-hint-1, eval = FALSE}
 ... + 
   labs(title = ...,
        subtitle = ...,
        x = ...,
        y = ...)
-
 ```
 
-### 
+```{r covariation-with-two-categoric-12-test, include = FALSE}
+
+```
 
 Reminder this is what your plot should look like: 
 
 ```{r}
 p3
-
 ```
 
-## Covariation with 2 Numerical Variables
+## Covariation with two numerical variables
 ### 
 
 In this section, we will learn how to visualize covariation between two numerical variables. 
@@ -1701,21 +1813,24 @@ p4 <- smaller |>
        y = "Price of the Diamond")
 
 p4
-
 ```
 
 ### Exercise 1
 
 Type in `smaller` and hit "Run Code".
 
-```{r covariation-with-2-n-1, exercise = TRUE}
+```{r covariation-with-two-numerical-1, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-2-n-1-hint-1, eval = FALSE}
+```{r covariation-with-two-numerical-1-hint-1, eval = FALSE}
 smaller
+```
+
+```{r covariation-with-two-numerical-1-test, include = FALSE}
+
 ```
 
 ### 
@@ -1726,51 +1841,57 @@ This dataframe shows diamonds that only have less than 3 carats.
 
 With a new pipeline, pipe the `smaller` dataset to `ggplot()`. 
 
-```{r covariation-with-2-n-2, exercise = TRUE}
+```{r covariation-with-two-numerical-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-2-n-2-hint-1, eval = FALSE}
+```{r covariation-with-two-numerical-2-hint-1, eval = FALSE}
 smaller |> 
   ggplot()
 ```
 
-### 
+```{r covariation-with-two-numerical-2-test, include = FALSE}
 
-Note that this plot is empty.
+```
 
 ### Exercise 3
 
 Within `ggplot()`, using `aes()`, set the `x` argument to the `carat` variable.
 
-```{r covariation-with-2-n-3, exercise = TRUE}
+```{r covariation-with-two-numerical-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-2-n-3-hint-1, eval = FALSE}
+```{r covariation-with-two-numerical-3-hint-1, eval = FALSE}
 smaller |> 
   ggplot(aes(x = ...))
 ```
 
-### 
+```{r covariation-with-two-numerical-3-test, include = FALSE}
+
+```
 
 ### Exercise 4
 
 Within `ggplot()`, using `aes()`, set the `y` argument to the `price` variable.
 
-```{r covariation-with-2-n-4, exercise = TRUE}
+```{r covariation-with-two-numerical-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-2-n-4-hint-1, eval = FALSE}
+```{r covariation-with-two-numerical-4-hint-1, eval = FALSE}
 smaller |> 
   ggplot(aes(x = carat, y = ...))
+```
+
+```{r covariation-with-two-numerical-4-test, include = FALSE}
+
 ```
 
 ### 
@@ -1781,15 +1902,19 @@ Scatterplots become less useful as the size of your dataset grows, because point
 
 Add `geom_point()` to the pipeline.
 
-```{r covariation-with-2-n-5, exercise = TRUE}
+```{r covariation-with-two-numerical-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-2-n-5-hint-1, eval = FALSE}
+```{r covariation-with-two-numerical-5-hint-1, eval = FALSE}
 ... + 
   geom_point()
+```
+
+```{r covariation-with-two-numerical-5-test, include = FALSE}
+
 ```
 
 ### 
@@ -1800,15 +1925,19 @@ Let's use the `alpha` aesthetic to add transparency to the plot.
 
 Within `geom_point()`, set the `alpha` argument to `0.01`. 
 
-```{r covariation-with-2-n-6, exercise = TRUE}
+```{r covariation-with-two-numerical-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-2-n-6-hint-1, eval = FALSE}
+```{r covariation-with-two-numerical-6-hint-1, eval = FALSE}
 ... + 
   geom_point(alpha = 0.01)
+```
+
+```{r covariation-with-two-numerical-6-test, include = FALSE}
+
 ```
 
 ### 
@@ -1819,34 +1948,42 @@ But using transparency can be challenging for very large datasets. Another solut
 
 Replace `geom_point()` with `geom_bin2d()`.
 
-```{r covariation-with-2-n-7, exercise = TRUE}
+```{r covariation-with-two-numerical-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-2-n-7-hint-1, eval = FALSE}
+```{r covariation-with-two-numerical-7-hint-1, eval = FALSE}
 ... + 
   geom_bin2d()
 ```
 
+```{r covariation-with-two-numerical-7-test, include = FALSE}
+
+```
+
 ### 
 
-geom_bin2d() and geom_hex() divide the coordinate plane into 2d bins and then use a fill color to display how many points fall into each bin. geom_bin2d() creates rectangular bins.
+`geom_bin2d()` and `geom_hex()` divide the coordinate plane into 2d bins and then use a fill color to display how many points fall into each bin. `geom_bin2d()` creates rectangular bins.
 
 
 ### Exercise 8
 
 Load in the `hexbin` package using `library()`. 
 
-```{r covariation-with-2-n-8, exercise = TRUE}
+```{r covariation-with-two-numerical-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-2-n-8-hint-1, eval = FALSE}
+```{r covariation-with-two-numerical-8-hint-1, eval = FALSE}
 library(...)
+```
+
+```{r covariation-with-two-numerical-8-test, include = FALSE}
+
 ```
 
 ### 
@@ -1857,16 +1994,20 @@ The function `geom_hex()` creates hexagonal bins. You will need to install the [
 
 Replace `geom_bin2d()` in the pipeline with `geom_hex()`. 
 
-```{r covariation-with-2-n-9, exercise = TRUE}
+```{r covariation-with-two-numerical-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-2-n-9-hint-1, eval = FALSE}
+```{r covariation-with-two-numerical-9-hint-1, eval = FALSE}
 smaller |> 
   ggplot(aes(x = carat, y = price)) +
   ...
+```
+
+```{r covariation-with-two-numerical-9-test, include = FALSE}
+
 ```
 
 ### 
@@ -1878,47 +2019,55 @@ Another option is to bin one continuous variable so it acts like a categorical v
 
 Replace `geom_hex()` with `geom_boxplot()` in the previous pipeline.
 
-```{r covariation-with-2-n-10, exercise = TRUE}
+```{r covariation-with-two-numerical-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-2-n-10-hint-1, eval = FALSE}
+```{r covariation-with-two-numerical-10-hint-1, eval = FALSE}
 ... +
   geom_boxplot()
+```
+
+```{r covariation-with-two-numerical-10-test, include = FALSE}
+
 ```
 
 ### Exercise 11
 
 Within `geom_boxplot()`, using `aes()`, set the `group` argument to `cut_width(carat, 0.1)`. 
 
-```{r covariation-with-2-n-11, exercise = TRUE}
+```{r covariation-with-two-numerical-11, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-2-n-11-hint-1, eval = FALSE}
+```{r covariation-with-two-numerical-11-hint-1, eval = FALSE}
 ... +
   geom_boxplot(aes(group = ...))
 ```
 
+```{r covariation-with-two-numerical-11-test, include = FALSE}
+
+```
+
 ### 
 
-cut_width(x, width), as used above, divides x into bins of width width. By default, boxplots look roughly the same (apart from number of outliers) regardless of how many observations there are, so it’s difficult to tell that each boxplot summaries a different number of points.
+`cut_width(x, width)`, as used above, divides x into bins of `width` width. By default, boxplots look roughly the same (apart from number of outliers) regardless of how many observations there are, so it’s difficult to tell that each boxplot summarizes a different number of points.
 
 ### Exercise 12
 
 Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs()` to the pipeline. 
 
-```{r covariation-with-2-n-12, exercise = TRUE}
+```{r covariation-with-two-numerical-12, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r covariation-with-2-n-12-hint-1, eval = FALSE}
+```{r covariation-with-two-numerical-12-hint-1, eval = FALSE}
 ... + 
   labs(
     title = ...,
@@ -1928,7 +2077,9 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs(
   )
 ```
 
-### 
+```{r covariation-with-two-numerical-12-test, include = FALSE}
+
+```
 
 This is a reminder that our plot should look like this:
 
@@ -1936,28 +2087,34 @@ This is a reminder that our plot should look like this:
 p4
 ```
 
-## Patterns and Models
+## Patterns and models
 ### 
 
-In this section, we will discuss how to find and display patterns in your datasets. 
+<!-- DK: This is not bad and does a good job of using all the text from the chapter. But is that text well-organized? A lot of the later questions lack knowledge drops. Also, whole thing is sort of disjoint and tough to follow. Do we really expect students to understand this plot? -->
 
-### 
-
-By the end of this section, we will be creating this plot:
+In this section, we will discuss how to find and display patterns in your data. We will create this plot:
 
 ```{r}
 p5 <- diamonds_aug |> 
   ggplot(aes(x = cut, y = .resid)) + 
   geom_boxplot() + 
   labs(
-    title = "Prediction Model between Carat and Residual Price",
-    subtitle = "As the number of carat increases the Residual Price decreases",
-    x = "Number of Carats",
-    y = "Residual Price"
+    title = "Cut Quality and (adjusted) Price",
+    subtitle = "A better cut means higher prices, adjusted for the number of carats",
+    x = "Quality of the Cut",
+    y = "Price (adjusted for carats)"
   )
 
 p5
 ```
+
+###
+
+If a systematic relationship exists between two variables it will appear as a pattern in the data. If you spot a pattern, you can ask yourself the following questions:
+
+* Could this pattern be due to coincidence (i.e. random chance)?
+
+* How can you describe the relationship implied by the pattern?
 
 ### Exercise 1
 
@@ -1973,19 +2130,21 @@ First, let's load in the `tidymodels` package by using `library()`.
 library(...)
 ```
 
+```{r patterns-and-models-1-test, include = FALSE}
+library(tidymodels)
+```
+
 ### 
 
-If a systematic relationship exists between two variables it will appear as a pattern in the data. If you spot a pattern, you can ask yourself the following questions:
+Other relevant questions of data patterns include:
 
-Could this pattern be due to coincidence (i.e. random chance)?
+* How strong is the relationship implied by the pattern?
 
-How can you describe the relationship implied by the pattern?
+* What other variables might affect the relationship?
 
-How strong is the relationship implied by the pattern?
+* Does the relationship change if you look at individual subgroups of the data?
 
-What other variables might affect the relationship?
-
-Does the relationship change if you look at individual subgroups of the data?
+The [**tidymodels**](https://www.tidymodels.org/) package provides tools for answering these questions.
 
 ### Exercise 2
 
@@ -2001,13 +2160,17 @@ Create a new variable `diamonds3` and set it equal to `diamonds`.
 diamonds3 <- diamonds
 ```
 
+```{r patterns-and-models-2-test, include = FALSE}
+diamonds3 <- diamonds
+```
+
 ### 
 
 Patterns in your data provide clues about relationships, i.e., they reveal covariation. If you think of variation as a phenomenon that creates uncertainty, covariation is a phenomenon that reduces it.
 
 ### Exercise 3
 
-Using your previous code, pipe `diamonds` to `mutate()`. Within `mutate()`, create a new variable `log_price` and set it equal to `log(price)`. 
+Let's manipulate the variables in `diamonds3`.  Retain the code from the previous question, pipe `diamonds` to `mutate()`. Within `mutate()`, create a new variable `log_price` and set it equal to `log(price)`. 
 
 ```{r patterns-and-models-3, exercise = TRUE}
 
@@ -2020,6 +2183,10 @@ diamonds3 <- diamonds |>
   mutate(
     log_price = ...
   )
+```
+
+```{r patterns-and-models-3-test, include = FALSE}
+
 ```
 
 ### 
@@ -2044,6 +2211,10 @@ diamonds3 <- diamonds |>
   )
 ```
 
+```{r patterns-and-models-4-test, include = FALSE}
+
+```
+
 ### 
 
 We will be using this dataset to make a model that predicts `price` from`carat` and then computes the residuals (the difference between the predicted value and the actual value).
@@ -2060,6 +2231,10 @@ Create a new variable called `diamonds_fit` and set it equal to `linear_reg()`.
 
 ```{r patterns-and-models-5-hint-1, eval = FALSE}
 diamonds_fit <- ...
+```
+
+```{r patterns-and-models-5-test, include = FALSE}
+
 ```
 
 ### 
@@ -2081,6 +2256,10 @@ diamonds_fit <- linear_reg() |>
   ...
 ```
 
+```{r patterns-and-models-6-test, include = FALSE}
+
+```
+
 ### 
 
 The functon [`linear_reg()`](https://parsnip.tidymodels.org/reference/linear_reg.html) defines a model that can predict numeric values from predictors using a linear function. This function can fit regression models.There are different ways to fit this model, and the method of estimation is chosen by setting the model `engine`.
@@ -2097,6 +2276,10 @@ Create a new variable called `diamonds_aug` and set it equal to `augment(diamond
 
 ```{r patterns-and-models-7-hint-1, eval = FALSE}
 diamonds_aug <- ...
+```
+
+```{r patterns-and-models-7-test, include = FALSE}
+
 ```
 
 ### 
@@ -2118,6 +2301,10 @@ diamonds_aug <- augment(diamonds_fit, new_data = diamonds) |>
   ...
 ```
 
+```{r patterns-and-models-8-test, include = FALSE}
+
+```
+
 ### 
 
 Note that instead of using the raw values of `price` and `carat`, we log transform them first, and fit a model to the log-transformed values. Then, we exponentiate the residuals to put them back in the scale of raw prices.
@@ -2137,9 +2324,13 @@ diamonds_aug |>
   ggplot()
 ```
 
-### 
+```{r patterns-and-models-9-test, include = FALSE}
 
-Note that this plot is empty
+```
+
+Note that this plot is empty.
+
+
 
 ### Exercise 10
 
@@ -2154,6 +2345,10 @@ Within `ggplot()`, using `aes()`, set the `x` argument to the `carat` variable.
 ```{r patterns-and-models-10-hint-1, eval = FALSE}
 diamonds_aug |> 
   ggplot(aes(x = ...))
+```
+
+```{r patterns-and-models-10-test, include = FALSE}
+
 ```
 
 ### Exercise 11
@@ -2171,6 +2366,10 @@ diamonds_aug |>
   ggplot(aes(x = carat, y = ...))
 ```
 
+```{r patterns-and-models-11-test, include = FALSE}
+
+```
+
 ### Exercise 12
 
 Add `geom_point()` to the pipeline.
@@ -2184,6 +2383,10 @@ Add `geom_point()` to the pipeline.
 ```{r patterns-and-models-12-hint-1, eval = FALSE}
 ... +
   geom_point()
+```
+
+```{r patterns-and-models-12-test, include = FALSE}
+
 ```
 
 ### 
@@ -2201,6 +2404,10 @@ Replace `geom_point()` from the previous pipeline and change it to `geom_boxplot
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r patterns-and-models-13-hint-1, eval = FALSE}
+
+```
+
+```{r patterns-and-models-13-test, include = FALSE}
 
 ```
 
@@ -2228,6 +2435,10 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs(
   )
 ```
 
+```{r patterns-and-models-14-test, include = FALSE}
+
+```
+
 ### 
 
 Reminder this is what our plot should look like.
@@ -2239,8 +2450,7 @@ p5
 ## Summary
 ### 
 
-This tutorial covered [Chapter 11: Exploratory data analysis](https://r4ds.hadley.nz/eda.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. We made use of the [**ggplot2**](https://ggplot2.tidyverse.org/) package and learned about Variation and Patterns. Some key commands that we used are [`coord_cartesian()`](https://ggplot2.tidyverse.org/reference/coord_cartesian.html) which sets limits on the coordinate system and will zoom the plot, [`geom_freqpoly()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html) which visualizes the distribution of a single continuous variable by dividing the x axis into bins and counts the number of observations in each bin, and [`geom_count()`](https://ggplot2.tidyverse.org/reference/geom_count.html) which is a variant of `geom_point()` that counts the number of observations at each location, that maps the count to point area. 
-
+This tutorial covered [Chapter 11: Exploratory data analysis](https://r4ds.hadley.nz/eda.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. We made use of the [**ggplot2**](https://ggplot2.tidyverse.org/) and the [**dplyr**](https://dplyr.tidyverse.org/) packages to learn about variation and patterns. Some key commands included [`coord_cartesian()`](https://ggplot2.tidyverse.org/reference/coord_cartesian.html), [`geom_freqpoly()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html), [`fct_reorder()`](https://forcats.tidyverse.org/reference/fct_reorder.html), [`geom_tile()`](https://ggplot2.tidyverse.org/reference/geom_tile.html), and [`geom_count()`](https://ggplot2.tidyverse.org/reference/geom_count.html).
 
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
