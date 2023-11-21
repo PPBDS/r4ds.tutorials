@@ -1,5 +1,7 @@
 # r4ds.tutorials (development version)
 
+* Re-number chapters to follow changes recently made in R4DS.
+
 # r4ds.tutorials 0.1.4
 
 * Initial CRAN release.
