@@ -1,6 +1,6 @@
 ---
 title: Communication
-author: David Kane and Srihith Garlapati
+author: David Kane
 tutorial:
   id: communication
 output:
@@ -15,11 +15,11 @@ description: 'Tutorial for Chapter 12: Communication'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
-library(babynames)
+library(scales)
 library(ggrepel)
 library(patchwork)
 
-
+library(babynames)
 
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
@@ -29,18 +29,6 @@ labels_tib <- tibble(
   start = 1:10,
   end = cumsum(start^2)
 )
-
-labels_graphic = ggplot(mpg, aes(x = displ, y = hwy)) +
-  geom_point(aes(color = class)) +
-  geom_smooth(se = FALSE) +
-  labs(
-    x = "Engine displacement (L)",
-    y = "Highway fuel economy (mpg)",
-    color = "Car type",
-    title = "Fuel efficiency generally decreases with engine size",
-    subtitle = "Two seaters (sports cars) are an exception because of their light weight",
-    caption = "Data from fueleconomy.gov"
-  )
 
 label_info <- mpg |>
   arrange(desc(displ)) |>
@@ -70,6 +58,39 @@ random_vals <- tibble(
 
 suv <- mpg |> filter(class == "suv")
 compact <- mpg |> filter(class == "compact")
+
+## Layout section
+
+p1 <- ggplot(mpg, aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  labs(title = "Plot 1")
+p2 <- ggplot(mpg, aes(x = drv, y = hwy)) + 
+  geom_boxplot() + 
+  labs(title = "Plot 2")
+p3 <- ggplot(mpg, aes(x = cty, y = hwy)) + 
+  geom_point() + 
+  labs(title = "Plot 3")
+
+p4 <- ggplot(mpg, aes(x = drv, y = cty, color = drv)) + 
+  geom_boxplot(show.legend = FALSE) + 
+  labs(title = "Plot 1")
+
+p5 <- ggplot(mpg, aes(x = drv, y = hwy, color = drv)) + 
+  geom_boxplot(show.legend = FALSE) + 
+  labs(title = "Plot 2")
+
+p6 <- ggplot(mpg, aes(x = cty, color = drv, fill = drv)) + 
+  geom_density(alpha = 0.5) + 
+  labs(title = "Plot 3")
+
+p7 <- ggplot(mpg, aes(x = hwy, color = drv, fill = drv)) + 
+  geom_density(alpha = 0.5) + 
+  labs(title = "Plot 4")
+
+p8 <- ggplot(mpg, aes(x = cty, y = hwy, color = drv)) + 
+  geom_point(show.legend = FALSE) + 
+  facet_wrap(~drv) +
+  labs(title = "Plot 5")
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -108,30 +129,40 @@ compact <- mpg |> filter(class == "compact")
 ## Introduction
 ### 
 
+*This is a ROUGH, UNFINISHED, draft.*
+
 This tutorial covers [Chapter 12: Communication](https://r4ds.hadley.nz/communication.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. In this tutorial we will be making use of three packages associated with [**ggplot2**](https://ggplot2.tidyverse.org/): [**scales**](https://scales.r-lib.org/), [**ggrepel**](https://ggrepel.slowkow.com), and [**patchwork**](https://patchwork.data-imaginist.com). Key commands include [`quote()`](https://rdrr.io/r/base/substitute.html) which simply returns its argument, [`geom_label_repel()`](https://rdrr.io/cran/ggrepel/man/geom_text_repel.html) which adds text directly to the plot, and [`label_dollar()`](https://scales.r-lib.org/reference/label_dollar.html) which formats numbers as currency. 
 
 ## Labels
 ### 
 
-In this section, you will learn that good labels makes for a great graphic. By the end of this section, we will have learnt how to make an exploratory graphic into an expository graphic. 
+The easiest place to start when turning an exploratory graphic into an expository graphic is with good labels. You add labels with the `labs()` function. We will create this plot:
 
-### 
+```{r}
+p_1 <- mpg |> 
+  ggplot(aes(x = displ, 
+             y = hwy)) +
+    geom_point(aes(color = class)) +
+    geom_smooth(se = FALSE) +
+    labs(
+      x = "Engine displacement (L)",
+      y = "Highway fuel economy (mpg)",
+      color = "Car type",
+      title = "Fuel efficiency generally decreases with engine size",
+      subtitle = "Two seaters (sports cars) are an exception because of their light we  ight",
+      caption = "Data from fueleconomy.gov"
+    )
 
-By the end of this section we should have this great expository plot:
-
-```{r include = TRUE}
-labels_graphic
+p_1
 ```
 
 ### Exercise 1
 
-Let's first load in the package **tidyverse** using the `library()` function. 
+Load the **tidyverse** package using the `library()` function. 
 
 ```{r labels-1, exercise = TRUE}
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r labels-1-hint-1, eval = FALSE}
 library(...)
@@ -143,21 +174,88 @@ library(tidyverse)
 
 ### 
 
-Let's start with the basics and make a plot with well-formatted labels.
+In previous tutorials, you learned how to use plots as tools for exploration. When you make exploratory plots, you know—even before looking—which variables the plot will display. You made each plot for a purpose, could quickly look at it, and then move on to the next plot. In the course of most analyses, you’ll produce tens or hundreds of plots, most of which are immediately thrown away.
 
 ### Exercise 2
 
-Now, let's explore the dataset that we want to create a plot on. Type in `mpg` and hit "Run Code". 
+Load the [**scales**](https://scales.r-lib.org/) package using the `library()` function. 
 
 ```{r labels-2, exercise = TRUE}
 
 ```
 
 ```{r labels-2-hint-1, eval = FALSE}
+library(...)
+```
+
+```{r labels-2-test, include = FALSE}
+library(scales)
+```
+
+### 
+
+The [**scales**](https://scales.r-lib.org/) package is used to override the default breaks, labels, transformations and palettes.
+
+You need to communicate your understanding to others. Your audience will likely not share your background knowledge and will not be deeply invested in the data. 
+
+### Exercise 3
+
+Load the [**ggrepel**](https://ggrepel.slowkow.com) package using `library()`. 
+
+```{r labels-3, exercise = TRUE}
+
+```
+
+```{r labels-3-hint-1, eval = FALSE}
+library(...)
+```
+
+```{r labels-3-test, include = FALSE}
+library(ggrepel)
+```
+
+### 
+
+The [**ggrepel**](https://ggrepel.slowkow.com) package will automatically adjust labels so that they don’t overlap. To help others quickly build up a good mental model of the data, you will need to invest considerable effort in making your plots as self-explanatory as possible.
+
+
+
+### Exercise 4
+
+Load the [**patchwork**](https://patchwork.data-imaginist.com) package using `library()`. 
+
+```{r labels-4, exercise = TRUE}
+
+```
+
+```{r labels-4-hint-1, eval = FALSE}
+library(...)
+```
+
+```{r labels-4-test, include = FALSE}
+library(patchwork)
+```
+
+### 
+
+The [**patchwork**](https://patchwork.data-imaginist.com) package allows you to combine separate plots into the same graphic.
+
+We recommend pairing this tutorial with a good general visualization book. We particularly like [*The Truthful Art*](https://www.amazon.com/gp/product/0321934075/), by Albert Cairo. It doesn’t teach the mechanics of creating visualizations, but instead focuses on what you need to think about in order to create effective graphics.
+
+
+### Exercise 5
+
+Now, let's explore the dataset that we want to create a plot on. Type in `mpg` and hit "Run Code". 
+
+```{r labels-5, exercise = TRUE}
+
+```
+
+```{r labels-5-hint-1, eval = FALSE}
 mpg
 ```
 
-```{r include = FALSE}
+```{r labels-5-test, include = FALSE}
 mpg
 ```
 
@@ -165,73 +263,9 @@ mpg
 
 The `mpg` dataset provides fuel economy data from 1999 and 2008 for 38 popular models of cars. The dataset is shipped with [**ggplot2**](https://ggplot2.tidyverse.org/) package.
 
-### Exercise 3
-
-Pipe `mpg` to `ggplot()`. 
-
-```{r labels-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r labels-3-hint-1, eval = FALSE}
-mpg |> 
-  ...
-```
-
-```{r include = FALSE}
-mpg |> 
-  ggplot()
-```
-
-### 
-
-Note: This plot is empty.
-
-### Exercise 4
-
-Within `ggplot()`, using `aes()`, set the `x` argument to the `displ` variable.
-
-```{r labels-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r labels-4-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = ...)) 
-```
-
-```{r include = FALSE}
-mpg |> 
-  ggplot(aes(x = displ))
-```
-
-### Exercise 5
-
-Within `ggplot()`, using `aes()`, set the `y` argument to the `hwy` variable.
-
-```{r labels-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r labels-5-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = ..., y = ...))
-```
-
-```{r include = FALSE}
-mpg |> 
-  ggplot(aes(x = displ, y = hwy))
-```
-
 ### Exercise 6
 
-Add `geom_point()` to the pipeline.
+Pipe `mpg` to `ggplot()`. 
 
 ```{r labels-6, exercise = TRUE}
 
@@ -240,19 +274,21 @@ Add `geom_point()` to the pipeline.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r labels-6-hint-1, eval = FALSE}
-... +
-  geom_point()
+mpg |> 
+  ...
 ```
 
-```{r include = FALSE}
+```{r labels-6-test, include = FALSE}
 mpg |> 
-  ggplot(aes(x = displ, y = hwy)) +
-  geom_point()
+  ggplot()
 ```
+
+As always, `ggplot()` alone, without the use of the `aes()` function as an argument to `mapping`, produces an empty rectangle.
 
 ### Exercise 7
 
-Within `geom_point()`, using `aes()`, set the `color` argument to the `class` variable. 
+Within `ggplot()`, using `aes()`, set the `x` argument to the `displ` variable and the `y` argument to the `hwy` variable
+
 
 ```{r labels-7, exercise = TRUE}
 
@@ -261,23 +297,18 @@ Within `geom_point()`, using `aes()`, set the `color` argument to the `class` va
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r labels-7-hint-1, eval = FALSE}
-... +
-  geom_point(aes(color = ...))
-```
-
-```{r include = FALSE}
 mpg |> 
-  ggplot(aes(x = displ, y = hwy)) +
-  geom_point(aes(color = class)) 
+  ggplot(aes(x = ..., y = ...))
 ```
 
-### 
-
-Now that we have a basic dot plot. We need to add a trend line that can allow us to see the trend of the points very clearly.
+```{r labels-7-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy))
+```
 
 ### Exercise 8
 
-Add `geom_smooth()` to the pipeline.
+Add `geom_point()` to the pipeline.
 
 ```{r labels-8, exercise = TRUE}
 
@@ -287,19 +318,20 @@ Add `geom_smooth()` to the pipeline.
 
 ```{r labels-8-hint-1, eval = FALSE}
 ... +
-  geom_smooth()
+  geom_point()
 ```
 
-```{r include = FALSE}
+```{r labels-8-test, include = FALSE}
 mpg |> 
   ggplot(aes(x = displ, y = hwy)) +
-  geom_point(aes(color = class)) +
-  geom_smooth()
+  geom_point()
 ```
+
+We can finally see some data. Although there is more plotting to do, it is not too early to start thinking about the labels we will be using.
 
 ### Exercise 9
 
-Within `geom_smooth()`, add the `se` argument and set it to `FALSE`. 
+Within `geom_point()`, using `aes()`, set the `color` argument to the `class` variable. 
 
 ```{r labels-9, exercise = TRUE}
 
@@ -309,25 +341,22 @@ Within `geom_smooth()`, add the `se` argument and set it to `FALSE`.
 
 ```{r labels-9-hint-1, eval = FALSE}
 ... +
-  geom_smooth(se = ...)
+  geom_point(aes(color = ...))
 ```
 
-```{r include = FALSE}
+```{r labels-9-test, include = FALSE}
 mpg |> 
   ggplot(aes(x = displ, y = hwy)) +
-  geom_point(aes(color = class)) +
-  geom_smooth(se = FALSE)
+  geom_point(aes(color = class)) 
 ```
 
 ### 
 
-The `se` argument removes the gray background of the line made through the function `geom_smooth()`. Our graphic is currently exploratory, let's turn it into an expository graphic with some good labels.
+The purpose of a plot title is to summarize the main finding. Avoid titles that just describe what the plot is, e.g., “A scatterplot of engine displacement vs. fuel economy”.
 
 ### Exercise 10
 
-Add a `title`, `subtitle`, `x` axis title, `y` axis title, legend title(`color`), and a `caption` by adding `labs()` to the pipeline. 
-
-(Hint the `caption` should be the following: `"Data from fueleconomy.gov"`)
+Add `geom_smooth()` to the pipeline.
 
 ```{r labels-10, exercise = TRUE}
 
@@ -336,6 +365,60 @@ Add a `title`, `subtitle`, `x` axis title, `y` axis title, legend title(`color`)
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r labels-10-hint-1, eval = FALSE}
+... +
+  geom_smooth()
+```
+
+```{r labels-10-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+  geom_point(aes(color = class)) +
+  geom_smooth()
+```
+
+### 
+
+The `subtitle` adds additional detail in a smaller font beneath the title. If there is one key conclusion which readers should come away with, spell it out in the subtitle.
+
+
+### Exercise 11
+
+Within `geom_smooth()`, add the `se` argument and set it to `FALSE`. 
+
+```{r labels-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r labels-11-hint-1, eval = FALSE}
+... +
+  geom_smooth(se = ...)
+```
+
+```{r labels-11-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+  geom_point(aes(color = class)) +
+  geom_smooth(se = FALSE)
+```
+
+### 
+
+The `caption` adds text at the bottom right of the plot, often used to describe the source of the data. Any plot you make should have a caption since your readers will always want to know where the data come from.
+
+### Exercise 12
+
+Add a `title`, `subtitle`, `x` axis title, `y` axis title, legend title(`color`), and a `caption` by adding `labs()` to the pipeline. 
+
+
+```{r labels-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r labels-12-hint-1, eval = FALSE}
 ... +
   labs(
     title = ...,
@@ -362,27 +445,21 @@ mpg |>
   )
 ```
 
-### 
-
-The purpose of a plot title is to summarize the main finding. Avoid titles that just describe what the plot is, e.g., “A scatterplot of engine displacement vs. fuel economy”. The argument, `subtitle`, adds additional detail in a smaller font beneath the `title` and the argument, `caption`, adds text at the bottom right of the plot, often used to describe the source of the data.
-
 Reminder: The graphic should look something like this
 
-```{r include = TRUE}
-labels_graphic
+```{r}
+p_1
 ```
 
-### Exercise 11
+### Exercise 13
 
-Type in `labels_tib` and hit "Run Code". 
+Let's move on to a new plot. Type in `labels_tib` and hit "Run Code". 
 
-```{r labels-11, exercise = TRUE}
+```{r labels-13, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r labels-11-hint-1, eval = FALSE}
+```{r labels-13-hint-1, eval = FALSE}
 labels_tib
 ```
 
@@ -394,53 +471,9 @@ labels_tib
 
 The tibble, `labels_tib`, is a premade tibble that we will be using to show that it is also possible to use mathematical equations instead of `textstrings` for the labels if we switch `""` for the function `quote()`
 
-### Exercise 12
-
-Pipe `labels_tib` to the function `ggplot()`. 
-
-```{r labels-12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r labels-12-hint-1, eval = FALSE}
-labels_tib |> 
-  ...
-```
-
-```{r include = FALSE}
-labels_tib |> 
-  ggplot()
-```
-
-### 
-
-Note that this plot is empty.
-
-### Exercise 13
-
-Within this function, using `aes()`, set the `x` argument to the `start` variable.
-
-```{r labels-13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r labels-13-hint-1, eval = FALSE}
-labels_tib |> 
-  ggplot(aes(x = ...))
-```
-
-```{r include = FALSE}
-labels_tib |> 
-  ggplot(aes(x = start))
-```
-
 ### Exercise 14
 
-Within this function, using `aes()`, set the `y` argument to the `end` variable.
+Pipe `labels_tib` to the function `ggplot()`. 
 
 ```{r labels-14, exercise = TRUE}
 
@@ -450,17 +483,18 @@ Within this function, using `aes()`, set the `y` argument to the `end` variable.
 
 ```{r labels-14-hint-1, eval = FALSE}
 labels_tib |> 
-  ggplot(aes(x = start, y = ...))
+  ...()
 ```
 
 ```{r include = FALSE}
 labels_tib |> 
-  ggplot(aes(x = start, y = end))
+  ggplot()
 ```
 
 ### Exercise 15
 
-Using your previous code, add the `geom_point()` function to the pipeline.
+Within this function, using `aes()`, set the `x` argument to the `start` variable and set the `y` argument to the `end` variable.
+
 
 ```{r labels-15, exercise = TRUE}
 
@@ -469,6 +503,26 @@ Using your previous code, add the `geom_point()` function to the pipeline.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r labels-15-hint-1, eval = FALSE}
+labels_tib |> 
+  ggplot(aes(x = start, y = ...))
+```
+
+```{r include = FALSE}
+labels_tib |> 
+  ggplot(aes(x = start, y = end))
+```
+
+### Exercise 16
+
+Add the `geom_point()` function to the pipeline.
+
+```{r labels-16, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r labels-16-hint-1, eval = FALSE}
 ... +
   geom_point()
 ```
@@ -479,17 +533,17 @@ labels_tib |>
   geom_point()
 ```
 
-### Exercise 16
+### Exercise 17
 
-Set the `x` axis title to `quote(x[i])` by adding `labs()` to the pipeline
+Using `labs()`, set the `x` axis title to `quote(x[i])`.
 
-```{r labels-16, exercise = TRUE}
+```{r labels-17, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-16-hint-1, eval = FALSE}
+```{r labels-17-hint-1, eval = FALSE}
 ... +
   labs(
     x = ...
@@ -507,20 +561,20 @@ labels_tib |>
   )
 ```
 
-### Exercise 17
+### Exercise 18
 
 Within `labs()`, set the `y` axis title to `quote(sum(x[i] ^ 2, i == 1, n))`. 
 
-```{r labels-17, exercise = TRUE}
+```{r labels-18, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r labels-17-hint-1, eval = FALSE}
+```{r labels-18-hint-1, eval = FALSE}
 ... +
   labs(
-    x = ...,
+    x = quote(x[i]),
     y = ...
   )
 ```
@@ -535,11 +589,11 @@ labels_tib |>
   )
 ```
 
-### Exercise 18
+### Exercise 19
 
 Type in `?plotmath` in the Console and learn more about what kind of syntax you can input into the `quote()` function. Copy/paste an interesting syntax and a meaning to the textbox below and hit "Submit".
 
-```{r labels-18}
+```{r labels-19}
 question_text(NULL,
 	message = "Place correct answer here.",
 	answer(NULL, correct = TRUE),
@@ -548,54 +602,89 @@ question_text(NULL,
 	rows = 6)
 ```
 
-```{r include = FALSE}
+```{r labels-19-test, include = FALSE}
 ?plotmath #In the Console
 ```
 
 ## Annotations
 ### 
 
-<!-- DK: Build the whole plot as a pipe first so that results are vomitted out with each exercise. Then, if necessary at the end, you can assign it to an object.  -->
+In addition to labeling major components of your plot, it’s often useful to label individual observations or groups of observations. The first tool you have at your disposal is `geom_text()`, a function similar to `geom_point()`, but with an additional aesthetic: `label`. This makes it possible to add text labels to your plots.
 
-In this section we will learn how to label an individual observation or a group of observations instead of just labeling major components of a plot. 
+In this section, we will make plots which look like this:
+
+```{r}
+p_2 <- 
+  mpg |>   
+    ggplot(aes(x = displ, 
+               y = hwy, 
+               color = drv)) +
+      geom_point(alpha = 0.3) +
+      geom_smooth(method = "loess", formula = y ~ x, se = FALSE) +
+      geom_text(
+        data = label_info, 
+        mapping = aes(x = displ, 
+                      y = hwy, 
+                      label = drive_type),
+        fontface = "bold", 
+        size = 5, 
+        hjust = "right", 
+        vjust = "bottom"
+      ) +
+      theme(legend.position = "none")
+
+p_2
+```
 
 ### Exercise 1
 
-Load in the **ggrepel** package using the `library()` function.
+There are two possible sources of labels. First, you might have a tibble that provides labels. Type `label_info` and hit "Run Code".
 
 ```{r annotations-1, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r annotations-1-hint-1, eval = FALSE}
-library(...)
+label_info
 ```
 
 ```{r annotations-1-test, include = FALSE}
-library(ggrepel)
+label_info
 ```
+
+### 
+
+`label_info` is a tibble with information about three specific cars from `mpg`. We can use this tibble to directly label the three groups and replace the legend by placing labels directly on the plot. 
 
 ### Exercise 2
 
-Let's make a new dataframe called `label_info` and set it to equal the dataset `mpg`.
+Create a new pipeline. Pipe `mpg` to the `ggplot()`. Using `aes()`, map `x` to `displ` and `y` to `hwy`. Add `geom_point()`.
+
 
 ```{r annotations-2, exercise = TRUE}
 
 ```
 
 ```{r annotations-2-hint-1, eval = FALSE}
-label_info <- mpg
+mpg |> 
+  ggplot(aes(x = ..., 
+             y = ...)) +
+    ...()
 ```
 
 ```{r annotations-2-test, include = FALSE}
-label_info <- mpg
+  mpg |>   
+    ggplot(aes(x = displ, 
+               y = hwy)) +
+      geom_point()
 ```
+
+This is not a bad plot, but it fails to use all the data we have about individual cars. 
+
 
 ### Exercise 3
 
-Using your previous code, create a new pipeline. Pipe `mpg` to the `arrange()` function. Within this function, add the argument `desc(displ)`.
+Within `aes()`, map `color` to `drv`.
 
 ```{r annotations-3, exercise = TRUE}
 
@@ -604,13 +693,27 @@ Using your previous code, create a new pipeline. Pipe `mpg` to the `arrange()` f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r annotations-3-hint-1, eval = FALSE}
-label_info <- mpg |> 
-  arrange(...)
+mpg |>   
+  ggplot(aes(x = displ, 
+             y = hwy,
+             ... = ...)) +
+    geom_point()
 ```
+
+```{r annotations-3-test, include = FALSE}
+mpg |>   
+  ggplot(aes(x = displ, 
+             y = hwy,
+             color = drv)) +
+    geom_point()
+```
+
+Using color as another "dimension" allows us to see another pattern. Front-wheel drive cars (`f`) have smaller engines and get better mileage. But notice how hard this is to read for a new viewer. How are they to know what `f` means?
+
 
 ### Exercise 4
 
-Using your previous code, add the `slice_head()` function. Within this function set the argument `n` to `1`.
+Within `geom_point()`, add the `alpha` argument and set it equal to `0.3`. 
 
 ```{r annotations-4, exercise = TRUE}
 
@@ -620,12 +723,26 @@ Using your previous code, add the `slice_head()` function. Within this function 
 
 ```{r annotations-4-hint-1, eval = FALSE}
 ... |> 
-  slice_head(n = ...)
+  geom_point(alpha = ...)
 ```
+
+```{r annotations-4-test, include = FALSE}
+mpg |>   
+  ggplot(aes(x = displ, 
+             y = hwy,
+             color = drv)) +
+    geom_point(alpha = 0.3)
+```
+
+### 
+
+Using `alpha` helps, first, to highlight where the data is densest and, second, to lessen the business of the plot, the better to allow space for labels.
+
+<!-- Using the `fontface` and `size` arguments we can customize the look of the text labels. They’re larger than the rest of the text on the plot and bolded. In addition, the `theme()` function with the argument `legend.position` set to `"none"` turns all the legends off. -->
 
 ### Exercise 5
 
-Using your previous code, within your call to `slice_head()`, add a `by` argument and set it to `drv` (drivetype). 
+Add `geom_smooth()` with `method` set to `"loess"`, `formula` to `y ~ x`, and `se` to `FALSE`.
 
 ```{r annotations-5, exercise = TRUE}
 
@@ -635,18 +752,27 @@ Using your previous code, within your call to `slice_head()`, add a `by` argumen
 
 ```{r annotations-5-hint-1, eval = FALSE}
 ... |> 
-  slice_head(n = ..., by = ...)
+  geom_smooth(method = ..., ... = y ~ x, se = ...)
+```
+
+```{r annotations-5-test, include = FALSE}
+mpg |>   
+  ggplot(aes(x = displ, 
+             y = hwy,
+             color = drv)) +
+    geom_point(alpha = 0.3) +
+    geom_smooth(method = "loess", formula = y ~ x, se = FALSE)
 ```
 
 ### 
 
-The by argument will group by whatever is inputted into the argument. 
+The lines cover different regions because, for example, there are no front-wheel drive (`f`) cars with engines much larger than 5 liters.
 
 ### Exercise 6
 
-Using your previous code, add the `mutate()` function to the pipeline. Within this function, create a new variable called `drive_type` and set it to: 
-`case_when(drv == "f" ~ "front-wheel drive", drv == "r" ~ "rear-wheel drive", drv == "4" ~ "4-wheel drive")`
+This plot is not bad, but reading it would be easier if the labels were included in the graphic itself. 
 
+Add `geom_text()` to the plot. Within `geom_text()`, add the `data` argument and set it equal to  `label_info`. Set the `mapping` argument equal to `aes(label = drive_type)`. 
 
 ```{r annotations-6, exercise = TRUE}
 
@@ -656,12 +782,32 @@ Using your previous code, add the `mutate()` function to the pipeline. Within th
 
 ```{r annotations-6-hint-1, eval = FALSE}
 ... |> 
-  mutate(drive_type = case_when(...))
+  geom_text(
+    data = ...,
+    mapping = ...
+  )
 ```
+
+```{r annotations-6-test, include = FALSE}
+mpg |>   
+  ggplot(aes(x = displ, 
+             y = hwy,
+             color = drv)) +
+    geom_point(alpha = 0.3) +
+    geom_smooth(method = "loess", formula = y ~ x, se = FALSE) +
+    geom_text(
+      data = label_info,
+      mapping = aes(label = drive_type)
+    )
+```
+
+### 
+
+There are two improvements. First, instead of opaque abbreviations like `4` or `f`, we are now using words, like "4-wheel drive" and "front-wheel drive" that most viewers will understand. Second, that information is in the plot itself, rather than off to the side in the legend.
 
 ### Exercise 7
 
-Using your previous code, add the `select()` function to the pipeline. Select the following columns: `displ`, `hwy`, `drv`, `drive_type`.
+We have control over how our labels look. Within your call to `geom_text()`, set the `fontface` argument to `"bold"` and the `size` argument to `5`.
 
 ```{r annotations-7, exercise = TRUE}
 
@@ -670,17 +816,40 @@ Using your previous code, add the `select()` function to the pipeline. Select th
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r annotations-7-hint-1, eval = FALSE}
-... |> 
-  select(...)
+... + 
+  geom_text(
+    data = label_info, 
+    aes(label = drive_type), 
+    fontface = ...,
+    ... = 5,
+  )
+```
+
+```{r annotations-7-test, include = FALSE}
+mpg |>   
+  ggplot(aes(x = displ, 
+             y = hwy,
+             color = drv)) +
+    geom_point(alpha = 0.3) +
+    geom_smooth(method = "loess", formula = y ~ x, se = FALSE) +
+    geom_text(
+      data = label_info,
+      mapping = aes(label = drive_type),
+      fontface = "bold",
+      size = 5
+    )
 ```
 
 ### 
 
-So, far we have pulled out the cars with the highest engine size in each drive type and saved their information as a new data frame called `label_info`.
+The `fontface` and `size` arguments we can customize the look of the text labels. In this case, these arguments make the labels larger than the rest of the text on the plot and bolded.
 
 ### Exercise 8
 
-Display `label_info` by typing `label_info` below and hitting "Run Code".
+The labels are easier to read, but they are still misplaced. Within `geom_text()`, set the `hjust` to `"right"` and the `vjust` argument to `"bottom"`. 
+
+
+Within `geom_text()`, add the `vjust` argument and set it equal to `"bottom"`. 
 
 ```{r annotations-8, exercise = TRUE}
 
@@ -689,16 +858,33 @@ Display `label_info` by typing `label_info` below and hitting "Run Code".
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r annotations-8-hint-1, eval = FALSE}
-label_info
+
+```
+
+```{r annotations-8-test, include = FALSE}
+mpg |>   
+  ggplot(aes(x = displ, 
+             y = hwy,
+             color = drv)) +
+    geom_point(alpha = 0.3) +
+    geom_smooth(method = "loess", formula = y ~ x, se = FALSE) +
+    geom_text(
+      data = label_info,
+      mapping = aes(label = drive_type),
+      fontface = "bold",
+      size = 5, 
+      hjust = "right", 
+      vjust = "bottom"
+    )
 ```
 
 ### 
 
-We will now use this new data frame to directly label the three groups and replace the legend by placing labels directly on the plot. 
+We use `hjust` (horizontal justification) and `vjust` (vertical justification) to control the alignment of the label.
 
 ### Exercise 9
 
-Create a new pipeline. Pipe `mpg` to the `ggplot()`. Using `aes()` map `x` to `displ`. 
+Add `theme()` to the pipeline. Within `theme()`, add the argument `legend.position` and set it to `"none"`. 
 
 ```{r annotations-9, exercise = TRUE}
 
@@ -707,13 +893,35 @@ Create a new pipeline. Pipe `mpg` to the `ggplot()`. Using `aes()` map `x` to `d
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r annotations-9-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = ...))
+... + 
+  theme(legend.position = ...)
 ```
+
+```{r annotations-9-test, include = FALSE}
+mpg |>   
+  ggplot(aes(x = displ, 
+             y = hwy,
+             color = drv)) +
+    geom_point(alpha = 0.3) +
+    geom_smooth(method = "loess", formula = y ~ x, se = FALSE) +
+    geom_text(
+      data = label_info,
+      mapping = aes(label = drive_type),
+      fontface = "bold",
+      size = 5, 
+      hjust = "right", 
+      vjust = "bottom"
+    ) +
+    theme(legend.position = "none")
+```
+
+### 
 
 ### Exercise 10
 
-Within `ggplot()`, using `aes()`, map `y` to `hwy`.
+The annotated plot we made is hard to read because the labels overlap with each other and with the points. We can use the `geom_label_repel()` function from the **ggrepel** package to address both of these issues. This useful package will automatically adjust labels so that they don’t overlap as you can see above.
+
+Change `geom_text()` to `geom_label_repel()`. Remove the `hjust` and `vjust` arguments. Also, set the `nudge_y` argument to `2`.
 
 ```{r annotations-10, exercise = TRUE}
 
@@ -722,13 +930,41 @@ Within `ggplot()`, using `aes()`, map `y` to `hwy`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r annotations-10-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = ..., y = ...))
+... + 
+    geom_..._repel(
+      data = label_info,
+      mapping = aes(label = drive_type),
+      fontface = "bold",
+      size = 5,
+      nudge_y = 2
+    ) +
+  ...
 ```
+
+```{r annotations-10-test, include = FALSE}
+mpg |>   
+  ggplot(aes(x = displ, 
+             y = hwy,
+             color = drv)) +
+    geom_point(alpha = 0.3) +
+    geom_smooth(method = "loess", formula = y ~ x, se = FALSE) +
+    geom_label_repel(
+      data = label_info,
+      mapping = aes(label = drive_type),
+      fontface = "bold",
+      size = 5,
+      nudge_y = 2
+    ) +
+    theme(legend.position = "none")
+```
+
+### 
+
+You can also use the same idea to highlight certain points on a plot with `geom_text_repel()` from the **ggrepel** package. 
 
 ### Exercise 11
 
-Within `ggplot()`, using `aes()`, map `color` to `drv`.
+Type `potential_outliers` and hit "Run Code". 
 
 ```{r annotations-11, exercise = TRUE}
 
@@ -737,28 +973,42 @@ Within `ggplot()`, using `aes()`, map `color` to `drv`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r annotations-11-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = ..., y = ..., color = ...))
+potential_outliers
 ```
+
+### 
+
+This is a tibble of cars with either `hwy > 40` or `hwy > 20 & displ > 5`. In other words, they are outside of the typical relationship between `hwy` and `displ`. 
 
 ### Exercise 12
 
-Using your previous code, add `geom_point()` to the pipeline.
+Before identifying these outliers in the graphic, we need to set up our initial plot. With a new pipeline, pipe `mpg` to `ggplot()`. Within this `ggplot()`, using `aes()`, map `x` to `displ` and `y` to `hwy`. Add `geom_point()` so that the data is displayed. 
 
 ```{r annotations-12, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r annotations-12-hint-1, eval = FALSE}
 ... |> 
-  geom_point()
+  ggplot(aes(x = ..., y = hwy)) +
+    ...()
 ```
+
+```{r annotations-12-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+    geom_point()
+```
+
+### 
+
+In addition to `geom_text()` and `geom_label()`, you have many other geoms in **ggplot2** available to help annotate your plot. For example, you can use `geom_hline()` and `geom_vline()` to add reference lines. We often make them thick (`linewidth = 2`) and white (`color = "white"`), and draw them underneath the primary data layer. That makes them easy to see, without drawing attention away from the data.
+
+<!-- DK: Error in R4DS. Submit a PR. Should be "white". Use geom_hline() and geom_vline() to add reference lines. We often make them thick (linewidth = 2) and white (color = white), and draw them underneath the primary data layer. That makes them easy to see, without drawing attention away from the data. -->
 
 ### Exercise 13
 
-Within `geom_point()`, add the `alpha` argument and set it equal to `0.3`. 
+Add the `geom_text_repel()` to the pipeline. Within `geom_text_repel()`, set the `data` argument equal to `potential_outliers` and the `mapping` argument to `aes(label = model)`.
 
 ```{r annotations-13, exercise = TRUE}
 
@@ -767,17 +1017,27 @@ Within `geom_point()`, add the `alpha` argument and set it equal to `0.3`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r annotations-13-hint-1, eval = FALSE}
-... |> 
-  geom_point(alpha = ...)
+... +
+  geom_text_repel(data = ...,
+                  mapping = aes(... = model))
+```
+
+```{r annotations-13-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+    geom_point() +
+    geom_text_repel(data = potential_outliers, 
+                    mapping = aes(label = model))
 ```
 
 ### 
 
-Using the `fontface` and `size` arguments we can customize the look of the text labels. They’re larger than the rest of the text on the plot and bolded. In addition, the `theme()` function with the argument `legend.position` set to `"none"` turns all the legends off.
+Our graphic is combining information from two different data sets: `mpg` and `potential_outliers`. `ggplot()` is, implicitly, assigning `mpg` as the value of `data`. `geom_text_repel()` is, instead, using `potential_outliers`.
+
 
 ### Exercise 14
 
-Add `geom_smooth()` to the pipeline.  
+Using your previous code, add the `geom_point()` function to the pipeline. Within this function, set `data` equal to `potential_outliers` and `color` equal to `"red"`. 
 
 ```{r annotations-14, exercise = TRUE}
 
@@ -786,13 +1046,31 @@ Add `geom_smooth()` to the pipeline.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r annotations-14-hint-1, eval = FALSE}
-... |> 
-  geom_smooth()
+... +
+  geom_point(data = ...,
+             color = "...")
 ```
+
+```{r annotations-14-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+    geom_point() +
+    geom_text_repel(data = potential_outliers, 
+                    mapping = aes(label = model)) +
+    geom_point(data = potential_outliers,
+               color = "red")
+```
+
+### 
+
+You can use `geom_segment()` with the arrow argument to draw attention to a point with an arrow. Use aesthetics `x` and `y` to define the starting location, and `xend` and `yend` to define the end location. 
 
 ### Exercise 15
 
-Within `geom_smooth()` add the `se` argument and set it equal to `FALSE`. 
+If we want to modify the outlier points further, it is often easier, or even necessary, to add another call to `geom_point()`. It may seem strange to have three separate calls to `geom_point()` in a single graphic, but making the graphic look exactly as we want often requires such gymnastics.
+
+Add another call to `geom_point()`. Set `data` equal to `potential_outliers`, `color` equal to `"red"`, `size` equal to `3`, and `shape` equal to `"circle open"`.
+
 
 ```{r annotations-15, exercise = TRUE}
 
@@ -801,13 +1079,38 @@ Within `geom_smooth()` add the `se` argument and set it equal to `FALSE`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r annotations-15-hint-1, eval = FALSE}
-... |> 
-  geom_smooth(se = ...)
+
 ```
+
+```{r annotations-15-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+    geom_point() +
+    geom_text_repel(data = potential_outliers, 
+                    mapping = aes(label = model)) +
+    geom_point(data = potential_outliers,
+               color = "red") +
+    geom_point(data = potential_outliers,
+               color = "red",
+               size = 3,
+               shape = "circle open")
+```
+
+We added a second layer of large, hollow points to further highlight the labelled points.
+
+
+Another geom that can help annotate your plot is `geom_rect()`. You can use `geom_rect()` to draw a rectangle around points of interest. The boundaries of the rectangle are defined by aesthetics `xmin`, `xmax`, `ymin`, `ymax`. Alternatively, look into the [**ggforce**](https://ggforce.data-imaginist.com/) package, specifically [`geom_mark_hull()`](https://ggforce.data-imaginist.com/reference/geom_mark_hull.html), which allows you to annotate subsets of points with hulls.
+
 
 ### Exercise 16
 
-Add `geom_text()` to the pipeline. Within `geom_text()`, add the `data` argument and set it equal to the previously made `label_info`. 
+<!-- DK: The rest of this Annotate section still needs cleaning. -->
+
+Another handy function for adding annotations to plots is `annotate()`. As a rule of thumb, geoms are generally useful for highlighting a subset of the data while `annotate()` is useful for adding one or few annotation elements to a plot.
+
+### 
+
+Create a new variable called `trend_text` and set it to `"Larger engine sizes tend to have lower fuel economy."`
 
 ```{r annotations-16, exercise = TRUE}
 
@@ -816,19 +1119,16 @@ Add `geom_text()` to the pipeline. Within `geom_text()`, add the `data` argument
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r annotations-16-hint-1, eval = FALSE}
-... |> 
-  geom_text(
-    data = ...
-  )
+trend_text <- ...
 ```
 
 ### 
 
-This code chunk should have returned an error stating that it *requires the following missing aesthetics: label*. It returns an error because we haven't yet mapped the label argument to a variable in the dataframe.
+To demonstrate using `annotate()`, let’s create some text to add to our plot. The text is a bit long, so we’ll use `stringr::str_wrap()` to automatically add line breaks to it given the number of characters you want per line.
 
 ### Exercise 17
 
-Within `geom_text()`, using `aes()`, map `x` to `displ`. 
+Using your previous code, create a new pipeline and pipe `trend_text` with the `str_wrap()` function. Within this function add an argument called `width` and set it to `30`. 
 
 ```{r annotations-17, exercise = TRUE}
 
@@ -837,16 +1137,13 @@ Within `geom_text()`, using `aes()`, map `x` to `displ`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r annotations-17-hint-1, eval = FALSE}
-... |> 
-  geom_text(
-    data = label_info, 
-    aes(x = ...)
-  )
+trend_text <- ... |> 
+  str_wrap(width = ...)
 ```
 
 ### Exercise 18
 
-Within `geom_text()`, using `aes()`, map `y` to `hwy`.
+Now let's make use of this annotation within a plot. Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this function map `x` to `displ` and `y` to `hwy` using `aes()`.
 
 ```{r annotations-18, exercise = TRUE}
 
@@ -855,16 +1152,13 @@ Within `geom_text()`, using `aes()`, map `y` to `hwy`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r annotations-18-hint-1, eval = FALSE}
-... |> 
-  geom_text(
-    data = label_info, 
-    aes(x = displ, y = ...)
-  )
+mpg |> 
+  ggplot(aes(x = ..., y = ...))
 ```
 
 ### Exercise 19
 
-Within `geom_text()`, using `aes()`, map `label` to `drive_type`. 
+Using your previous code, add the `geom_point()` function to the pipeline.
 
 ```{r annotations-19, exercise = TRUE}
 
@@ -873,486 +1167,6 @@ Within `geom_text()`, using `aes()`, map `label` to `drive_type`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r annotations-19-hint-1, eval = FALSE}
-... |> 
-  geom_text(
-    data = ..., 
-    aes(x = displ, y = hwy, label = ...)
-  )
-```
-
-### Exercise 20
-
-Within your call to `geom_text()`, add the `fontface` argument and set it to `"bold"`. 
-
-```{r annotations-20, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-20-hint-1, eval = FALSE}
-... + 
-  geom_text(
-    data = label_info, 
-    aes(x = displ, y = hwy, label = drive_type), 
-    fontface = ...
-  )
-```
-
-### 
-
-This new argument sets the new labels to be bolded.
-
-### Exercise 21
-
-Within your call to `geom_text()`, add the `size` argument and set it to `5`.
-
-```{r annotations-21, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-21-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = ..., y = ..., color = ...)) |> 
-  geom_point(alpha = ...) |> 
-  geom_smooth(se = ...) |> 
-  geom_text(
-    data = ..., 
-    aes(...), 
-    fontface = ..., 
-    size = ...
-  )
-```
-
-### 
-
-The `fontface` and `size` arguments we can customize the look of the text labels. In this case, these arguments make the labels larger than the rest of the text on the plot and bolded.
-
-### Exercise 22
-
-Within `geom_text()` add the `hjust` argument and set it equal to `"right"`. 
-
-```{r annotations-22, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-22-hint-1, eval = FALSE}
-... |> 
-  geom_text(
-    data = ..., 
-    aes(...), 
-    fontface = ..., 
-    size = ...,
-    hjust = ...,
-  )
-```
-
-### Exercise 23
-
-Within `geom_text()`, add the `vjust` argument and set it equal to `"bottom"`. 
-
-```{r annotations-23, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-23-hint-1, eval = FALSE}
-... |> 
-  geom_text(
-    data = ..., 
-    aes(...), 
-    fontface = ..., 
-    size = ...,
-    hjust = ...,
-    vjust = ...
-  )
-```
-
-### 
-
-Note the use of `hjust` (horizontal justification) and `vjust` (vertical justification) to control the alignment of the label.
-
-### Exercise 24
-
-Add `theme()` to the pipeline. Within `theme()`, add the argument `legend.position` and set it to `"none"`. 
-
-```{r annotations-24, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-24-hint-1, eval = FALSE}
-... + 
-  theme(legend.position = ...)
-```
-
-### 
-
-The annotated plot we made is hard to read because the labels overlap with each other and with the points. We can use the `geom_label_repel()` function from the **ggrepel** package to address both of these issues. This useful package will automatically adjust labels so that they don’t overlap as you can see above.
-
-### Exercise 25
-
-Within `geom_text()`, remove the `hjust` and `vjust` arguments. Also, change `geom_text()` to `geom_label_repel()`. 
-
-```{r annotations-25, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-25-hint-1, eval = FALSE}
-... + 
-  geom_label_repel(
-    data = ..., 
-    aes(...), 
-    fontface = ..., 
-    size = ...
-  ) + 
-  ...
-```
-
-### Exercise 26
-
-Within `geom_text()`, add the `nudge_y` argument and set it equal to `2`. 
-
-```{r annotations-26, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r annotations-26-hint-1, eval = FALSE}
-... + 
-  geom_label_repel(
-    data = ..., 
-    aes(...), 
-    fontface = ..., 
-    size = ...,
-    nudge_y = ...
-  ) + 
-  ...
-```
-
-### 
-
-You can also use the same idea to highlight certain points on a plot with `geom_text_repel()` from the **ggrepel** package. 
-
-## More Annotations
-### 
-
-In this section, we will discuss and learn more ways to add annotations to your plots.
-
-### Exercise 1
-
-Create a new variable called `potential_outliers` and set it equal to the `mpg` dataset. 
-
-```{r more-annotations-1, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-1-hint-1, eval = FALSE}
-potential_outliers <- mpg
-```
-
-### Exercise 2
-
-Create a new pipeline and pipe `mpg` to the `filter()` function. Within this function add the following code: `hwy > 40 | (hwy > 20 & displ > 5)`. 
-
-```{r more-annotations-2, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-2-hint-1, eval = FALSE}
-potential_outliers <- mpg |> 
-  filter(...)
-```
-
-### Exercise 3
-
-With a new pipeline, pipe `mpg` to `ggplot()`. Within this `ggplot()`, using `aes()`, map `x` to `displ`. 
-
-```{r more-annotations-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-3-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = ...))
-```
-
-### Exercise 4
-
-Within `ggplot()`, using `aes()`, map `y` to `hwy`.
-
-```{r more-annotations-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-4-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = displ, y = ...))
-```
-
-### Exercise 5
-
-Add `geom_point()` to the pipeline. 
-
-```{r more-annotations-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-5-hint-1, eval = FALSE}
-... +
-  geom_point()
-```
-
-### Exercise 6
-
-Add the `geom_text_repel()` to the pipeline. Within `geom_text_repel()`, add the `data` argument and set it equal to `potential_outliers`.
-
-```{r more-annotations-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-6-hint-1, eval = FALSE}
-... +
-  geom_text_repel(data = ...)
-```
-
-### 
-
-This code chunk should have returned an error stating that it *requires the following missing aesthetics: label*. It returns an error because we haven't yet mapped the label argument to a variable in the dataframe. 
-
-### 
-
-In addition to `geom_text()` and `geom_label()`, you have many other geoms in **ggplot2** available to help annotate your plot. For example, you can use `geom_hline()` and `geom_vline()` to add reference lines. We often make them thick (`linewidth = 2`) and white (`color = white`), and draw them underneath the primary data layer. That makes them easy to see, without drawing attention away from the data.
-
-### Exercise 7
-
-Within `geom_text_repel()`, using `aes()`, map `label` to `model`.
-
-```{r more-annotations-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-7-hint-1, eval = FALSE}
-... +
-  geom_text_repel(data = potential_outliers, 
-                  aes(label = ...))
-```
-
-### 
-
-Another geom that can help annotate your plot is `geom_rect()`. You can use `geom_rect()` to draw a rectangle around points of interest. The boundaries of the rectangle are defined by aesthetics `xmin`, `xmax`, `ymin`, `ymax`. Alternatively, look into the [**ggforce**](https://ggforce.data-imaginist.com/) package, specifically [`geom_mark_hull()`](https://ggforce.data-imaginist.com/reference/geom_mark_hull.html), which allows you to annotate subsets of points with hulls.
-
-### Exercise 8
-
-Using your previous code, add the `geom_point()` function to the pipeline. Within this function, add the argument `data` and set it to `potential_outliers`. 
-
-```{r more-annotations-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-8-hint-1, eval = FALSE}
-... +
-  geom_point(data = ...)
-```
-
-### 
-
-You can use `geom_segment()` with the arrow argument to draw attention to a point with an arrow. Use aesthetics `x` and `y` to define the starting location, and `xend` and `yend` to define the end location. 
-
-### Exercise 9
-
-Within your most recent call to `geom_point()`, add the `color` argument and set it equal to `"red"`.
-
-```{r more-annotations-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-9-hint-1, eval = FALSE}
-... +
-  geom_point(data = ..., color = ...) 
-```
-
-### Exercise 10
-
-Add another `geom_point()` to the pipeline. Within `geom_point()`, add a `data` argument and set it equal to `potential_outliers`. 
-
-```{r more-annotations-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-10-hint-1, eval = FALSE}
-... +
-  geom_point(data = ...)
-```
-
-### Exercise 11
-
-Within your most previous call to `geom_point()`, add the `color` argument and set it to `"red"`.
-
-```{r more-annotations-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-11-hint-1, eval = FALSE}
-... +
-  geom_point(data = ..., color = ...) +
-  geom_point(data = ..., 
-             color = ...)
-```
-
-### Exercise 12
-
-Within your most previous call to `geom_point()`, add the `size` argument and set it equal to `3`. 
-
-```{r more-annotations-12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-12-hint-1, eval = FALSE}
-... +
-  geom_point(data = ..., 
-             color = ...,
-             size = ...)
-```
-
-### Exercise 13
-
-Within `geom_point()`, add the `shape` argument and set it equal to `"circle open"`. 
-
-```{r more-annotations-13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-13-hint-1, eval = FALSE}
-... +
-  geom_point(data = ..., 
-             color = ...,
-             size = ..., 
-             shape = ...)
-```
-
-### 
-
-Note another handy technique used here: we added a second layer of large, hollow points to further highlight the labelled points.
-
-### Exercise 14
-
-Add `labs()` to the pipeline. Within `labs()`, add a `title`, `subtitle`, `x` axis title, and a `y` axis title.
-
-```{r more-annotations-14, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-14-hint-1, eval = FALSE}
-... +
-  labs(title = ...,
-       subtitle = ...,
-       x = ...
-       y = ...)
-```
-
-### Exercise 15
-
-<!-- SG: Start again here with your edits -->
-
-Another handy function for adding annotations to plots is `annotate()`. As a rule of thumb, geoms are generally useful for highlighting a subset of the data while `annotate()` is useful for adding one or few annotation elements to a plot.
-
-### 
-
-Create a new variable called `trend_text` and set it to `"Larger engine sizes tend to have lower fuel economy."`
-
-```{r more-annotations-15, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-15-hint-1, eval = FALSE}
-trend_text <- ...
-```
-
-### 
-
-To demonstrate using `annotate()`, let’s create some text to add to our plot. The text is a bit long, so we’ll use `stringr::str_wrap()` to automatically add line breaks to it given the number of characters you want per line.
-
-### Exercise 16
-
-Using your previous code, create a new pipeline and pipe `trend_text` with the `str_wrap()` function. Within this function add an argument called `width` and set it to `30`. 
-
-```{r more-annotations-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-16-hint-1, eval = FALSE}
-trend_text <- ... |> 
-  str_wrap(width = ...)
-```
-
-### Exercise 17
-
-Now let's make use of this annotation within a plot. Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this function map `x` to `displ` and `y` to `hwy` using `aes()`.
-
-```{r more-annotations-17, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-17-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = ..., y = ...))
-```
-
-### Exercise 18
-
-Using your previous code, add the `geom_point()` function to the pipeline.
-
-```{r more-annotations-18, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r more-annotations-18-hint-1, eval = FALSE}
 mpg |> 
   ggplot(aes(x = ..., y = ...)) +
   geom_point()
@@ -1360,17 +1174,17 @@ mpg |>
 
 ### 
 
-### Exercise 19
+### Exercise 20
 
 Using your previous code, add the `annotate()` function to the pipeline. Within this function set the argument `geom` to `"label"`, `x` to `3.5`, and `y` to `38`. 
  
-```{r more-annotations-19, exercise = TRUE}
+```{r annotations-20, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-19-hint-1, eval = FALSE}
+```{r annotations-20-hint-1, eval = FALSE}
 mpg |> 
   ggplot(aes(x = ..., y = ...)) +
   geom_point() +
@@ -1385,17 +1199,17 @@ mpg |>
 
 This code chunk should have returned an error stating that it *requires the following missing aesthetics: label*. It returns an error because we haven't yet mapped the label argument to a variable in the dataframe. Now let's end the annotation about the trend into the plot while mapping the label argument.
 
-### Exercise 20
+### Exercise 21
 
 Using your previous code, within your most recent call to the `annotate()` function, add the argument `label` and set it to `trend_text`. 
 
-```{r more-annotations-20, exercise = TRUE}
+```{r annotations-21, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-20-hint-1, eval = FALSE}
+```{r annotations-21-hint-1, eval = FALSE}
 mpg |> 
   ggplot(aes(x = ..., y = ...)) +
   geom_point() +
@@ -1411,17 +1225,17 @@ mpg |>
 
 Now, let's alighn it horizontally using the argument `hjust`. 
 
-### Exercise 21
+### Exercise 22
 
 Using your previous code, within your most recent call to the `annotate()` function, add the arguments `hjust` and set it to `"left"` and `color` and set it to `"red"`.
 
-```{r more-annotations-21, exercise = TRUE}
+```{r annotations-22, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r more-annotations-21-hint-1, eval = FALSE}
+```{r annotations-22-hint-1, eval = FALSE}
 mpg |> 
   ggplot(aes(x = ..., y = ...)) +
   geom_point() +
@@ -1442,11 +1256,15 @@ Annotation is a powerful tool for communicating main takeaways and interesting f
 ## Scales
 ### 
 
-In this section, we will learn about how to display plots more appropriately by using scales.
+In this section, we will learn about how to display plots more appropriately by using scales. The most common use of the **scales** package is to customise to control the appearance of axis and legend labels. Use a `break_` function to control how breaks are generated from the limits, and a `label_` function to control how breaks are turned in to labels.
 
 ### Exercise 1
 
-First load in the package **scales** using the `library()` function.
+When you make a regular plot, **ggplot2* automatically adds scales for you. Let's make a simple plot to demonstrate this.
+
+### 
+
+Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this function map `x` to `displ` and `y` to `hwy` using `aes()`. 
 
 ```{r scales-1, exercise = TRUE}
 
@@ -1455,20 +1273,17 @@ First load in the package **scales** using the `library()` function.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-1-hint-1, eval = FALSE}
-library(...)
+mpg |> 
+  ggplot(aes(x = ..., y = ...))
 ```
 
-### 
+```{r scales-1-test, include = FALSE}
 
-The most common use of the scales package is to customise to control the appearance of axis and legend labels. Use a break_ function to control how breaks are generated from the limits, and a label_ function to control how breaks are turned in to labels.
+```
 
 ### Exercise 2
 
-When you make a regular plot, **ggplot2* automatically adds scales for you. Let's make a simple plot to demonstrate this.
-
-### 
-
-Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this function map `x` to `displ` and `y` to `hwy` using `aes()`. 
+Using your previous code, add the `geom_point()` function to the pipeline. Within this function map the argument `color` to `class` using `aes()`.
 
 ```{r scales-2, exercise = TRUE}
 
@@ -1478,12 +1293,25 @@ Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this fun
 
 ```{r scales-2-hint-1, eval = FALSE}
 mpg |> 
-  ggplot(aes(x = ..., y = ...))
+  ggplot(aes(x = ..., y = ...)) + 
+    geom_point(aes(color = ...))
 ```
+
+```{r scales-2-test, include = FALSE}
+
+```
+
+### 
+
+**ggplot2** automatically adds default scales behind the scenes such as `scale_x_continuous()`, `scale_y_continuous()`, and `scale_color_discrete()`.
 
 ### Exercise 3
 
-Using your previous code, add the `geom_point()` function to the pipeline. Within this function map the argument `color` to `class` using `aes()`.
+We can test this previous statement, by adding those functions at the end of our previous pipeline. 
+
+### 
+
+Using your previous code, add the `scale_x_continuous()`, `scale_y_continuous()`, and the `scale_color_discrete()` functions to the pipeline. 
 
 ```{r scales-3, exercise = TRUE}
 
@@ -1494,20 +1322,23 @@ Using your previous code, add the `geom_point()` function to the pipeline. Withi
 ```{r scales-3-hint-1, eval = FALSE}
 mpg |> 
   ggplot(aes(x = ..., y = ...)) + 
-    geom_point(aes(color = ...))
+    geom_point(aes(color = ...)) +
+    scale_x_continuous() +
+    ... +
+    scale_color_discrete()
+```
+
+```{r scales-3-test, include = FALSE}
+
 ```
 
 ### 
 
-**ggplot2** automatically adds default scales behind the scenes such as `scale_x_continuous()`, `scale_y_continuous()`, and `scale_color_discrete()`.
+We can see that the two data frames are the same. Note the naming scheme for scales: scale_ followed by the name of the aesthetic, then _, then the name of the scale. The default scales are named according to the type of variable they align with: continuous, discrete, datetime, or date.
 
 ### Exercise 4
 
-We can test this previous statement, by adding those functions at the end of our previous pipeline. 
-
-### 
-
-Using your previous code, add the `scale_x_continuous()`, `scale_y_continuous()`, and the `scale_color_discrete()` functions to the pipeline. 
+Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this function, map `x` to `displ`, `y` to `hwy`, and `color` to `drv` using `aes()`. 
 
 ```{r scales-4, exercise = TRUE}
 
@@ -1517,20 +1348,20 @@ Using your previous code, add the `scale_x_continuous()`, `scale_y_continuous()`
 
 ```{r scales-4-hint-1, eval = FALSE}
 mpg |> 
-  ggplot(aes(x = ..., y = ...)) + 
-    geom_point(aes(color = ...)) +
-    scale_x_continuous() +
-    ... +
-    scale_color_discrete()
+  ggplot(aes(x = ..., y = ..., color = ...))
+```
+
+```{r scales-4-test, include = FALSE}
+
 ```
 
 ### 
 
-We can see that the two data frames are the same. Note the naming scheme for scales: scale_ followed by the name of the aesthetic, then _, then the name of the scale. The default scales are named according to the type of variable they align with: continuous, discrete, datetime, or date.
+There are two primary arguments that affect the appearance of the ticks on the axes and the keys on the legend: `breaks` and `labels`. Breaks controls the position of the ticks, or the values associated with the keys.
 
 ### Exercise 5
 
-Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this function, map `x` to `displ`, `y` to `hwy`, and `color` to `drv` using `aes()`. 
+Using your previous code, add the `scale_y_continuous()` function to the pipeline. Within this function add the `breaks` argument and set it to `seq(15, 40, by = 5)`.
 
 ```{r scales-5, exercise = TRUE}
 
@@ -1540,16 +1371,21 @@ Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this fun
 
 ```{r scales-5-hint-1, eval = FALSE}
 mpg |> 
-  ggplot(aes(x = ..., y = ..., color = ...))
+  ggplot(aes(x = ..., y = ..., color = ...)) +
+    scale_y_continuous(breaks = ...)
+```
+
+```{r scales-5-test, include = FALSE}
+
 ```
 
 ### 
 
-There are two primary arguments that affect the appearance of the ticks on the axes and the keys on the legend: `breaks` and `labels`. Breaks controls the position of the ticks, or the values associated with the keys.
+Labels controls the text label associated with each tick/key. The most common use of `breaks` is to override the default choice.
 
 ### Exercise 6
 
-Using your previous code, add the `scale_y_continuous()` function to the pipeline. Within this function add the `breaks` argument and set it to `seq(15, 40, by = 5)`.
+Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this function map `x` to `displ`, `y` to `hwy`, and `color` to `drv` using `aes()`
 
 ```{r scales-6, exercise = TRUE}
 
@@ -1559,17 +1395,20 @@ Using your previous code, add the `scale_y_continuous()` function to the pipelin
 
 ```{r scales-6-hint-1, eval = FALSE}
 mpg |> 
-  ggplot(aes(x = ..., y = ..., color = ...)) +
-    scale_y_continuous(breaks = ...)
+  ggplot(aes(x = ..., y = ..., color = ...))
+```
+
+```{r scales-6-test, include = FALSE}
+
 ```
 
 ### 
 
-Labels controls the text label associated with each tick/key. The most common use of `breaks` is to override the default choice.
+You can use labels in the same way (a character vector the same length as breaks), but you can also set it to NULL to suppress the labels altogether. This can be useful for maps, or for publishing plots where you can’t share the absolute numbers.
 
 ### Exercise 7
 
-Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this function map `x` to `displ`, `y` to `hwy`, and `color` to `drv` using `aes()`
+Using your previous code, add the `geom_point()` function to the pipeline.
 
 ```{r scales-7, exercise = TRUE}
 
@@ -1579,16 +1418,17 @@ Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this fun
 
 ```{r scales-7-hint-1, eval = FALSE}
 mpg |> 
-  ggplot(aes(x = ..., y = ..., color = ...))
+  ggplot(aes(x = ..., y = ..., color = ...)) +
+    geom_point()
 ```
 
-### 
+```{r scales-7-test, include = FALSE}
 
-You can use labels in the same way (a character vector the same length as breaks), but you can also set it to NULL to suppress the labels altogether. This can be useful for maps, or for publishing plots where you can’t share the absolute numbers.
+```
 
 ### Exercise 8
 
-Using your previous code, add the `geom_point()` function to the pipeline.
+Using your previous code, add the `scale_x_continuous()` function to the pipeline. Within this function, add the `labels` argument and set it to `NULL`. 
 
 ```{r scales-8, exercise = TRUE}
 
@@ -1599,12 +1439,17 @@ Using your previous code, add the `geom_point()` function to the pipeline.
 ```{r scales-8-hint-1, eval = FALSE}
 mpg |> 
   ggplot(aes(x = ..., y = ..., color = ...)) +
-    geom_point()
+    geom_point() +
+    scale_x_continuous(labels = ...)
+```
+
+```{r scales-8-test, include = FALSE}
+
 ```
 
 ### Exercise 9
 
-Using your previous code, add the `scale_x_continuous()` function to the pipeline. Within this function, add the `labels` argument and set it to `NULL`. 
+Using your previous code, add the `scale_y_continuous()` function to the pipeline. Within this function, add the `labels` argument and set it to `NULL`. 
 
 ```{r scales-9, exercise = TRUE}
 
@@ -1616,12 +1461,19 @@ Using your previous code, add the `scale_x_continuous()` function to the pipelin
 mpg |> 
   ggplot(aes(x = ..., y = ..., color = ...)) +
     geom_point() +
-    scale_x_continuous(labels = ...)
+    scale_x_continuous(labels = ...) +
+    scale_y_continuous(labels = ...)
 ```
+
+```{r scales-9-test, include = FALSE}
+
+```
+
+### 
 
 ### Exercise 10
 
-Using your previous code, add the `scale_y_continuous()` function to the pipeline. Within this function, add the `labels` argument and set it to `NULL`. 
+Using your previous code, add the `scale_color_discrete()` function to the pipeline. Within this function, add the `labels` argument and set it to `c("4" = "4-wheel", "f" = "front", "r" = "rear")`. 
 
 ```{r scales-10, exercise = TRUE}
 
@@ -1634,12 +1486,21 @@ mpg |>
   ggplot(aes(x = ..., y = ..., color = ...)) +
     geom_point() +
     scale_x_continuous(labels = ...) +
-    scale_y_continuous(labels = ...)
+    scale_y_continuous(labels = ...) +
+    scale_color_discrete(labels = ...)
 ```
+
+```{r scales-10-test, include = FALSE}
+
+```
+
+### 
+
+You can also use breaks and labels to control the appearance of legends. For discrete scales for categorical variables, labels can be a named list of the existing levels names and the desired labels for them.
 
 ### Exercise 11
 
-Using your previous code, add the `scale_color_discrete()` function to the pipeline. Within this function, add the `labels` argument and set it to `c("4" = "4-wheel", "f" = "front", "r" = "rear")`. 
+This time we will be using the **scales** package to create more efficient axis labels. Create a new pipeline and pipe `diamonds` to the `ggplot()` function. Within this function, pipe map `x` to `price` and `y` to `cut`.
 
 ```{r scales-11, exercise = TRUE}
 
@@ -1648,21 +1509,19 @@ Using your previous code, add the `scale_color_discrete()` function to the pipel
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-11-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = ..., y = ..., color = ...)) +
-    geom_point() +
-    scale_x_continuous(labels = ...) +
-    scale_y_continuous(labels = ...) +
-    scale_color_discrete(labels = ...)
+diamonds |> 
+  ggplot(aes(x = ..., y = ...))
+```
+
+```{r scales-11-test, include = FALSE}
+
 ```
 
 ### 
 
-You can also use breaks and labels to control the appearance of legends. For discrete scales for categorical variables, labels can be a named list of the existing levels names and the desired labels for them.
-
 ### Exercise 12
 
-This time we will be using the **scales** package to create more efficient axis labels. Create a new pipeline and pipe `diamonds` to the `ggplot()` function. Within this function, pipe map `x` to `price` and `y` to `cut`.
+Using your previous code, add the `geom_boxplot()` function to the pipeline. Within this function add the `alpha` argument and set it to `0.05`. 
 
 ```{r scales-12, exercise = TRUE}
 
@@ -1672,12 +1531,19 @@ This time we will be using the **scales** package to create more efficient axis 
 
 ```{r scales-12-hint-1, eval = FALSE}
 diamonds |> 
-  ggplot(aes(x = ..., y = ...))
+  ggplot(aes(x = ..., y = ...)) +
+    geom_boxplot(alpha = ...)
 ```
+
+```{r scales-12-test, include = FALSE}
+
+```
+
+### 
 
 ### Exercise 13
 
-Using your previous code, add the `geom_boxplot()` function to the pipeline. Within this function add the `alpha` argument and set it to `0.05`. 
+Using your previous code, add the `scale_x_continuous()` function. Within this function add the `labels` argument and set it equal to the `label_dollar()` function.
 
 ```{r scales-13, exercise = TRUE}
 
@@ -1688,12 +1554,21 @@ Using your previous code, add the `geom_boxplot()` function to the pipeline. Wit
 ```{r scales-13-hint-1, eval = FALSE}
 diamonds |> 
   ggplot(aes(x = ..., y = ...)) +
-    geom_boxplot(alpha = ...)
+    geom_boxplot(alpha = ...) +
+    scale_x_continuous(labels = ...)
 ```
+
+```{r scales-13-test, include = FALSE}
+
+```
+
+### 
+
+The `labels` argument coupled with labelling functions from the **scales** package is also useful for formatting numbers as currency, percent, etc. The plot shows default labelling with `label_dollar()`, which adds a dollar sign as well as a thousand separator comma.
 
 ### Exercise 14
 
-Using your previous code, add the `scale_x_continuous()` function. Within this function add the `labels` argument and set it equal to the `label_dollar()` function.
+Another handy label function is `label_percent()`. Create a new pipeline and pipe `diamonds` to the `ggplot()` function. Within this function, map `x` to `cut` and `fill` to `clarity`.
 
 ```{r scales-14, exercise = TRUE}
 
@@ -1703,18 +1578,18 @@ Using your previous code, add the `scale_x_continuous()` function. Within this f
 
 ```{r scales-14-hint-1, eval = FALSE}
 diamonds |> 
-  ggplot(aes(x = ..., y = ...)) +
-    geom_boxplot(alpha = ...) +
-    scale_x_continuous(labels = ...)
+  ggplot(aes(x = ..., fill = ...))
+```
+
+```{r scales-14-test, include = FALSE}
+
 ```
 
 ### 
 
-The `labels` argument coupled with labelling functions from the **scales** package is also useful for formatting numbers as currency, percent, etc. The plot shows default labelling with `label_dollar()`, which adds a dollar sign as well as a thousand separator comma.
-
 ### Exercise 15
 
-Another handy label function is `label_percent()`. Create a new pipeline and pipe `diamonds` to the `ggplot()` function. Within this function, map `x` to `cut` and `fill` to `clarity`.
+Using your previous code, add the `geom_bar()` function. Within this function add the `position` argument and set it equal to `"fill"`. 
 
 ```{r scales-15, exercise = TRUE}
 
@@ -1724,12 +1599,19 @@ Another handy label function is `label_percent()`. Create a new pipeline and pip
 
 ```{r scales-15-hint-1, eval = FALSE}
 diamonds |> 
-  ggplot(aes(x = ..., fill = ...))
+  ggplot(aes(x = ..., fill = ...)) +
+  geom_bar(position = ...)
 ```
+
+```{r scales-15-test, include = FALSE}
+
+```
+
+### 
 
 ### Exercise 16
 
-Using your previous code, add the `geom_bar()` function. Within this function add the `position` argument and set it equal to `"fill"`. 
+Using your previous code, add the `scale_y_continuous()` function to the pipeline. Within this function, add the `name` argument and set equal to `"Percentage"` and add the `labels` argument and set it equal to `label_percent()`. 
 
 ```{r scales-16, exercise = TRUE}
 
@@ -1740,12 +1622,19 @@ Using your previous code, add the `geom_bar()` function. Within this function ad
 ```{r scales-16-hint-1, eval = FALSE}
 diamonds |> 
   ggplot(aes(x = ..., fill = ...)) +
-  geom_bar(position = ...)
+  geom_bar(position = ...) +
+  scale_y_continuous(name = ..., labels = ...)
 ```
+
+```{r scales-16-test, include = FALSE}
+
+```
+
+### 
 
 ### Exercise 17
 
-Using your previous code, add the `scale_y_continuous()` function to the pipeline. Within this function, add the `name` argument and set equal to `"Percentage"` and add the `labels` argument and set it equal to `label_percent()`. 
+Type in `presidential` and hit "Run Code".
 
 ```{r scales-17, exercise = TRUE}
 
@@ -1754,15 +1643,20 @@ Using your previous code, add the `scale_y_continuous()` function to the pipelin
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-17-hint-1, eval = FALSE}
-diamonds |> 
-  ggplot(aes(x = ..., fill = ...)) +
-  geom_bar(position = ...) +
-  scale_y_continuous(name = ..., labels = ...)
+presedential
 ```
+
+```{r scales-17-test, include = FALSE}
+
+```
+
+### 
+
+The dataset, `presidential` gives the names of each president, the start and end date of their term, and their party of 12 US presidents from Eisenhower to Trump. This data is in the public domain.
 
 ### Exercise 18
 
-Type in `presidential` and hit "Run Code".
+Create a new pipeline and pipe `presidential` to the `mutate()` function. Within this function, create a new variable `id` and set it equal to `33` plus `row_number()`.
 
 ```{r scales-18, exercise = TRUE}
 
@@ -1771,16 +1665,19 @@ Type in `presidential` and hit "Run Code".
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-18-hint-1, eval = FALSE}
-presedential
+presidential |> 
+  mutate(id = ...)
+```
+
+```{r scales-18-test, include = FALSE}
+
 ```
 
 ### 
 
-The dataset, `presidential` gives the names of each president, the start and end date of their term, and their party of 12 US presidents from Eisenhower to Trump. This data is in the public domain.
-
 ### Exercise 19
 
-Create a new pipeline and pipe `presidential` to the `mutate()` function. Within this function, create a new variable `id` and set it equal to `33` plus `row_number()`.
+Using your previous code, add the `ggplot()` function to the pipeline. Within this function, map `x` to `start` and `y` to `id` using `aes()`. 
 
 ```{r scales-19, exercise = TRUE}
 
@@ -1790,12 +1687,19 @@ Create a new pipeline and pipe `presidential` to the `mutate()` function. Within
 
 ```{r scales-19-hint-1, eval = FALSE}
 presidential |> 
-  mutate(id = ...)
+  mutate(id = ...) |> 
+  ggplot(aes(x = ..., y = ...))
 ```
+
+```{r scales-19-test, include = FALSE}
+
+```
+
+### 
 
 ### Exercise 20
 
-Using your previous code, add the `ggplot()` function to the pipeline. Within this function, map `x` to `start` and `y` to `id` using `aes()`. 
+Using your previous code, add the `geom_point()` function to the pipeline. 
 
 ```{r scales-20, exercise = TRUE}
 
@@ -1806,12 +1710,19 @@ Using your previous code, add the `ggplot()` function to the pipeline. Within th
 ```{r scales-20-hint-1, eval = FALSE}
 presidential |> 
   mutate(id = ...) |> 
-  ggplot(aes(x = ..., y = ...))
+  ggplot(aes(x = ..., y = ...)) +
+  geom_point()
 ```
+
+```{r scales-20-test, include = FALSE}
+
+```
+
+### 
 
 ### Exercise 21
 
-Using your previous code, add the `geom_point()` function to the pipeline. 
+Using your previous code, add the `geom_segment()` function. Within this function, map `xend` to `end` and `yend` to `id`.
 
 ```{r scales-21, exercise = TRUE}
 
@@ -1823,12 +1734,21 @@ Using your previous code, add the `geom_point()` function to the pipeline.
 presidential |> 
   mutate(id = ...) |> 
   ggplot(aes(x = ..., y = ...)) +
-  geom_point()
+  geom_point() +
+  geom_segment(aes(xend = ..., yend = ...))
 ```
+
+```{r scales-21-test, include = FALSE}
+
+```
+
+### 
+
+Another use of breaks is when you have relatively few data points and want to highlight exactly where the observations occur.
 
 ### Exercise 22
 
-Using your previous code, add the `geom_segment()` function. Within this function, map `xend` to `end` and `yend` to `id`.
+Using your previous code, add the `scale_x_date()` function. Within this function add the argument `name` and set it equal to `NULL`.
 
 ```{r scales-22, exercise = TRUE}
 
@@ -1841,16 +1761,19 @@ presidential |>
   mutate(id = ...) |> 
   ggplot(aes(x = ..., y = ...)) +
   geom_point() +
-  geom_segment(aes(xend = ..., yend = ...))
+  geom_segment(aes(xend = ..., yend = ...)) +
+  scale_x_date(name = ...)
+```
+
+```{r scales-22-test, include = FALSE}
+
 ```
 
 ### 
 
-Another use of breaks is when you have relatively few data points and want to highlight exactly where the observations occur.
-
 ### Exercise 23
 
-Using your previous code, add the `scale_x_date()` function. Within this function add the argument `name` and set it equal to `NULL`.
+Using your previous code, within your call to the function `scale_x_date()`, add the argument `breaks` and set it equal to `presidential$start`.
 
 ```{r scales-23, exercise = TRUE}
 
@@ -1864,12 +1787,20 @@ presidential |>
   ggplot(aes(x = ..., y = ...)) +
   geom_point() +
   geom_segment(aes(xend = ..., yend = ...)) +
-  scale_x_date(name = ...)
+  scale_x_date(name = ..., breaks = ...)
 ```
+
+```{r scales-23-test, include = FALSE}
+
+```
+
+### 
+
+Note that for the breaks argument we pulled out the start variable as a vector with presidential$start because we can’t do an aesthetic mapping for this argument. Also note that the specification of breaks and labels for date and datetime scales is a little different:
 
 ### Exercise 24
 
-Using your previous code, within your call to the function `scale_x_date()`, add the argument `breaks` and set it equal to `presidential$start`.
+Using your previous code, within your call to the function `scale_x_date()`, add the argument `date_labels` and set it equal to `"'%y"`.
 
 ```{r scales-24, exercise = TRUE}
 
@@ -1878,29 +1809,10 @@ Using your previous code, within your call to the function `scale_x_date()`, add
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r scales-24-hint-1, eval = FALSE}
-presidential |> 
-  mutate(id = ...) |> 
-  ggplot(aes(x = ..., y = ...)) +
-  geom_point() +
-  geom_segment(aes(xend = ..., yend = ...)) +
-  scale_x_date(name = ..., breaks = ...)
-```
-
-### 
-
-Note that for the breaks argument we pulled out the start variable as a vector with presidential$start because we can’t do an aesthetic mapping for this argument. Also note that the specification of breaks and labels for date and datetime scales is a little different:
-
-### Exercise 25
-
-Using your previous code, within your call to the function `scale_x_date()`, add the argument `date_labels` and set it equal to `"'%y"`.
-
-```{r scales-25, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r scales-25-hint-1, eval = FALSE}
+```{r scales-24-test, include = FALSE}
 
 ```
 
@@ -3180,11 +3092,216 @@ We overcame our scales problem by sharing scales across multiple plots, training
 
 In this section, we will learn about how to customize the non-data elements of your plot with a theme.
 
+The **ggplot2** package includes eight themes, with `theme_gray()` as the default. Many more are included in add-on packages like **ggthemes** (https://jrnold.github.io/ggthemes), by Jeffrey Arnold. You can also create your own themes, if you are trying to match a particular corporate or journal style.
+
+### Exercise 1
+
+<!-- DK: Change this initial sequence so that, instead of a step to build each item, we just build the plot once, and then each question switches the theme. -->
+
+With a new pipeline, pipe `mpg` to `ggplot()`. 
+
+```{r themes-1, exercise = TRUE}
+
+```
+
+```{r themes-1-hint-1, eval = FALSE}
+mpg |> 
+  ...
+```
+
+```{r themes-1-test, include = FALSE}
+mpg |> 
+  ggplot()
+```
+
 ### 
 
-We will be creating this graph:
+One theme that the **ggthemes** package has is `theme_bw()`. This is the classic dark-on-light ggplot2 theme. This theme may work better for presentations displayed with a projector.
 
-<!-- DK: Title and subtitle. x/y axis labels. -->
+### Exercise 2
+
+Within `ggplot()`, using `aes()`, map `x` to `displ`.
+
+```{r themes-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r themes-2-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = ...))
+```
+
+```{r themes-2-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ))
+```
+
+### 
+
+Another theme that the **ggthemes** package has is `theme_linedraw()`. This is a theme with only black lines of various widths on white backgrounds, reminiscent of a line drawing. Serves a purpose similar to `theme_bw()`. Note that this theme has some very thin lines *(<< 1 pt)* which some journals may refuse.
+
+### Exercise 3
+
+Using your previous code, within `ggplot()` and within `aes()`, map `y` to `hwy`. 
+
+```{r themes-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r themes-3-hint-1, eval = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = ...))
+```
+
+```{r themes-3-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy))
+```
+
+### 
+
+A third theme that the **ggthemes** package has is `theme_light()`. This is a theme similar to `theme_linedraw()` but with light grey lines and axes, to direct more attention towards the data.
+
+### Exercise 4
+
+Add `geom_point()` to the pipeline. 
+
+```{r themes-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r themes-4-hint-1, eval = FALSE}
+... +
+  geom_point()
+```
+
+```{r themes-4-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+    geom_point()
+```
+
+### 
+
+A fourth theme that the **ggthemes** package offers is `theme_dark()`. This theme is the dark cousin of `theme_light()`, with similar line sizes but a dark background. Useful to make thin coloured lines pop out.
+
+### Exercise 5
+
+<!-- DK: Explain what/why this aes() is within geom_point(). -->
+
+Within `geom_point()`, add `aes()` and, within that function, set `color` to `class`. 
+
+```{r themes-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r themes-5-hint-1, eval = FALSE}
+... +
+  geom_point(aes(color = ...))
+```
+
+```{r themes-5-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+    geom_point(aes(color = class))
+```
+
+### 
+
+A fifth theme that the **ggthemes** package offers is `theme_minimal()`. This is a minimalistic theme with no background annotations.
+
+### Exercise 6
+
+Add `geom_smooth()` to the pipeline. 
+
+```{r themes-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r themes-6-hint-1, eval = FALSE}
+... +
+  geom_smooth()
+```
+
+```{r themes-6-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+    geom_point(aes(color = class)) +
+    geom_smooth()
+```
+
+### 
+
+Another theme that the **ggthemes** package offers is `theme_classic()`. This is a classic-looking theme, with x and y axis lines and no gridlines.
+
+### Exercise 7
+
+Within `geom_smooth()`, add the argument `se` and set it equal to `FALSE`.
+
+```{r themes-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r themes-7-hint-1, eval = FALSE}
+... +
+  geom_smooth(se = ...)
+```
+
+```{r themes-7-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+    geom_point(aes(color = class)) +
+    geom_smooth(se = FALSE)
+```
+
+### 
+
+Another theme that the **ggthemes** package offers is `theme_void()`. This is a completely empty theme.
+
+### Exercise 8
+
+Add `theme_bw()` to the pipeline.
+
+```{r themes-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r themes-8-hint-1, eval = FALSE}
+... +
+  theme_bw()
+```
+
+```{r themes-8-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+    geom_point(aes(color = class)) +
+    geom_smooth(se = FALSE) +
+    theme_bw()
+```
+
+### 
+
+The `theme_bw()` function used here, changes the signature **ggplot2** theme with a grey background and white gridlines that is designed to put the data forward yet make comparisons easy to a classic dark-on-light **ggplot2** theme
+
+### Exercise 9
+
+Having learned about the built-in themes, we will now create this graphic:
+
+<!-- DK: Don't necessarily need to use the exact same plot as in the book. Why not make it nicer with, for example, a subtitle and caption.  -->
 
 
 ```{r}
@@ -3204,162 +3321,11 @@ themes_plot <- mpg |>
     plot.caption.position = "plot",
     plot.caption = element_text(hjust = 0)
   )
+
+themes_plot
 ```
 
-### Exercise 1
-
-Load in the **ggthemes** package using `library()`.
-
-```{r themes-1, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-1-hint-1, eval = FALSE}
-library(...)
-```
-
-### 
-
-The **ggplot2** package includes eight themes, with `theme_gray()` as the default. Many more are included in add-on packages like **ggthemes** (https://jrnold.github.io/ggthemes), by Jeffrey Arnold. You can also create your own themes, if you are trying to match a particular corporate or journal style.
-
-### Exercise 2
-
-With a new pipeline, pipe `mpg` to `ggplot()`. 
-
-```{r themes-2, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-2-hint-1, eval = FALSE}
-mpg |> 
-  ...
-```
-
-### 
-
-One theme that the **ggthemes** package has is `theme_bw()`. This is the classic dark-on-light ggplot2 theme. This theme may work better for presentations displayed with a projector.
-
-### Exercise 3
-
-Within `ggplot()`, using `aes()`, map `x` to `displ`.
-
-```{r themes-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-3-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = ...))
-```
-
-### 
-
-Another theme that the **ggthemes** package has is `theme_linedraw()`. This is a theme with only black lines of various widths on white backgrounds, reminiscent of a line drawing. Serves a purpose similar to `theme_bw()`. Note that this theme has some very thin lines *(<< 1 pt)* which some journals may refuse.
-
-### Exercise 4
-
-Using your previous code, within `ggplot()` and within `aes()`, map `y` to `hwy`. 
-
-```{r themes-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-4-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = displ, y = ...))
-```
-
-### 
-
-A third theme that the **ggthemes** package has is `theme_light()`. This is a theme similar to `theme_linedraw()` but with light grey lines and axes, to direct more attention towards the data.
-
-### Exercise 5
-
-Add `geom_point()` to the pipeline. 
-
-```{r themes-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-5-hint-1, eval = FALSE}
-... +
-  geom_point()
-```
-
-### 
-
-A fourth theme that the **ggthemes** package offers is `theme_dark()`. This theme is the dark cousin of `theme_light()`, with similar line sizes but a dark background. Useful to make thin coloured lines pop out.
-
-### Exercise 6
-
-Within `geom_point()`, map `color` to `class`. 
-
-```{r themes-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-6-hint-1, eval = FALSE}
-... +
-  geom_point(aes(color = ...))
-```
-
-### 
-
-A fifth theme that the **ggthemes** package offers is `theme_minimal()`. This is a minimalistic theme with no background annotations.
-
-### Exercise 7
-
-Add `geom_smooth()` to the pipeline. 
-
-```{r themes-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-7-hint-1, eval = FALSE}
-... +
-  geom_smooth()
-```
-
-### 
-
-Another theme that the **ggthemes** package offers is `theme_classic()`. This is a classic-looking theme, with x and y axis lines and no gridlines.
-
-### Exercise 8
-
-Within `geom_smooth()`, add the argument `se` and set it equal to `FALSE`.
-
-```{r themes-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-8-hint-1, eval = FALSE}
-... +
-  geom_smooth(se = ...)
-```
-
-### 
-
-Another theme that the **ggthemes** package offers is `theme_void()`. This is a completely empty theme.
-
-### Exercise 9
-
-Add `theme_bw()` to the pipeline.
+With a new pipeline, pipe `mpg` to `ggplot()`.
 
 ```{r themes-9, exercise = TRUE}
 
@@ -3368,16 +3334,17 @@ Add `theme_bw()` to the pipeline.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r themes-9-hint-1, eval = FALSE}
-
+mpg |> 
+  ggplot()
 ```
 
 ### 
 
-The `theme_bw()` function used here, changes the signature **ggplot2** theme with a grey background and white gridlines that is designed to put the data forward yet make comparisons easy to a classic dark-on-light **ggplot2** theme
+It’s also possible to control individual components of each theme, like the size and color of the font used for the `y` axis. We’ve already seen that `legend.position` controls where the legend is drawn. There are many other aspects of the legend that can be customized with `theme()`
 
 ### Exercise 10
 
-With a new pipeline, pipe `mpg` to `ggplot()`.
+Within `ggplot()`, map `x` to `displ` using `aes()`. 
 
 ```{r themes-10, exercise = TRUE}
 
@@ -3387,16 +3354,12 @@ With a new pipeline, pipe `mpg` to `ggplot()`.
 
 ```{r themes-10-hint-1, eval = FALSE}
 mpg |> 
-  ggplot()
+  ggplot(aes(x = ...))
 ```
-
-### 
-
-It’s also possible to control individual components of each theme, like the size and color of the font used for the `y` axis. We’ve already seen that `legend.position` controls where the legend is drawn. There are many other aspects of the legend that can be customized with `theme()`
 
 ### Exercise 11
 
-Within `ggplot()`, map `x` to `displ` using `aes()`. 
+Within `ggplot()`, map `y` to `hwy` using `aes()`. 
 
 ```{r themes-11, exercise = TRUE}
 
@@ -3406,12 +3369,12 @@ Within `ggplot()`, map `x` to `displ` using `aes()`.
 
 ```{r themes-11-hint-1, eval = FALSE}
 mpg |> 
-  ggplot(aes(x = ...))
+  ggplot(aes(x = displ, y = ...))
 ```
 
 ### Exercise 12
 
-Within `ggplot()`, map `y` to `hwy` using `aes()`. 
+Within `ggplot()`, map `color` to `drv`. 
 
 ```{r themes-12, exercise = TRUE}
 
@@ -3421,12 +3384,16 @@ Within `ggplot()`, map `y` to `hwy` using `aes()`.
 
 ```{r themes-12-hint-1, eval = FALSE}
 mpg |> 
-  ggplot(aes(x = displ, y = ...))
+  ggplot(aes(x = displ, y = ..., color = ...))
 ```
+
+### 
+
+One of the final themes in **ggthemes** is `theme_test()`. This is a theme for visual unit tests. It should ideally never change except for new features. 
 
 ### Exercise 13
 
-Within `ggplot()`, map `color` to `drv`. 
+Add `geom_point()` to the pipeline. 
 
 ```{r themes-13, exercise = TRUE}
 
@@ -3435,17 +3402,13 @@ Within `ggplot()`, map `color` to `drv`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r themes-13-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = displ, y = ..., color = ...))
+... +
+  geom_point()
 ```
-
-### 
-
-One of the final themes in **ggthemes** is `theme_test()`. This is a theme for visual unit tests. It should ideally never change except for new features. 
 
 ### Exercise 14
 
-Add `geom_point()` to the pipeline. 
+Add a `title` and a `caption` using `labs()`. (Hint: The caption should be `"Source: https://fueleconomy.gov"`)
 
 ```{r themes-14, exercise = TRUE}
 
@@ -3455,12 +3418,13 @@ Add `geom_point()` to the pipeline.
 
 ```{r themes-14-hint-1, eval = FALSE}
 ... +
-  geom_point()
+  labs(title = ...,
+       caption = ...)
 ```
 
 ### Exercise 15
 
-Add a `title` and a `caption` using `labs()`. (Hint: The caption should be `"Source: https://fueleconomy.gov"`)
+Add `theme()` to the pipeline. Within `theme()`, add the `legend.position` argument and set it equal to `c(0.6, 0.7)`.
 
 ```{r themes-15, exercise = TRUE}
 
@@ -3469,22 +3433,6 @@ Add a `title` and a `caption` using `labs()`. (Hint: The caption should be `"Sou
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r themes-15-hint-1, eval = FALSE}
-... +
-  labs(title = ...,
-       caption = ...)
-```
-
-### Exercise 16
-
-Add `theme()` to the pipeline. Within `theme()`, add the `legend.position` argument and set it equal to `c(0.6, 0.7)`.
-
-```{r themes-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-16-hint-1, eval = FALSE}
 ... +
   theme(
     legend.position = ...
@@ -3495,17 +3443,17 @@ Add `theme()` to the pipeline. Within `theme()`, add the `legend.position` argum
 
 The `legend.position` argument sets the position of legends ("none", "left", "right", "bottom", "top", or two-element numeric vector).
 
-### Exercise 17
+### Exercise 16
 
 Within `theme()`, add the `legend.direction` argument and set it equal to `"horizontal"`. 
 
-```{r themes-17, exercise = TRUE}
+```{r themes-16, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r themes-17-hint-1, eval = FALSE}
+```{r themes-16-hint-1, eval = FALSE}
 ... +
   theme(
     legend.position = ...,
@@ -3517,9 +3465,32 @@ Within `theme()`, add the `legend.direction` argument and set it equal to `"hori
 
 The `legend.direction` argument sets the layout of items in legends ("horizontal" or "vertical")
 
-### Exercise 18
+### Exercise 17
 
 Within `theme()`, add the `legend.box.background` argument and set it equal to `element_rect(color = "black")`. 
+
+```{r themes-17, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r themes-17-hint-1, eval = FALSE}
+... +
+  theme(
+    legend.position = ...,
+    legend.direction = ...,
+    legend.box.background = ...,
+    )
+```
+
+### 
+
+The `legend.box.background` argument sets the background of legend area (`element_rect()`; inherits from rect)
+
+### Exercise 18
+
+Within `theme()`, add the `plot.title` argument and set it equal to `element_text(face = "bold")`. 
 
 ```{r themes-18, exercise = TRUE}
 
@@ -3533,29 +3504,6 @@ Within `theme()`, add the `legend.box.background` argument and set it equal to `
     legend.position = ...,
     legend.direction = ...,
     legend.box.background = ...,
-    )
-```
-
-### 
-
-The `legend.box.background` argument sets the background of legend area (`element_rect()`; inherits from rect)
-
-### Exercise 19
-
-Within `theme()`, add the `plot.title` argument and set it equal to `element_text(face = "bold")`. 
-
-```{r themes-19, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-19-hint-1, eval = FALSE}
-... +
-  theme(
-    legend.position = ...,
-    legend.direction = ...,
-    legend.box.background = ...,
     plot.title = ...
     )
 ```
@@ -3564,17 +3512,17 @@ Within `theme()`, add the `plot.title` argument and set it equal to `element_tex
 
 The `plot.title` argument changes the plot title (text appearance) (`element_text()`; inherits from title) left-aligned by default
 
-### Exercise 20
+### Exercise 19
 
 Within `theme()`, add the `plot.title.position` argument and set it equal to `"plot"`. 
 
-```{r themes-20, exercise = TRUE}
+```{r themes-19, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r themes-20-hint-1, eval = FALSE}
+```{r themes-19-hint-1, eval = FALSE}
 ... +
   theme(
     legend.position = ...,
@@ -3589,17 +3537,17 @@ Within `theme()`, add the `plot.title.position` argument and set it equal to `"p
 
 The `plot.title.position` argument sets the alignment of the plot title/subtitle and caption. A value of `"plot"` means that titles and/or caption are aligned to the entire plot (minus any space for margins and plot tag).
 
-### Exercise 21
+### Exercise 20
 
 Within `theme()`, add the `plot.caption.position` argument and set it equal to `"plot"`.
 
-```{r themes-21, exercise = TRUE}
+```{r themes-20, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r themes-21-hint-1, eval = FALSE}
+```{r themes-20-hint-1, eval = FALSE}
 ... +
   theme(
     legend.position = ...,
@@ -3611,17 +3559,17 @@ Within `theme()`, add the `plot.caption.position` argument and set it equal to `
     )
 ```
 
-### Exercise 22
+### Exercise 21
 
 Within `theme()`, add the `plot.caption` argument and set it to `element_text(hjust = 0)`. 
 
-```{r themes-22, exercise = TRUE}
+```{r themes-21, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r themes-22-hint-1, eval = FALSE}
+```{r themes-21-hint-1, eval = FALSE}
 ... +
   theme(
     legend.position = ...,
@@ -3640,17 +3588,17 @@ The `plot.caption` argument within `theme()` sets the caption below the plot (te
 
 ### 
 
-### Exercise 23
+### Exercise 22
 
 Within `labs()` add a `subtitle`, `x` axis title, and a `y` axis title. 
 
-```{r themes-23, exercise = TRUE}
+```{r themes-22, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r themes-23-hint-1, eval = FALSE}
+```{r themes-22-hint-1, eval = FALSE}
 ... +
   labs(
     title = ...,
@@ -3662,75 +3610,69 @@ Within `labs()` add a `subtitle`, `x` axis title, and a `y` axis title.
   theme(...)
 ```
 
-### 
-
 Reminder: This is what our plot should look like
 
-```{r message = FALSE}
-themes_plot <- mpg |> 
-  ggplot(aes(x = displ, y = hwy, color = drv)) +
-  geom_point() +
-  labs(
-    title = "Larger engine sizes tend to have lower fuel economy",
-    caption = "Source: https://fueleconomy.gov."
-  ) +
-  theme(
-    legend.position = c(0.6, 0.7),
-    legend.direction = "horizontal",
-    legend.box.background = element_rect(color = "black"),
-    plot.title = element_text(face = "bold"),
-    plot.title.position = "plot",
-    plot.caption.position = "plot",
-    plot.caption = element_text(hjust = 0)
-  )
-
+```{r}
+themes_plot 
 ```
 
 ## Layout
 ### 
 
-In this section, given that we have multiple plots, we will learn how to lay them out in a certain way. 
+<!-- DK: Change around. Show the plots that we have created. Then the questions can be about combining them. -->
 
-### 
+So far we talked about how to create and modify a single plot. What if you have multiple plots you want to lay out in a certain way? The **patchwork** package allows you to combine separate plots into the same graphic. 
 
-Let's first create two plots
 
 ### Exercise 1
 
-Load in the **patchwork** package with `library()`. 
+We have created several plots (`p1` through `p8`) for you to use in these exercises. Type `p1` and hit "Run Code".
 
 ```{r layout-1, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r layout-1-hint-1, eval = FALSE}
-library(...)
+p1
+```
+
+```{r layout-1-test, include = FALSE}
+p1
 ```
 
 ### 
 
-The **patchwork** package provides a strong API for sequentially building up a plot, but does not concern itself with composition of multiple plots. **patchwork** is a package that expands the API to allow for arbitrarily complex composition of plots by, among others, providing mathematical operators for combining multiple plots.
+The **ggplot2** package provides a strong API for sequentially building up a plot, but does not concern itself with composition of multiple plots. **patchwork** is a package that expands the API to allow for arbitrarily complex composition of plots by, among others, providing mathematical operators for combining multiple plots.
 
 ### Exercise 2
 
-Let's create the first plot. Create a new variable, `p1` and set it equal to `mpg`. From `mpg`, create a new pipeline with `ggplot()`. 
+Enter `p1` on the first line and `p2` on the second line. Hit "Run Code".
+
 
 ```{r layout-2, exercise = TRUE}
+
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r layout-2-hint-1, eval = FALSE}
-p1 <- mpg |> 
-  ggplot()
+...
+p2
 ```
+
+```{r layout-2-test, include = FALSE}
+p1
+p2
+```
+
+### 
+
+To place two plots next to each other, you can simply add them to each other. Note that you first need to create the plots and save them as objects (in the following example they’re called `p1` and `p2`). Then, you place them next to each other with `+`.
 
 ### Exercise 3
 
-WIthin `ggplot()`, map `x` to `displ` using `aes()`. 
+Type `p1 + p2` and hit "Run Code".
 
 ```{r layout-3, exercise = TRUE}
 
@@ -3739,143 +3681,6 @@ WIthin `ggplot()`, map `x` to `displ` using `aes()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r layout-3-hint-1, eval = FALSE}
-p1 <- mpg |> 
-  ggplot(aes(x = ...)) 
-```
-
-### Exercise 4
-
-Within `ggplot()`, map `y` to `hwy` using `aes()`. 
-
-```{r layout-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r layout-4-hint-1, eval = FALSE}
-p1 <- mpg |> 
-  ggplot(aes(x = ..., y = ...)) 
-```
-
-### Exercise 5
-
-Add `geom_point()` to the pipeline.
-
-```{r layout-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r layout-5-hint-1, eval = FALSE}
-... +
-  geom_point()
-```
-
-### Exercise 6
-
-Add a `title`, `subtitle`, `x` axis title, and a `y` axis title using `labs()`.
-
-```{r layout-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r layout-6-hint-1, eval = FALSE}
-... + 
-  labs(
-    title = ...,
-    subtitle = ...,
-    x = ...,
-    y = ...
-  )
-```
-
-### 
-
-Let's also create the second plot and then place them beside each other.
-
-### Exercise 7
-
-Create a new variable, `p2` and set it equal to `mpg`.
-
-```{r layout-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r layout-7-hint-1, eval = FALSE}
-p2 <- mpg
-```
-
-### Exercise 8
-
-With your previous code, start a new pipeline with `mpg` and `ggplot()`. Within `ggplot()`, using `aes()`, map `x` to `drv`. 
-
-```{r layout-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r layout-8-hint-1, eval = FALSE}
-p2 <- mpg |> 
-  ggplot(aes(x = ...))
-```
-
-### Exercise 9
-
-Within `ggplot()`, using `aes()`, also map `y` to `hwy`.
-
-```{r layout-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r layout-9-hint-1, eval = FALSE}
-p2 <- mpg |> 
-  ggplot(aes(x = ..., y = ...))
-```
-
-### Exercise 10
-
-Add a `title`, `subtitle`, `x` axis title, and a `y` axis title using `labs()`.
-
-```{r layout-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r layout-10-hint-1, eval = FALSE}
-... +
-  labs(
-    title = ...,
-    subtitle = ...,
-    x = ...,
-    y = ...
-  )
-```
-
-### 
-
-To place two plots next to each other, you can simply add them to each other. Note that you first need to create the plots and save them as objects (in the following example they’re called `p1` and `p2`). Then, you place them next to each other with `+`.
-
-### Exercise 11
-
-Type `p1 + p2` and hit "Run Code".
-
-```{r layout-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r layout-11-hint-1, eval = FALSE}
 p1 + ...
 ```
 
@@ -4126,6 +3931,8 @@ Can you see where that extra row we ignored earlier in the analysis messes thing
 ### 
 
 This tutorial covered [Chapter 12: Communication](https://r4ds.hadley.nz/communication.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. In this tutorial we made use of three packages associated with [**ggplot2**](https://ggplot2.tidyverse.org/): [**scales**](https://scales.r-lib.org/), [**ggrepel**](https://ggrepel.slowkow.com), and [**patchwork**](https://patchwork.data-imaginist.com). Key commands included [`quote()`](https://rdrr.io/r/base/substitute.html) which simply returns its argument, [`geom_label_repel()`](https://rdrr.io/cran/ggrepel/man/geom_text_repel.html) which adds text directly to the plot, and [`label_dollar()`](https://scales.r-lib.org/reference/label_dollar.html) which formats numbers as currency. 
+
+Explore [*The Truthful Art*](https://www.amazon.com/gp/product/0321934075/) by Albert Cairo to learn more about creating effective graphics.
 
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
