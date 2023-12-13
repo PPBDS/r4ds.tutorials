@@ -2,6 +2,8 @@
 
 * Re-number chapters to follow changes recently made in R4DS.
 
+* Update several tutorials to improve the overall quality.
+
 # r4ds.tutorials 0.1.4
 
 * Initial CRAN release.
