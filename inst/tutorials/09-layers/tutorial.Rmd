@@ -39,22 +39,12 @@ polling_data <- read_csv("data/vis4_polling_data.csv",
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- This tutorial is a bit of a mess. We need to add the code from the missing sections. And then we need to decide what to do with the extra plots. -->
-
-<!-- Note that the later material sucks! There are not enough knowledge drops.  -->
-
-<!-- Change elements of theme.. -->
-
-<!-- Each section should begin with two questions looking at the data, even if they are the same questions each time. print, glimpse, etc -->
-
 <!-- Make the plots cooler! Add links to  https://ggplot2-book.org/. And https://socviz.co/. Or maybe put these in case studies. Love this one: https://socviz.co/groupfacettx.html#histograms. -->
 
-
+<!-- DK: The final four plot exercies, which are not part of R4DS, need to be dealt with. Maybe turn these into a graduation exercise with one repo, one qmd which contains the three plots, then publish them? Some of these plots are not very good. Maybe move some of them to other tutorials? -->
 
 ## Introduction
 ### 
-
-*This is a ROUGH, UNFINISHED, draft.*
 
 This tutorial covers [Chapter 9: Layers](https://r4ds.hadley.nz/layers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to use [**ggplot2**](https://ggplot2.tidyverse.org/) and related packages to create persuasive graphics. Key functions include [`geom_smooth()`](https://ggplot2.tidyverse.org/reference/geom_smooth.html),  [`geom_histogram()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html), and  [`facet_wrap()`](https://ggplot2.tidyverse.org/reference/facet_wrap.html).
 
@@ -815,9 +805,82 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
 
 We need the two extra calls to `geom_point()` because the first one makes the centeral point red while the second makes the red circle around it.
 
+### Exercise 15
+
 Geoms are the fundamental building blocks of ggplot2. You can completely transform the look of your plot by changing its geom, and different geoms can reveal different features of your data. 
 
-<!-- DK: Still need to add the last few plots in this section. -->
+Make a new plot by hitting "Run Code".
+
+```{r geometric-objects-15, exercise = TRUE}
+ggplot(mpg, aes(x = hwy)) +
+  geom_histogram(binwidth = 2)
+```
+
+```{r geometric-objects-15-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = hwy)) +
+  geom_histogram(binwidth = 2)
+```
+
+```{r geometric-objects-15-test, include = FALSE}
+ggplot(mpg, aes(x = hwy)) +
+  geom_histogram(binwidth = 2)
+```
+
+### 
+
+The histogram reveala that the distribution of highway mileage is bimodal and right skewed. You can see a similar plot if you replace `geom_histogram(binwidth = 2)` with `geom_density()`.
+
+### Exercise 16
+
+Hit "Run Code" to create a boxplot with the same data.
+
+```{r geometric-objects-16, exercise = TRUE}
+ggplot(mpg, aes(x = hwy)) +
+  geom_boxplot()
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-16-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = hwy)) +
+  geom_boxplot()
+```
+
+```{r geometric-objects-16-test, include = FALSE}
+ggplot(mpg, aes(x = hwy)) +
+  geom_boxplot()
+```
+
+### 
+
+`geom_boxplot()` helps to highlight the two outlier data points. **ggplot2** provides more than 40 geoms but these don’t cover all possible plots one could make. If you need a different geom, look at extension packages first to see if someone else has already implemented it (see https://exts.ggplot2.tidyverse.org/gallery/ for a sampling).
+
+### Exercise 17
+
+The [**ggridges** package](https://wilkelab.org/ggridges) is useful for making ridgeline plots, which can be useful for visualizing the density of a numerical variable for different levels of a categorical variable. Hit "Run Code" to see an example.
+
+```{r geometric-objects-17, exercise = TRUE}
+library(ggridges)
+
+ggplot(mpg, aes(x = hwy, y = drv, fill = drv, color = drv)) +
+  geom_density_ridges(alpha = 0.5, show.legend = FALSE)
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geometric-objects-17-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = hwy, y = drv, fill = drv, color = drv)) +
+  geom_density_ridges(alpha = 0.5, show.legend = FALSE)
+```
+
+```{r geometric-objects-17-test, include = FALSE}
+ggplot(mpg, aes(x = hwy, y = drv, fill = drv, color = drv)) +
+  geom_density_ridges(alpha = 0.5, show.legend = FALSE)
+```
+
+### 
+
+The best place to get a comprehensive overview of all of the geoms **ggplot2** offers, as well as all functions in the package, is the [reference page](https://ggplot2.tidyverse.org/reference). To learn more about any single geom, use the help (e.g., `?geom_smooth`).
 
 
 ## Facets
@@ -1038,12 +1101,7 @@ diamonds |>
 
 ### 
 
-<!-- DK: Too much text! -->
-
 On the x-axis, the chart displays cut, a variable from diamonds. On the y-axis, it displays count, but count is not a variable in diamonds! It is a "statistical transformation" which **ggplot2** has calculated for us.
-
-
-
 
 ### Exercise 5
 
@@ -1393,9 +1451,7 @@ To learn more about a position adjustment, look up the help page associated with
 ## Coordinate Systems
 ### 
 
-<!-- DK: Still need to review this section. -->
-
-Coordinate systems are probably the most complicated part of ggplot2. The default coordinate system is the Cartesian coordinate system where the x and y positions act independently to determine the location of each point. We are going to create one of these systems with the US.
+Coordinate systems are probably the most complicated part of **ggplot2**. The default coordinate system is the Cartesian coordinate system where the x and y positions act independently to determine the location of each point. 
 
 ### Exercise 1
 
@@ -1409,108 +1465,70 @@ Load the `maps` package with `library()`.
 library(...)
 ```
 
+```{r coordinate-systems-1-test}
+library(maps)
+```
+
 ### 
 
-The `maps` package includes the area of each matching region in the map is computed, and regions which match the same element of regions have their areas combined. Each region is assumed planar, with vertices specified by the x and y components of the map object.
+The **maps** package includes the area of each matching region in the map is computed, and regions which match the same element of regions have their areas combined. Each region is assumed planar, with vertices specified by the x and y components of the map object.
 
 ### Exercise 2
 
-Run `summary()` on `nz` to view its contents.
+Hit "Run Code" to create an object with data for New Zealand and then create a plot.
 
 ```{r coordinate-systems-2, exercise = TRUE}
+nz <- map_data("nz")
+
+ggplot(nz, aes(x = long, y = lat, group = group)) +
+  geom_polygon(fill = "white", color = "black")
 
 ```
 
 ```{r coordinate-systems-2-hint-1, eval = FALSE}
 nz <- map_data("nz")
+
+ggplot(nz, aes(x = long, y = lat, group = group)) +
+  geom_polygon(fill = "white", color = "black")
 ```
+
+```{r coordinate-systems-2-test}
+nz <- map_data("nz")
+
+ggplot(nz, aes(x = long, y = lat, group = group)) +
+  geom_polygon(fill = "white", color = "black")
+```
+
+### 
+
+We don’t have the space to discuss maps extensively in this tutorial but you can learn more in the [Maps](https://ggplot2-book.org/maps) chapter of [*ggplot2: Elegant Graphics for Data Analysis*](https://ggplot2-book.org/). 
 
 ### Exercise 3
 
-We now want to plot our `nz` data with `ggplot()`
+`coord_quickmap()` sets the aspect ratio correctly for geographic maps. This is very important if you’re plotting spatial data with **ggplot2**. Add `coord_quickmap()` to the `ggplot()` call from the previous question.
 
 ```{r coordinate-systems-3, exercise = TRUE}
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r coordinate-systems-3-hint-1, eval = FALSE}
-ggplot(...)
-```
-
-### 
-
-We don't have to use `data = nz` because it is in the variable spot for data, meaning we don't have to specify `data = nz`.
-
-### Exercise 4
-
-Set x-axis to `long` and y-axis to `lat` and group to `group`
-
-```{r coordinate-systems-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r coordinate-systems-4-hint-1, eval = FALSE}
-ggplot(nz, aes(x = ..., 
-               y = ...,
-               group = ...))
-```
-
-### Exercise 5
-
-Now we want to add the layer of `geom_polygon()`.
-
-```{r coordinate-systems-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r coordinate-systems-5-hint-1, eval = FALSE}
 ... +
-  ...()
+  coord_quickmap()
 ```
 
-### 
-
-`geom_polygon()` is used to create filled polygons or regions on a plot. Commonly used to visualize geographic data, such as maps, choropleth plots, or any other data that can be represented as polygons.
-
-### Exercise 6
-
-Now we want to add color the item that we have plotted. Set `fill` to white and `color` to black
-
-```{r coordinate-systems-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r coordinate-systems-6-hint-1, eval = FALSE}
-... +
-  geom_polygon(fill = ..., 
-               color = ...)
-```
-
-### Exercise 7
-
-Finally let us use the `coord_quickmap()` which sets the aspect ratio correctly for geographic maps. This is very important because we are plotting spatial data with `ggplot2`
-
-```{r coordinate-systems-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r coordinate-systems-7-hint-1, eval = FALSE}
-... +
+```{r coordinate-systems-3-test}
+ggplot(nz, aes(x = long, y = lat, group = group)) +
+  geom_polygon(fill = "white", color = "black") +
   coord_quickmap()
 ```
 
 ### 
 
-Now you should see the New Zealand data plotted out based on the spatial data. We can visualize more data through `coord_polar()`. Take a look at the use of [`coord_polar()`](https://r4ds.hadley.nz/layers.html#coordinate-systems)
+`coord_polar()` uses polar coordinates. Polar coordinates reveal an interesting connection between a bar chart and a Coxcomb chart.
 
+<!-- DK: The above is not well-explained! And leaves out the last two plots from this section. -->
 
 ## The layered grammar of graphics
 ### 
@@ -1537,7 +1555,6 @@ Our new template takes seven parameters, the bracketed words that appear in the 
 
 The seven parameters in the template compose the grammar of graphics, a formal system for building plots. The [grammar of graphics](https://vita.had.co.nz/papers/layered-grammar.pdf) is based on the insight that you can uniquely describe any plot as a combination of a dataset, a geom, a set of mappings, a stat, a position adjustment, a coordinate system, a faceting scheme, and a theme.
 
-<!-- DK: Maybe turn these into a graduation exercise with one repo, one qmd which contains the three plots, then publish them? -->
 
 ## Plot 1
 ### 
@@ -1741,7 +1758,7 @@ Now we know how to minimize the over plotting, it will come in handy in future g
 ## Plot 2
 ### 
 
-In this exercise, we will map Joe Biden's approval rating until June 30th, the first ~6 months of his term. We will explore different types of `geom_smooth()` in this section.
+In this exercise, we will map Joe Biden's approval rating until June 30, 2021, the first ~6 months of his term. We will explore different types of `geom_smooth()`.
 
 ### 
 
@@ -2455,122 +2472,6 @@ col_p
 
 Through this we are able to view our data with a `facet_wrap` which splits a plot into subplots that each display one subset of the data based on a categorical variable.
 
-## Plot 5
-### 
-
-Let's create this graph using `geom_bar()`.
-
-```{r}
-bar_p <- ggplot(data = midwest, 
-                   mapping = aes(x = state, 
-                                 fill = category)) + 
-  geom_bar(alpha = 1/5, 
-           position = "dodge") + 
-  labs(title = "Categories found in each state",
-       subtitle = "The 5 states in the midwest with each category present.",
-       x = "State",
-       y = "Count",
-       fill = "Category")
-
-bar_p
-```
-
-### Exercise 1
-
-Run `glimpse()` on the `midwest` data set. 
-
-```{r plot-5-1, exercise = TRUE}
-
-```
-
-```{r plot-5-1-hint-1, eval = FALSE}
-...(midwest)
-```
-
-### 
-
-### Exercise 2
-
-Add `ggplot()` and map `state` to the x axis of the `midwest` data and set `fill` to `category`.
-
-```{r plot-5-2, exercise = TRUE}
-
-```
-
-```{r plot-5-2-hint-1, eval = FALSE}
-ggplot(data = ..., 
-       mapping = aes(x =..., 
-                     fill =...))
-```
-
-### 
-
-Here we have used `state` data on the x axis and the count on the y axis is automatically implemented. Within a bar graph, we only input the x variable due to the y variable automatically being created usually as count. Through this we can see count within each `state` in the `midwest` data.
-
-### Exercise 3
-
-Add the layer `geom_bar()`.
-
-```{r plot-5-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plot-5-3-hint-1, eval = FALSE}
-... +
-  geom_bar()
-```
-
-### 
-
-`geom_bar()` displays the frequency or count of a categorical variable as bars of equal width. By default, `geom_bar()` counts the number of occurrences of each category and maps them to the height of the bars.
-
-### Exercise 4
-
-Within `geom_bar()`, set `alpha` to 1/5, `position` to `"dodge"`.
-
-```{r plot-5-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plot-5-4-hint-1, eval = FALSE}
-... + geom_bar(alpha = ..., 
-               position = ...)
-```
-
-### Exercise 5
-
-Finally, use `labs()` to give the graph a title, subtitle, axis labels, legend labels, and caption of your choosing.
-
-```{r plot-5-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r plot-5-5-hint-1, eval = FALSE}
-... +
-  labs(..., 
-       fill = "...",
-       ...)
-```
-
-Reminder: This is what your plot should look like.
-
-```{r make-bar-p}
-bar_p
-```
-
-### 
-
-We like using bar charts here because they bin your data and then plot bin counts, the number of points that fall in each bin.
-
-### 
-
-For more information on other stat_summary plots besides bar graphs check out [Statistical transformations](https://r4ds.hadley.nz/layers.html#statistical-transformations) from [Chapter 10: Layers](https://r4ds.hadley.nz/layers.html) in [*R for Data Science (2e)*](https://r4ds.hadley.nz/).
 
 
 ## Summary
