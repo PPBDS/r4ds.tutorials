@@ -15,6 +15,7 @@ description: 'Tutorial for Chapter 5: Data tidying'
 library(learnr)
 library(tidyverse)
 library(tutorial.helpers)
+library(babynames)
 
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
@@ -41,6 +42,8 @@ cms_pivoted <- cms_patient_experience |>
 
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
+
+<!-- DK: Clean up babynames example. -->
 
 <!-- DK: We need a lot of knowledge drops. And some questions split up into two or three steps. -->
 
@@ -1009,6 +1012,286 @@ pivot_wider(id_cols = starts_with("org"),
 
 This will get rid of any duplicate rows in the columns that start with "org'. And as we can see, there are many duplicates. `id_cols` cut the row count from 500 to 95.
 
+
+## Babynames
+### 
+
+Let's finish this tutorial by creating an interesting graphic. 
+
+The `babynames` data set comes from the SSA (Social Security Administration). After 1986, all baby's were required to be given a social security number. This data contains all the names, year born, and sex of the babies. The number of names is counted and is converted into a proportion. We will be using this data to analyze the popularity of top 10 names each year.
+
+### 
+
+Let's create this graph:
+
+<!-- DK: Change sex to Sex in legend title; change F/M to Female and Male in legend body; place Male on top. A couple of steps should be separated out into separate questions. Deal with "## Selecting by prop" message by changing top_n(n = 10) to top_n(n = 10, wt = prop). Split into three questions to build this -->
+
+```{r message = FALSE}
+baby_p <- babynames |>
+  group_by(year, sex) |> 
+  top_n(n = 10) |>
+  ungroup() |> 
+  summarise(total = sum(prop), .by = c(sex, year)) |>
+  ggplot(mapping = aes(x = year, y = total, color = sex)) +
+    geom_point() +
+    scale_y_continuous(labels = scales::percent) +
+    labs(title = "Total Popularity of Top 10 Names",
+         subtitle = "The most popular names are beccoming much less popular",
+         x = "Year",
+         y = "Top 10 Names as Percentage of All Names") 
+
+baby_p
+```
+
+### Exercise 1
+
+Use `library()` to load the **babynames** package.
+
+```{r babynames-1, exercise = TRUE}
+
+```
+
+```{r babynames-1-hint-1, eval = FALSE}
+library(...)
+```
+
+```{r babynames-1-test, include = FALSE}
+library(babynames)
+```
+
+### 
+
+Learn more about the package from its [website](http://hadley.github.io/babynames/).
+
+### Exercise 2
+
+Recall that your Console and the exercise code chunks for this tutorial use different R sessions. The fact that you loaded **babynames** in an exercise code chunk does not mean that it is loaded in your Console.
+
+In your Console, after loading the **babynames** package, look up the help page for the `babynames` tibble with `?babynames`. Copy/paste the "Format" paragraph.
+
+```{r babynames-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+The variable `prop` is more subtle than it might, at first, appear. It is the proportion, **within a given `year` and `sex`**, of the total number of babies who have that given name. 
+
+
+### Exercise 3
+
+Run `summary()` on the `babynames` tibble.
+
+```{r babynames-3, exercise = TRUE}
+
+```
+
+```{r babynames-3-hint-1, eval = FALSE}
+summary(...)
+```
+
+```{r babynames-3-test, include = FALSE}
+
+```
+
+### 
+
+Note that we have no missing values.
+
+### Exercise 4
+
+Print out `babynames`
+
+```{r babynames-4, exercise = TRUE}
+
+```
+
+```{r babynames-4-hint-1, eval = FALSE}
+babynames
+```
+
+```{r babynames-4-test, include = FALSE}
+
+```
+
+### 
+
+There are almost 2 million observations.
+
+### Exercise 5
+
+Pipe `babynames` to `group_by(year, sex)`. This will lead future commands in the pipe to do all calculations on a per year/sex basis, at least until we `ungroup()` the data.
+
+```{r babynames-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r babynames-5-hint-1, eval = FALSE}
+babynames |> 
+  group_by(year, sex) 
+```
+
+```{r babynames-5-test, include = FALSE}
+
+```
+
+### 
+
+Modern R code rarely uses `group_by()` anymore, prefering to `.by`/`by` arguments to *Tidyverse* functions like `summarise()`. 
+
+
+### Exercise 6
+
+Continue the pipe with `top_n(n = 10)`.
+
+```{r babynames-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r babynames-6-hint-1, eval = FALSE}
+... |> 
+  top_n(n = 10)
+```
+
+```{r babynames-6-test, include = FALSE}
+
+```
+
+### 
+
+This pulls out the 10 most popular names, for each year and, within each year, for each sex.
+
+Note that there should be 2,760 rows in the resulting tibble: 138 years times 10 names times 2 sexes. Instead we have 2,761 rows. Can you figure out why? Does it mess up our plot?
+
+### Exercise 7
+
+<!-- DK: No ungroup()! -->
+
+Continue the pipe with `ungroup()`.
+
+```{r babynames-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r babynames-7-hint-1, eval = FALSE}
+... |> 
+  ungroup()
+```
+
+```{r babynames-7-test, include = FALSE}
+
+```
+
+### 
+
+One reason that `group_by()` is being phased out is that, unless you remember to `ungroup()` in the pipe, you will get weird results and/or errors. `ungroup()` removes the grouping variables which you had placed on the tibble previously.
+
+
+### Exercise 8
+
+Continue the pipe with `summarise()`, using the argument `total = sum(prop)`.
+
+```{r babynames-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r babynames-8-hint-1, eval = FALSE}
+... |>
+  summarise(total = sum(prop))
+```
+
+```{r babynames-8-test, include = FALSE}
+
+```
+
+### 
+
+This produces a somewhat nonsense result. The sum of all the values of `prop` for all these years and both sexes does not really mean anything.
+
+### Exercise 9
+
+Edit the call to the `summarise()` by adding `.by` argument with value `c(sex`, `year`). 
+
+```{r babynames-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r babynames-9-hint-1, eval = FALSE}
+... |> 
+  summarise(total = sum(prop), .by = c(...))
+```
+
+```{r babynames-9-test, include = FALSE}
+
+```
+
+### 
+
+This generates the data which we want to plot.
+
+### Exercise 10
+
+Continue your pipe with `ggplot()`. Within `aes()`, map `year` to the x-axis, `total` to the y-axis, and `sex` to color. Also add `geom_point()`.
+
+```{r babynames-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r babynames-10-hint-1, eval = FALSE}
+...|>
+  ggplot(mapping = aes(x = ..., y = ..., color = ...)) +
+    geom_point()
+```
+
+```{r babynames-10-test, include = FALSE}
+
+```
+
+### Exercise 11
+
+To finish your plot, use `labs()` to give the graph a title, subtitle, and axis labels. 
+
+```{r babynames-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r babynames-11-hint-1, eval = FALSE}
+... +
+  labs(...)
+```
+
+```{r babynames-11-test, include = FALSE}
+
+```
+
+Reminder: This is what your plot should look like.
+
+```{r show-baby}
+baby_p
+```
+
+### 
+
+Can you see where that extra row we ignored earlier in the analysis messes things up for one point in the male set in the 1880s?
 
 ## Summary
 ### 

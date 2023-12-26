@@ -19,7 +19,6 @@ library(scales)
 library(ggrepel)
 library(patchwork)
 
-library(babynames)
 
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
@@ -61,33 +60,23 @@ compact <- mpg |> filter(class == "compact")
 
 ## Layout section
 
-p1 <- ggplot(mpg, aes(x = displ, y = hwy)) + 
-  geom_point() + 
-  labs(title = "Plot 1")
-p2 <- ggplot(mpg, aes(x = drv, y = hwy)) + 
-  geom_boxplot() + 
-  labs(title = "Plot 2")
-p3 <- ggplot(mpg, aes(x = cty, y = hwy)) + 
-  geom_point() + 
-  labs(title = "Plot 3")
-
-p4 <- ggplot(mpg, aes(x = drv, y = cty, color = drv)) + 
+p1 <- ggplot(mpg, aes(x = drv, y = cty, color = drv)) + 
   geom_boxplot(show.legend = FALSE) + 
   labs(title = "Plot 1")
 
-p5 <- ggplot(mpg, aes(x = drv, y = hwy, color = drv)) + 
+p2 <- ggplot(mpg, aes(x = drv, y = hwy, color = drv)) + 
   geom_boxplot(show.legend = FALSE) + 
   labs(title = "Plot 2")
 
-p6 <- ggplot(mpg, aes(x = cty, color = drv, fill = drv)) + 
+p3 <- ggplot(mpg, aes(x = cty, color = drv, fill = drv)) + 
   geom_density(alpha = 0.5) + 
   labs(title = "Plot 3")
 
-p7 <- ggplot(mpg, aes(x = hwy, color = drv, fill = drv)) + 
+p4 <- ggplot(mpg, aes(x = hwy, color = drv, fill = drv)) + 
   geom_density(alpha = 0.5) + 
   labs(title = "Plot 4")
 
-p8 <- ggplot(mpg, aes(x = cty, y = hwy, color = drv)) + 
+p5 <- ggplot(mpg, aes(x = cty, y = hwy, color = drv)) + 
   geom_point(show.legend = FALSE) + 
   facet_wrap(~drv) +
   labs(title = "Plot 5")
@@ -99,7 +88,6 @@ p8 <- ggplot(mpg, aes(x = cty, y = hwy, color = drv)) +
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- DK: Maybe move babynames example elsewhere? This tutorial is pretty long already! Took the last student 2 hours. -->
 
 <!-- Clark feedback -->
 
@@ -131,7 +119,7 @@ p8 <- ggplot(mpg, aes(x = cty, y = hwy, color = drv)) +
 
 *This is a ROUGH, UNFINISHED, draft.*
 
-This tutorial covers [Chapter 11: Communication](https://r4ds.hadley.nz/communication.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. In this tutorial we will be making use of three packages associated with [**ggplot2**](https://ggplot2.tidyverse.org/): [**scales**](https://scales.r-lib.org/), [**ggrepel**](https://ggrepel.slowkow.com), and [**patchwork**](https://patchwork.data-imaginist.com). Key commands include [`quote()`](https://rdrr.io/r/base/substitute.html) which simply returns its argument, [`geom_label_repel()`](https://rdrr.io/cran/ggrepel/man/geom_text_repel.html) which adds text directly to the plot, and [`label_dollar()`](https://scales.r-lib.org/reference/label_dollar.html) which formats numbers as currency. 
+This tutorial covers [Chapter 11: Communication](https://r4ds.hadley.nz/communication.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. In this tutorial we will be making use of three packages associated with [**ggplot2**](https://ggplot2.tidyverse.org/): [**scales**](https://scales.r-lib.org/), [**ggrepel**](https://ggrepel.slowkow.com), and [**patchwork**](https://patchwork.data-imaginist.com). Key commands include [`quote()`](https://rdrr.io/r/base/substitute.html) which simply returns its argument and [`geom_label_repel()`](https://rdrr.io/cran/ggrepel/man/geom_text_repel.html) which adds text directly to the plot.
 
 ## Labels
 ### 
@@ -168,7 +156,7 @@ Load the **tidyverse** package using the `library()` function.
 library(...)
 ```
 
-```{r include = FALSE}
+```{r labels-1-test, include = FALSE}
 library(tidyverse)
 ```
 
@@ -430,7 +418,7 @@ Add a `title`, `subtitle`, `x` axis title, `y` axis title, legend title(`color`)
   )
 ```
 
-```{r include = FALSE}
+```{r labels-12-test, include = FALSE}
 mpg |> 
   ggplot(aes(x = displ, y = hwy)) +
   geom_point(aes(color = class)) +
@@ -463,7 +451,7 @@ Let's move on to a new plot. Type in `labels_tib` and hit "Run Code".
 labels_tib
 ```
 
-```{r include = FALSE}
+```{r labels-13-test, include = FALSE}
 labels_tib
 ```
 
@@ -486,7 +474,7 @@ labels_tib |>
   ...()
 ```
 
-```{r include = FALSE}
+```{r labels-14-test, include = FALSE}
 labels_tib |> 
   ggplot()
 ```
@@ -507,7 +495,7 @@ labels_tib |>
   ggplot(aes(x = start, y = ...))
 ```
 
-```{r include = FALSE}
+```{r labels-15-test, include = FALSE}
 labels_tib |> 
   ggplot(aes(x = start, y = end))
 ```
@@ -527,7 +515,7 @@ Add the `geom_point()` function to the pipeline.
   geom_point()
 ```
 
-```{r include = FALSE}
+```{r labels-16-test, include = FALSE}
 labels_tib |> 
   ggplot(aes(x = start, y = end)) + 
   geom_point()
@@ -552,7 +540,7 @@ Using `labs()`, set the `x` axis title to `quote(x[i])`.
 
 ### 
 
-```{r include = FALSE}
+```{r labels-17-test, include = FALSE}
 labels_tib |> 
   ggplot(aes(x = start, y = end)) + 
   geom_point() +
@@ -579,7 +567,7 @@ Within `labs()`, set the `y` axis title to `quote(sum(x[i] ^ 2, i == 1, n))`.
   )
 ```
 
-```{r include = FALSE}
+```{r labels-18-test, include = FALSE}
 labels_tib |> 
   ggplot(aes(x = start, y = end)) + 
   geom_point() +
@@ -600,10 +588,6 @@ question_text(NULL,
 	allow_retry = FALSE,
 	incorrect = NULL,
 	rows = 6)
-```
-
-```{r labels-19-test, include = FALSE}
-?plotmath #In the Console
 ```
 
 ## Annotations
@@ -970,10 +954,12 @@ Type `potential_outliers` and hit "Run Code".
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r annotations-11-hint-1, eval = FALSE}
 potential_outliers
+```
+
+```{r annotations-11-test, include = FALSE}
+
 ```
 
 ### 
@@ -1122,6 +1108,10 @@ Create a new variable called `trend_text` and set it to `"Larger engine sizes te
 trend_text <- ...
 ```
 
+```{r annotations-16-test, include = FALSE}
+
+```
+
 ### 
 
 To demonstrate using `annotate()`, let’s create some text to add to our plot. The text is a bit long, so we’ll use `stringr::str_wrap()` to automatically add line breaks to it given the number of characters you want per line.
@@ -1141,6 +1131,10 @@ trend_text <- ... |>
   str_wrap(width = ...)
 ```
 
+```{r annotations-17-test, include = FALSE}
+
+```
+
 ### Exercise 18
 
 Now let's make use of this annotation within a plot. Create a new pipeline and pipe `mpg` to the `ggplot()` function. Within this function map `x` to `displ` and `y` to `hwy` using `aes()`.
@@ -1154,6 +1148,10 @@ Now let's make use of this annotation within a plot. Create a new pipeline and p
 ```{r annotations-18-hint-1, eval = FALSE}
 mpg |> 
   ggplot(aes(x = ..., y = ...))
+```
+
+```{r annotations-18-test, include = FALSE}
+
 ```
 
 ### Exercise 19
@@ -1170,6 +1168,10 @@ Using your previous code, add the `geom_point()` function to the pipeline.
 mpg |> 
   ggplot(aes(x = ..., y = ...)) +
   geom_point()
+```
+
+```{r annotations-19-test, include = FALSE}
+
 ```
 
 ### 
@@ -1193,6 +1195,10 @@ mpg |>
     x = ..., 
     y = ...
   )
+```
+
+```{r annotations-20-test, include = FALSE}
+
 ```
 
 ### 
@@ -1221,6 +1227,10 @@ mpg |>
   )
 ```
 
+```{r annotations-21-test, include = FALSE}
+
+```
+
 ### 
 
 Now, let's alighn it horizontally using the argument `hjust`. 
@@ -1247,6 +1257,10 @@ mpg |>
     hjust = ...,
     color = ...
   )
+```
+
+```{r annotations-22-test, include = FALSE}
+
 ```
 
 ### 
@@ -1834,10 +1848,12 @@ First create a new variable called `base`. Set `base` equal to the dataset `mpg`
 base
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r legend-layout-1-hint-1, eval = FALSE}
 base <- mpg
+```
+
+```{r legend-layout-1-test, include = FALSE}
+
 ```
 
 ### Exercise 2
@@ -1856,6 +1872,10 @@ base <- mpg |>
   ggplot(aes(x = ..., y = ...))
 ```
 
+```{r legend-layout-2-test, include = FALSE}
+
+```
+
 ### Exercise 3
 
 Using your previous code, add the `geom_point()` function to the pipeline. Within this newly added function map `color` to `class`. (Add your code before `base` displayed below)
@@ -1871,6 +1891,10 @@ base
 base <- mpg |> 
   ggplot(aes(x = ..., y = ...)) +
   geom_point(aes(color = ...))
+```
+
+```{r legend-layout-3-test, include = FALSE}
+
 ```
 
 ### 
@@ -1893,6 +1917,10 @@ base <- mpg |>
   ggplot(aes(x = ..., y = ...)) +
   geom_point(aes(color = ...)) +
   theme(legend.position = "left")
+```
+
+```{r legend-layout-4-test, include = FALSE}
+
 ```
 
 ### 
@@ -1918,6 +1946,10 @@ base <- mpg |>
 base
 ```
 
+```{r legend-layout-5-test, include = FALSE}
+
+```
+
 ### 
 
 We can see that the legend is taking too much space at the top of the plot. So let's adjust the way the legend is displayed.
@@ -1939,6 +1971,10 @@ base <- mpg |>
   geom_point(aes(color = ...)) +
   theme(legend.position = "top") +
   guides 
+```
+
+```{r legend-layout-6-test, include = FALSE}
+
 ```
 
 ### 
@@ -1964,6 +2000,10 @@ We will be working with a dataset called `diamonds`. Type in `diamonds` and hit 
 
 ```
 
+```{r replacing-a-scale-1-test, include = FALSE}
+
+```
+
 ### 
 
 The dataset `diamonds` us a dataset containing the prices and other attributes of almost 54,000 diamonds. The variables are as follows:
@@ -1983,6 +2023,10 @@ diamonds |>
   ggplot(aes(x = ..., y = ...))
 ```
 
+```{r replacing-a-scale-2-test, include = FALSE}
+
+```
+
 ### Exercise 3
 
 Using your previous code, add the `geom_bin2d()` function to the pipeline.
@@ -1996,6 +2040,10 @@ Using your previous code, add the `geom_bin2d()` function to the pipeline.
 ```{r replacing-a-scale-3-hint-1, eval = FALSE}
 ... +
   geom_bin2d()
+```
+
+```{r replacing-a-scale-3-test, include = FALSE}
+
 ```
 
 ### 
@@ -2016,6 +2064,10 @@ Using your previous code, within the `ggplot()` function, add the `log10()` func
 diamonds |> 
   ggplot(aes(x = log10(...), y = ...)) +
   geom_bin2d()
+```
+
+```{r replacing-a-scale-4-test, include = FALSE}
+
 ```
 
 ### 
@@ -2039,6 +2091,10 @@ diamonds |>
   scale_x_log10()
 ```
 
+```{r replacing-a-scale-5-test, include = FALSE}
+
+```
+
 ### Exercise 6
 
 Using your previous code, add the `scale_y_log10()` function to the pipeline.
@@ -2052,6 +2108,10 @@ Using your previous code, add the `scale_y_log10()` function to the pipeline.
 ```{r replacing-a-scale-6-hint-1, eval = FALSE}
 ... + 
   scale_y_log10()
+```
+
+```{r replacing-a-scale-6-test, include = FALSE}
+
 ```
 
 ### 
@@ -2073,6 +2133,10 @@ mpg |>
   ggplot(aes(x = ..., y = ...))
 ```
 
+```{r replacing-a-scale-7-test, include = FALSE}
+
+```
+
 ### Exercise 8
 
 Using your previous code, add the `geom_point()` function to the pipeline. Within this function, map `color` to `drv`.
@@ -2086,6 +2150,10 @@ Using your previous code, add the `geom_point()` function to the pipeline. Withi
 ```{r replacing-a-scale-8-hint-1, eval = FALSE}
 ,,, +
   geom_point(aes(color = ...))
+```
+
+```{r replacing-a-scale-8-test, include = FALSE}
+
 ```
 
 ### 
@@ -2105,6 +2173,10 @@ Using your previous code, add a scale function, `scale_color_brewer()` to the pi
 ```{r replacing-a-scale-9-hint-1, eval = FALSE}
 ... +
   scale_color_brewer(palette = ...)
+```
+
+```{r replacing-a-scale-9-test, include = FALSE}
+
 ```
 
 ### 
@@ -2127,6 +2199,10 @@ Using your previous code, within your call to the `geom_point()` function, add t
   ....
 ```
 
+```{r replacing-a-scale-10-test, include = FALSE}
+
+```
+
 ### 
 
 The ColorBrewer scales are documented online at https://colorbrewer2.org/ and made available in R via the RColorBrewer package, by Erich Neuwirth.
@@ -2146,6 +2222,10 @@ presidential |>
   mutate(id = ...)
 ```
 
+```{r replacing-a-scale-11-test, include = FALSE}
+
+```
+
 ### 
 
 ### Exercise 12
@@ -2163,6 +2243,10 @@ Using your previous code, add the `ggplot()` function to the pipeline and map `x
   ggplot(aes(x = ..., y = ..., color = ...))
 ```
 
+```{r replacing-a-scale-12-test, include = FALSE}
+
+```
+
 ### Exercise 13
 
 Add `geom_point()` to the pipe. 
@@ -2176,6 +2260,10 @@ Add `geom_point()` to the pipe.
 ```{r replacing-a-scale-13-hint-1, eval = FALSE}
 ... +
   geom_point()
+```
+
+```{r replacing-a-scale-13-test, include = FALSE}
+
 ```
 
 ### Exercise 14
@@ -2193,7 +2281,9 @@ Add `geom_segment()` to the pipe, use `aes()`, setting the `xend` argument set t
   geom_segment(aes(xend = ..., yend = ...))
 ```
 
-<!-- DK: Drop knowledge. -->
+```{r replacing-a-scale-14-test, include = FALSE}
+
+```
 
 ### Exercise 15
 
@@ -2208,6 +2298,10 @@ Using your previous code, add the `scale_color_manual()` function to the pipelin
 ```{r replacing-a-scale-15-hint-1, eval = FALSE}
 ... +
   scale_color_manual(values = ...)
+```
+
+```{r replacing-a-scale-15-test, include = FALSE}
+
 ```
 
 ### 
@@ -2228,7 +2322,9 @@ For our next plot, we will create a plot with the dataset `random_vals`. Type in
 random_vals
 ```
 
-<!-- DK: Knowledge drop. -->
+```{r replacing-a-scale-16-test, include = FALSE}
+
+```
 
 ### Exercise 17
 
@@ -2241,6 +2337,10 @@ Pipe `random_vals` to `ggplot()`. Within `ggplot()`, map `x` to `random_x` and `
 ```{r replacing-a-scale-17-hint-1, eval = FALSE}
 random_vals |> 
   ggplot(aes(x = ..., y = ...))
+```
+
+```{r replacing-a-scale-17-test, include = FALSE}
+
 ```
 
 ### 
@@ -2262,6 +2362,10 @@ Using your previous code, add the `geom_hex()` function to the pipeline.
   geom_hex()
 ```
 
+```{r replacing-a-scale-18-test, include = FALSE}
+
+```
+
 ### Exercise 19
 
 Using your previous code, add the `coord_fixed()` function to the pipeline.
@@ -2275,6 +2379,10 @@ Using your previous code, add the `coord_fixed()` function to the pipeline.
 ```{r replacing-a-scale-19-hint-1, eval = FALSE}
 ... +
   coord_fixed()
+```
+
+```{r replacing-a-scale-19-test, include = FALSE}
+
 ```
 
 ### 
@@ -2296,6 +2404,10 @@ Using your previous code, add the `scale_color_viridis_c()` function to the pipe
   scale_fill_viridis_c()
 ```
 
+```{r replacing-a-scale-20-test, include = FALSE}
+
+```
+
 ### 
 
 This is the plot that shows a continuous plot in the viridis color scale.
@@ -2313,6 +2425,10 @@ Using your previous code, change the `scale_fill_viridis_c()` to `scale_fill_vir
 ```{r replacing-a-scale-21-hint-1, eval = FALSE}
 ... +
   scale_fill_viridis_b()
+```
+
+```{r replacing-a-scale-21-test, include = FALSE}
+
 ```
 
 ### 
@@ -2336,6 +2452,10 @@ Using your previous code, add the `labs()` function to the pipeline. Within this
        y = ...)
 ```
 
+```{r replacing-a-scale-22-test, include = FALSE}
+
+```
+
 ### 
 
 Note that all color scales come in two varieties: scale_color_*() and scale_fill_*() for the color and fill aesthetics respectively (the color scales are available in both UK and US spellings).
@@ -2353,11 +2473,13 @@ Pipe `mpg` to `ggplot()`.
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r zooming-1-hint-1, eval = FALSE}
 mpg |> 
   ggplot()
+```
+
+```{r zooming-1-test, include = FALSE}
+
 ```
 
 ### Exercise 2
@@ -2375,6 +2497,10 @@ mpg |>
   ggplot(aes(x = ...))
 ```
 
+```{r zooming-2-test, include = FALSE}
+
+```
+
 ### Exercise 3
 
 Within ur call to `ggplot()`, within `aes()`, map `y` to `hwy`.
@@ -2388,6 +2514,10 @@ Within ur call to `ggplot()`, within `aes()`, map `y` to `hwy`.
 ```{r zooming-3-hint-1, eval = FALSE}
 mpg |> 
   ggplot(aes(x = displ, y = ...))
+```
+
+```{r zooming-3-test, include = FALSE}
+
 ```
 
 ### 
@@ -2414,6 +2544,10 @@ Using the same pipe as above, add `geom_point()` to the pipeline.
   geom_point()
 ```
 
+```{r zooming-4-test, include = FALSE}
+
+```
+
 ### Exercise 5
 
 Within your call to `geom_point()`, using `aes()`, map `color` to `drv`.
@@ -2429,6 +2563,10 @@ Within your call to `geom_point()`, using `aes()`, map `color` to `drv`.
   geom_point(aes(...))
 ```
 
+```{r zooming-5-test, include = FALSE}
+
+```
+
 ### Exercise 6
 
 Add `geom_smooth()` to the pipeline.
@@ -2442,6 +2580,10 @@ Add `geom_smooth()` to the pipeline.
 ```{r zooming-6-hint-1, eval = FALSE}
 ... +
   geom_smooth()
+```
+
+```{r zooming-6-test, include = FALSE}
+
 ```
 
 ### 
@@ -2464,6 +2606,10 @@ mpg |>
   ...
 ```
 
+```{r zooming-7-test, include = FALSE}
+
+```
+
 ### Exercise 8
 
 Within your call to `filter()`, add `&` and filter out `hwy` greater than or equal to `10` "and" hwy being less than or equal to `25`.
@@ -2478,6 +2624,10 @@ Within your call to `filter()`, add `&` and filter out `hwy` greater than or equ
 mpg |> 
   filter(displ >= ... & displ <= ... & hwy >= ... & hwy <= ...) |> 
   ...
+```
+
+```{r zooming-8-test, include = FALSE}
+
 ```
 
 ### 
@@ -2499,6 +2649,10 @@ mpg |>
   ggplot()
 ```
 
+```{r zooming-9-test, include = FALSE}
+
+```
+
 ### Exercise 10
 
 Within your call to `ggplot()`, using `aes()`, map `x` to `displ`.
@@ -2512,6 +2666,10 @@ Within your call to `ggplot()`, using `aes()`, map `x` to `displ`.
 ```{r zooming-10-hint-1, eval = FALSE}
 mpg |> 
   ggplot(aes(x = ...))
+```
+
+```{r zooming-10-test, include = FALSE}
+
 ```
 
 ### Exercise 11
@@ -2529,6 +2687,10 @@ mpg |>
   ggplot(aes(x = displ, y = ...))
 ```
 
+```{r zooming-11-test, include = FALSE}
+
+```
+
 ### Exercise 12
 
 Add `geom_point()` to the pipeline.
@@ -2542,6 +2704,10 @@ Add `geom_point()` to the pipeline.
 ```{r zooming-12-hint-1, eval = FALSE}
 ... +
   geom_point()
+```
+
+```{r zooming-12-test, include = FALSE}
+
 ```
 
 ### Exercise 13
@@ -2559,6 +2725,10 @@ Within your call to `geom_point()`, using `aes()`, map `color` to `drv`.
   geom_point(aes(color = ...))
 ```
 
+```{r zooming-13-test, include = FALSE}
+
+```
+
 ### Exercise 14
 
 Add `geom_smooth()` to the pipeline.
@@ -2572,6 +2742,10 @@ Add `geom_smooth()` to the pipeline.
 ```{r zooming-14-hint-1, eval = FALSE}
 ... +
   geom_smooth()
+```
+
+```{r zooming-14-test, include = FALSE}
+
 ```
 
 ### 
@@ -2593,6 +2767,10 @@ Add `scale_x_continuous()` to the pipeline.
   scale_x_continuous()
 ```
 
+```{r zooming-15-test, include = FALSE}
+
+```
+
 ### Exercise 16
 
 Within your call to `scale_x_continuous()`, set the `limits` argument to `c(5, 6)`. 
@@ -2606,6 +2784,10 @@ Within your call to `scale_x_continuous()`, set the `limits` argument to `c(5, 6
 ```{r zooming-16-hint-1, eval = FALSE}
 ... +
   scale_x_continuous(limits = ...)
+```
+
+```{r zooming-16-test, include = FALSE}
+
 ```
 
 ### Exercise 17
@@ -2623,6 +2805,10 @@ Add `scale_y_continuous()` to the pipeline.
   scale_y_continuous()
 ```
 
+```{r zooming-17-test, include = FALSE}
+
+```
+
 ### Exercise 18
 
 Within your call to `scale_y_continuous()`, set the `limits` argument to `c(10, 25)`.
@@ -2636,6 +2822,10 @@ Within your call to `scale_y_continuous()`, set the `limits` argument to `c(10, 
 ```{r zooming-18-hint-1, eval = FALSE}
 ... +
   scale_y_continuous(limits = ...)
+```
+
+```{r zooming-18-test, include = FALSE}
+
 ```
 
 ### 
@@ -2653,6 +2843,10 @@ Using your previous pipeline, delete `scale_x_continuous()` and `scale_y_continu
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r zooming-19-hint-1, eval = FALSE}
+
+```
+
+```{r zooming-19-test, include = FALSE}
 
 ```
 
@@ -2674,6 +2868,10 @@ Within your call to `coord_cartesian()`, set the `xlim` argument to `c(5, 6)`.
 
 ```
 
+```{r zooming-20-test, include = FALSE}
+
+```
+
 ### 
 
 ### Exercise 21
@@ -2687,6 +2885,10 @@ Within your call to `coord_cartesian()`, set the `ylim` argument to `c(10, 25)`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r zooming-21-hint-1, eval = FALSE}
+
+```
+
+```{r zooming-21-test, include = FALSE}
 
 ```
 
@@ -2709,6 +2911,10 @@ Add a title, x axis title, and a y axis title using `labs()`.
        y = ...)
 ```
 
+```{r zooming-22-test, include = FALSE}
+
+```
+
 ## More Zooming
 ### 
 
@@ -2728,6 +2934,10 @@ Create a new variable called `suv` and set it equal to `mpg`.
 suv <- mpg
 ```
 
+```{r more-zooming-1-test, include = FALSE}
+
+```
+
 ### Exercise 2
 
 Using your previous code, pipe `mpg` to `filter()`. Filter out all the instances when `class` equals `"suv"`. 
@@ -2740,6 +2950,10 @@ Using your previous code, pipe `mpg` to `filter()`. Filter out all the instances
 
 ```{r more-zooming-2-hint-1, eval = FALSE}
 suv <- mpg |> filter(class == ...)
+```
+
+```{r more-zooming-2-test, include = FALSE}
+
 ```
 
 ### Exercise 3
@@ -2756,6 +2970,10 @@ Create a new variable called `compact` and set it equal to `mpg`.
 
 ```
 
+```{r more-zooming-3-test, include = FALSE}
+
+```
+
 ### Exercise 4
 
 Using your previous code, pipe `mpg` to `filter()`. Filter out all the instances when `class` equals `"compact"`. 
@@ -2768,6 +2986,10 @@ Using your previous code, pipe `mpg` to `filter()`. Filter out all the instances
 
 ```{r more-zooming-4-hint-1, eval = FALSE}
 compact <- mpg |> filter(class == ...)
+```
+
+```{r more-zooming-4-test, include = FALSE}
+
 ```
 
 ### 
@@ -2788,6 +3010,10 @@ Pipe `suv` to `ggplot()`.
 suv |> ggplot()
 ```
 
+```{r more-zooming-5-test, include = FALSE}
+
+```
+
 ### Exercise 6
 
 Within your call to `ggplot()`, using `aes()`, map `x` to `displ`.
@@ -2801,6 +3027,10 @@ Within your call to `ggplot()`, using `aes()`, map `x` to `displ`.
 ```{r more-zooming-6-hint-1, eval = FALSE}
 suv |> 
   ggplot(aes(x = ...))
+```
+
+```{r more-zooming-6-test, include = FALSE}
+
 ```
 
 ### Exercise 7
@@ -2818,6 +3048,10 @@ suv |>
   ggplot(aes(x = ..., y = ...))
 ```
 
+```{r more-zooming-7-test, include = FALSE}
+
+```
+
 ### Exercise 8
 
 Within your call to `ggplot()`, within `aes()`, map `color` to `drv`.
@@ -2833,6 +3067,10 @@ suv |>
   ggplot(aes(x = ..., y = ..., color = ...))
 ```
 
+```{r more-zooming-8-test, include = FALSE}
+
+```
+
 ### Exercise 9
 
 Add `geom_point()` to the pipeline.
@@ -2846,6 +3084,10 @@ Add `geom_point()` to the pipeline.
 ```{r more-zooming-9-hint-1, eval = FALSE}
 ... + 
   geom_point()
+```
+
+```{r more-zooming-9-test, include = FALSE}
+
 ```
 
 ### 
@@ -2867,6 +3109,10 @@ compact |>
   ...
 ```
 
+```{r more-zooming-10-test, include = FALSE}
+
+```
+
 ### 
 
 This is the plot for the compact class of car and comparing fuel efficiency with engine size. But, since we extracted two classes of cars and plotted them separately, it’s difficult to compare the plots because all three scales (the x-axis, the y-axis, and the color aesthetic) have different ranges. Let's create variables that will make sure both plots will have the same range.
@@ -2883,6 +3129,10 @@ Create a new variable `x_scale` and set it equal to `scale_x_continuous(limits =
 
 ```{r more-zooming-11-hint-1, eval = FALSE}
 x_scale = ...
+```
+
+```{r more-zooming-11-test, include = FALSE}
+
 ```
 
 ### 
@@ -2903,6 +3153,10 @@ Create a new variable `y_scale` and set it equal to `scale_y_continuous(limits =
 y_scale = ...
 ```
 
+```{r more-zooming-12-test, include = FALSE}
+
+```
+
 ### 
 
 The function `scale_y_continuous()` is used to set the scale of the y-axis. The function `range(mpg$hwy)` computes the minimum and maximim of the `displ` column of the `mpg` dataset. The `limits` argument sets the minimum and maximum limit of the x-axis in the plot. 
@@ -2919,6 +3173,10 @@ Create a new variable `col_scale` and set it equal to `scale_color_discrete(limi
 
 ```{r more-zooming-13-hint-1, eval = FALSE}
 col_scale = ...
+```
+
+```{r more-zooming-13-test, include = FALSE}
+
 ```
 
 ### 
@@ -2940,6 +3198,10 @@ suv |>
   ggplot()
 ```
 
+```{r more-zooming-14-test, include = FALSE}
+
+```
+
 ### Exercise 15
 
 Within your call to `ggplot()`, using `aes()`, map `x` to `displ`. 
@@ -2953,6 +3215,10 @@ Within your call to `ggplot()`, using `aes()`, map `x` to `displ`.
 ```{r more-zooming-15-hint-1, eval = FALSE}
 suv |> 
   ggplot(aes(x = ...))
+```
+
+```{r more-zooming-15-test, include = FALSE}
+
 ```
 
 ### Exercise 16
@@ -2970,6 +3236,10 @@ suv |>
   ggplot(aes(x = displ, y = ...))
 ```
 
+```{r more-zooming-16-test, include = FALSE}
+
+```
+
 ### Exercise 17
 
 Within your call to `ggplot()`, within `aes()`, map `color` to `drv`.
@@ -2983,6 +3253,10 @@ Within your call to `ggplot()`, within `aes()`, map `color` to `drv`.
 ```{r more-zooming-17-hint-1, eval = FALSE}
 suv |> 
   ggplot(aes(x = displ, y = hwy, color = ...))
+```
+
+```{r more-zooming-17-test, include = FALSE}
+
 ```
 
 ### Exercise 18
@@ -3000,6 +3274,10 @@ Add `geom_point()` to the pipeline.
   geom_point().
 ```
 
+```{r more-zooming-18-test, include = FALSE}
+
+```
+
 ### Exercise 19
 
 Add the `x_scale` variable to the pipeline.
@@ -3013,6 +3291,10 @@ Add the `x_scale` variable to the pipeline.
 ```{r more-zooming-19-hint-1, eval = FALSE}
 ... + 
   x_scale
+```
+
+```{r more-zooming-19-test, include = FALSE}
+
 ```
 
 ### 
@@ -3034,6 +3316,10 @@ Add the `y_scale` variable to the pipeline.
   y_scale
 ```
 
+```{r more-zooming-20-test, include = FALSE}
+
+```
+
 ### Exercise 21
 
 Add the `col_scale` variable to the pipeline. 
@@ -3049,6 +3335,10 @@ Add the `col_scale` variable to the pipeline.
   col_scale
 ```
 
+```{r more-zooming-21-test, include = FALSE}
+
+```
+
 ### Exercise 22
 
 Add a `title`, `x` axis title, `y` axis title, and a legend title (`color`) using `labs()`. 
@@ -3061,6 +3351,10 @@ Add a `title`, `x` axis title, `y` axis title, and a legend title (`color`) usin
 
 ```{r more-zooming-22-hint-1, eval = FALSE}
 ... + labs()
+```
+
+```{r more-zooming-22-test, include = FALSE}
+
 ```
 
 ### Exercise 23
@@ -3081,6 +3375,10 @@ compact |>
        x = ..., 
        y = ...,
        color = ...)
+```
+
+```{r more-zooming-23-test, include = FALSE}
+
 ```
 
 ### 
@@ -3338,6 +3636,10 @@ mpg |>
   ggplot()
 ```
 
+```{r themes-9-test, include = FALSE}
+
+```
+
 ### 
 
 It’s also possible to control individual components of each theme, like the size and color of the font used for the `y` axis. We’ve already seen that `legend.position` controls where the legend is drawn. There are many other aspects of the legend that can be customized with `theme()`
@@ -3357,6 +3659,10 @@ mpg |>
   ggplot(aes(x = ...))
 ```
 
+```{r themes-10-test, include = FALSE}
+
+```
+
 ### Exercise 11
 
 Within `ggplot()`, map `y` to `hwy` using `aes()`. 
@@ -3372,6 +3678,10 @@ mpg |>
   ggplot(aes(x = displ, y = ...))
 ```
 
+```{r themes-11-test, include = FALSE}
+
+```
+
 ### Exercise 12
 
 Within `ggplot()`, map `color` to `drv`. 
@@ -3385,6 +3695,10 @@ Within `ggplot()`, map `color` to `drv`.
 ```{r themes-12-hint-1, eval = FALSE}
 mpg |> 
   ggplot(aes(x = displ, y = ..., color = ...))
+```
+
+```{r themes-12-test, include = FALSE}
+
 ```
 
 ### 
@@ -3406,6 +3720,10 @@ Add `geom_point()` to the pipeline.
   geom_point()
 ```
 
+```{r themes-13-test, include = FALSE}
+
+```
+
 ### Exercise 14
 
 Add a `title` and a `caption` using `labs()`. (Hint: The caption should be `"Source: https://fueleconomy.gov"`)
@@ -3420,6 +3738,10 @@ Add a `title` and a `caption` using `labs()`. (Hint: The caption should be `"Sou
 ... +
   labs(title = ...,
        caption = ...)
+```
+
+```{r themes-14-test, include = FALSE}
+
 ```
 
 ### Exercise 15
@@ -3437,6 +3759,10 @@ Add `theme()` to the pipeline. Within `theme()`, add the `legend.position` argum
   theme(
     legend.position = ...
     )
+```
+
+```{r themes-15-test, include = FALSE}
+
 ```
 
 ### 
@@ -3461,6 +3787,10 @@ Within `theme()`, add the `legend.direction` argument and set it equal to `"hori
     )
 ```
 
+```{r themes-16-test, include = FALSE}
+
+```
+
 ### 
 
 The `legend.direction` argument sets the layout of items in legends ("horizontal" or "vertical")
@@ -3482,6 +3812,10 @@ Within `theme()`, add the `legend.box.background` argument and set it equal to `
     legend.direction = ...,
     legend.box.background = ...,
     )
+```
+
+```{r themes-17-test, include = FALSE}
+
 ```
 
 ### 
@@ -3508,6 +3842,10 @@ Within `theme()`, add the `plot.title` argument and set it equal to `element_tex
     )
 ```
 
+```{r themes-18-test, include = FALSE}
+
+```
+
 ### 
 
 The `plot.title` argument changes the plot title (text appearance) (`element_text()`; inherits from title) left-aligned by default
@@ -3531,6 +3869,10 @@ Within `theme()`, add the `plot.title.position` argument and set it equal to `"p
     plot.title = ...,
     plot.title.position = ...
     )
+```
+
+```{r themes-19-test, include = FALSE}
+
 ```
 
 ### 
@@ -3559,6 +3901,10 @@ Within `theme()`, add the `plot.caption.position` argument and set it equal to `
     )
 ```
 
+```{r themes-20-test, include = FALSE}
+
+```
+
 ### Exercise 21
 
 Within `theme()`, add the `plot.caption` argument and set it to `element_text(hjust = 0)`. 
@@ -3580,6 +3926,10 @@ Within `theme()`, add the `plot.caption` argument and set it to `element_text(hj
     plot.caption.position = ..., 
     plot.caption = ...
     )
+```
+
+```{r themes-21-test, include = FALSE}
+
 ```
 
 ### 
@@ -3610,6 +3960,10 @@ Within `labs()` add a `subtitle`, `x` axis title, and a `y` axis title.
   theme(...)
 ```
 
+```{r themes-22-test, include = FALSE}
+
+```
+
 Reminder: This is what our plot should look like
 
 ```{r}
@@ -3618,8 +3972,6 @@ themes_plot
 
 ## Layout
 ### 
-
-<!-- DK: Change around. Show the plots that we have created. Then the questions can be about combining them. -->
 
 So far we talked about how to create and modify a single plot. What if you have multiple plots you want to lay out in a certain way? The **patchwork** package allows you to combine separate plots into the same graphic. 
 
@@ -3654,8 +4006,6 @@ Enter `p1` on the first line and `p2` on the second line. Hit "Run Code".
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r layout-2-hint-1, eval = FALSE}
 ...
 p2
@@ -3668,7 +4018,7 @@ p2
 
 ### 
 
-To place two plots next to each other, you can simply add them to each other. Note that you first need to create the plots and save them as objects (in the following example they’re called `p1` and `p2`). Then, you place them next to each other with `+`.
+To place two plots next to each other, you can simply add them to each other, if you have loaded the **patchwork** package. Note that you first need to create the plots and save them as objects (in the following example they’re called `p1` and `p2`). Then, you place them next to each other with `+`.
 
 ### Exercise 3
 
@@ -3678,259 +4028,186 @@ Type `p1 + p2` and hit "Run Code".
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r layout-3-hint-1, eval = FALSE}
 p1 + ...
+```
+
+```{r layout-3-test, include = FALSE}
+p1 + p2
 ```
 
 ### 
 
 It’s important to note that in the above code chunk we did not use a new function from the **patchwork** package. Instead, the package added a new functionality to the `+` operator.
 
-
-
-## Babynames
-### 
-
-The `babynames` data set comes from the SSA (Social Security Administration). After 1986, all baby's were required to be given a social security number. This data contains all the names, year born, and sex of the babies. The number of names is counted and is converted into a proportion. We will be using this data to analyze the popularity of top 10 names each year.
-
-### 
-
-Let's create this graph:
-
-<!-- DK: Change sex to Sex in legend title; change F/M to Female and Male in legend body; place Male on top. A couple of steps should be separated out into separate questions. Deal with "## Selecting by prop" message by changing top_n(n = 10) to top_n(n = 10, wt = prop). Split into three questions to build this -->
-
-```{r message = FALSE}
-baby_p <- babynames |>
-  group_by(year, sex) |> 
-  top_n(n = 10) |>
-  ungroup() |> 
-  summarise(total = sum(prop), .by = c(sex, year)) |>
-  ggplot(mapping = aes(x = year, y = total, color = sex)) +
-    geom_point() +
-    scale_y_continuous(labels = scales::percent) +
-    labs(title = "Total Popularity of Top 10 Names",
-         subtitle = "The most popular names are beccoming much less popular",
-         x = "Year",
-         y = "Top 10 Names as Percentage of All Names") 
-
-baby_p
-```
-
-### Exercise 1
-
-Use `library()` to load the **babynames** package.
-
-```{r babynames-1, exercise = TRUE}
-
-```
-
-```{r babynames-1-hint-1, eval = FALSE}
-library(...)
-```
-
-### 
-
-Learn more about the package from its [website](http://hadley.github.io/babynames/).
-
-### Exercise 2
-
-Recall that your Console and the exercise code chunks for this tutorial use different R sessions. The fact that you loaded **babynames** in an exercise code chunk does not mean that it is loaded in your Console.
-
-In your Console, after loading the **babynames** package, look up the help page for the `babynames` tibble with `?babynames`. Copy/paste the "Format" paragraph.
-
-```{r babynames-2}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-### 
-
-The variable `prop` is more subtle than it might, at first, appear. It is the proportion, **within a given `year` and `sex`**, of the total number of babies who have that given name. 
-
-
-### Exercise 3
-
-Run `summary()` on the `babynames` tibble.
-
-```{r babynames-3, exercise = TRUE}
-
-```
-
-```{r babynames-3-hint-1, eval = FALSE}
-summary(...)
-```
-
-### 
-
-Note that we have no missing values.
-
 ### Exercise 4
 
-Print out `babynames`
+You can also create complex plot layouts with **patchwork**. Type `(p1 | p3) / p2` and hit "Run Code".
 
-```{r babynames-4, exercise = TRUE}
+```{r layout-4, exercise = TRUE}
 
 ```
 
-```{r babynames-4-hint-1, eval = FALSE}
-babynames
+```{r layout-4-hint-1, eval = FALSE}
+(... | p3) / ...
+```
+
+```{r layout-4-test, include = FALSE}
+(p1 | p3) / p2
 ```
 
 ### 
 
-There are almost 2 million observations.
+`|` places the `p1` and `p3` next to each other and `/` moves `p2` to the next line.
 
 ### Exercise 5
 
-Pipe `babynames` to `group_by(year, sex)`. This will lead future commands in the pipe to do all calculations on a per year/sex basis, at least until we `ungroup()` the data.
+Additionally, **patchwork** allows you to collect legends from multiple plots into one common legend, customize the placement of the legend as well as dimensions of the plots, and add a common title, subtitle, caption, etc. to your plots. Start with `(p1 + p2) / (p3 + p4) / p5`.  
 
-```{r babynames-5, exercise = TRUE}
+
+```{r layout-5, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+```{r layout-5-hint-1, eval = FALSE}
+(p1 + p2) ... (p3 + p4) / ...
+```
 
-```{r babynames-5-hint-1, eval = FALSE}
-babynames |> 
-  group_by(year, sex) 
+```{r layout-5-test, include = FALSE}
+(p1 + p2) / (p3 + p4) / p5
 ```
 
 ### 
 
-Modern R code rarely uses `group_by()` anymore, prefering to `.by`/`by` arguments to *Tidyverse* functions like `summarise()`. 
-
+This creates a collection of plots with two plots in the first row, two in the second, and then a single plot in the third row.
 
 ### Exercise 6
 
-Continue the pipe with `top_n(n = 10)`.
+Modify the code by adding `guide_area()` to the front of the call.
 
-```{r babynames-6, exercise = TRUE}
+
+```{r layout-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r babynames-6-hint-1, eval = FALSE}
-... |> 
-  top_n(n = 10)
+```{r layout-6-hint-1, eval = FALSE}
+... / (p1 + p2) / (p3 + p4) / p5
+```
+
+```{r layout-6-test, include = FALSE}
+guide_area() / (p1 + p2) / (p3 + p4) / p5
 ```
 
 ### 
 
-This pulls out the 10 most popular names, for each year and, within each year, for each sex.
-
-Note that there should be 2,760 rows in the resulting tibble: 138 years times 10 names times 2 sexes. Instead we have 2,761 rows. Can you figure out why? Does it mess up our plot?
+By default plot guides (like legends) will be put on the side as with regular plots, but by adding a `guide_area()` to the plot you can tell **patchwork** to place the guides in that area instead. 
 
 ### Exercise 7
 
-Continue the pipe with `ungroup()`.
+None of our plots, by design, include a legend because we want a single legend for the entire diplay. We also want a single title. To add this, we need to use the **patchwork** function `plot_annotation()`. Add it to our plot, setting the `title` argument to `"City and highway mileage for cars with different drive trains"` and the `caption` argument to `"Source: https://fueleconomy.gov."`. 
 
-```{r babynames-7, exercise = TRUE}
+```{r layout-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r babynames-7-hint-1, eval = FALSE}
-... |> 
-  ungroup()
+```{r layout-7-hint-1, eval = FALSE}
+guide_area() / (p1 + p2) / (p3 + p4) / p5 +
+     ...(
+         title = "City and highway mileage for cars with different drive trains",
+         caption = ...
+     ) 
+```
+
+```{r layout-7-test, include = FALSE}
+guide_area() / (p1 + p2) / (p3 + p4) / p5 +
+  plot_annotation(
+      title = "City and highway mileage for cars with different drive trains",
+      caption = "Source: https://fueleconomy.gov."
+  ) 
 ```
 
 ### 
 
-One reason that `group_by()` is being phased out is that, unless you remember to `ungroup()` in the pipe, you will get weird results and/or errors. `ungroup()` removes the grouping variables which you had placed on the tibble previously.
-
+**patchwork** has several functions which perform similar tasks for a collection of plots which **ggplot2** provides for individual plots.
 
 ### Exercise 8
 
-Continue the pipe with `summarise()`, using the argument `total = sum(prop)`.
+`plot_layout()` provides fine-grained control over the details of how the plots are put together. Add `plot_layout()` with the `guides` argument set to `"collect"` and the `heights` argument set to `c(1, 3, 2, 4)`.
 
-```{r babynames-8, exercise = TRUE}
+```{r layout-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r babynames-8-hint-1, eval = FALSE}
-... |>
-  summarise(total = sum(prop))
+```{r layout-8-hint-1, eval = FALSE}
+... +
+  plot_layout(
+    ... = "collect",
+    heights = ...
+  )
+```
+
+```{r layout-8-test, include = FALSE}
+guide_area() / (p1 + p2) / (p3 + p4) / p5 +
+  plot_annotation(
+      title = "City and highway mileage for cars with different drive trains",
+      caption = "Source: https://fueleconomy.gov."
+  ) +
+  plot_layout(
+    guides = "collect",
+    heights = c(1, 3, 2, 4)
+  )
 ```
 
 ### 
 
-This produces a somewhat nonsense result. The sum of all the values of `prop` for all these years and both sexes does not really mean anything.
+We have customized the heights of the various components of our patchwork – the guide has a height of 1, the box plots 3, density plots 2, and the faceted scatterplot 4. **patchwork** divides up the area you have allotted for your plot using this scale and places the components accordingly.
 
 ### Exercise 9
 
-Edit the call to the `summarise()` by adding `.by` argument with value `c(sex`, `year`). 
+The top of the collection is still a bit messed up. We can fix this by adding `theme(legend.position = "top")` as the last line. WARNING: Instead of using a `+` sign to connect this line to the rest of the code, you need to use an `&`. 
 
-```{r babynames-9, exercise = TRUE}
+```{r layout-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r babynames-9-hint-1, eval = FALSE}
-... |> 
-  summarise(total = sum(prop), .by = c(...))
+```{r layout-9-hint-1, eval = FALSE}
+... & 
+    theme(legend.position = "top")
+```
+
+```{r layout-9-test, include = FALSE}
+guide_area() / (p1 + p2) / (p3 + p4) / p5 +
+    plot_annotation(
+        title = "City and highway mileage for cars with different drive trains",
+        caption = "Source: https://fueleconomy.gov."
+    ) +
+    plot_layout(
+        guides = "collect",
+        heights = c(1, 3, 2, 4)
+    ) & 
+    theme(legend.position = "top")
 ```
 
 ### 
 
-This generates the data which we want to plot.
+Note the use of the & operator here instead of the usual +. This is because we’re modifying the theme for the patchwork plot as opposed to the individual ggplots. The legend is placed on top, inside the guide_area().
 
-### Exercise 10
 
-Continue your pipe with `ggplot()`. Within `aes()`, map `year` to the x-axis, `total` to the y-axis, and `sex` to color. Also add `geom_point()`.
 
-```{r babynames-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r babynames-10-hint-1, eval = FALSE}
-...|>
-  ggplot(mapping = aes(x = ..., y = ..., color = ...)) +
-    geom_point()
-```
-
-### Exercise 11
-
-To finish your plot, use `labs()` to give the graph a title, subtitle, and axis labels. 
-
-```{r babynames-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r babynames-11-hint-1, eval = FALSE}
-... +
-  labs(...)
-```
-
-Reminder: This is what your plot should look like.
-
-```{r show-baby}
-baby_p
-```
-
-### 
-
-Can you see where that extra row we ignored earlier in the analysis messes things up for one point in the male set in the 1880s?
 
 
 ## Summary
 ### 
 
-This tutorial covered [Chapter 11: Communication](https://r4ds.hadley.nz/communication.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. In this tutorial we made use of three packages associated with [**ggplot2**](https://ggplot2.tidyverse.org/): [**scales**](https://scales.r-lib.org/), [**ggrepel**](https://ggrepel.slowkow.com), and [**patchwork**](https://patchwork.data-imaginist.com). Key commands included [`quote()`](https://rdrr.io/r/base/substitute.html) which simply returns its argument, [`geom_label_repel()`](https://rdrr.io/cran/ggrepel/man/geom_text_repel.html) which adds text directly to the plot, and [`label_dollar()`](https://scales.r-lib.org/reference/label_dollar.html) which formats numbers as currency. 
+This tutorial covered [Chapter 11: Communication](https://r4ds.hadley.nz/communication.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. In this tutorial we made use of three packages associated with [**ggplot2**](https://ggplot2.tidyverse.org/): [**scales**](https://scales.r-lib.org/), [**ggrepel**](https://ggrepel.slowkow.com), and [**patchwork**](https://patchwork.data-imaginist.com). Key commands included [`quote()`](https://rdrr.io/r/base/substitute.html) which simply returns its argument and [`geom_label_repel()`](https://rdrr.io/cran/ggrepel/man/geom_text_repel.html) which adds text directly to the plot. 
 
 Explore [*The Truthful Art*](https://www.amazon.com/gp/product/0321934075/) by Albert Cairo to learn more about creating effective graphics.
 
