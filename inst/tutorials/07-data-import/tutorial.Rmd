@@ -16,6 +16,7 @@ library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
 library(janitor)
+
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
@@ -70,12 +71,16 @@ This tutorial covers [Chapter 7: Data import](https://r4ds.hadley.nz/data-import
 
 This section provides practical advice for handling features like column names, types, and missing data. 
 
+Note the distinction between *Tidyverse* (capitalized and in italics) and **tidyverse** (no capitalization and in bold). The latter refers to an actual R package, the one which we use almost every time we use R. The latter has a more [general meaning](https://www.tidyverse.org/):
+
+> The tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures.
+
 
 ### Exercise 1
 
 [**readr**](https://readr.tidyverse.org/) is the key package for reading in data. Load **readr** by typing `library(readr)` at your Console. Then run `help(package = "readr")`. Copy/paste the first header below. (It should be a single line which references the version number.)
 
-```{r reading-data-from-a--1}
+```{r reading-data-from-a-file-1}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -86,31 +91,11 @@ question_text(NULL,
 
 ### 
 
-Because **readr** is one of the 8 packages in the *Tidyverse* we rarely load it directly. Instead, we run `library(tidyverse)` which loads all 8 packages.
+Because **readr** is one of the core packages in the *Tidyverse* we rarely load it directly. Instead, we run `library(tidyverse)` which loads all those packages.
 
+The "core" *Tidyverse* is the 9 packages loaded by `library(tidyverse)` but the broader *Tidyverse* universe includes [many more packages](https://www.tidyverse.org/packages/) which share the same general philosophy.
 
 ### Exercise 2
-
-Load **tidyverse** by typing `library(tidyverse)` at your Console. Then run `help(package = "tidyverse")`. Copy/paste the first header below. (It should be a single line which references the version number.)
-
-```{r reading-data-from-a--2}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 1)
-```
-
-### 
-
-Note the distinction between *Tidyverse* (capitalized and in italics) and **tidyverse** (no capitalizatio and in bold). The latter refers to an actual R package, the one which we use almost every time we use R. The latter has a more [general meaning](https://www.tidyverse.org/):
-
-> The tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures.
-
-The "core" *Tidyverse* is the 8 packages loaded by `library(tidyverse)` but the broader *Tidyverse* universe includes [many more packages](https://www.tidyverse.org/packages/) which share the same general philosophy.
-
-### Exercise 3
 
 Consider this data:
 
@@ -122,46 +107,58 @@ read_lines("data/students.csv") |> cat(sep = "\n")
 
 Write code for reading this data into R. Use `read_csv()` and set the `file` argument to "data/students.csv". All the files we will use in this tutorial live in the `data/` directory.
 
-```{r reading-data-from-a--3, exercise = TRUE}
+```{r reading-data-from-a-file-2, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--3-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-2-hint-1, eval = FALSE}
 read_csv(file = ...)
+```
+
+```{r reading-data-from-a-file-2-test, include = FALSE}
+read_csv(file = "data/students.csv")
 ```
 
 ### 
 
 When you run `read_csv()`, it prints out a message telling you the number of rows and columns of data, the delimiter that was used, and the column specifications (names of columns organized by the type of data the column contains). It also prints out some information about retrieving the full column specification and how to quiet this message. 
 
-### Exercise 4
+### Exercise 3
 
 Instead of just reading in the file and then just "dumping" out the results back to the screen, run the same code as above but assign the result to a new object, `students`.
 
 
-```{r reading-data-from-a--4, exercise = TRUE}
+```{r reading-data-from-a-file-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-a--4-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-3-hint-1, eval = FALSE}
 students <- read_csv(file = ...)
+```
+
+```{r reading-data-from-a-file-3-test, include = FALSE}
+students <- read_csv(file = "data/students.csv")
 ```
 
 ### 
 
 There are two primary modes of doing data analysis. In the first, we write a series of statements, connected with pipes, which "dump out" their results directly to the screen. This approach is useful for interactive analysis. In the second, which usually comes later, we assign the results of the commands to an object, like `students`, which we will work with later.
 
-### Exercise 5
+### Exercise 4
 
 Print out the `students` object.
 
-```{r reading-data-from-a--5, exercise = TRUE}
+```{r reading-data-from-a-file-4, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--5-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-4-hint-1, eval = FALSE}
+students
+```
+
+```{r reading-data-from-a-file-4-test, include = FALSE}
 students
 ```
 
@@ -169,39 +166,48 @@ students
 
 In the `favourite.food` column, there are a bunch of food items, and then the character string "N/A", which should have been a real NA that R will recognize as “not available”. This is something we can address using the `na` argument. 
 
-### Exercise 6
+### Exercise 5
 
-By default, `read_csv()` only recognizes empty strings ("") in this dataset as NAs. We want it to also recognize the character string "N/A". Run `read_csv()` on "data/students.csv", setting the `na` argument to 'c("N/A", "")'
+By default, `read_csv()` only recognizes empty strings ("") in this dataset as NAs. We want it to also recognize the character string "N/A". Run `read_csv()` on "data/students.csv", setting the `na` argument to `c("N/A", "")`.
 
-
-```{r reading-data-from-a--6, exercise = TRUE}
+```{r reading-data-from-a-file-5, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--6-hint-1, eval = FALSE}
-students <- read_csv(file = ...,
+```{r reading-data-from-a-file-5-hint-1, eval = FALSE}
+students <- read_csv(file = "data/students.csv",
                      na = ...)
+```
+
+```{r reading-data-from-a-file-5-test, include = FALSE}
+students <- read_csv(file = "data/students.csv",
+                     na = c("N/A", ""))
 ```
 
 ### 
 
 There are a bewildering set of characters that different people will use to indicate that data is missing. Look carefully at your data to find them all.
 
-### Exercise 7
+### Exercise 6
 
-You might also notice that the Student ID and Full Name columns are surrounded by backticks. That’s because they contain spaces, breaking R’s usual rules for variable names; they’re *non-syntactic* names. To refer to these variables, you need to surround them with backticks, `` ` ``. 
+You might also notice that the Student ID and Full Name columns are surrounded by backticks. That’s because they contain spaces, breaking R’s usual rules for variable names; they’re *non-syntactic* names. To refer to these variables, you need to surround them with backticks: `` ` ``. 
 
-Pipe `students` to the `rename()` function, with "student_id = `Student ID`" as the argument.
+Pipe `students` to the `rename()` function, with `student_id = "Student ID"` as the argument.
 
-```{r reading-data-from-a--7, exercise = TRUE}
+```{r reading-data-from-a-file-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-a--7-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-6-hint-1, eval = FALSE}
 students |> 
-  rename(... = `Student ID)
+  rename(... = "Student ID")
+```
+
+```{r reading-data-from-a-file-6-test, include = FALSE}
+students |> 
+  rename(student_id = "Student ID")
 ```
 
 ### 
@@ -209,32 +215,41 @@ students |>
 This fixes the variable name `Student ID`, but we still have to deal with `Full Name`. Sometimes, a data set will have scores of weirdly named variables. In that case, we recomend using `clean_names()` from the [**janitor**](https://sfirke.github.io/janitor/) package. 
 
 
-### Exercise 8
+### Exercise 7
 
 The  [**janitor**](https://sfirke.github.io/janitor/) package is also commonly used for cleaning names. Load in the package below. *Note*: Nothing will be displayed if the code runs correctly.
 
-```{r reading-data-from-a--8, exercise = TRUE}
+```{r reading-data-from-a-file-7, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--8-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-7-hint-1, eval = FALSE}
+library(janitor)
+```
+
+```{r reading-data-from-a-file-7-test, include = FALSE}
 library(janitor)
 ```
 
 **janitor** has several useful functions, including `make_clean_names()`, which does the same thing as `clean_names()` but can be used directly during data import rather than as part of a pipe.
 
 
-### Exercise 9
+### Exercise 8
 
 Pipe `students` to `clean_names()`.
 
-```{r reading-data-from-a--9, exercise = TRUE}
+```{r reading-data-from-a-file-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-a--9-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-8-hint-1, eval = FALSE}
+students |> 
+  clean_names()
+```
+
+```{r reading-data-from-a-file-8-test, include = FALSE}
 students |> 
   clean_names()
 ```
@@ -244,20 +259,26 @@ students |>
 `clean_names()` not only fixes the *non-syntactic* names like `Full Name`; it also cleans up any variable name which does not follow the standard approach of, first, no capitalization and, second, using underscores as a word seperator. Note how `favourite.food` becomes `favourite_food` and `mealPlan` becomes `meal_plan`
 
 
-### Exercise 10
+### Exercise 9
 
-Another common task after reading in data is to consider variable types. For example, meal_plan is a categorical variable with a known set of possible values, which in R should be represented as a factor. Continue the pipe by adding a call to `mutate()`, with `meal_plan = factor(meal_plan)'.
+Another common task after reading in data is to consider variable types. For example, `meal_plan` is a categorical variable with a known set of possible values, which in R should be represented as a factor. Continue the pipe by adding a call to `mutate()`, with `meal_plan = factor(meal_plan)'.
 
-```{r reading-data-from-a--10, exercise = TRUE}
+```{r reading-data-from-a-file-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-a--10-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-9-hint-1, eval = FALSE}
 students |> 
   clean_names() |> 
   mutate(meal_plan = ...(meal_plan))
+```
+
+```{r reading-data-from-a-file-9-test, include = FALSE}
+students |> 
+  clean_names() |> 
+  mutate(meal_plan = factor(meal_plan))
 ```
 
 ### 
@@ -265,19 +286,21 @@ students |>
 Note that the values in the `meal_plan` variable have stayed the same, but the type of variable denoted underneath the variable name has changed from character (`<chr>`) to factor (`<fct>`).
 
 
-### Exercise 11
+### Exercise 10
+
+<!-- DK: Stopped here. -->
 
 Before you analyze these data, you’ll probably want to fix the `age` column. Currently, `age` is a character variable because one of the observations is typed out as `five` instead of a numeric `5`. 
-Continue the pipe by adding a new line to you call to `mutate()` in which you re-define `age` with 
-`age = if_else(age == "five", "5", age)`
 
-```{r reading-data-from-a--11, exercise = TRUE}
+Continue the pipe by adding a new line to you call to `mutate()` in which you re-define `age` with `age = if_else(age == "five", "5", age)`
+
+```{r reading-data-from-a-file-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-a--11-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-10-hint-1, eval = FALSE}
 students |> 
   clean_names() |> 
   mutate(
@@ -286,21 +309,25 @@ students |>
   )
 ```
 
+```{r reading-data-from-a-file-10-test, include = FALSE}
+
+```
+
 ### 
 
 A new function here is `if_else()`, which has three arguments. The first argument `test` should be a logical vector. The result will contain the value of the second argument, `yes`, when test is `TRUE`, and the value of the third argument, `no`, when it is `FALSE`. Here we’re saying if `age` is the character string "five", make it "5", and if not leave it as `age`. 
 
-### Exercise 12
+### Exercise 11
 
 The result of the pipe still shows `age` as a character variable. But we know that `age` is a number. R has a collection of `parse_*` functions which transform variable types. Continue the pipe by adding a third line to the `mutate()` statement: `age = parse_number(age)`. Don't forget to separate the different `mutate()` steps with commas.  
 
-```{r reading-data-from-a--12, exercise = TRUE}
+```{r reading-data-from-a-file-11, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-a--12-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-11-hint-1, eval = FALSE}
 students |> 
   clean_names() |> 
   mutate(
@@ -308,6 +335,10 @@ students |>
     age = if_else(age == "five", "5", age),
     age = ...(age)
   )
+```
+
+```{r reading-data-from-a-file-11-test, include = FALSE}
+
 ```
 
 ### 
@@ -319,7 +350,7 @@ We could combine the two manipulations of `age` into a single line within `mutat
 But it is often easier to build a pipe step-by-step, checking that each part is doing what you want before moving on.
 
 
-### Exercise 13
+### Exercise 12
 
 "CSV" stands for **c**omma-**s**eparated **v**alues, meaning that the variable names and data values are separated by commas in the file. 
 
@@ -333,17 +364,21 @@ cat(readLines("data/test_1.csv"), sep = "\n")
 
 Write code to read this file into R using `read_csv()`, setting the `file` argument to "data/test_1.csv".
 
-```{r reading-data-from-a--13, exercise = TRUE}
+```{r reading-data-from-a-file-12, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--13-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-12-hint-1, eval = FALSE}
 Use read_csv() to read in a csv file. 
 Set the `file` argument to "data/test_1.csv".
 ```
 
-```{r reading-data-from-a--13-hint-2, eval = FALSE}
+```{r reading-data-from-a-file-12-hint-2, eval = FALSE}
 read_csv(file = "data/test_1.csv")
+```
+
+```{r reading-data-from-a-file-12-test, include = FALSE}
+
 ```
 
 ### 
@@ -363,19 +398,23 @@ Working with R interactively is like having a conversation. You say something to
 R then provides some information about the columns in the data set. The column specification message is a *suggestion* from R to you to specify the data types for each column of data. R "guesses" a data type until we use the `col_types` argument. 
 
 
-### Exercise 14
+### Exercise 13
 
 Make the message disappear by setting the `show_col_types` argument to `FALSE`.
 
-```{r reading-data-from-a--14, exercise = TRUE}
+```{r reading-data-from-a-file-13, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-a--14-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-13-hint-1, eval = FALSE}
 read_csv(file = "data/test_1.csv",
          show_col_types = ...)
+```
+
+```{r reading-data-from-a-file-13-test, include = FALSE}
+
 ```
 
 ### 
@@ -394,7 +433,7 @@ It is always better to use the `col_types` argument explicitly in order to ensur
 R is trying to be helpful by nagging you with that message. It is saying "Don't you want to specify the column types for this data? That would be a good idea!"
 
 
-### Exercise 15
+### Exercise 14
 
 Consider the contents of the `test_2.csv` file. 
 
@@ -406,19 +445,23 @@ cat(readLines("data/test_2.csv"), sep = "\n")
 
 Write code for skipping the text at the top of `"data/test_2.csv"` by setting the second argument `skip` to the appropriate number.
 
-```{r reading-data-from-a--15, exercise = TRUE}
+```{r reading-data-from-a-file-14, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--15-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-14-hint-1, eval = FALSE}
 In addition to the `file` argument, you will 
 need to use the`skip` argument here. Set `skip` 
 to 2.
 ```
 
-```{r reading-data-from-a--15-hint-2, eval = FALSE}
+```{r reading-data-from-a-file-14-hint-2, eval = FALSE}
 read_csv(file = "data/test_2.csv",
           skip = ...)
+```
+
+```{r reading-data-from-a-file-14-test, include = FALSE}
+
 ```
 
 ### 
@@ -434,7 +477,7 @@ read_csv("data/test_2.csv",
 
 The argument `skip` is used to skip rows, but to skip columns, you can use the `col_only()` function as the argument to `col_types` in order to read in only the columns which you want. 
 
-### Exercise 16
+### Exercise 15
 
 Consider the contents of the `test_3.csv` file. 
 
@@ -446,17 +489,21 @@ cat(readLines("data/test_3.csv"), sep = "\n")
 
 Write code that will create default names for `"data/test_3.csv"` by setting the `col_names` argument to `FALSE`.
 
-```{r reading-data-from-a--16, exercise = TRUE}
+```{r reading-data-from-a-file-15, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--16-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-15-hint-1, eval = FALSE}
 Use the `col_names argument and set it to FALSE
 ```
 
-```{r reading-data-from-a--16-hint-2, eval = FALSE}
+```{r reading-data-from-a-file-15-hint-2, eval = FALSE}
 read_csv(file = "data/test_3.csv",
           col_names = ...)
+```
+
+```{r reading-data-from-a-file-15-test, include = FALSE}
+
 ```
 
 ### 
@@ -472,7 +519,7 @@ read_csv("data/test_3.csv",
 
 The argument `col_names` can also be used to create custom column names. 
 
-### Exercise 17
+### Exercise 16
 
 Consider, again, the contents of the `test_3.csv` file. 
 
@@ -486,21 +533,24 @@ cat(readLines("data/test_3.csv"), sep = "\n")
 
 Set the argument `col_names` to a vector containing the column names `"a"`, `"b"`, and `"c"`.
 
-```{r reading-data-from-a--17, exercise = TRUE}
+```{r reading-data-from-a-file-16, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-a--17-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-16-hint-1, eval = FALSE}
 Use the `col_names` argument and set it to c("a", "b", "c"). 
 ```
 
-```{r reading-data-from-a--17-hint-2, eval = FALSE}
+```{r reading-data-from-a-file-16-hint-2, eval = FALSE}
 read_csv(file = "data/test_3.csv",
           col_names = c("a", "b", "c"))
 ```
 
+```{r reading-data-from-a-file-16-test, include = FALSE}
+
+```
 
 ### 
 
@@ -516,23 +566,27 @@ read_csv("data/test_3.csv",
 `col_names` is not only specific to `read_csv()`, it can be used in other functions such as `read_excel()` and `read_delim()`
 
 
-### Exercise 18
+### Exercise 17
 
 Get rid of the column specification message by setting the `col_types` argument to `cols(a = col_double(), b = col_double(), c = col_double())`.
 
 
-```{r reading-data-from-a--18, exercise = TRUE}
+```{r reading-data-from-a-file-17, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-a--18-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-17-hint-1, eval = FALSE}
 read_csv("data/test_3.csv",
          col_names = c("a", "b", "c"),
          col_types = cols(a = col_double(), 
                           b = col_double(), 
                           c = col_double()))
+```
+
+```{r reading-data-from-a-file-17-test, include = FALSE}
+
 ```
 
 ### 
@@ -552,7 +606,7 @@ read_csv("data/test_3.csv",
 There are many other arguments to `cols`. You can type `?cols` into your console to see all the different arguments!
 
 
-### Exercise 19
+### Exercise 18
 
 Consider the contents of the `test_5.csv` file. Note the "." for the first value for `b`. In this file, a period indicates a missing value. **This is not always true.** Missing values can be indicated in many different ways. And, sometimes, a period is just a period.
 
@@ -564,17 +618,21 @@ cat(readLines("data/test_5.csv"), sep = "\n")
 
 Write code to recognize the `.` value for `b` in `"data/test_5.csv"` as an NA value by setting the `na` argument to "." in `read_csv`.
 
-```{r reading-data-from-a--19, exercise = TRUE}
+```{r reading-data-from-a-file-18, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--19-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-18-hint-1, eval = FALSE}
 Use the `na` argument and set it to "."
 ```
 
-```{r reading-data-from-a--19-hint-2, eval = FALSE}
+```{r reading-data-from-a-file-18-hint-2, eval = FALSE}
 read_csv(file = "data/test_5.csv",
          na = ".")
+```
+
+```{r reading-data-from-a-file-18-test, include = FALSE}
+
 ```
 
 ### 
@@ -591,7 +649,7 @@ read_csv("data/test_5.csv",
 Before removing `"."`, the `col_type` of Column b was character, but after it became a `double`. One element can change the entire column which can mess up other parts of your code.
 
 
-### Exercise 20
+### Exercise 19
 
 Consider the contents of the `test_6.csv` file.
 
@@ -603,17 +661,21 @@ cat(readLines("data/test_6.csv"), sep = "\n")
 
 Write code for skipping the text lines within `"data/test_6.csv"` by setting the `comment` to "#".
 
-```{r reading-data-from-a--20, exercise = TRUE}
+```{r reading-data-from-a-file-19, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--20-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-19-hint-1, eval = FALSE}
 Use the `comment` argument and set it to "#".
 ```
 
-```{r reading-data-from-a--20-hint-2, eval = FALSE}
+```{r reading-data-from-a-file-19-hint-2, eval = FALSE}
 read_csv(file = "data/test_6.csv",
          comment = "...")
+```
+
+```{r reading-data-from-a-file-19-test, include = FALSE}
+
 ```
 
 ### 
@@ -629,7 +691,7 @@ read_csv("data/test_6.csv",
 
 It doesn't always have to be "#", it can be any character that designates a line as a comment!
 
-### Exercise 21
+### Exercise 20
 
 Consider the contents of the `test_7.csv` file.
 
@@ -641,14 +703,18 @@ cat(readLines("data/test_7.csv"), sep = "\n")
 
 Write code to make sure the column `grade` within `"data/test_7.csv"` appears as an integer variable (`col_integer()`), and `student` as a character variable (`col_character()`).
 
-```{r reading-data-from-a--21, exercise = TRUE}
+```{r reading-data-from-a-file-20, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--21-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-20-hint-1, eval = FALSE}
 Use the col_types argument and set it 
 to cols(grade = col_integer(), 
         student = col_character())
+```
+
+```{r reading-data-from-a-file-20-test, include = FALSE}
+
 ```
 
 ### 
@@ -665,7 +731,7 @@ read_csv("data/test_7.csv",
 
 There are many more data types such as `col_logical`, `col_double`, `col_date`, etc.
 
-### Exercise 22
+### Exercise 21
 
 Consider the following tibble `tbl_1`.
 
@@ -680,19 +746,23 @@ tbl_1
 
 Use `write_csv()` to save this tibble to a file named "tbl_1.csv". Then add `list.files()` after that in order to see the file that you've created.
 
-```{r reading-data-from-a--22, exercise = TRUE}
+```{r reading-data-from-a-file-21, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--22-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-21-hint-1, eval = FALSE}
 The first argument should be the object you want 
 to save. The second argument should be the name you 
 want the file saved as.
 ```
 
-```{r reading-data-from-a--22-hint-2, eval = FALSE}
+```{r reading-data-from-a-file-21-hint-2, eval = FALSE}
 write_csv(...)
 list.files()
+```
+
+```{r reading-data-from-a-file-21-test, include = FALSE}
+
 ```
 
 ### 
@@ -701,7 +771,7 @@ Your result should look like include two files: `exercise.Rmd`, which is a file 
 
 There are many arguments to `write_csv()` such as `delim`, `na`, `col_names` and many more to make the written file cleaner.
 
-### Exercise 23
+### Exercise 22
 
 Consider the contents of the `test_bad_names.csv` file.
 
@@ -713,12 +783,16 @@ cat(readLines("data/test_bad_names.csv"), sep = "\n")
 
 Many files will have column names that are not formatted correctly, but **tidyverse** has the `name_repair` argument to fix that. Using the contents of `"data/test_bad_names.csv"`, use the `name_repair` argument and set it to `"universal"` in `read_csv()`
 
-```{r reading-data-from-a--23, exercise = TRUE}
+```{r reading-data-from-a-file-22, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--23-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-22-hint-1, eval = FALSE}
 read_csv(file = "data/test_bad_names.csv", name_repair = "universal")
+```
+
+```{r reading-data-from-a-file-22-test, include = FALSE}
+
 ```
 
 ### 
@@ -735,17 +809,21 @@ The `"universal"` makes sure the columns names are all unique and uses the synta
 
 
 
-### Exercise 24
+### Exercise 23
 
 Now read the file `"data/test_bad_names.csv"` using `read_csv()`. Then pipe it into `clean_names()`, a function from the **janitor** package.
 
-```{r reading-data-from-a--24, exercise = TRUE}
+```{r reading-data-from-a-file-23, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--24-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-23-hint-1, eval = FALSE}
 read_csv(file = "data/test_bad_names.csv") |> 
   clean_names()
+```
+
+```{r reading-data-from-a-file-23-test, include = FALSE}
+
 ```
 
 ### 
@@ -761,19 +839,23 @@ read_csv(file = "data/test_bad_names.csv") |>
 
 The function `clean_names()` used the syntax within the **janitor** package to clean the names and also makes them unique. This lets you easily access the different columns without running into errors.
 
-### Exercise 25
+### Exercise 24
 
 To make the code cleaner and to reduce the number of pipes, you can set the `name_repair` argument to `janitor::make_clean_names` in `read_csv()`.
 
-```{r reading-data-from-a--25, exercise = TRUE}
+```{r reading-data-from-a-file-24, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-a--25-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-24-hint-1, eval = FALSE}
 read_csv(file = "data/test_bad_names.csv", 
          name_repair = janitor::make_clean_names)
+```
+
+```{r reading-data-from-a-file-24-test, include = FALSE}
+
 ```
 
 ### 
@@ -791,7 +873,7 @@ The **janitor** package has a function called `remove_empty()` to remove empty s
 
 
 
-### Exercise 26
+### Exercise 25
 
 CSV files are just one type of **text** file. A text file is any file which includes plain text. The contents of such files are easy to look at in any text editor, or in RStudio.
 
@@ -805,13 +887,17 @@ cat(readLines("data/delim_1.txt"), sep = "\n")
 
 Write code for reading this file in to R. The values in the file are separated by pipes rather than commas. So, instead of `read_csv()`, you should use `read_delim()`. 
 
-```{r reading-data-from-a--26, exercise = TRUE}
+```{r reading-data-from-a-file-25, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--26-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-25-hint-1, eval = FALSE}
 Set the file argument to "data/delim_1.txt". 
 Also use the `delim` argument and set it to "|".
+```
+
+```{r reading-data-from-a-file-25-test, include = FALSE}
+
 ```
 
 ### 
@@ -826,7 +912,7 @@ read_delim("data/delim_1.txt", delim = "|")
 
 Note how the spaces and commas are included in the values for `town`. You can't use `read_csv()` here because not all the columns are denoted by commas.
 
-### Exercise 27
+### Exercise 26
 
 Consider the contents of the text file `delim_2.txt`:
 
@@ -838,23 +924,27 @@ cat(readLines("data/delim_2.txt"), sep = "\n")
 
 Write code for reading this file in to R. Also, use the `col_types` argument to both prevent the col_types message from printing out and to set `population` as an integer.
 
-```{r reading-data-from-a--27, exercise = TRUE}
+```{r reading-data-from-a-file-26, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-a--27-hint-1, eval = FALSE}
+```{r reading-data-from-a-file-26-hint-1, eval = FALSE}
 Set the `col_types` argument to 
 cols(date = col_date(format = ""),
      population = col_integer(),
      town = col_character())
 ```
 
-```{r reading-data-from-a--27-hint-2, eval = FALSE}
+```{r reading-data-from-a-file-26-hint-2, eval = FALSE}
 read_delim("data/delim_2.txt", 
            delim = "|",
            col_types = cols(date = col_date(format = ""),
                             population = col_integer(),
                             town = col_character()))
+```
+
+```{r reading-data-from-a-file-26-test, include = FALSE}
+
 ```
 
 ### 
@@ -882,15 +972,17 @@ A CSV file doesn’t contain any information about the type of each variable (i.
 
 ### Exercise 1
 
-A CSV file doesn’t contain any information about the type of each variable (i.e. whether it’s a logical, number, string, etc.), so readr will try to guess the type. This section describes how the guessing process works, how to resolve some common problems that cause it to fail, and, if needed, how to supply the column types yourself. 
-
 In this tutorial, we will make use of the "quotation trick" which allows `read_csv()` and related functions to read data in directly from a quoted string, rather than a file. As an example, run this code:
 
 
-```{r controlling-column-t-1, exercise = TRUE}
+```{r controlling-column-types-1, exercise = TRUE}
 read_csv("
          a, b, c
          1, 2, 3")
+```
+
+```{r controlling-column-types-1-test, include = FALSE}
+
 ```
 
 ### 
@@ -909,13 +1001,17 @@ This produces the same tibble as if the character string were in a separate file
 You can see that behavior in action in this simple example. Press Run Code.
 
 
-```{r controlling-column-t-2, exercise = TRUE}
+```{r controlling-column-types-2, exercise = TRUE}
 read_csv("
   logical,numeric,date,string
   TRUE,1,2021-01-15,abc
   false,4.5,2021-02-15,def
   T,Inf,2021-02-16,ghi
 ")
+```
+
+```{r controlling-column-types-2-test, include = FALSE}
+
 ```
 
 ### 
@@ -927,7 +1023,7 @@ The first row is just treated as a column name by `read_csv()`. It does not use 
 
 The most common way column detection fails is that a column contains unexpected values, and you get a character column instead of a more specific type. One of the most common causes for this is a missing value, recorded using something other than the `NA` that readr expects. Press Run Code.
 
-```{r controlling-column-t-3, exercise = TRUE}
+```{r controlling-column-types-3, exercise = TRUE}
 simple_csv <- "
   x
   10
@@ -938,6 +1034,10 @@ simple_csv <- "
 read_csv(simple_csv)
 ```
 
+```{r controlling-column-types-3-test, include = FALSE}
+
+```
+
 ### 
 
 Note how `x` is read in as a character column when, obviously, it should be a number. In this very small case, you can easily see the missing value `.`. But what happens if you have thousands of rows with only a few missing values represented by `.`s speckled among them?
@@ -946,17 +1046,20 @@ Note how `x` is read in as a character column when, obviously, it should be a nu
 
 One approach is to tell `read_csv()` that x is a numeric column, and then see where it fails. You can do that with the `col_types` argument, which takes a named list where the names match the column names in the CSV file. Run `read_csv()` with `simple_csv` as the first argument and `col_types = list(x = col_double())` as the second.
 
-```{r controlling-column-t-4, exercise = TRUE}
+```{r controlling-column-types-4, exercise = TRUE}
 
 ```
 
-```{r controlling-column-t-4-hint-1, eval = FALSE}
+```{r controlling-column-types-4-hint-1, eval = FALSE}
 read_csv(
   simple_csv, 
   ... = list(x = col_double())
 )
 ```
 
+```{r controlling-column-types-4-test, include = FALSE}
+
+```
 
 ### 
 
@@ -966,19 +1069,23 @@ This worked in that `x` is a `<dbl>`. R has two built-in number variable types: 
 
 Take the call to `read_csv()` from the previous question and assign the output to an object called `df`. Then, in the next line, run `problems()` on `df`.
 
-```{r controlling-column-t-5, exercise = TRUE}
+```{r controlling-column-types-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r controlling-column-t-5-hint-1, eval = FALSE}
+```{r controlling-column-types-5-hint-1, eval = FALSE}
 ... <- read_csv(
   simple_csv, 
   col_types = list(x = col_double())
 )
 
 problems(...)
+```
+
+```{r controlling-column-types-5-test, include = FALSE}
+
 ```
 
 ### 
@@ -989,12 +1096,16 @@ This tells us that there was a problem in row 3, col 1 where **readr** expected 
 
 Since we now that `.` means a missing value in this data, we can now call `read_csv()` on `simple_csv` with the `na` argument set to `"."`.
 
-```{r controlling-column-t-6, exercise = TRUE}
+```{r controlling-column-types-6, exercise = TRUE}
 
 ```
 
-```{r controlling-column-t-6-hint-1, eval = FALSE}
+```{r controlling-column-types-6-hint-1, eval = FALSE}
 read_csv(simple_csv, na = ".")
+```
+
+```{r controlling-column-types-6-test, include = FALSE}
+
 ```
 
 ### 
@@ -1012,7 +1123,7 @@ read_csv(simple_csv, na = ".")
 
 It’s also possible to override the default column by switching from `list()` to `cols()` and specifying `.default`. Use `read_csv()` to read in `another_csv` with the `col_types` argumet set to `cols(.default = col_character()`.
 
-```{r controlling-column-t-7, exercise = TRUE}
+```{r controlling-column-types-7, exercise = TRUE}
 another_csv <- "
 x,y,z
 1,2,3"
@@ -1022,11 +1133,15 @@ x,y,z
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r controlling-column-t-7-hint-1, eval = FALSE}
+```{r controlling-column-types-7-hint-1, eval = FALSE}
 read_csv(
   another_csv, 
   ... = cols(... = col_character())
 )
+```
+
+```{r controlling-column-types-7-test, include = FALSE}
+
 ```
 
 ### 
@@ -1045,17 +1160,21 @@ Here are the other 5 column types from **readr**.
 Another useful helper is `cols_only()` which will read in only the columns you specify. Run `read_csv()` on `another_csv` with the `col_types` argument set to `cols_only(x = col_character()`.
 
 
-```{r controlling-column-t-8, exercise = TRUE}
+```{r controlling-column-types-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r controlling-column-t-8-hint-1, eval = FALSE}
+```{r controlling-column-types-8-hint-1, eval = FALSE}
 read_csv(
   another_csv,
   col_types = ...(x = ...)
 )
+```
+
+```{r controlling-column-types-8-test, include = FALSE}
+
 ```
 
 ### 
@@ -1072,18 +1191,22 @@ The [help page](https://readr.tidyverse.org/reference/cols.html) for `cols()` in
 
 Consider another example file:
 
-```{r controlling-column-t-9-setup}
+```{r controlling-column-types-9-setup}
 cat(readLines("data/ex_2.csv"), sep = "\n")
 ```
 
 Read the `data/ex_2.csv` file into R to check if there are any parsing mistakes.
 
-```{r controlling-column-t-9, exercise = TRUE}
+```{r controlling-column-types-9, exercise = TRUE}
 
 ```
 
-```{r controlling-column-t-9-hint-1, eval = FALSE}
+```{r controlling-column-types-9-hint-1, eval = FALSE}
 read_csv("data/ex_2.csv")
+```
+
+```{r controlling-column-types-9-test, include = FALSE}
+
 ```
 
 ### 
@@ -1092,41 +1215,49 @@ Notice that R parses column `a` and `b` both as a doubles. But what if column `a
 
 ### Exercise 10
 
-```{r controlling-column-t-10-setup}
+```{r controlling-column-types-10-setup}
 cat(readLines("data/ex_2.csv"), sep = "\n")
 ```
 
 Begin by using `read_csv()` to read in the file `ex_2.csv`. Then, set the `col_types` argument to `cols()`. Within `cols()`, set `.default` to `col_character()`.
 
-```{r controlling-column-t-10, exercise = TRUE}
+```{r controlling-column-types-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r controlling-column-t-10-hint-1, eval = FALSE}
+```{r controlling-column-types-10-hint-1, eval = FALSE}
 read_csv(..., 
          col_types = cols(.default = ...)
 )
 ```
 
+```{r controlling-column-types-10-test, include = FALSE}
+
+```
+
 ### Exercise 11
 
-```{r controlling-column-t-11-setup}
+```{r controlling-column-types-11-setup}
 cat(readLines("data/ex_2.csv"), sep = "\n")
 ```
 
 Pipe the results of `read_csv()` to the function `mutate()`. Within `mutate()` set `a` to `parse_integer(a)`. 
 
-```{r controlling-column-t-11, exercise = TRUE}
+```{r controlling-column-types-11, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r controlling-column-t-11-hint-1, eval = FALSE}
+```{r controlling-column-types-11-hint-1, eval = FALSE}
 ... |> 
     mutate(a = ...)
+```
+
+```{r controlling-column-types-11-test, include = FALSE}
+
 ```
 
 ### 
@@ -1135,21 +1266,25 @@ You can also use `parse_number()` to parse integers, not just `parse_integer()`.
 
 ### Exercise 12
 
-```{r controlling-column-t-12-setup}
+```{r controlling-column-types-12-setup}
 cat(readLines("data/ex_2.csv"), sep = "\n")
 ```
 
 Continue your pipe with `mutate()`. Use `parse_date()` to transform `b` to dates. The first argument to `parse_date()` should be `b`. The second argument should be `format`. Set `format` to `"%Y%M%D"`.
 
-```{r controlling-column-t-12, exercise = TRUE}
+```{r controlling-column-types-12, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r controlling-column-t-12-hint-1, eval = FALSE}
+```{r controlling-column-types-12-hint-1, eval = FALSE}
 ... |> 
   mutate(b = parse_date(b, format="..."))
+```
+
+```{r controlling-column-types-12-test, include = FALSE}
+
 ```
 
 ### 
@@ -1160,18 +1295,22 @@ Continue your pipe with `mutate()`. Use `parse_date()` to transform `b` to dates
 
 Let's explore one last file `ex_3.csv` that has parsing failures.
 
-```{r controlling-column-t-13-setup}
+```{r controlling-column-types-13-setup}
 cat(readLines("data/ex_3.csv"), sep = "\n")
 ```
 
  Run `read_csv("data/ex_3.csv")` and examine the parsing failures.
 
-```{r controlling-column-t-13, exercise = TRUE}
+```{r controlling-column-types-13, exercise = TRUE}
 
 ```
 
-```{r controlling-column-t-13-hint-1, eval = FALSE}
+```{r controlling-column-types-13-hint-1, eval = FALSE}
 read_csv("data/ex_3.csv")
+```
+
+```{r controlling-column-types-13-test, include = FALSE}
+
 ```
 
 ### 
@@ -1180,21 +1319,25 @@ What are the problems here? First, R parses column `x` as a character, when it i
 
 ### Exercise 14
 
-```{r controlling-column-t-14-setup}
+```{r controlling-column-types-14-setup}
 cat(readLines("data/ex_3.csv"), sep = "\n")
 ```
 
 Let's first fix column `x`. Pipe the results of `read_csv("data/ex_3.csv")` to the function `mutate()`. Within `mutate()` set `x` equal to `parse_date(x, "%d %B %Y")`.  
 
-```{r controlling-column-t-14, exercise = TRUE}
+```{r controlling-column-types-14, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r controlling-column-t-14-hint-1, eval = FALSE}
+```{r controlling-column-types-14-hint-1, eval = FALSE}
 ... |> 
     mutate(x = parse_date(...))
+```
+
+```{r controlling-column-types-14-test, include = FALSE}
+
 ```
 
 ### 
@@ -1205,37 +1348,45 @@ Also note that we did not need to use the `.default = col_character()` trick bef
 
 ### Exercise 15
 
-```{r controlling-column-t-15-setup}
+```{r controlling-column-types-15-setup}
 cat(readLines("data/ex_3.csv"), sep = "\n")
 ```
 
 Continue your pipe with `mutate()`. Within `mutate()` set `z` to `parse_number(z)`. 
 
-```{r controlling-column-t-15, exercise = TRUE}
+```{r controlling-column-types-15, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r controlling-column-t-15-hint-1, eval = FALSE}
+```{r controlling-column-types-15-hint-1, eval = FALSE}
 ... |> 
     mutate(z = parse_number(...))
+```
+
+```{r controlling-column-types-15-test, include = FALSE}
+
 ```
 
 ## Reading data from multiple files
 ### 
 
-Data Scientists deal with a huge number of files loaded with data, so it is important to learn how to clean multiple files at once.
+Clean multiple files at once is a common task.
 
 ### Exercise 1
 
 Run `list.files("data")` to check what files there are in the `data` folder.
 
-```{r reading-data-from-mu-1, exercise = TRUE}
+```{r reading-data-from-multiple-fil-1, exercise = TRUE}
 
 ```
 
-```{r reading-data-from-mu-1-hint-1, eval = FALSE}
+```{r reading-data-from-multiple-fil-1-hint-1, eval = FALSE}
+list.files("data")
+```
+
+```{r reading-data-from-multiple-fil-1-test, include = FALSE}
 list.files("data")
 ```
 
@@ -1247,14 +1398,18 @@ The `list.files()` function is part of base R.  Check out its [help page](https:
 
 Change the call to `list.files("data")` by setting the argument `pattern` to `"similar"` to only look at the files with the names "similar" in them.
 
-```{r reading-data-from-mu-2, exercise = TRUE}
+```{r reading-data-from-multiple-fil-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-mu-2-hint-1, eval = FALSE}
+```{r reading-data-from-multiple-fil-2-hint-1, eval = FALSE}
 list.files("data", ... = "similar")
+```
+
+```{r reading-data-from-multiple-fil-2-test, include = FALSE}
+
 ```
 
 ### 
@@ -1273,14 +1428,18 @@ You can also set `pattern` to ".csv" or ".delim" for those types of files in a f
 
 To show the exact directory of where the files came from, set the argument `full.names` to `TRUE` in `list.files()`.
 
-```{r reading-data-from-mu-3, exercise = TRUE}
+```{r reading-data-from-multiple-fil-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-mu-3-hint-1, eval = FALSE}
+```{r reading-data-from-multiple-fil-3-hint-1, eval = FALSE}
 list.files("data", pattern = "similar", full.names = ...)
+```
+
+```{r reading-data-from-multiple-fil-3-test, include = FALSE}
+
 ```
 
 ### 
@@ -1305,15 +1464,19 @@ cat(readLines("data/similar_3.csv"), sep = "\n")
 
 Now let's combine the files by piping the last call to `list_files()` directly to `read_csv()`!
 
-```{r reading-data-from-mu-4, exercise = TRUE}
+```{r reading-data-from-multiple-fil-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-mu-4-hint-1, eval = FALSE}
+```{r reading-data-from-multiple-fil-4-hint-1, eval = FALSE}
 list.files("data", pattern = "similar", full.names = TRUE) |> 
   read_csv()
+```
+
+```{r reading-data-from-multiple-fil-4-test, include = FALSE}
+
 ```
 
 ### 
@@ -1324,15 +1487,19 @@ Column `b`'s type is `chr` because the "." in `similar_1.csv` makes R think the 
 
 In `read_csv()`, set the argument `na` to `"."` to get rid of the character in column `b`.
 
-```{r reading-data-from-mu-5, exercise = TRUE}
+```{r reading-data-from-multiple-fil-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-mu-5-hint-1, eval = FALSE}
+```{r reading-data-from-multiple-fil-5-hint-1, eval = FALSE}
 ... |> 
   read_csv(na = ".")
+```
+
+```{r reading-data-from-multiple-fil-5-test, include = FALSE}
+
 ```
 
 ### 
@@ -1352,15 +1519,19 @@ Because the "." is gone, column `b`'s type is `dbl` now.
 
 Now let's get rid of the annoying "specify column types" message by using the `show_col_types` argument. In the call to `read_csv()`, add the `show_col_types` argument to `FALSE`.
 
-```{r reading-data-from-mu-6, exercise = TRUE}
+```{r reading-data-from-multiple-fil-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-mu-6-hint-1, eval = FALSE}
+```{r reading-data-from-multiple-fil-6-hint-1, eval = FALSE}
 ... |> 
   read_csv(na = ".", ... = FALSE)
+```
+
+```{r reading-data-from-multiple-fil-6-test, include = FALSE}
+
 ```
 
 ### 
@@ -1372,15 +1543,19 @@ You can use the other arguments of `read_csv()` to further clean your files, suc
  
 Consider the three sales files currently in the `data` directory. Run `list.files()` with `"data"` as the `path` (first) argument and `"sales"` as the value for the `pattern` argument.
 
-```{r reading-data-from-mu-7, exercise = TRUE}
+```{r reading-data-from-multiple-fil-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-mu-7-hint-1, eval = FALSE}
+```{r reading-data-from-multiple-fil-7-hint-1, eval = FALSE}
 list.files(path = ..., 
            pattern = ...)
+```
+
+```{r reading-data-from-multiple-fil-7-test, include = FALSE}
+
 ```
 
 ### 
@@ -1392,17 +1567,21 @@ Although there are only 3 files here, in many cases you will need to deal with h
 Pipe the results from `list_files()` to `read_csv()`. Don't forget to add `full.names = TRUE` to the call to `list.files()`, otherwise `read_csv()` won't be able to *find* the files.
 
 
-```{r reading-data-from-mu-8, exercise = TRUE}
+```{r reading-data-from-multiple-fil-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-mu-8-hint-1, eval = FALSE}
+```{r reading-data-from-multiple-fil-8-hint-1, eval = FALSE}
 list.files(path = "data",
            pattern = 'sales', 
            full.names = TRUE) |> 
   read_csv()
+```
+
+```{r reading-data-from-multiple-fil-8-test, include = FALSE}
+
 ```
 
 ### 
@@ -1415,17 +1594,21 @@ Although this works, we have lost the information about which rows come from whi
 
 Using the same code as above, add the `id` argument to `read_csv()` with a value of `"file"`.
 
-```{r reading-data-from-mu-9, exercise = TRUE}
+```{r reading-data-from-multiple-fil-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-data-from-mu-9-hint-1, eval = FALSE}
+```{r reading-data-from-multiple-fil-9-hint-1, eval = FALSE}
 list.files(path = "data",
            pattern = 'sales', 
            full.names = TRUE) |> 
   read_csv(... = "file")
+```
+
+```{r reading-data-from-multiple-fil-9-test, include = FALSE}
+
 ```
 
 ### 
@@ -1437,7 +1620,7 @@ This is especially helpful in circumstances where the files you’re reading in 
 ## Writing to a file
 ### 
 
-**readr** also comes with two useful functions for writing data back to disk: `write_csv()` and `write_tsv()`. The most important arguments to these functions are `x` (the data frame to save) and `file` (the location to save it). You can also specify how missing values are written with `na`, and if you want to `append` to an existing file.
+**readr** also comes with two useful functions for writing data back to disk: `write_csv()` and `write_tsv()`. The most important arguments to these functions are `x` (the data frame or tibble to write) and `file` (the location to write it to). You can also specify how missing values are written with `na`, and if you want to `append` to an existing file.
 
 ### Exercise 1
 
@@ -1453,9 +1636,19 @@ students2 <- students |>
   )
 ```
 
+```{r writing-to-a-file-1-test, include = FALSE}
+students2 <- students |> 
+  clean_names() |> 
+  mutate(
+    meal_plan = factor(meal_plan),
+    age = if_else(age == "five", "5", age),
+    age = parse_number(age)
+  )
+```
+
 ### 
 
-This workflow is very common. First, we interactively add code, line-by-line, to a pipe, running the entire pipe each time, examining the output as it is "spat" back to the scrren. Second, once the pipe produces what we want, then we add an object, `students2` in this case, to the front of the pipe and create a permanent object which we can then work with.
+This workflow is very common. First, we interactively add code, line-by-line, to a pipe, running the entire pipe each time, examining the output as it is "spat" back to the screen. Second, once the pipe produces what we want, then we add an object, `students2` in this case, to the front of the pipe and create a permanent object which we can then work with.
 
 ### Exercise 2
 
@@ -1469,6 +1662,10 @@ Type `students2` and hit Run Code. This will produce the same output as `print(s
 students2
 ```
 
+```{r writing-to-a-file-2-test, include = FALSE}
+students2
+```
+
 ### 
 
 `students2` has been cleaned up from the original "students.csv", most importantly in terms the variable names. Note that `mean_plan` is a `<fct>`, meaning a factor.
@@ -1477,7 +1674,7 @@ students2
 
 ### Exercise 3
 
-<!-- There does not seem to be a way for students to write out a file to a location to which they will have access for reading. So, we need to stick students2.csv in data/ ahead of time, while pretending that students are doing it. -->
+<!-- DK: There does not seem to be a way for students to write out a file to a location to which they will have access for reading. So, we need to stick students2.csv in data/ ahead of time, while pretending that students are doing it. And what about tests? -->
 
 Use `write_csv()` to write the contents of the `students2` object to a file called `"students2.csv"` which is located in the `data` directory.  Do this by setting the first argument of `write_csv()`, `x`, to `students2` and then the second argument, `file`, to `"data/students2.csv"`.
 
@@ -1486,10 +1683,14 @@ Use `write_csv()` to write the contents of the `students2` object to a file call
 
 ```
 
-
 ```{r writing-to-a-file-3-hint-1, eval = FALSE}
 write_csv(x = ..., 
           ... = "data/students2.csv")
+```
+
+```{r writing-to-a-file-3-test, include = FALSE}
+write_csv(x = students2, 
+          file = "data/students2.csv")
 ```
 
 ### 
@@ -1505,9 +1706,12 @@ Now let’s read that csv file back in. Run `read_csv()` on `"data/students2.csv
 
 ```
 
-
 ```{r writing-to-a-file-4-hint-1, eval = FALSE}
 read_csv("data/students2.csv")
+```
+
+```{r writing-to-a-file-4-test, include = FALSE}
+
 ```
 
 ### 
@@ -1557,6 +1761,10 @@ write_rds(iris_p,
           "test_1.rds")
 ```
 
+```{r writing-to-a-file-5-test, include = FALSE}
+
+```
+
 ### 
 
 The big advantage of creating an rds file is that we can reload the object it contains later, without re-running the code which created it.  
@@ -1573,6 +1781,10 @@ Run `list.files("data")`. You should see your newly created file listed.
 list.files("data")
 ```
 
+```{r writing-to-a-file-6-test, include = FALSE}
+
+```
+
 ### 
 
 To find the file on your computer, you can set the `list.files()` argument `include.dirs` to `TRUE`. This causes the full path for each file to be returned.
@@ -1587,6 +1799,10 @@ Let's now use `read_rds()` to read in the newly created file! Set the `file` arg
 
 ```{r writing-to-a-file-7-hint-1, eval = FALSE}
 read_rds(file = "data/test_1.rds")
+```
+
+```{r writing-to-a-file-7-test, include = FALSE}
+
 ```
 
 ### 
@@ -1619,6 +1835,10 @@ file saved as.
 write_rds(mtcars, "test_2.rds")
 ```
 
+```{r writing-to-a-file-8-test, include = FALSE}
+
+```
+
 ### 
 
 You are not limited to just one object in an rds file. You can save multiple!
@@ -1633,6 +1853,10 @@ Run `list.files("data")`. You should see your newly created file listed.
 
 ```{r writing-to-a-file-9-hint-1, eval = FALSE}
 list.files("data")
+```
+
+```{r writing-to-a-file-9-test, include = FALSE}
+
 ```
 
 ### 
@@ -1650,6 +1874,10 @@ Let's now use `read_rds()` to read in the newly created file! Set the `file` arg
 
 ```{r writing-to-a-file-10-hint-1, eval = FALSE}
 read_rds(file = "data/test_2.rds")
+```
+
+```{r writing-to-a-file-10-test, include = FALSE}
+
 ```
 
 ### 
@@ -1702,9 +1930,15 @@ tibble(
 )
 ```
 
+```{r data-entry-1-test, include = FALSE}
+tibble(x = c(1, 2, 5),
+       y = c("h", "m", "g"),
+       z = c(0.08, 0.83, 0.60))
+```
+
 ### 
 
-Laying out the data by column can make it hard to see how the rows are related, so an alternative is `tribble()`, short for transposed tibble, which lets you lay out your data row by row.
+Laying out the data by column can make it hard to see how the rows are related, so an alternative is `tribble()`, short for **tr**ansposed t**ibble**, which lets you lay out your data row by row.
 
 ### Exercise 2
 
@@ -1725,11 +1959,20 @@ tribble(
 )
 ```
 
+```{r data-entry-2-test, include = FALSE}
+tribble(
+  ~x, ~y, ~z,
+  1, "h", 0.08,
+  2, "m", 0.83,
+  5, "g", 0.60
+)
+```
+
 ### 
 
 The difference between the name `tibble()` and the name `tribble()` is one letter: *r*. The *r* stands for **r**ows since `tribble()` allows you to type in the data by row.
 
-<!-- More questions: Something about going to data frames with as.data.frame? Differences between tibbles and data frames? How about as_tibble()? Maybe matrices? -->
+<!-- DK: Add more questions? Something about going to data frames with as.data.frame? Differences between tibbles and data frames? How about as_tibble()? Maybe matrices? -->
 
 ## Summary
 ### 
