@@ -88,7 +88,6 @@ p5 <- ggplot(mpg, aes(x = cty, y = hwy, color = drv)) +
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-
 <!-- Clark feedback -->
 
 
@@ -3390,174 +3389,24 @@ We overcame our scales problem by sharing scales across multiple plots, training
 
 In this section, we will learn about how to customize the non-data elements of your plot with a theme.
 
-The **ggplot2** package includes eight themes, with `theme_gray()` as the default. Many more are included in add-on packages like **ggthemes** (https://jrnold.github.io/ggthemes), by Jeffrey Arnold. You can also create your own themes, if you are trying to match a particular corporate or journal style.
+The **ggplot2** package includes eight themes, with `theme_gray()` as the default. Many more are included in add-on packages such as **ggthemes** (https://jrnold.github.io/ggthemes), by Jeffrey Arnold. You can also create your own themes, if you are trying to match a particular corporate or journal style.
 
 ### Exercise 1
 
-<!-- DK: Change this initial sequence so that, instead of a step to build each item, we just build the plot once, and then each question switches the theme. -->
-
-With a new pipeline, pipe `mpg` to `ggplot()`. 
+Pipe `mpg` to `ggplot()`. Within `aes()`, set `x = displ` and `y = hwy`. Follow with `geom_point(aes(color = class))`. Last line is `geom_smooth(se = FALSE)`.
 
 ```{r themes-1, exercise = TRUE}
 
 ```
 
 ```{r themes-1-hint-1, eval = FALSE}
-mpg |> 
-  ...
+... |> 
+  ggplot(aes(x = ..., ... = hwy)) +
+    geom_point(...(color = class)) +
+    geom_smooth(se = ...)
 ```
 
 ```{r themes-1-test, include = FALSE}
-mpg |> 
-  ggplot()
-```
-
-### 
-
-One theme that the **ggthemes** package has is `theme_bw()`. This is the classic dark-on-light ggplot2 theme. This theme may work better for presentations displayed with a projector.
-
-### Exercise 2
-
-Within `ggplot()`, using `aes()`, map `x` to `displ`.
-
-```{r themes-2, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-2-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = ...))
-```
-
-```{r themes-2-test, include = FALSE}
-mpg |> 
-  ggplot(aes(x = displ))
-```
-
-### 
-
-Another theme that the **ggthemes** package has is `theme_linedraw()`. This is a theme with only black lines of various widths on white backgrounds, reminiscent of a line drawing. Serves a purpose similar to `theme_bw()`. Note that this theme has some very thin lines *(<< 1 pt)* which some journals may refuse.
-
-### Exercise 3
-
-Using your previous code, within `ggplot()` and within `aes()`, map `y` to `hwy`. 
-
-```{r themes-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-3-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = displ, y = ...))
-```
-
-```{r themes-3-test, include = FALSE}
-mpg |> 
-  ggplot(aes(x = displ, y = hwy))
-```
-
-### 
-
-A third theme that the **ggthemes** package has is `theme_light()`. This is a theme similar to `theme_linedraw()` but with light grey lines and axes, to direct more attention towards the data.
-
-### Exercise 4
-
-Add `geom_point()` to the pipeline. 
-
-```{r themes-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-4-hint-1, eval = FALSE}
-... +
-  geom_point()
-```
-
-```{r themes-4-test, include = FALSE}
-mpg |> 
-  ggplot(aes(x = displ, y = hwy)) +
-    geom_point()
-```
-
-### 
-
-A fourth theme that the **ggthemes** package offers is `theme_dark()`. This theme is the dark cousin of `theme_light()`, with similar line sizes but a dark background. Useful to make thin coloured lines pop out.
-
-### Exercise 5
-
-<!-- DK: Explain what/why this aes() is within geom_point(). -->
-
-Within `geom_point()`, add `aes()` and, within that function, set `color` to `class`. 
-
-```{r themes-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-5-hint-1, eval = FALSE}
-... +
-  geom_point(aes(color = ...))
-```
-
-```{r themes-5-test, include = FALSE}
-mpg |> 
-  ggplot(aes(x = displ, y = hwy)) +
-    geom_point(aes(color = class))
-```
-
-### 
-
-A fifth theme that the **ggthemes** package offers is `theme_minimal()`. This is a minimalistic theme with no background annotations.
-
-### Exercise 6
-
-Add `geom_smooth()` to the pipeline. 
-
-```{r themes-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-6-hint-1, eval = FALSE}
-... +
-  geom_smooth()
-```
-
-```{r themes-6-test, include = FALSE}
-mpg |> 
-  ggplot(aes(x = displ, y = hwy)) +
-    geom_point(aes(color = class)) +
-    geom_smooth()
-```
-
-### 
-
-Another theme that the **ggthemes** package offers is `theme_classic()`. This is a classic-looking theme, with x and y axis lines and no gridlines.
-
-### Exercise 7
-
-Within `geom_smooth()`, add the argument `se` and set it equal to `FALSE`.
-
-```{r themes-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-7-hint-1, eval = FALSE}
-... +
-  geom_smooth(se = ...)
-```
-
-```{r themes-7-test, include = FALSE}
 mpg |> 
   ggplot(aes(x = displ, y = hwy)) +
     geom_point(aes(color = class)) +
@@ -3566,24 +3415,27 @@ mpg |>
 
 ### 
 
-Another theme that the **ggthemes** package offers is `theme_void()`. This is a completely empty theme.
+This plot show the `theme_gray()` default. 
 
-### Exercise 8
+Many people wonder why the default theme has a gray background. This was a deliberate choice because it puts the data forward while still making the grid lines visible. The white grid lines are visible (which is important because they significantly aid position judgments), but they have little visual impact and we can easily tune them out. The gray background gives the plot a similar typographic color to the text, ensuring that the graphics fit in with the flow of a document without jumping out with a bright white background. Finally, the gray background creates a continuous field of color which ensures that the plot is perceived as a single visual entity
+
+
+### Exercise 2
 
 Add `theme_bw()` to the pipeline.
 
-```{r themes-8, exercise = TRUE}
+```{r themes-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r themes-8-hint-1, eval = FALSE}
+```{r themes-2-hint-1, eval = FALSE}
 ... +
-  theme_bw()
+    theme_bw()
 ```
 
-```{r themes-8-test, include = FALSE}
+```{r themes-2-test, include = FALSE}
 mpg |> 
   ggplot(aes(x = displ, y = hwy)) +
     geom_point(aes(color = class)) +
@@ -3593,11 +3445,69 @@ mpg |>
 
 ### 
 
-The `theme_bw()` function used here, changes the signature **ggplot2** theme with a grey background and white gridlines that is designed to put the data forward yet make comparisons easy to a classic dark-on-light **ggplot2** theme
+This is the classic dark-on-light **ggplot2** theme. This theme may work better for presentations displayed with a projector.
 
-### Exercise 9
+### Exercise 3
 
-Having learned about the built-in themes, we will now create this graphic:
+Replace `theme_bw()` with `theme_linedraw()`.
+
+
+```{r themes-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r themes-3-hint-1, eval = FALSE}
+... +
+    theme_linedraw()
+```
+
+```{r themes-3-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+    geom_point(aes(color = class)) +
+    geom_smooth(se = FALSE) +
+    theme_linedraw()
+```
+
+### 
+
+A theme with only black lines of various widths on white backgrounds, reminiscent of a line drawing. Serves a purpose similar to `theme_bw()`.
+
+### Exercise 4
+
+Replace `theme_linedraw()` with `theme_light()`.
+
+
+```{r themes-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r themes-4-hint-1, eval = FALSE}
+... +
+    theme_light()
+```
+
+```{r themes-4-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = displ, y = hwy)) +
+    geom_point(aes(color = class)) +
+    geom_smooth(se = FALSE) +
+    theme_light()
+```
+
+### 
+
+A theme similar to `theme_linedraw()` but with light grey lines and axes, to direct more attention towards the data. There are four other themes built into **ggplot2**.
+
+
+
+### Exercise 5
+
+Having learned about the **ggplot2** themes, we will now create this graphic:
 
 <!-- DK: Don't necessarily need to use the exact same plot as in the book. Why not make it nicer with, for example, a subtitle and caption.  -->
 
@@ -3623,7 +3533,132 @@ themes_plot <- mpg |>
 themes_plot
 ```
 
-With a new pipeline, pipe `mpg` to `ggplot()`.
+Start a new pipeline with 
+
+````
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
+  geom_point()
+````
+
+
+```{r themes-5, exercise = TRUE}
+
+```
+
+```{r themes-5-hint-1, eval = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
+  geom_point()
+```
+
+```{r themes-5-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
+  geom_point()
+```
+
+### 
+
+It’s possible to control individual components of each theme, like the size and color of the font used for the `y` axis. We’ve already seen that `legend.position` controls where the legend is drawn. There are many other aspects of the legend that can be customized with `theme()`.
+
+### Exercise 6
+
+Using `labs()`, set `title` to `"Larger engine sizes tend to have lower fuel economy"`and `caption` to `"Source: https://fueleconomy.gov"`.
+
+```{r themes-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r themes-6-hint-1, eval = FALSE}
+... +
+  labs(title = ...,
+       caption = ...)
+```
+
+```{r themes-6-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
+  geom_point() +
+  labs(
+    title = "Larger engine sizes tend to have lower fuel economy",
+    caption = "Source: https://fueleconomy.gov."
+  )
+```
+
+### 
+
+In the plot which we are trying to create, we need to change the direction of the legend as well as put a black border around it. The `theme()` function provides us with the ability to make very detailed changes in plot.
+
+### Exercise 7
+
+Add `theme()` to the pipeline. Within `theme()`, add the `legend.position` argument and set it equal to `c(0.6, 0.7)`.
+
+```{r themes-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r themes-7-hint-1, eval = FALSE}
+... +
+  theme(
+    legend.position = ...
+    )
+```
+
+```{r themes-7-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
+  geom_point() +
+  labs(
+    title = "Larger engine sizes tend to have lower fuel economy",
+    caption = "Source: https://fueleconomy.gov."
+  ) +
+  theme(
+    legend.position = c(0.6, 0.7)
+  )
+```
+
+### 
+
+The `legend.position` argument sets the position of legends ("none", "left", "right", "bottom", "top", or a two-element numeric vector).
+
+### Exercise 8
+
+Within `theme()`, add the `legend.direction` argument and set it equal to `"horizontal"`. 
+
+```{r themes-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r themes-8-hint-1, eval = FALSE}
+... +
+  theme(
+    legend.position = c(0.6, 0.7),
+    legend.direction = ...
+    )
+```
+
+```{r themes-8-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
+  geom_point() +
+  labs(
+    title = "Larger engine sizes tend to have lower fuel economy",
+    caption = "Source: https://fueleconomy.gov."
+  ) +
+  theme(
+    legend.position = c(0.6, 0.7),
+    legend.direction = "horizontal"
+  )
+```
+
+### 
+
+The `legend.direction` argument sets the layout of items in legends ("horizontal" or "vertical"). Note the change in the legend in this plot relative to the previous one.
+
+### Exercise 9
+
+Within `theme()`, add the `legend.box.background` argument and set it equal to `element_rect(color = "black")`. 
 
 ```{r themes-9, exercise = TRUE}
 
@@ -3632,180 +3667,6 @@ With a new pipeline, pipe `mpg` to `ggplot()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r themes-9-hint-1, eval = FALSE}
-mpg |> 
-  ggplot()
-```
-
-```{r themes-9-test, include = FALSE}
-
-```
-
-### 
-
-It’s also possible to control individual components of each theme, like the size and color of the font used for the `y` axis. We’ve already seen that `legend.position` controls where the legend is drawn. There are many other aspects of the legend that can be customized with `theme()`
-
-### Exercise 10
-
-Within `ggplot()`, map `x` to `displ` using `aes()`. 
-
-```{r themes-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-10-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = ...))
-```
-
-```{r themes-10-test, include = FALSE}
-
-```
-
-### Exercise 11
-
-Within `ggplot()`, map `y` to `hwy` using `aes()`. 
-
-```{r themes-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-11-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = displ, y = ...))
-```
-
-```{r themes-11-test, include = FALSE}
-
-```
-
-### Exercise 12
-
-Within `ggplot()`, map `color` to `drv`. 
-
-```{r themes-12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-12-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = displ, y = ..., color = ...))
-```
-
-```{r themes-12-test, include = FALSE}
-
-```
-
-### 
-
-One of the final themes in **ggthemes** is `theme_test()`. This is a theme for visual unit tests. It should ideally never change except for new features. 
-
-### Exercise 13
-
-Add `geom_point()` to the pipeline. 
-
-```{r themes-13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-13-hint-1, eval = FALSE}
-... +
-  geom_point()
-```
-
-```{r themes-13-test, include = FALSE}
-
-```
-
-### Exercise 14
-
-Add a `title` and a `caption` using `labs()`. (Hint: The caption should be `"Source: https://fueleconomy.gov"`)
-
-```{r themes-14, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-14-hint-1, eval = FALSE}
-... +
-  labs(title = ...,
-       caption = ...)
-```
-
-```{r themes-14-test, include = FALSE}
-
-```
-
-### Exercise 15
-
-Add `theme()` to the pipeline. Within `theme()`, add the `legend.position` argument and set it equal to `c(0.6, 0.7)`.
-
-```{r themes-15, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-15-hint-1, eval = FALSE}
-... +
-  theme(
-    legend.position = ...
-    )
-```
-
-```{r themes-15-test, include = FALSE}
-
-```
-
-### 
-
-The `legend.position` argument sets the position of legends ("none", "left", "right", "bottom", "top", or two-element numeric vector).
-
-### Exercise 16
-
-Within `theme()`, add the `legend.direction` argument and set it equal to `"horizontal"`. 
-
-```{r themes-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-16-hint-1, eval = FALSE}
-... +
-  theme(
-    legend.position = ...,
-    legend.direction = ...
-    )
-```
-
-```{r themes-16-test, include = FALSE}
-
-```
-
-### 
-
-The `legend.direction` argument sets the layout of items in legends ("horizontal" or "vertical")
-
-### Exercise 17
-
-Within `theme()`, add the `legend.box.background` argument and set it equal to `element_rect(color = "black")`. 
-
-```{r themes-17, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-17-hint-1, eval = FALSE}
 ... +
   theme(
     legend.position = ...,
@@ -3814,25 +3675,35 @@ Within `theme()`, add the `legend.box.background` argument and set it equal to `
     )
 ```
 
-```{r themes-17-test, include = FALSE}
-
+```{r themes-9-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
+  geom_point() +
+  labs(
+    title = "Larger engine sizes tend to have lower fuel economy",
+    caption = "Source: https://fueleconomy.gov."
+  ) +
+  theme(
+    legend.position = c(0.6, 0.7),
+    legend.direction = "horizontal",
+    legend.box.background = element_rect(color = "black")
+  )
 ```
 
 ### 
 
-The `legend.box.background` argument sets the background of legend area (`element_rect()`; inherits from rect)
+Note that customization of the legend box and plot title elements of the theme are done with `element_*()` functions. These functions specify the styling of non-data components, e.g., the legend border color is defined in the color argument of `element_rect()`. 
 
-### Exercise 18
+### Exercise 10
 
 Within `theme()`, add the `plot.title` argument and set it equal to `element_text(face = "bold")`. 
 
-```{r themes-18, exercise = TRUE}
+```{r themes-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r themes-18-hint-1, eval = FALSE}
+```{r themes-10-hint-1, eval = FALSE}
 ... +
   theme(
     legend.position = ...,
@@ -3842,80 +3713,39 @@ Within `theme()`, add the `plot.title` argument and set it equal to `element_tex
     )
 ```
 
-```{r themes-18-test, include = FALSE}
-
+```{r themes-10-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
+  geom_point() +
+  labs(
+    title = "Larger engine sizes tend to have lower fuel economy",
+    caption = "Source: https://fueleconomy.gov."
+  ) +
+  theme(
+    legend.position = c(0.6, 0.7),
+    legend.direction = "horizontal",
+    legend.box.background = element_rect(color = "black"),
+    plot.title = element_text(face = "bold")
+  )
 ```
 
 ### 
 
-The `plot.title` argument changes the plot title (text appearance) (`element_text()`; inherits from title) left-aligned by default
+The `plot.title` argument changes the plot title (text appearance) (`element_text()`; inherits from title) left-aligned by default.
 
-### Exercise 19
 
-Within `theme()`, add the `plot.title.position` argument and set it equal to `"plot"`. 
 
-```{r themes-19, exercise = TRUE}
 
-```
+### Exercise 11
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+Within `theme()`, let's make three more additions: Set `plot.title.position` to `"plot"`, `plot.caption.position` to `"plot"`, and `plot.caption` to `element_text(hjust = 0)`. 
 
-```{r themes-19-hint-1, eval = FALSE}
-... +
-  theme(
-    legend.position = ...,
-    legend.direction = ...,
-    legend.box.background = ...,
-    plot.title = ...,
-    plot.title.position = ...
-    )
-```
-
-```{r themes-19-test, include = FALSE}
-
-```
-
-### 
-
-The `plot.title.position` argument sets the alignment of the plot title/subtitle and caption. A value of `"plot"` means that titles and/or caption are aligned to the entire plot (minus any space for margins and plot tag).
-
-### Exercise 20
-
-Within `theme()`, add the `plot.caption.position` argument and set it equal to `"plot"`.
-
-```{r themes-20, exercise = TRUE}
+```{r themes-11, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r themes-20-hint-1, eval = FALSE}
-... +
-  theme(
-    legend.position = ...,
-    legend.direction = ...,
-    legend.box.background = ...,
-    plot.title = ...,
-    plot.title.position = ...,
-    plot.caption.position = ...
-    )
-```
-
-```{r themes-20-test, include = FALSE}
-
-```
-
-### Exercise 21
-
-Within `theme()`, add the `plot.caption` argument and set it to `element_text(hjust = 0)`. 
-
-```{r themes-21, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-21-hint-1, eval = FALSE}
+```{r themes-11-hint-1, eval = FALSE}
 ... +
   theme(
     legend.position = ...,
@@ -3928,41 +3758,31 @@ Within `theme()`, add the `plot.caption` argument and set it to `element_text(hj
     )
 ```
 
-```{r themes-21-test, include = FALSE}
-
-```
-
-### 
-
-The `plot.caption` argument within `theme()` sets the caption below the plot (text appearance) (`element_text()`; inherits from title) right-aligned by default. 
-
-### 
-
-### Exercise 22
-
-Within `labs()` add a `subtitle`, `x` axis title, and a `y` axis title. 
-
-```{r themes-22, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r themes-22-hint-1, eval = FALSE}
-... +
+```{r themes-11-test, include = FALSE}
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
+  geom_point() +
   labs(
-    title = ...,
-    caption = ...,
-    subtitle = ...,
-    x = ...,
-    y = ...
+    title = "Larger engine sizes tend to have lower fuel economy",
+    caption = "Source: https://fueleconomy.gov."
   ) +
-  theme(...)
+  theme(
+    legend.position = c(0.6, 0.7),
+    legend.direction = "horizontal",
+    legend.box.background = element_rect(color = "black"),
+    plot.title = element_text(face = "bold"),
+    plot.title.position = "plot",
+    plot.caption.position = "plot",
+    plot.caption = element_text(hjust = 0)
+  )
 ```
 
-```{r themes-22-test, include = FALSE}
+### 
 
-```
+The theme elements that control the position of the title and the caption are `plot.title.position` and `plot.caption.position`, respectively. In the this plot these are set to `"plot"` to indicate these elements are aligned to the entire plot area, instead of the plot panel (the default).
+
+The `plot.caption` argument with value `element_text(hjust = 0)` places the caption flush left. It would otherwise be right-aligned by default. 
+
+### 
 
 Reminder: This is what our plot should look like
 
@@ -4199,8 +4019,6 @@ guide_area() / (p1 + p2) / (p3 + p4) / p5 +
 ### 
 
 Note the use of the & operator here instead of the usual +. This is because we’re modifying the theme for the patchwork plot as opposed to the individual ggplots. The legend is placed on top, inside the guide_area().
-
-
 
 
 
