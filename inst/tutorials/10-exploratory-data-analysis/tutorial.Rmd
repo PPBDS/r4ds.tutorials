@@ -1,6 +1,6 @@
 ---
 title: Exploratory data analysis
-author: David Kane, Srihith Garlapati and Heather Li
+author: David Kane
 tutorial:
   id: exploratory-data-analysis
 output:
@@ -14,6 +14,7 @@ description: 'Tutorial for Chapter 10: Exploratory data analysis'
 ```{r setup, include = FALSE}
 library(learnr)
 library(tutorial.helpers)
+library(knitr)
 
 library(tidyverse)
 library(tidymodels)
@@ -123,7 +124,6 @@ months <-
 
 ```
 
-
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
 ```
 
@@ -132,9 +132,6 @@ months <-
 
 <!-- Do the last two fancy graphics belong here? Not both of them! They are too long, and this is not a short tutorial already. But where to put them? -->
 
-
-<!-- SG: Add labs() to this area -->
-
 <!-- The below links should be dropped at least once, if not twice. -->
 
 <!-- https://ggplot2.tidyverse.org/ -->
@@ -142,20 +139,23 @@ months <-
 <!-- https://socviz.co/ -->
 <!-- https://clauswilke.com/dataviz/ -->
 
-<!-- Split up some of these Sections into smaller parts, one for several of the subsections in the chapter, like  A categorical and a numerical variable -->
 
+<!-- Revisit the Patterns and models section. It is a mess! -->
 
 ## Introduction
 ### 
 
-*This is a ROUGH, UNFINISHED, draft.*
-
 This tutorial covers [Chapter 10: Exploratory data analysis](https://r4ds.hadley.nz/eda.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. We will be making use of the [**ggplot2**](https://ggplot2.tidyverse.org/) and the [**dplyr**](https://dplyr.tidyverse.org/) packages to learn about variation and patterns. Some key commands include [`coord_cartesian()`](https://ggplot2.tidyverse.org/reference/coord_cartesian.html), [`geom_freqpoly()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html), [`fct_reorder()`](https://forcats.tidyverse.org/reference/fct_reorder.html), [`geom_tile()`](https://ggplot2.tidyverse.org/reference/geom_tile.html), and [`geom_count()`](https://ggplot2.tidyverse.org/reference/geom_count.html). 
+
+<!-- There is a Question section which includes no code. I have incorporated that material as knowledge drops in the Variation section. -->
+
 
 ## Variation
 ### 
 
-In this section, we will learn about variation or basically the tendency of values of a variable to change from measurement to measurement. 
+<!-- DK: Section is OK, but could be cleaned up. For example, why bother creating `smaller`. Just pipe it. -->
+
+Your goal during EDA is to develop an understanding of your data. The easiest way to do this is to use questions as tools to guide your investigation. When you ask a question, the question focuses your attention on a specific part of your dataset and helps you decide which graphs, models, or transformations to make.
 
 ### Exercise 1
 
@@ -269,7 +269,7 @@ diamonds |>
 
 ### 
 
-Let's visualize the distribution of the variable's values using the `binwidth` argument to `geom_histogram()`.
+Every variable has its own pattern of variation, which can reveal interesting information about how that it varies between measurements on the same observation as well as across observations. The best way to understand that pattern is to visualize the distribution of the variable’s values.
 
 ### Exercise 6
 
@@ -294,7 +294,7 @@ diamonds |>
 
 ### 
 
-This plot is a way to visualize variation. Let's now take a look at the distribution of carat for smaller diamonds.
+We’ll start our exploration by visualizing the distribution of weights (carat) of ~54,000 diamonds from the diamonds dataset. Since carat is a numerical variable, we can use a histogram.
 
 ### Exercise 7
 
@@ -324,7 +324,7 @@ Some valuable questions to ask yourself when dealing with variation are the foll
 
 ### Exercise 8
 
-We are still creating the `smaller` tibble. Copy your previous code and create a pipeline with `diamonds`. Pipe `diamonds` with `filter()` and filter out `carat` that are less than `3`. 
+We are still creating the `smaller` tibble. Copy your previous code and create a pipeline with `diamonds`. Pipe `diamonds` with `filter()` and filter out rows for which `carat` is less than `3`. 
 
 ```{r variation-8, exercise = TRUE}
 
@@ -452,6 +452,8 @@ smaller |>
 
 ### 
 
+<!-- DK: Does this knowledge drop really belong here? -->
+
 This visualization also revealed clusters, which suggest that subgroups exist in your data. To understand the subgroups, ask:
 
 - How are the observations within each subgroup similar to each other?
@@ -501,7 +503,16 @@ diamonds |>
   ggplot(aes(x = ...))
 ```
 
+```{r variation-14-test, include = FALSE}
+diamonds |> 
+  ggplot(aes(x = y))
+```
+
 ### 
+
+Be careful! The `x` in this code is an argument, the usual usage with `aes()`. The `y`, on the other hand, is not an argument! It is not the usual `y` for which we provide a value when using `aes()`. In this case, `y` is a variable in the `diamonds` tibble. 
+
+Always be careful when variable names happen to be the same as argument names!
 
 Sometimes outliers are data entry errors, sometimes they are simply values at the extremes that happened to be observed in this data collection, and other times they suggest important new discoveries.
 
@@ -520,9 +531,15 @@ Add `geom_histogram()` to the pipeline
   geom_histogram()
 ```
 
+```{r variation-15-test, include = FALSE}
+diamonds |> 
+  ggplot(aes(x = y)) +
+    geom_histogram()
+```
+
 ### 
 
-When you have a lot of data, outliers are sometimes difficult to see in a histogram.
+When you have a lot of data, outliers are sometimes difficult to see in a histogram. We know that they are there because the x-axis extends all the way to 60.
 
 ### Exercise 16
 
@@ -537,6 +554,12 @@ Within `geom_histogram()`, add the `binwidth` argument and set it equal to `0.5`
 ```{r variation-16-hint-1, eval = FALSE}
 ... +
   geom_histogram(binwidth = ...)
+```
+
+```{r variation-16-test, include = FALSE}
+diamonds |> 
+  ggplot(aes(x = y)) +
+    geom_histogram(binwidth = 0.5)
 ```
 
 ### 
@@ -558,14 +581,20 @@ Add `coord_cartesian()` to the pipeline. Within `coord_cartesian()`, add the `yl
   coord_cartesian(ylim = ...)
 ```
 
+```{r variation-17-test, include = FALSE}
+diamonds |> 
+  ggplot(aes(x = y)) +
+    geom_histogram(binwidth = 0.5) +
+    coord_cartesian(ylim = c(0, 50))
+```
+
 ### 
 
-The function, `coord_cartesian()`, also has an `xlim` argument for when you need to zoom into the x-axis. ggplot2 also has `xlim()` and `ylim()` functions that work slightly differently: they throw away the data outside the limits. This allows us to see that there are three unusual values: `0`, `~30`, and `~60`. 
+The function, `coord_cartesian()`, also has an `xlim` argument for when you need to zoom into the x-axis. **ggplot2** also has `xlim()` and `ylim()` functions that work slightly differently: they throw away the data outside the limits. This allows us to see that there are three unusual values: `0`, `~30`, and `~60`. 
 
 ### Exercise 18
 
 Pipe `diamonds` to `filter()` and filter `y` to be less than `3`.
-
 
 ```{r variation-18, exercise = TRUE}
 
@@ -588,7 +617,7 @@ The `y` variable measures one of the three dimensions of these diamonds, in `mm`
 
 ### Exercise 19
 
-Modify the pipe by adding, to the `filter()` command,  `|` and `y` greater than `20`.
+Modify the pipe by adding, to the `filter()` command,  `|` and then `y` greater than `20`.
 
 ```{r variation-19, exercise = TRUE}
 
@@ -625,6 +654,12 @@ Add `select()` to the pipeline. Within `select()`, select the variables `price`,
   select(price, x, ...)
 ```
 
+```{r variation-20-test, include = FALSE}
+diamonds |> 
+  filter(y < 3 | y > 20) |> 
+  select(price, x, y, z)
+```
+
 ### Exercise 21
 
 Add `arrange()` to the pipeline. Within `arrange()`, add the variable `y`  
@@ -640,21 +675,24 @@ Add `arrange()` to the pipeline. Within `arrange()`, add the variable `y`
   arrange(...)
 ```
 
+```{r variation-21-test, include = FALSE}
+diamonds |> 
+  filter(y < 3 | y > 20) |> 
+  select(price, x, y, z) |> 
+  arrange(y)
+```
+
 This arranges the data by the width of the diamonds. By doing EDA, we have discovered missing data that was coded as `0`, which we never would have found by simply searching for `NAs`. Going forward we might choose to re-code these values as `NAs` in order to prevent misleading calculations. We might also suspect that measurements of `32mm` and `59mm` are implausible: those diamonds are over an inch long, but don’t cost hundreds of thousands of dollars!
 
 
 ## Unusual Values
 ### 
 
-In this section we will learn about the ways to deal with unusual values in a dataset.
+In this section we will learn about the ways to deal with unusual values in a dataset. One way is to drop the entire row with the strange values. By the end of this section we will be creating the plot below:
 
-### 
+<!-- DK: This plot is awful ugly, although it is also ugly in the book. Ought to make it nicer, or even replace it? -->
 
-One way is to drop the entire row with the strange values.
-
-### 
-
-By the end of this section we will be creating the plot below:
+<!-- DK: Make this more like the chapter. -->
 
 ```{r}
 p1 <- nycflights13::flights |> 
@@ -683,9 +721,11 @@ With a new pipeline, pipe `diamonds` to `filter()`. Within `filter()`, type `bet
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r unusual-values-1-hint-1, eval = FALSE}
+
+```
+
+```{r unusual-values-1-test, include = FALSE}
 
 ```
 
@@ -693,7 +733,6 @@ With a new pipeline, pipe `diamonds` to `filter()`. Within `filter()`, type `bet
 
 This just keeps the rows with the normal values and drops all of the rows with the strange values. We don’t recommend this option because one invalid value doesn’t imply that all the other values for that observation are also invalid. Additionally, if you have low quality data, by the time that you’ve applied this approach to every variable you might find that you don’t have any data left!
 
-### 
 
 ### Exercise 2
 
@@ -708,6 +747,10 @@ Create a new variable called `diamonds2` and set it equal to `diamonds`.
 
 ```{r unusual-values-2-hint-1, eval = FALSE}
 diamonds2 <- ...
+```
+
+```{r unusual-values-2-test, include = FALSE}
+
 ```
 
 ### 
@@ -727,6 +770,10 @@ Copy your previous code and pipe `diamonds` to `mutate()`. Within `mutate()`, cr
 ```{r unusual-values-3-hint-1, eval = FALSE}
 diamonds2 <- diamonds |> 
   mutate(y_new = ...)
+```
+
+```{r unusual-values-3-test, include = FALSE}
+
 ```
 
 ### 
@@ -750,6 +797,10 @@ Add `ggplot()` to the pipeline.
   ggplot()
 ```
 
+```{r unusual-values-4-test, include = FALSE}
+
+```
+
 ### Exercise 5
 
 Within `ggplot()`, using `aes()`, set the `x` argument to `x` and the `y` argument to `y_new`.
@@ -765,6 +816,10 @@ Within `ggplot()`, using `aes()`, set the `x` argument to `x` and the `y` argume
   ggplot(aes(x = ..., y = ...))
 ```
 
+```{r unusual-values-5-test, include = FALSE}
+
+```
+
 ### Exercise 6
 
 Add `geom_point()` to the pipeline.
@@ -778,6 +833,10 @@ Add `geom_point()` to the pipeline.
 ```{r unusual-values-6-hint-1, eval = FALSE}
 ... +
   geom_point()
+```
+
+```{r unusual-values-6-test, include = FALSE}
+
 ```
 
 ### 
@@ -797,6 +856,10 @@ Within `geom_point()`, add the `na.rm` argument and set it equal to `TRUE`.
 ```{r unusual-values-7-hint-1, eval = FALSE}
 ... + 
   geom_point(na.rm = ...)
+```
+
+```{r unusual-values-7-test, include = FALSE}
+
 ```
 
 ### 
@@ -821,6 +884,10 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title using `labs()`.
     )
 ```
 
+```{r unusual-values-8-test, include = FALSE}
+
+```
+
 ### 
 
 Other times you want to understand what makes observations with missing values different to observations with recorded values. For example, in `nycflights13::flights`, missing values in the `dep_time` variable indicate that the flight was cancelled. So you might want to compare the scheduled departure times for cancelled and non-cancelled times. You can do this by making a new variable, using `is.na()` to check if `dep_time` is missing. Let's make a plot using `geom_freqpoly()`. 
@@ -838,6 +905,10 @@ nycflights13::flights |>
   mutate(
     cancelled = ...
   )
+```
+
+```{r unusual-values-9-test, include = FALSE}
+
 ```
 
 ### 
@@ -861,6 +932,10 @@ nycflights13::flights |>
     cancelled = is.na(dep_time),
     sched_hour = ...
   )
+```
+
+```{r unusual-values-10-test, include = FALSE}
+
 ```
 
 ### 
@@ -888,6 +963,10 @@ nycflights13::flights |>
   )
 ```
 
+```{r unusual-values-11-test, include = FALSE}
+
+```
+
 ### 
 
 *“Far better an approximate answer to the right question, which is often vague, than an exact answer to the wrong question, which can always be made precise.” — John Tukey*
@@ -912,6 +991,10 @@ nycflights13::flights |>
   )
 ```
 
+```{r unusual-values-12-test, include = FALSE}
+
+```
+
 ### 
 
 EDA is fundamentally a creative process. And like most creative processes, the key to asking quality questions is to generate a large quantity of questions. It is difficult to ask revealing questions at the start of your analysis because you do not know what insights can be gleaned from your dataset.
@@ -931,6 +1014,10 @@ Add `ggplot()` to the pipeline.
   ggplot()
 ```
 
+```{r unusual-values-13-test, include = FALSE}
+
+```
+
 ### 
 
 Each new question that you ask will expose you to a new aspect of your data and increase your chance of making a discovery. You can quickly drill down into the most interesting parts of your data—and develop a set of thought-provoking questions—if you follow up each question with a new question based on what you find.
@@ -948,6 +1035,10 @@ Within `ggplot()`, using `aes()`, set the `x` argument to the `sched_dep_time` v
 ```{r unusual-values-14-hint-1, eval = FALSE}
 ... + 
   ggplot(aes(x = ...))
+```
+
+```{r unusual-values-14-test, include = FALSE}
+
 ```
 
 ### 
@@ -973,6 +1064,10 @@ Add `geom_freqpoly()` to the pipeline.
   geom_freqpoly()
 ```
 
+```{r unusual-values-15-test, include = FALSE}
+
+```
+
 ### Exercise 16
 
 Within `geom_freqpoly()`, using `aes()`, set the `color` argument equal to the `cancelled` variable.
@@ -988,6 +1083,10 @@ Within `geom_freqpoly()`, using `aes()`, set the `color` argument equal to the `
   geom_freqpoly(aes(color = ...))
 ```
 
+```{r unusual-values-16-test, include = FALSE}
+
+```
+
 ### Exercise 17
 
 Within `geom_freqpoly()`, add the `binwidth` argument and set it equal to `1/4`. 
@@ -1001,6 +1100,10 @@ Within `geom_freqpoly()`, add the `binwidth` argument and set it equal to `1/4`.
 ```{r unusual-values-17-hint-1, eval = FALSE}
 ... +
   geom_freqpoly(aes(color = cancelled), binwidth = ...)
+```
+
+```{r unusual-values-17-test, include = FALSE}
+
 ```
 
 ### Exercise 18
@@ -1023,6 +1126,10 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs(
   )
 ```
 
+```{r unusual-values-18-test, include = FALSE}
+
+```
+
 ### 
 
 However this plot isn’t great because there are many more non-cancelled flights than cancelled flights. In the next section we’ll explore some techniques for improving this comparison.
@@ -1039,11 +1146,8 @@ p1
 ## Covariation
 ### 
 
-In this section we will be learning how to describe the behavior between variables.
+If variation describes the behavior within a variable, covariation describes the behavior between variables. By the end of this section we will have made this graph:
 
-### 
-
-By the end of this section we will have made this graph:
 ```{r}
 p2 <- mpg |> 
   ggplot(aes(x = hwy, y = fct_reorder(class, hwy, median))) +
@@ -1052,7 +1156,7 @@ p2 <- mpg |>
     title = "Variation of Highway Mileage over Classes", 
     subtitle = "The compact and midsized cars are tied for the highest highway mileage.",
     x = "Highway Mileage",
-    y = "Car Classes"
+    y = NULL
   )
 
 p2
@@ -1066,15 +1170,14 @@ With a new pipeline, pipe `diamonds` to `ggplot()`.
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r covariation-1-hint-1, eval = FALSE}
 diamonds |> 
   ...
 ```
 
 ```{r covariation-1-test, include = FALSE}
-
+diamonds |> 
+  ggplot()
 ```
 
 ### 
@@ -1097,7 +1200,8 @@ diamonds |>
 ```
 
 ```{r covariation-2-test, include = FALSE}
-
+diamonds |> 
+  ggplot(aes(x = price))
 ```
 
 ### 
@@ -1120,7 +1224,9 @@ Add `geom_freqpoly()` to the pipeline.
 ```
 
 ```{r covariation-3-test, include = FALSE}
-
+diamonds |> 
+  ggplot(aes(x = price)) +
+    geom_freqpoly()
 ```
 
 ### 
@@ -1143,16 +1249,18 @@ Within `geom_freqpoly()`, using `aes()`, set the `color` argument to the `cut` v
 ```
 
 ```{r covariation-4-test, include = FALSE}
-
+diamonds |> 
+  ggplot(aes(x = price)) +
+    geom_freqpoly(aes(color = cut))
 ```
 
 ### 
 
-Note that ggplot2 uses an ordered color scale for `cut` because it’s defined as an ordered factor variable in the data.
+Note that **ggplot2** uses an ordered color scale for `cut` because it’s defined as an ordered factor variable in the data.
 
 ### Exercise 5
 
-Within `geom_freqpoly()`, add the `binwidth` argument and set it equal to `500`. 
+Within `geom_freqpoly()`, set `binwidth` to `500` and `linewidth` to `0.75`. 
 
 ```{r covariation-5, exercise = TRUE}
 
@@ -1162,16 +1270,26 @@ Within `geom_freqpoly()`, add the `binwidth` argument and set it equal to `500`.
 
 ```{r covariation-5-hint-1, eval = FALSE}
 ... + 
-  geom_freqpoly(aes(color = cut), binwidth = ...)
+  geom_freqpoly(aes(color = cut), 
+                binwidth = ...,
+                ... = 0.75)
 ```
 
 ```{r covariation-5-test, include = FALSE}
-
+diamonds |> 
+  ggplot(aes(x = price)) +
+    geom_freqpoly(aes(color = cut), 
+                  binwidth = 500,
+                  linewidth = 0.75)
 ```
+
+### 
+
+The default appearance of `geom_freqpoly()` is not that useful here because the height, determined by the overall count, differs so much across `cut`s, making it hard to see the differences in the shapes of their distributions. To make the comparison easier we need to swap what is displayed on the y-axis. Instead of displaying count, we’ll display the **density**, which is the count standardized so that the area under each frequency polygon is one.
 
 ### Exercise 6
 
-Within `geom_freqpoly()`, add the `linewidth` argument and set it equal to `0.75`. 
+Within `ggplot()`, within `aes()`, set the `y` argument to `after_stat(density)`. 
 
 ```{r covariation-6, exercise = TRUE}
 
@@ -1180,21 +1298,26 @@ Within `geom_freqpoly()`, add the `linewidth` argument and set it equal to `0.75
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r covariation-6-hint-1, eval = FALSE}
-... + 
-  geom_freqpoly(aes(color = cut), binwidth = 500, linewidth = ...)
+diamonds |> 
+  ggplot(aes(x = price, y = ...) + 
+  geom_freqpoly(aes(color = cut), binwidth = 500, linewidth = 0.75)
 ```
 
 ```{r covariation-6-test, include = FALSE}
-
+diamonds |> 
+  ggplot(aes(x = price, y = after_stat(density))) +
+    geom_freqpoly(aes(color = cut), 
+                  binwidth = 500,
+                  linewidth = 0.75)
 ```
 
 ### 
 
-The default appearance of `geom_freqpoly()` is not that useful here because the height, determined by the overall count, differs so much across `cut`s, making it hard to see the differences in the shapes of their distributions. To make the comparison easier we need to swap what is displayed on the y-axis. Instead of displaying count, we’ll display the **density**, which is the count standardized so that the area under each frequency polygon is one.
+Note that we’re mapping the `density` to `y`, but since `density` is not a variable in the `diamonds` dataset, we need to first calculate it. We use the `after_stat()` function to do so.
 
 ### Exercise 7
 
-Within `ggplot()`, within `aes()`, set the `y` argument to `after_stat(density)`. 
+Add a `title`, `subtitle`, `x` axis title, a `y` axis title, and a legend title (`color`) by adding `labs()` to the pipeline. 
 
 ```{r covariation-7, exercise = TRUE}
 
@@ -1203,30 +1326,6 @@ Within `ggplot()`, within `aes()`, set the `y` argument to `after_stat(density)`
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r covariation-7-hint-1, eval = FALSE}
-diamonds |> 
-  ggplot(aes(x = price, y = ...) + 
-  geom_freqpoly(aes(color = cut), binwidth = 500, linewidth = 0.75)
-```
-
-```{r covariation-7-test, include = FALSE}
-
-```
-
-### 
-
-Note that we’re mapping the `density` to `y`, but since `density` is not a variable in the `diamonds` dataset, we need to first calculate it. We use the `after_stat()` function to do so.
-
-### Exercise 8
-
-Add a `title`, `subtitle`, `x` axis title, a `y` axis title, and a legend title (`color`) by adding `labs()` to the pipeline. 
-
-```{r covariation-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-8-hint-1, eval = FALSE}
 ... + 
   labs(
     title = ...,
@@ -1236,46 +1335,68 @@ Add a `title`, `subtitle`, `x` axis title, a `y` axis title, and a legend title 
   )
 ```
 
-```{r covariation-8-test, include = FALSE}
-
-```
-
 ### 
 
 There’s something rather surprising about this plot - it appears that fair diamonds (the lowest quality) have the highest average price! But maybe that’s because frequency polygons are a little hard to interpret - there’s a lot going on in this plot. A visually simpler plot for exploring this relationship is using side-by-side boxplots.
 
+### Exercise 8
+
+With a new pipeline, pipe `diamonds` to `ggplot()`, setting `x` to `cut` and `y` to `price` within `aes()`. Add `geom_boxplot()` at the end.
+
+```{r covariation-8, exercise = TRUE}
+
+```
+
+```{r covariation-8-hint-1, eval = FALSE}
+... |> 
+  ggplot(...(x = cut, y = price)) +
+    ...
+```
+
+```{r covariation-8-test, include = FALSE}
+diamonds |> 
+  ggplot(aes(x = cut, y = price)) +
+    geom_boxplot()
+```
+
+### 
+
+We see much less information about the distribution, but the boxplots are much more compact so we can more easily compare them (and fit more on one plot). It supports the counter-intuitive finding that better quality diamonds are typically cheaper! In the exercises, you’ll be challenged to figure out why.
+
 ### Exercise 9
 
-With a new pipeline, pipe `diamonds` to `ggplot()`. 
+Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs()` to the pipeline. 
 
 ```{r covariation-9, exercise = TRUE}
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r covariation-9-hint-1, eval = FALSE}
-diamonds |> 
-  ggplot()
+... + 
+  labs(
+    title = ...,
+    subtitle = ...,
+    x = ...,
+    y = ...
+  )
 ```
 
-```{r covariation-9-test, include = FALSE}
+### 
 
-```
-
-
+`cut` is an ordered factor: Fair is worse than Good, which is worse than Very Good and so on. Many categorical variables don’t have such an intrinsic order, so you might want to reorder them to make a more informative display. One way to do that is with `fct_reorder()`. Let's use a new dataset to explore this approach.
 
 ### Exercise 10
 
-Within `ggplot()`, using `aes()`, set the `x` argument to the `cut` variable. 
+Type in `mpg` and hit "Run Code". 
 
 ```{r covariation-10, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r covariation-10-hint-1, eval = FALSE}
-diamonds |> 
-  ggplot(aes(x = ...))
+mpg
 ```
 
 ```{r covariation-10-test, include = FALSE}
@@ -1284,11 +1405,11 @@ diamonds |>
 
 ### 
 
-Note that this plot should only have an x-axis labelled.
+This dataset contains a subset of the fuel economy data that the EPA makes available on https://fueleconomy.gov/. It contains only models which had a new release every year between 1999 and 2008 - this was used as a proxy for the popularity of the car.
 
 ### Exercise 11
 
-Within `ggplot()`, using `aes()`, set the `y` argument to the `price` variable. 
+With a new pipeline, pipe `mpg` to `ggplot()`, setting `x` to `class` and `y` to `hwy` within `aes()`. Add `geom_boxplot()` at the end.
 
 ```{r covariation-11, exercise = TRUE}
 
@@ -1297,17 +1418,24 @@ Within `ggplot()`, using `aes()`, set the `y` argument to the `price` variable.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r covariation-11-hint-1, eval = FALSE}
-diamonds |> 
-  ggplot(aes(x = cut, y = ...))
+mpg |> 
+  ggplot(aes(... = class, y = ...)) +
+    ...
 ```
 
 ```{r covariation-11-test, include = FALSE}
-
+mpg |> 
+  ggplot(aes(x = class, y = hwy)) +
+    geom_boxplot()
 ```
+
+### 
+
+The trend is pretty hard to see, so to make it easier on the eyes, we can reorder `class` based on the `median` value of `hwy`. 
 
 ### Exercise 12
 
-Add `geom_boxplot()` to the pipeline.
+Within `ggplot()`, within `aes()`, set the `x` argument to `fct_reorder(class, hwy, median)`.
 
 ```{r covariation-12, exercise = TRUE}
 
@@ -1316,21 +1444,24 @@ Add `geom_boxplot()` to the pipeline.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r covariation-12-hint-1, eval = FALSE}
-... +
-  geom_boxplot()
+mpg |> 
+  ggplot(aes(x = ..., y = hwy)) +
+    geom_boxplot()
 ```
 
 ```{r covariation-12-test, include = FALSE}
-
+mpg |> 
+  ggplot(aes(x = fct_reorder(class, hwy, median), y = hwy)) +
+    geom_boxplot()
 ```
 
 ### 
 
-We see much less information about the distribution, but the boxplots are much more compact so we can more easily compare them (and fit more on one plot). It supports the counter-intuitive finding that better quality diamonds are typically cheaper! In the exercises, you’ll be challenged to figure out why.
+The function, `fct_reorder()`, is useful for 1d displays where the factor is mapped to position and the function `fct_reorder2()` is for 2d displays where the factor is mapped to a non-position aesthetic. 
 
 ### Exercise 13
 
-Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs()` to the pipeline. 
+Since we have long variable names, `geom_boxplot()` will work better if you flip it `90°`. You can do that by exchanging the `x` and `y` aesthetic mappings. Within `ggplot()`, within `aes()`, swap the aesthetic mappings of `x` and `y`.
 
 ```{r covariation-13, exercise = TRUE}
 
@@ -1339,26 +1470,25 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs(
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r covariation-13-hint-1, eval = FALSE}
-... + 
-  labs(
-    title = ...,
-    subtitle = ...,
-    x = ...,
-    y = ...
-  )
+mpg |> 
+  ggplot(aes(y = fct_reorder(class, hwy, median), ... = ...)) +
+    geom_boxplot()
+  ...
 ```
 
 ```{r covariation-13-test, include = FALSE}
-
+mpg |> 
+  ggplot(aes(y = fct_reorder(class, hwy, median), x = hwy)) +
+    geom_boxplot()
 ```
 
 ### 
 
-`cut` is an ordered factor: fair is worse than good, which is worse than very good and so on. Many categorical variables don’t have such an intrinsic order, so you might want to reorder them to make a more informative display. One way to do that is with `fct_reorder()`. Let's use a new dataset.
+If you have a small dataset, it’s sometimes useful to use `geom_jitter()` to avoid overplotting to more easily see the relationship between a continuous and categorical variable. The [**ggbeeswarm**](https://r-charts.com/distribution/ggbeeswarm/) package provides a number of methods similar to `geom_jitter()`.
 
 ### Exercise 14
 
-Type in `mpg` and hit "Run Code". 
+Add a `title`, `subtitle` and `x` axis title by adding `labs()` to the pipeline. Set the y-axis label to `NULL`. 
 
 ```{r covariation-14, exercise = TRUE}
 
@@ -1367,167 +1497,25 @@ Type in `mpg` and hit "Run Code".
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r covariation-14-hint-1, eval = FALSE}
-mpg
-```
-
-```{r covariation-14-test, include = FALSE}
-
-```
-
-### 
-
-This dataset contains a subset of the fuel economy data that the EPA makes available on https://fueleconomy.gov/. It contains only models which had a new release every year between 1999 and 2008 - this was used as a proxy for the popularity of the car.
-
-### Exercise 15
-
-With a new pipeline, pipe `mpg` to `ggplot()`. 
-
-```{r covariation-15, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-15-hint-1, eval = FALSE}
-mpg |> 
-  ggplot()
-```
-
-```{r covariation-15-test, include = FALSE}
-
-```
-
-
-
-### Exercise 16
-
-Within `ggplot()`, using `aes()`, set the `x` argument to the `class` variable.
-
-```{r covariation-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-16-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = ...))
-```
-
-```{r covariation-16-test, include = FALSE}
-
-```
-
-### Exercise 17
-
-Within `ggplot()`, using `aes()`, set the `y` argument to `hwy`.
-
-```{r covariation-17, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-17-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = class, y = ...))
-```
-
-```{r covariation-17-test, include = FALSE}
-
-```
-
-### Exercise 18
-
-Add `geom_boxplot()` to the pipeline.
-
-```{r covariation-18, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-18-hint-1, eval = FALSE}
-... + 
-  geom_boxplot()
-```
-
-```{r covariation-18-test, include = FALSE}
-
-```
-
-### 
-
-The trend is pretty hard to see, so to make it easier on the eyes, we can reorder `class` based on the `median` value of `hwy`. 
-
-### Exercise 19
-
-Within `ggplot()`, within `aes()`, set the `x` argument to `fct_reorder(class, hwy, median)`.
-
-```{r covariation-19, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-19-hint-1, eval = FALSE}
-
-```
-
-```{r covariation-19-test, include = FALSE}
-
-```
-
-### 
-
-The function, `fct_reorder()`, is useful for 1d displays where the factor is mapped to position and the function `fct_reorder2()` is for 2d displays where the factor is mapped to a non-position aesthetic. Since we have long variable names, `geom_boxplot()` will work better if you flip it `90°`. You can do that by exchanging the `x` and `y` aesthetic mappings.
-
-### Exercise 20
-
-Within `ggplot()`, within `aes()`, swap the aesthetic mappings of `x` and `y`.
-
-```{r covariation-20, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-20-hint-1, eval = FALSE}
-mpg |> 
-  ggplot(aes(x = ..., y = ...)) + 
-  ...
-```
-
-```{r covariation-20-test, include = FALSE}
-
-```
-
-### 
-
-If you have a small dataset, it’s sometimes useful to use `geom_jitter()` to avoid overplotting to more easily see the relationship between a continuous and categorical variable. The [**ggbeeswarm**](https://r-charts.com/distribution/ggbeeswarm/) package provides a number of methods similar to `geom_jitter()`.
-
-### Exercise 21
-
-Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs()` to the pipeline. 
-
-```{r covariation-21, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-21-hint-1, eval = FALSE}
 ... + 
   labs(
     title = ...,
     subtitle = ...,
     x = ...,
-    y = ...
+    y = NULL
   )
 ```
 
-```{r covariation-21-test, include = FALSE}
-
+```{r covariation-14-test, include = FALSE}
+mpg |> 
+  ggplot(aes(x = hwy, y = fct_reorder(class, hwy, median))) +
+  geom_boxplot() + 
+  labs(
+    title = "Variation of Highway Mileage over Classes", 
+    subtitle = "The compact and midsized cars are tied for the highest highway mileage.",
+    x = "Highway Mileage",
+    y = NULL
+  )
 ```
 
 Reminder this is what our plot should look like: 
@@ -1562,26 +1550,29 @@ p3
 
 ### Exercise 1
 
-With a new pipeline, pipe the `diamonds` dataset to `ggplot()`.
+With a new pipeline, pipe the `diamonds` dataset to `ggplot()` with `aes(x = cut, y = color)`.
 
 ```{r covariation-with-two-categoric-1, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r covariation-with-two-categoric-1-hint-1, eval = FALSE}
 diamonds |> 
-  ggplot()
+  ggplot(aes(... = cut, y = ...))
 ```
 
 ```{r covariation-with-two-categoric-1-test, include = FALSE}
-
+diamonds |> 
+  ggplot(aes(x = cut, y = color))
 ```
+
+### 
+
+To visualize the covariation between categorical variables, you’ll need to count the number of observations for each combination of levels of these categorical variables.
 
 ### Exercise 2
 
-Within `ggplot()`, using `aes()`, set the `x` argument to the `cut` variable.
+One way to visualize two categorical variables is by using the function `geom_count()`. This function counts the number of observations at each location. Add `geom_count()` to the pipeline.
 
 ```{r covariation-with-two-categoric-2, exercise = TRUE}
 
@@ -1590,44 +1581,52 @@ Within `ggplot()`, using `aes()`, set the `x` argument to the `cut` variable.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r covariation-with-two-categoric-2-hint-1, eval = FALSE}
-diamonds |> 
-  ggplot(aes(x = ...))
+... + 
+  geom_count()
 ```
 
 ```{r covariation-with-two-categoric-2-test, include = FALSE}
-
+diamonds |> 
+  ggplot(aes(x = cut, y = color)) +
+    geom_count()
 ```
 
 ### 
 
-To visualize the covariation between categorical variables, you’ll need to count the number of observations for each combination of levels of these categorical variables.
+The size of each circle in the plot displays how many observations occurred at each combination of values. Covariation will appear as a strong correlation between specific x values and specific y values.
+
+
+
+
 
 ### Exercise 3
 
-Within `ggplot()`, using `aes()`, set the `y` argument to the `color` variable.
+Another approach for exploring the relationship between these variables is computing the counts with **dplyr**.
+
+With a new pipeline, pipe the `diamonds` dataset to `count()`. Within `count` add the variables `color` and `cut`. 
 
 ```{r covariation-with-two-categoric-3, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r covariation-with-two-categoric-3-hint-1, eval = FALSE}
 diamonds |> 
-  ggplot(aes(x = cut, y = ...))
+  count(color, ...)
 ```
 
 ```{r covariation-with-two-categoric-3-test, include = FALSE}
-
+diamonds |> 
+  count(color, cut)
 ```
 
 ### 
 
-One way to visualize two categorical variables is by using the function `geom_count()`. This function counts the number of observations at each location.
+Now, let's visualize this with `geom_tile()` and the fill aesthetic.
+
 
 ### Exercise 4
 
-Add `geom_count()` to the pipeline.
+Add `ggplot()` to the pipeline, using `aes()`, with `x` set to `color` and `y` set to `cut`. 
 
 ```{r covariation-with-two-categoric-4, exercise = TRUE}
 
@@ -1637,20 +1636,22 @@ Add `geom_count()` to the pipeline.
 
 ```{r covariation-with-two-categoric-4-hint-1, eval = FALSE}
 ... + 
-  geom_count()
+  ggplot(aes(x = color, y = ...))
 ```
 
 ```{r covariation-with-two-categoric-4-test, include = FALSE}
-
+diamonds |> 
+  count(color, cut) |> 
+  ggplot(aes(x = color, y = cut))
 ```
 
 ### 
 
-The size of each circle in the plot displays how many observations occurred at each combination of values. Covariation will appear as a strong correlation between specific x values and specific y values.
+If the categorical variables are unordered, you might want to use the [**seriation**](https://cran.r-project.org/web/packages/seriation/index.html) package to simultaneously reorder the rows and columns in order to more clearly reveal interesting patterns.
 
 ### Exercise 5
 
-Let's make our plot fancy by adding a `title`, `subtitle`, `x` axis title, a `y` axis title by adding `labs()` to the pipeline.
+To the pipeline, add `geom_tile()`, within which using `aes()`, setting the `fill` argument to the `n` variable.
 
 ```{r covariation-with-two-categoric-5, exercise = TRUE}
 
@@ -1660,23 +1661,23 @@ Let's make our plot fancy by adding a `title`, `subtitle`, `x` axis title, a `y`
 
 ```{r covariation-with-two-categoric-5-hint-1, eval = FALSE}
 ... + 
-  labs(title = ...,
-       subtitle = ..., 
-       x = ...,
-       y = ...)
+  geom_tile()
 ```
 
 ```{r covariation-with-two-categoric-5-test, include = FALSE}
-
+diamonds |> 
+  count(color, cut) |> 
+  ggplot(aes(x = color, y = cut)) +
+    geom_tile(aes(fill = n))
 ```
 
 ### 
 
-Another approach for exploring the relationship between these variables is computing the counts with **dplyr**.
+For larger plots, you might want to try the [**heatmaply**](https://cran.r-project.org/web/packages/heatmaply/vignettes/heatmaply.html) package, which creates interactive plots.
 
 ### Exercise 6
 
-With a new pipeline, pipe the `diamonds` dataset to `count()`. Within `count` add the variables `color` and `cut`. 
+Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs()` to the pipeline.
 
 ```{r covariation-with-two-categoric-6, exercise = TRUE}
 
@@ -1685,132 +1686,6 @@ With a new pipeline, pipe the `diamonds` dataset to `count()`. Within `count` ad
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r covariation-with-two-categoric-6-hint-1, eval = FALSE}
-diamonds |> 
-  count(color, ...)
-```
-
-```{r covariation-with-two-categoric-6-test, include = FALSE}
-
-```
-
-### 
-
-Now, let's visualize this with `geom_tile()` and the fill aesthetic.
-
-### Exercise 7
-
-Add `ggplot()` to the pipeline.
-
-```{r covariation-with-two-categoric-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-with-two-categoric-7-hint-1, eval = FALSE}
-... +
-  ggplot()
-```
-
-```{r covariation-with-two-categoric-7-test, include = FALSE}
-
-```
-
-### Exercise 8
-
-Within `ggplot()`, using `aes()`, set the `x` argument to the `color` variable.
-
-```{r covariation-with-two-categoric-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-with-two-categoric-8-hint-1, eval = FALSE}
-... +
-  ggplot(aes(x = ...))
-```
-
-```{r covariation-with-two-categoric-8-test, include = FALSE}
-
-```
-
-### Exercise 9
-
-Within `ggplot()`, using `aes()`, set the `y` argument to the `cut` variable. 
-
-```{r covariation-with-two-categoric-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-with-two-categoric-9-hint-1, eval = FALSE}
-... + 
-  ggplot(aes(x = color, y = ...))
-```
-
-```{r covariation-with-two-categoric-9-test, include = FALSE}
-
-```
-
-### 
-
-If the categorical variables are unordered, you might want to use the [**seriation**](https://cran.r-project.org/web/packages/seriation/index.html) package to simultaneously reorder the rows and columns in order to more clearly reveal interesting patterns.
-
-### Exercise 10
-
-Add `geom_tile()` to the pipeline.
-
-```{r covariation-with-two-categoric-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-with-two-categoric-10-hint-1, eval = FALSE}
-... + 
-  geom_tile()
-```
-
-```{r covariation-with-two-categoric-10-test, include = FALSE}
-
-```
-
-### Exercise 11
-
-Within `geom_tile()`, using `aes()`, set the `fill` argument to the `n` variable.
-
-```{r covariation-with-two-categoric-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-with-two-categoric-11-hint-1, eval = FALSE}
-... + 
-  geom_tile(aes(fill = ...))
-```
-
-```{r covariation-with-two-categoric-11-test, include = FALSE}
-
-```
-
-### 
-
-For larger plots, you might want to try the [**heatmaply**](https://cran.r-project.org/web/packages/heatmaply/vignettes/heatmaply.html) package, which creates interactive plots.
-
-### Exercise 12
-
-Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs()` to the pipeline.
-
-```{r covariation-with-two-categoric-12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-with-two-categoric-12-hint-1, eval = FALSE}
 ... + 
   labs(title = ...,
        subtitle = ...,
@@ -1818,8 +1693,17 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs(
        y = ...)
 ```
 
-```{r covariation-with-two-categoric-12-test, include = FALSE}
-
+```{r covariation-with-two-categoric-6-test, include = FALSE}
+diamonds |> 
+  count(color, cut) |> 
+  ggplot(aes(x = color, y = cut)) +
+    geom_tile(aes(fill = n)) +
+    labs(
+      title = "Covariation between Diamond Cut and the Color of the Diamond",
+      subtitle = "There are more ideally cut diamonds than other cut types of diamonds",
+      x = "Color of diamond",
+      y = "Cut of diamond"
+      )
 ```
 
 Reminder this is what your plot should look like: 
@@ -1833,13 +1717,9 @@ p3
 
 In this section, we will learn how to visualize covariation between two numerical variables. 
 
-### 
-
-By the end of this section, we will have created this plot:
-
 ```{r}
 p4 <- smaller |> 
-  ggplot( aes(x = carat, y = price)) + 
+  ggplot(aes(x = carat, y = price)) + 
   geom_boxplot(aes(group = cut_width(carat, 0.1))) +
   labs(title = "Covariation between Number of Carats and Price of Diamonds",
        subtitle = "As the number of carats of a diamond increases the price also increases",
@@ -1849,6 +1729,10 @@ p4 <- smaller |>
 p4
 ```
 
+### 
+
+Let's build this plot.
+
 ### Exercise 1
 
 Type in `smaller` and hit "Run Code".
@@ -1857,42 +1741,47 @@ Type in `smaller` and hit "Run Code".
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r covariation-with-two-numerical-1-hint-1, eval = FALSE}
 smaller
 ```
 
 ```{r covariation-with-two-numerical-1-test, include = FALSE}
-
+smaller
 ```
 
 ### 
 
-This dataframe shows diamonds that only have less than 3 carats. 
+This tibble only includes diamonds that have less than 3 carats. 
 
 ### Exercise 2
 
-With a new pipeline, pipe the `smaller` dataset to `ggplot()`. 
+You’ve already seen one great way to visualize the covariation between two numerical variables: draw a scatterplot with `geom_point()`. You can see covariation as a pattern in the points. Pipe `smaller` into `ggplot()`, using `aes(x = carat, y = price))` as the value for `mapping`. Add `geom_point()` at the end.
 
 ```{r covariation-with-two-numerical-2, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r covariation-with-two-numerical-2-hint-1, eval = FALSE}
 smaller |> 
-  ggplot()
+  ggplot(aes(x = ..., y = price)) +
+    ...
 ```
 
 ```{r covariation-with-two-numerical-2-test, include = FALSE}
-
+smaller |> 
+  ggplot(aes(x = carat, y = price)) +
+    geom_point()
 ```
+
+### 
+
+For example, you can see a positive relationship between the carat size and the price of a diamond: diamonds with more carats have a higher price. The relationship seems exponential.
 
 ### Exercise 3
 
-Within `ggplot()`, using `aes()`, set the `x` argument to the `carat` variable.
+Scatterplots become less useful as the size of your dataset grows, because points begin to overplot, and pile up into areas of uniform black, making it hard to judge differences in the density of the data across the 2-dimensional space as well as making it hard to spot the trend. 
+
+Take the previous code and add `alpha = 1 / 100` to the call to `geom_point()`.
 
 ```{r covariation-with-two-numerical-3, exercise = TRUE}
 
@@ -1902,16 +1791,23 @@ Within `ggplot()`, using `aes()`, set the `x` argument to the `carat` variable.
 
 ```{r covariation-with-two-numerical-3-hint-1, eval = FALSE}
 smaller |> 
-  ggplot(aes(x = ...))
+  ggplot(aes(x = carat, y = price)) +
+    geom_point(alpha = ...)
 ```
 
 ```{r covariation-with-two-numerical-3-test, include = FALSE}
-
+smaller |> 
+  ggplot(aes(x = carat, y = price)) +
+    geom_point(alpha = 1 / 100)
 ```
+
+### 
+
+Using the `alpha` aesthetic to add transparency is one way to deal with too much data.
 
 ### Exercise 4
 
-Within `ggplot()`, using `aes()`, set the `y` argument to the `price` variable.
+Using transparency can be challenging for very large datasets. Another solution is to "bin" the data, using functions like `geom_bin2d()` and `geom_hex()`. Replace the call to `geom_point()` with `geom_bin2d()`.
 
 ```{r covariation-with-two-numerical-4, exercise = TRUE}
 
@@ -1921,20 +1817,26 @@ Within `ggplot()`, using `aes()`, set the `y` argument to the `price` variable.
 
 ```{r covariation-with-two-numerical-4-hint-1, eval = FALSE}
 smaller |> 
-  ggplot(aes(x = carat, y = ...))
+  ggplot(aes(x = carat, y = price)) +
+    ...
 ```
 
 ```{r covariation-with-two-numerical-4-test, include = FALSE}
-
+smaller |> 
+  ggplot(aes(x = carat, y = price)) +
+    geom_bin2d()
 ```
 
 ### 
 
-Scatterplots become less useful as the size of your dataset grows, because points begin to overplot, and pile up into areas of uniform black, making it hard to judge differences in the density of the data across the 2-dimensional space as well as making it hard to spot the trend.
+`geom_bin2d()` and `geom_hex()` divide the coordinate plane into 2d bins and then use a fill color to display how many points fall into each bin. `geom_bin2d()` creates rectangular bins. `geom_hex()` creates hexagonal bins. You will need to install the **hexbin** package to use `geom_hex()`.
+
 
 ### Exercise 5
 
-Add `geom_point()` to the pipeline.
+Another option is to bin one continuous variable so it acts like a categorical variable. Then you can use one of the techniques for visualizing the combination of a categorical and a continuous variable that you learned about. For example, you could bin carat and then for each group, display a boxplot. 
+
+To create such a plot, begin by replacing `geom_hex()` with `geom_boxplot()` from the previous pipeline.
 
 ```{r covariation-with-two-numerical-5, exercise = TRUE}
 
@@ -1943,21 +1845,24 @@ Add `geom_point()` to the pipeline.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r covariation-with-two-numerical-5-hint-1, eval = FALSE}
-... + 
-  geom_point()
+... +
+  geom_boxplot()
 ```
 
 ```{r covariation-with-two-numerical-5-test, include = FALSE}
-
+smaller |> 
+  ggplot(aes(x = carat, y = price)) +
+    geom_boxplot()
 ```
 
 ### 
 
-Let's use the `alpha` aesthetic to add transparency to the plot. 
+Not a particularly informative plot! We need to change `carat` from a continuous numeric variable to a category variable, each value of which would cover a range of `carat`.
+
 
 ### Exercise 6
 
-Within `geom_point()`, set the `alpha` argument to `0.01`. 
+Within `geom_boxplot()`, using `aes()`, set the `group` argument to `cut_width(carat, 0.1)`. 
 
 ```{r covariation-with-two-numerical-6, exercise = TRUE}
 
@@ -1966,21 +1871,23 @@ Within `geom_point()`, set the `alpha` argument to `0.01`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r covariation-with-two-numerical-6-hint-1, eval = FALSE}
-... + 
-  geom_point(alpha = 0.01)
+... +
+  geom_boxplot(aes(... = cut_width(..., 0.1)))
 ```
 
 ```{r covariation-with-two-numerical-6-test, include = FALSE}
-
+smaller |> 
+  ggplot(aes(x = carat, y = price)) +
+    geom_boxplot(aes(group = cut_width(carat, 0.1)))
 ```
 
 ### 
 
-But using transparency can be challenging for very large datasets. Another solution is to use bin. Previously you used `geom_histogram()` and `geom_freqpoly()` to bin in one dimension. Now you’ll learn how to use `geom_bin2d()` and `geom_hex()` to bin in two dimensions.
+`cut_width(x, width)`, as used above, divides x into bins of `width` width. By default, boxplots look roughly the same (apart from number of outliers) regardless of how many observations there are, so it’s difficult to tell that each boxplot summarizes a different number of points.
 
 ### Exercise 7
 
-Replace `geom_point()` with `geom_bin2d()`.
+Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs()` to the pipeline. 
 
 ```{r covariation-with-two-numerical-7, exercise = TRUE}
 
@@ -1990,119 +1897,6 @@ Replace `geom_point()` with `geom_bin2d()`.
 
 ```{r covariation-with-two-numerical-7-hint-1, eval = FALSE}
 ... + 
-  geom_bin2d()
-```
-
-```{r covariation-with-two-numerical-7-test, include = FALSE}
-
-```
-
-### 
-
-`geom_bin2d()` and `geom_hex()` divide the coordinate plane into 2d bins and then use a fill color to display how many points fall into each bin. `geom_bin2d()` creates rectangular bins.
-
-
-### Exercise 8
-
-Load in the `hexbin` package using `library()`. 
-
-```{r covariation-with-two-numerical-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-with-two-numerical-8-hint-1, eval = FALSE}
-library(...)
-```
-
-```{r covariation-with-two-numerical-8-test, include = FALSE}
-
-```
-
-### 
-
-The function `geom_hex()` creates hexagonal bins. You will need to install the [**hexbin**](https://cran.r-project.org/web/packages/hexbin/index.html) package to use `geom_hex()`.
-
-### Exercise 9
-
-Replace `geom_bin2d()` in the pipeline with `geom_hex()`. 
-
-```{r covariation-with-two-numerical-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-with-two-numerical-9-hint-1, eval = FALSE}
-smaller |> 
-  ggplot(aes(x = carat, y = price)) +
-  ...
-```
-
-```{r covariation-with-two-numerical-9-test, include = FALSE}
-
-```
-
-### 
-
-Another option is to bin one continuous variable so it acts like a categorical variable. Then you can use one of the techniques for visualizing the combination of a categorical and a continuous variable that you learned about. For example, you could bin carat and then for each group, display a boxplot.
-
-
-### Exercise 10
-
-Replace `geom_hex()` with `geom_boxplot()` in the previous pipeline.
-
-```{r covariation-with-two-numerical-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-with-two-numerical-10-hint-1, eval = FALSE}
-... +
-  geom_boxplot()
-```
-
-```{r covariation-with-two-numerical-10-test, include = FALSE}
-
-```
-
-### Exercise 11
-
-Within `geom_boxplot()`, using `aes()`, set the `group` argument to `cut_width(carat, 0.1)`. 
-
-```{r covariation-with-two-numerical-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-with-two-numerical-11-hint-1, eval = FALSE}
-... +
-  geom_boxplot(aes(group = ...))
-```
-
-```{r covariation-with-two-numerical-11-test, include = FALSE}
-
-```
-
-### 
-
-`cut_width(x, width)`, as used above, divides x into bins of `width` width. By default, boxplots look roughly the same (apart from number of outliers) regardless of how many observations there are, so it’s difficult to tell that each boxplot summarizes a different number of points.
-
-### Exercise 12
-
-Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs()` to the pipeline. 
-
-```{r covariation-with-two-numerical-12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r covariation-with-two-numerical-12-hint-1, eval = FALSE}
-... + 
   labs(
     title = ...,
     subtitle = ...,
@@ -2111,8 +1905,14 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs(
   )
 ```
 
-```{r covariation-with-two-numerical-12-test, include = FALSE}
-
+```{r covariation-with-two-numerical-7-test, include = FALSE}
+smaller |> 
+  ggplot(aes(x = carat, y = price)) + 
+  geom_boxplot(aes(group = cut_width(carat, 0.1))) +
+  labs(title = "Covariation between Number of Carats and Price of Diamonds",
+       subtitle = "As the number of carats of a diamond increases the price also increases",
+       x = "Number of Carats",
+       y = "Price of the Diamond")
 ```
 
 This is a reminder that our plot should look like this:
@@ -2121,10 +1921,16 @@ This is a reminder that our plot should look like this:
 p4
 ```
 
+### 
+
+One way to deal with different number of observations in each bin is to make the width of the boxplot proportional to the number of points with `varwidth = TRUE`.
+
+
+
 ## Patterns and models
 ### 
 
-<!-- DK: This is not bad and does a good job of using all the text from the chapter. But is that text well-organized? A lot of the later questions lack knowledge drops. Also, whole thing is sort of disjoint and tough to follow. Do we really expect students to understand this plot? -->
+<!-- DK: This is not bad and does a good job of using all the text from the chapter. But is that text well-organized? Also, whole thing is sort of disjoint and tough to follow. Do we really expect students to understand this plot? Introducing tidymodels, and variable transformations, and residuals is a lot of stuff! Also, sure would be nice if we could do all this in one pipe, rather than creating a bunch of new objects. First line would start with diamonds, then select just the three variables we need, proving a bicg picture on what we are doing; then log-transform, and so on. -->
 
 In this section, we will discuss how to find and display patterns in your data. We will create this plot:
 
@@ -2142,7 +1948,7 @@ p5 <- diamonds_aug |>
 p5
 ```
 
-###
+### 
 
 If a systematic relationship exists between two variables it will appear as a pattern in the data. If you spot a pattern, you can ask yourself the following questions:
 
@@ -2204,7 +2010,7 @@ Patterns in your data provide clues about relationships, i.e., they reveal covar
 
 ### Exercise 3
 
-Let's manipulate the variables in `diamonds3`.  Retain the code from the previous question, pipe `diamonds` to `mutate()`. Within `mutate()`, create a new variable `log_price` and set it equal to `log(price)`. 
+Let's manipulate the variables in `diamonds3`.  Retain the code from the previous question but pipe `diamonds` to `mutate()`. Within `mutate()`, create a new variable `log_price` and set it equal to `log(price)`. 
 
 ```{r patterns-and-models-3, exercise = TRUE}
 
@@ -2220,7 +2026,10 @@ diamonds3 <- diamonds |>
 ```
 
 ```{r patterns-and-models-3-test, include = FALSE}
-
+diamonds3 <- diamonds |> 
+  mutate(
+    log_price = log(price)
+  )
 ```
 
 ### 
@@ -2246,12 +2055,16 @@ diamonds3 <- diamonds |>
 ```
 
 ```{r patterns-and-models-4-test, include = FALSE}
-
+diamonds3 <- diamonds |> 
+  mutate(
+    log_price = log(price),
+    log_carat = log(carat)
+  )
 ```
 
 ### 
 
-We will be using this dataset to make a model that predicts `price` from`carat` and then computes the residuals (the difference between the predicted value and the actual value).
+We will be using `diamonds3`, with these two new variables,  to make a model that predicts `log_price` from `log_carat` and then computes the residuals (the difference between the predicted value and the actual value).
 
 ### Exercise 5
 
@@ -2261,14 +2074,12 @@ Create a new variable called `diamonds_fit` and set it equal to `linear_reg()`.
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r patterns-and-models-5-hint-1, eval = FALSE}
 diamonds_fit <- ...
 ```
 
 ```{r patterns-and-models-5-test, include = FALSE}
-
+diamonds_fit <- linear_reg()
 ```
 
 ### 
@@ -2291,12 +2102,13 @@ diamonds_fit <- linear_reg() |>
 ```
 
 ```{r patterns-and-models-6-test, include = FALSE}
-
+diamonds_fit <- linear_reg() |> 
+  fit(log_price ~ log_carat, data = diamonds3)
 ```
 
 ### 
 
-The functon [`linear_reg()`](https://parsnip.tidymodels.org/reference/linear_reg.html) defines a model that can predict numeric values from predictors using a linear function. This function can fit regression models.There are different ways to fit this model, and the method of estimation is chosen by setting the model `engine`.
+The functon [`linear_reg()`](https://parsnip.tidymodels.org/reference/linear_reg.html) defines a model that can predict numeric values from predictors using a linear function. This function can fit regression models. There are different ways to fit this model, and the method of estimation is chosen by setting the model `engine`.
 
 ### Exercise 7
 
@@ -2306,23 +2118,21 @@ Create a new variable called `diamonds_aug` and set it equal to `augment(diamond
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r patterns-and-models-7-hint-1, eval = FALSE}
 diamonds_aug <- ...
 ```
 
 ```{r patterns-and-models-7-test, include = FALSE}
-
+diamonds_aug <- augment(diamonds_fit, new_data = diamonds3)
 ```
 
 ### 
 
-The residuals give us a view of the price of the diamond, once the effect of carat has been removed.
+If you look at `diamonds_aug`, you will notice a new variable: `.resid`. The residuals give us a view of the `log(price)` of the diamond, once the effect of `log(carat)` has been removed.
 
 ### Exercise 8
 
-Using your previous code, pipe `augment(diamonds_fit, new_data = diamonds3)` with `mutate()`. Within `mutate()`, create a new variable `.resid` and set it equal to `exp(.resid)`. 
+Using your previous code, pipe `augment(diamonds_fit, new_data = diamonds3)` to `mutate()`. Within `mutate()`, create a new variable `.resid` and set it equal to `exp(.resid)`. 
 
 ```{r patterns-and-models-8, exercise = TRUE}
 
@@ -2331,27 +2141,26 @@ Using your previous code, pipe `augment(diamonds_fit, new_data = diamonds3)` wit
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r patterns-and-models-8-hint-1, eval = FALSE}
-diamonds_aug <- augment(diamonds_fit, new_data = diamonds) |>
+diamonds_aug <- augment(diamonds_fit, new_data = diamonds3) |>
   ...
 ```
 
 ```{r patterns-and-models-8-test, include = FALSE}
-
+diamonds_aug <- augment(diamonds_fit, new_data = diamonds3) |>
+  mutate(.resid = exp(.resid))
 ```
 
 ### 
 
-Note that instead of using the raw values of `price` and `carat`, we log transform them first, and fit a model to the log-transformed values. Then, we exponentiate the residuals to put them back in the scale of raw prices.
+Note that instead of using the raw values of `price` and `carat`, we log transformed them first, and fitted a model to the log-transformed values. Then, we exponentiate the residuals to put them back on the scale of raw prices.
 
 ### Exercise 9
 
-With a new pipeline, pipe `diamonds_aug` with `ggplot()`.
+With a new pipeline, pipe `diamonds_aug` to `ggplot()`.
 
 ```{r patterns-and-models-9, exercise = TRUE}
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r patterns-and-models-9-hint-1, eval = FALSE}
 diamonds_aug |> 
@@ -2359,12 +2168,11 @@ diamonds_aug |>
 ```
 
 ```{r patterns-and-models-9-test, include = FALSE}
-
+diamonds_aug |> 
+  ggplot()
 ```
 
-Note that this plot is empty.
-
-
+Note that this plot is empty, as usual when we call `ggplot()` without specifying a value for `mapping`.
 
 ### Exercise 10
 
@@ -2382,8 +2190,13 @@ diamonds_aug |>
 ```
 
 ```{r patterns-and-models-10-test, include = FALSE}
-
+diamonds_aug |> 
+  ggplot(aes(x = carat))
 ```
+
+### 
+
+Big picture: We are sure that there is a major relationship between `price` and `carat`. Diamonds with more carats are much more expensive. If we want to study the relationship between `price` and `cut`, we first need to "adjust" for the number of carats.
 
 ### Exercise 11
 
@@ -2401,8 +2214,15 @@ diamonds_aug |>
 ```
 
 ```{r patterns-and-models-11-test, include = FALSE}
-
+diamonds_aug |> 
+  ggplot(aes(x = carat, y = .resid))
 ```
+
+### 
+
+<!-- DK: This is was too concise to be meaningful to new students! -->
+
+If we had not log-transformed `price` and `carat`, this adjustment process would not have worked nearly as well.
 
 ### Exercise 12
 
@@ -2420,16 +2240,20 @@ Add `geom_point()` to the pipeline.
 ```
 
 ```{r patterns-and-models-12-test, include = FALSE}
-
+diamonds_aug |> 
+  ggplot(aes(x = carat, y = .resid)) +
+    geom_point()
 ```
 
 ### 
+
+<!-- DK: This is word-for-word from the book, but I don't understand it! -->
 
 Once you’ve removed the strong relationship between carat and price, you can see what you expect in the relationship between cut and price: relative to their size, better quality diamonds are more expensive.
 
 ### Exercise 13
 
-Replace `geom_point()` from the previous pipeline and change it to `geom_boxplot()`. 
+In the previous pipeline, replace `carat` with `cut` and replace `geom_point()` with `geom_boxplot()`. 
 
 ```{r patterns-and-models-13, exercise = TRUE}
 
@@ -2438,16 +2262,20 @@ Replace `geom_point()` from the previous pipeline and change it to `geom_boxplot
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r patterns-and-models-13-hint-1, eval = FALSE}
-
+diamonds_aug |> 
+  ggplot(aes(x = ..., y = .resid)) +
+    ...
 ```
 
 ```{r patterns-and-models-13-test, include = FALSE}
-
+diamonds_aug |> 
+  ggplot(aes(x = cut, y = .resid)) +
+    geom_boxplot()
 ```
 
 ### 
 
-A boxplot is the best way to see the relationship between the type of diamond cut and the price of the diamond. 
+A boxplot is the best way to see the relationship between the type of diamond cut and the price of the diamond, adjusted for `carat`. 
 
 ### Exercise 14
 
@@ -2470,7 +2298,15 @@ Add a `title`, `subtitle`, `x` axis title, and a `y` axis title by adding `labs(
 ```
 
 ```{r patterns-and-models-14-test, include = FALSE}
-
+diamonds_aug |> 
+  ggplot(aes(x = cut, y = .resid)) + 
+  geom_boxplot() + 
+  labs(
+    title = "Cut Quality and (adjusted) Price",
+    subtitle = "A better cut means higher prices, adjusted for the number of carats",
+    x = "Quality of the Cut",
+    y = "Price (adjusted for carats)"
+  )
 ```
 
 ### 
@@ -2480,6 +2316,11 @@ Reminder this is what our plot should look like.
 ```{r}
 p5
 ```
+
+## More Plots
+### 
+
+The next two sections help you to create two complex, publication-quality graphics. The first is from [*Data Visualization: A Practical Introduction*](https://socviz.co/) by [Kieran Healy](https://kieranhealy.org/). This freely-available book is a great introduction to using R for data visualization. The second is from the this *New York Times* [article](https://www.nytimes.com/interactive/2021/06/29/upshot/portland-seattle-vancouver-weather.html) about the 2021 heat wave in Portland, Oregon.
 
 <!-- The months tibble created above seems like an absurd hack. Can we get rid of it? -->
 
@@ -2498,10 +2339,7 @@ p5
 
 <!-- This is a cool animation: https://github.com/jschoeley/de0anim Do it here. Or show it somewhere else? Or create an animation tutorial? -->
 
-## More Plots
-###
-
-The next two sections help you to create two complex, publication-quality graphics. The first is from [*Data Visualization: A Practical Introduction*](https://socviz.co/) by [Kieran Healy](https://kieranhealy.org/). This freely-available book is a great introduction to using R for data visualization. The second is from the this *New York Times* [article](https://www.nytimes.com/interactive/2021/06/29/upshot/portland-seattle-vancouver-weather.html) about the 2021 heat wave in Portland, Oregon.
+<!-- Thanks to Srihith Garlapati and Heather Li -->
 
 ## The US Life Expectancy Gap
 ### 
@@ -2539,11 +2377,11 @@ final_plot
 
 We will first explore the data set we will be using for the first graph. Run `oecd_sum` in the code chunk below.
 
-```{r the-us-life-expectan-1, exercise = TRUE}
+```{r the-us-life-expectancy-gap-1, exercise = TRUE}
 
 ```
 
-```{r the-us-life-expectan-1-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-1-hint-1, eval = FALSE}
 oecd_sum
 ```
 
@@ -2555,7 +2393,7 @@ The data set is from the Organisation for Economic Co-operation and Development,
 
 We will explore the `oecd_sum` data set further. Go onto this website [here](https://kjhealy.github.io/socviz/reference/oecd_sum.html). Copy and paste what the hi_lo and diff variables represent.
 
-```{r the-us-life-expectan-2}
+```{r the-us-life-expectancy-gap-2}
   question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -2572,11 +2410,11 @@ This dataset focuses specifically on the USA in relation to OECD stats.
 
 We will be building a plot mapping the USA's average life expectancy compared to the OECD's from 1960 to 2015. Start by building a pipe with the data set. Use the function `select()`. Within select, input `-other, -usa`. 
 
-```{r the-us-life-expectan-3, exercise = TRUE}
+```{r the-us-life-expectancy-gap-3, exercise = TRUE}
 
 ```
 
-```{r the-us-life-expectan-3-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-3-hint-1, eval = FALSE}
 oecd_sum |> 
   select(-other, -usa)
 ```
@@ -2587,13 +2425,13 @@ We do not need to know the life expectancy in OECD countries or in the US. We si
 
 Continue the pipe with ggplot. Within `ggplot()`, set the argument `mapping` to equal `aes()`. Within `aes()`, map `year` to the x-axis and `diff` to the y-axis.
 
-```{r the-us-life-expectan-4, exercise = TRUE}
+```{r the-us-life-expectancy-gap-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-4-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-4-hint-1, eval = FALSE}
 oecd_sum |> 
   select(...) |> 
   ggplot(mapping = aes(x = ...,
@@ -2608,13 +2446,13 @@ Remember: simply mapping variables to the x and y axis will create an empty plot
 
 Continue building your plot. Reminder, since you are building the plot layer by layer, you must use `+`. Within `aes`, set the `fill` argument to `hi_lo`.
 
-```{r the-us-life-expectan-5, exercise = TRUE}
+```{r the-us-life-expectancy-gap-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-5-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-5-hint-1, eval = FALSE}
 oecd_sum |> 
   select(...) |> 
   ggplot(mapping = aes(x = ...,
@@ -2630,13 +2468,13 @@ This will allow the bars to be a different colour if the US' life expectancy is 
 
 Add the `geom_col()` layer.
 
-```{r the-us-life-expectan-6, exercise = TRUE}
+```{r the-us-life-expectancy-gap-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-6-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-6-hint-1, eval = FALSE}
 oecd_sum |> 
   select(...) |> 
   ggplot(mapping = aes(x = ...,
@@ -2653,13 +2491,13 @@ We choose to use `geom_col()` instead of `geom_bar()` since we already have the 
 
 Add the layer `guides(fill = "none")`
 
-```{r the-us-life-expectan-7, exercise = TRUE}
+```{r the-us-life-expectancy-gap-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-7-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-7-hint-1, eval = FALSE}
 oecd_sum |> 
   select(...) |> 
   ggplot(mapping = aes(x = ...,
@@ -2677,13 +2515,13 @@ oecd_sum |>
 
 Add the theme `theme_minimal()`.
 
-```{r the-us-life-expectan-8, exercise = TRUE}
+```{r the-us-life-expectancy-gap-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-8-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-8-hint-1, eval = FALSE}
 oecd_sum |> 
   select(...) |> 
   ggplot(mapping = aes(x = ...,
@@ -2706,13 +2544,13 @@ Add the `labs()` layer to give your plot the appropriate `title`, `subtitle`, `c
 final_plot
 ```
 
-```{r the-us-life-expectan-9, exercise = TRUE}
+```{r the-us-life-expectancy-gap-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-9-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-9-hint-1, eval = FALSE}
 oecd_sum |> 
   select(...) |> 
   ggplot(mapping = aes(x = ...,
@@ -2732,7 +2570,7 @@ oecd_sum |>
 
 Skim through [this documentation here](https://ggplot2-book.org/themes.html). We will be using these functions to modify the font of the graph and make it bold. What are the four element functions that can be used in `theme()`? 
 
-```{r the-us-life-expectan-10}
+```{r the-us-life-expectancy-gap-10}
 question_text(NULL,
 	message = "element_text(), element_line(), element_rect(), element_blank()",
 	answer(NULL,
@@ -2749,7 +2587,7 @@ We will primarily be using `element_text()`.
 ### Exercise 11
 
 Summarize in your own words what the function `element_text()` does.
-```{r the-us-life-expectan-11}
+```{r the-us-life-expectancy-gap-11}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -2765,13 +2603,13 @@ Note: the only family fonts that will reliably work are "serif", "sans", and "mo
 
 We will now use `theme(plot.title = ...)` to change the plot title. Set the argument `face` to "bold".
 
-```{r the-us-life-expectan-12, exercise = TRUE}
+```{r the-us-life-expectancy-gap-12, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-12-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-12-hint-1, eval = FALSE}
 ... +
   theme(plot.title = element_text(face ="bold")
 ```
@@ -2780,13 +2618,13 @@ We will now use `theme(plot.title = ...)` to change the plot title. Set the argu
 
 Add the `size` argument within `element_text()`. Set the size to 20.
 
-```{r the-us-life-expectan-13, exercise = TRUE}
+```{r the-us-life-expectancy-gap-13, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-13-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-13-hint-1, eval = FALSE}
 ... +
   theme(plot.title = element_text(face = "bold",
                                   size = 20)
@@ -2800,13 +2638,13 @@ This aligns with the typical font sizes you have on your laptop.
 
 We will adjust the margins to increase readability. Margins act as a buffer around each individual text block. Add the argument `margin` and then set it to `margin(b = 5)`
 
-```{r the-us-life-expectan-14, exercise = TRUE}
+```{r the-us-life-expectancy-gap-14, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-14-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-14-hint-1, eval = FALSE}
 ... +
   theme(plot.title = element_text(face = ...,
                                   size = ...,
@@ -2821,13 +2659,13 @@ We will adjust the margins to increase readability. Margins act as a buffer arou
 
 We will now format the subtitle. Within the big `theme()` function, add a new argument titled `plot.subtitle`. Set it equal to element_text(). Note: there will be an error if you attempt to run this since there is no arguments within element_text().
 
-```{r the-us-life-expectan-15, exercise = TRUE}
+```{r the-us-life-expectancy-gap-15, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-15-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-15-hint-1, eval = FALSE}
 ... +
   theme(plot.title = element_text(face = ...,
                                   size = ...,
@@ -2835,51 +2673,48 @@ We will now format the subtitle. Within the big `theme()` function, add a new ar
         plot.subtitle = element_text())
 ```
 
-
 ### Exercise 16
 
 Add the argument `face` to element_text(). Set it equal to "italic".
 
-```{r the-us-life-expectan-16, exercise = TRUE}
+```{r the-us-life-expectancy-gap-16, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-16-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-16-hint-1, eval = FALSE}
 ...,
 plot.subtitle = element_text(face = "italic")
 ```
-
 
 ### Exercise 17
 
 Change the font size to 15.
 
-```{r the-us-life-expectan-17, exercise = TRUE}
+```{r the-us-life-expectancy-gap-17, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-17-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-17-hint-1, eval = FALSE}
 ...,
 plot.subtitle = element_text(face = "italic",
                              size = 15)
 ```
 
-
 ### Exercise 18
 
 From here, set the bottom margin to 10 to create space between the subtitle and the graph.
 
-```{r the-us-life-expectan-18, exercise = TRUE}
+```{r the-us-life-expectancy-gap-18, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-18-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-18-hint-1, eval = FALSE}
 ...,
 plot.subtitle = element_text(face = "italic",
                              size = 15,
@@ -2894,13 +2729,13 @@ The margin is measured in pixels.
 
 We will now modify the caption to make it italic, and also create some space between the caption and the graph. Add the `plot.caption =` argument within `theme()`. Set it to element_text(). 
 
-```{r the-us-life-expectan-19, exercise = TRUE}
+```{r the-us-life-expectancy-gap-19, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-19-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-19-hint-1, eval = FALSE}
 ...,
 plot.subtitle = element_text(face = "italic",
                              size = 15,
@@ -2908,18 +2743,17 @@ plot.subtitle = element_text(face = "italic",
 plot.caption = element_text()
 ```
 
-
 ### Exercise 20
 
 Make the font italic.
 
-```{r the-us-life-expectan-20, exercise = TRUE}
+```{r the-us-life-expectancy-gap-20, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-20-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-20-hint-1, eval = FALSE}
 ...,
 plot.caption = element_text(face = "italic")
 ```
@@ -2928,13 +2762,13 @@ plot.caption = element_text(face = "italic")
 
 Set the top margin to 5. We do this by using `margin = margin(t = 5)`.
 
-```{r the-us-life-expectan-21, exercise = TRUE}
+```{r the-us-life-expectancy-gap-21, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-21-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-21-hint-1, eval = FALSE}
 ...,
 plot.caption = element_text(face = "italic",
                             margin = margin(t = 5))
@@ -2948,13 +2782,13 @@ plot.caption = element_text(face = "italic",
 
 We will now simply set the y-axis title to be bold. Add axis.title.y as an argument to theme(). Set it equal to element_text(), and then face = "bold".
 
-```{r the-us-life-expectan-22, exercise = TRUE}
+```{r the-us-life-expectancy-gap-22, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-22-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-22-hint-1, eval = FALSE}
 axis.title.y = element_text(face = "bold")
 ```
 
@@ -2966,13 +2800,13 @@ Any code that modifies the axes will have the prefix "axis" instead of "plot".
 
 Last but not least, we will modify the axes ticks to be bold, so they are more easily readable. Add `axis.text` to within the `theme()` argument. Set it equal to `element_text()`. Make the font bold.
 
-```{r the-us-life-expectan-23, exercise = TRUE}
+```{r the-us-life-expectancy-gap-23, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r the-us-life-expectan-23-hint-1, eval = FALSE}
+```{r the-us-life-expectancy-gap-23-hint-1, eval = FALSE}
 axis.text = element_text(face = "bold"))
 ```
 
@@ -2982,10 +2816,8 @@ Reminder: your final graph should look like this.
 final_plot
 ```
 
-
 ## Portland Heatwave in 2021
 ### 
-
 
 <!-- HL: I also have no idea why the colour of the dots won't change -->
 
@@ -3001,7 +2833,7 @@ include_graphics("images/nyt-plot.png")
 
 Credits to Cédric Scherer on Twitter for providing the code breakdown of a slightly modified graph. You can find the GitHub code [here](https://gist.github.com/z3tt/275e6cffa5933c85332bacfad717eb88).
 
-###
+### 
 
 This section will be 31 exercises long.
 
@@ -3051,11 +2883,11 @@ portland_final
 
 We will be using the `portland_data` tibble, taken from [Oregon Live Data](https://www.oregonlive.com/data/). The data has been prepared for you. Run `portland_data` in the code chunk below to explore the data set.
 
-```{r portland-heatwave-in-1, exercise = TRUE}
+```{r portland-heatwave-in-2021-1, exercise = TRUE}
 
 ```
 
-```{r portland-heatwave-in-1-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-1-hint-1, eval = FALSE}
 portland_data
 ```
 
@@ -3067,13 +2899,13 @@ Good! Note: the temperatures are all in Fahrenheit, and `tmax` and `tmin` repres
 
 Run `glimpse()` on the portland_data tibble.
 
-```{r portland-heatwave-in-2, exercise = TRUE}
+```{r portland-heatwave-in-2021-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-2-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-2-hint-1, eval = FALSE}
 glimpse(portland_data)
 ```
 
@@ -3085,13 +2917,13 @@ Take a look at the `recent_high` column. It's a logical column that we will late
 
 Take a look at the `months` tibble, we will use it to create breaks on the x-axis. Run `months` in the code chunk below. 
 
-```{r portland-heatwave-in-3, exercise = TRUE}
+```{r portland-heatwave-in-2021-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-3-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-3-hint-1, eval = FALSE}
 months
 ```
 
@@ -3104,11 +2936,11 @@ This `months` tibble contains column `yday`, which indicates what day of the yea
 
 Let's start building the plot! First, let's use the function `ggplot()`. Within the function, set the argument `data` equal to `portland_data`.
 
-```{r portland-heatwave-in-4, exercise = TRUE}
+```{r portland-heatwave-in-2021-4, exercise = TRUE}
 
 ```
 
-```{r portland-heatwave-in-4-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-4-hint-1, eval = FALSE}
 ggplot(data = portland_data)
 ```
 
@@ -3120,13 +2952,13 @@ Good! This merely tells the plot what dataset to use. We have not told it what t
 
 Next, let's assign the `x` and `y` variables. Within ggplot, set the `x` variable to `yday` and the `y` variable to `tmax`. Remember to set this within `mapping = aes()` in ggplot. 
 
-```{r portland-heatwave-in-5, exercise = TRUE}
+```{r portland-heatwave-in-2021-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-5-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-5-hint-1, eval = FALSE}
 ggplot(data = portland_data,
        mapping = aes(x = yday,
                      y = tmax))
@@ -3140,13 +2972,13 @@ Good! The original plot by the New York Times mapped maximum temperature, so we 
 
 Next, we will start adding the scatterplot. Add the layer `geom_point`. Remember to use a `+` sign after the `ggplot` layer.
 
-```{r portland-heatwave-in-6, exercise = TRUE}
+```{r portland-heatwave-in-2021-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-6-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-6-hint-1, eval = FALSE}
 ... +
   geom_point()
 ```
@@ -3159,13 +2991,13 @@ You may notice there's a significant degree of overplotting. We will rectify thi
 
 Within `geom_point`, add the argument alpha and set it to .05. Furthermore, set the argument `size` (still within geom_point) to .9. 
 
-```{r portland-heatwave-in-7, exercise = TRUE}
+```{r portland-heatwave-in-2021-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-7-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-7-hint-1, eval = FALSE}
 ... +
   geom_point(alpha = .05,
              size = .9)
@@ -3179,13 +3011,13 @@ Since there is around 40 years of data, there will be a significant degree of ov
 
 Now, we want to get the 3 dots that the NYT graphic highlights. We will add another geom_point layer to create those three dots. 
 
-```{r portland-heatwave-in-8, exercise = TRUE}
+```{r portland-heatwave-in-2021-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-8-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-8-hint-1, eval = FALSE}
 ... +
   geom_point()
 ```
@@ -3198,13 +3030,13 @@ Right now, we have simply added another layer which was the exact same as the la
 
 Within the second `geom_point`, we must filter the data. First, use the argument `data = ...`. Next, within that argument, use `filter()`. The first argument should be `portland_data` (since we are filtering that data set), and then the second argument should be `recent_high != FALSE``.
 
-```{r portland-heatwave-in-9, exercise = TRUE}
+```{r portland-heatwave-in-2021-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-9-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-9-hint-1, eval = FALSE}
 ... +
   geom_point(data = filter(portland_data, 
                     recent_high != FALSE))
@@ -3218,13 +3050,13 @@ The `recent_high` column has been modified so that `TRUE` columns are true for t
 
 We will now change the color of those three dots. Within `geom_point()`, add a new argument which set `color` to "#C1392B". 
 
-```{r portland-heatwave-in-10, exercise = TRUE}
+```{r portland-heatwave-in-2021-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-10-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-10-hint-1, eval = FALSE}
 ... +
   geom_point(data = filter(portland_data, 
                     recent_high != FALSE),
@@ -3239,13 +3071,13 @@ You can use HEX codes in the `color` argument to change it to whatever colour yo
 
 Next, we'll change the size of these dots to make them stand out more. Set the argument `size` to 2.3.
 
-```{r portland-heatwave-in-11, exercise = TRUE}
+```{r portland-heatwave-in-2021-11, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-11-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-11-hint-1, eval = FALSE}
 ...+
   geom_point(data = filter(portland_data, 
                     recent_high != FALSE),
@@ -3261,13 +3093,13 @@ Good! Now you can clearly see these three dots distinct from the other dots in t
 
 You may have noticed a legend popping up on the side of your graph. We don't need it, since these three dots don't indicate anything in particular. Add a new layer, `guides()`. Within `guides()`, set `color = "none"`.
 
-```{r portland-heatwave-in-12, exercise = TRUE}
+```{r portland-heatwave-in-2021-12, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-12-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-12-hint-1, eval = FALSE}
 ... +
   guides(color = "none")
 ```
@@ -3281,13 +3113,13 @@ The `guides` function allows you to get rid of legends just like an argument wit
 
 Copy and paste your code from Exercise 12. Add another layer, `scale_x_continuous`. We want to first change the break intervals on the x-axis. Set the argument `breaks` to `months$yday`.
 
-```{r portland-heatwave-in-13, exercise = TRUE}
+```{r portland-heatwave-in-2021-13, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-13-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-13-hint-1, eval = FALSE}
 ... +
   scale_x_continuous(breaks = months$yday)
 ```
@@ -3300,13 +3132,13 @@ Remember, the `$` operator pulls a vector from a tibble. Since we only care abou
 
 Next, we want to change the labels so they display the names of the months. Still within `scale_x_continuous`, add the argument `labels` and set it to `months$label`.
 
-```{r portland-heatwave-in-14, exercise = TRUE}
+```{r portland-heatwave-in-2021-14, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-14-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-14-hint-1, eval = FALSE}
 ... +
   scale_x_continuous(breaks = months$yday,
                      labels = months$label)
@@ -3320,13 +3152,13 @@ You may see that it's a little crowded in the axis labels. We will fix that in t
 
 Still within `scale_x_continuous`, add the argument `expand =`. Set it equal to `c(.01,.01)`
 
-```{r portland-heatwave-in-15, exercise = TRUE}
+```{r portland-heatwave-in-2021-15, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-15-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-15-hint-1, eval = FALSE}
 ...+
   scale_x_continuous(breaks = months$yday,
                      labels = months$label,
@@ -3341,13 +3173,13 @@ The `expand` argument adds padding around the data to ensure they're placed away
 
 Now let's fix the y-axis. In the NYT graphic, there are breaks every 20 degrees. Let's make our graph the same way. In `scale_y_continuous`, set the `break` argument equal to `seq(from = 20, to = 120, by = 20)`.
 
-```{r portland-heatwave-in-16, exercise = TRUE}
+```{r portland-heatwave-in-2021-16, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-16-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-16-hint-1, eval = FALSE}
 ...+
   scale_y_continuous(breaks = seq(from = 20, to = 120, by = 20))
 ```
@@ -3360,13 +3192,13 @@ Now let's fix the y-axis. In the NYT graphic, there are breaks every 20 degrees.
 
 Next, we want to add °F to each of the breaks. Including units is important! Within scale_y_continuous, add the `labels` argument.Set the labels argument equal to `function(x) paste0(x, "°F")`.
 
-```{r portland-heatwave-in-17, exercise = TRUE}
+```{r portland-heatwave-in-2021-17, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-17-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-17-hint-1, eval = FALSE}
 ... +
   scale_y_continuous(breaks = seq(from = 20, to = 120, by = 20),
                      labels = function(x) paste0(x, "°F"))
@@ -3380,13 +3212,13 @@ When you want to add text to your axis labels without changing the data itself, 
 
 To simplify the plot, add the layer `theme_minimal()`.
 
-```{r portland-heatwave-in-18, exercise = TRUE}
+```{r portland-heatwave-in-2021-18, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-18-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-18-hint-1, eval = FALSE}
 ...+
   theme_minimal()
 ```
@@ -3403,13 +3235,13 @@ Add the `labs()` layer to add a title and a caption. Remember, use `\n` to add a
 portland_final
 ```
 
-```{r portland-heatwave-in-19, exercise = TRUE}
+```{r portland-heatwave-in-2021-19, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-19-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-19-hint-1, eval = FALSE}
 ... +
   labs(title = ...,
        subtitle = ...,
@@ -3425,13 +3257,13 @@ Remember, to get rid of the x and y axis labels, set them equal to `NULL`.
 
 The first thing to fix is the title. We should make it bold, just like we did in the previous exercise. Add the `theme()` layer, and within it set the argument `plot.title` equal to `element_text()`. Within `element_text()`, set `face = "bold"`.
 
-```{r portland-heatwave-in-20, exercise = TRUE}
+```{r portland-heatwave-in-2021-20, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-20-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-20-hint-1, eval = FALSE}
 ...+
   theme(plot.title = element_text(face = "bold"))
 ```
@@ -3444,13 +3276,13 @@ Good! Remember "face" changes the font to be either plain, italic, bold, or bold
 
 Next, let's get rid of some grid lines to make it much cleaner. Within theme() still, set `panel.grid.minor` equal to `element_blank()`.
 
-```{r portland-heatwave-in-21, exercise = TRUE}
+```{r portland-heatwave-in-2021-21, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-21-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-21-hint-1, eval = FALSE}
 ... +
   theme(plot.title = element_text(face = "bold"),
         panel.grid.minor = element_blank())
@@ -3464,13 +3296,13 @@ Minor grid lines are those that do not have a label attached to them. We got rid
 
 You may also have noticed that there are no vertical lines running across the graph at all. We will get rid of the x-axis major labels by setting `panel.grid.major.x` equal to `element_blank()`. 
 
-```{r portland-heatwave-in-22, exercise = TRUE}
+```{r portland-heatwave-in-2021-22, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-22-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-22-hint-1, eval = FALSE}
 ...+
   theme(plot.title = element_text(face = "bold"),
         panel.grid.minor = element_blank(),
@@ -3485,13 +3317,13 @@ Somewhat confusingly, "x-axis" lines run vertically, and "y-axis" lines run hori
 
 You may have noticed that when we set `panel.grid.minor` to `element_blank()` the x-axis line disappeared. This is because we have no label at 0 degrees. However, we want an x-axis. Within `theme()` set the argument `axis.line.x` equal to `element_line()`.
 
-```{r portland-heatwave-in-23, exercise = TRUE}
+```{r portland-heatwave-in-2021-23, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-23-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-23-hint-1, eval = FALSE}
 ... +
   theme(plot.title = element_text(face = "bold"),
         panel.grid.minor = element_blank(),
@@ -3507,13 +3339,13 @@ Remember: `element_line` is one of the four elements in modifying themes, along 
 
 The x-axis is a bit too thick and bold. We can reduce the size of the line. Within `element_line()` set the argument `size` equal to 0.2. 
 
-```{r portland-heatwave-in-24, exercise = TRUE}
+```{r portland-heatwave-in-2021-24, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-24-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-24-hint-1, eval = FALSE}
 ...+
   theme(plot.title = element_text(face = "bold"),
         panel.grid.minor = element_blank(),
@@ -3529,13 +3361,13 @@ Good! You can modify the size of lines just like you can modify the size of poin
 
 In the NYT graphic, each month has a little tick on the x-axis. Let's create those! Still within `theme()`, set `axis.ticks.x` equal to element_line(). 
 
-```{r portland-heatwave-in-25, exercise = TRUE}
+```{r portland-heatwave-in-2021-25, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-25-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-25-hint-1, eval = FALSE}
 ...+
   theme(plot.title = element_text(face = "bold"),
         panel.grid.minor = element_blank(),
@@ -3552,13 +3384,13 @@ Good! Since the ticks are a line, we use `element_line` to create them.
 
 You may notice there is one key element missing, that being the annotation on the plot that has "Last 3 days". We will create this soon. But first, assign your code to a plot object called `portland_graph`. 
 
-```{r portland-heatwave-in-26, exercise = TRUE}
+```{r portland-heatwave-in-2021-26, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-26-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-26-hint-1, eval = FALSE}
 portland_graph <- ggplot(...)
 ```
 
@@ -3570,13 +3402,13 @@ Good! Now we can add the annotation layer.
 
 Add the function `annotate()` to your plot object `portland_graph`. 
 
-```{r portland-heatwave-in-27, exercise = TRUE}
+```{r portland-heatwave-in-2021-27, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-27-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-27-hint-1, eval = FALSE}
 ...
 
 portland_graph + annotate()
@@ -3590,13 +3422,13 @@ Note: you will get an error if you attempt to run this. We have not put everythi
 
 Within annotate, put "text". This tells R that you want to annotate the plot with text.
 
-```{r portland-heatwave-in-28, exercise = TRUE}
+```{r portland-heatwave-in-2021-28, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-28-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-28-hint-1, eval = FALSE}
 portland_graph + annotate("text")
 ```
 
@@ -3608,13 +3440,13 @@ You could also annotate a graph with a rectangle (`"rect"`), a line segment (`"s
 
 Next, we will set the x and y coordinates for where this label should go. Set the argument `x` equal to 210 and `y` equal to 118.
 
-```{r portland-heatwave-in-29, exercise = TRUE}
+```{r portland-heatwave-in-2021-29, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-29-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-29-hint-1, eval = FALSE}
 portland_graph + annotate("text",
                           x = 210,
                           y = 118)
@@ -3628,13 +3460,13 @@ These coordinates are based off the values of the x and y axes. July is roughly 
 
 You may have noticed we don't have any text yet. Within annotate, set the `label` argument equal to "Last 3 days".
 
-```{r portland-heatwave-in-30, exercise = TRUE}
+```{r portland-heatwave-in-2021-30, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-30-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-30-hint-1, eval = FALSE}
 portland_graph + annotate("text",
                           x = 210,
                           y = 118,
@@ -3657,13 +3489,13 @@ As a reminder, this is what your final plot should look like.
 portland_final
 ```
 
-```{r portland-heatwave-in-31, exercise = TRUE}
+```{r portland-heatwave-in-2021-31, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r portland-heatwave-in-31-hint-1, eval = FALSE}
+```{r portland-heatwave-in-2021-31-hint-1, eval = FALSE}
 portland_graph + annotate("text",
                           x = 210,
                           y = 118,
@@ -3674,7 +3506,7 @@ portland_graph + annotate("text",
 
 ### 
 
-These arguments, `fontface` and `color` are the same aesthetic arguments you would use with other geoms in ggplot.
+These arguments, `fontface` and `color` are the same aesthetic arguments you would use with other geoms in **ggplot2**.
 
 
 ## Summary
