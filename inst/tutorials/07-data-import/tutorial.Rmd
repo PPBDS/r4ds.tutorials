@@ -1372,7 +1372,7 @@ Continue your pipe with `mutate()`. Within `mutate()` set `z` to `parse_number(z
 ## Reading data from multiple files
 ### 
 
-Clean multiple files at once is a common task.
+Cleaning multiple files at once is a common task.
 
 ### Exercise 1
 
@@ -1383,7 +1383,7 @@ Run `list.files("data")` to check what files there are in the `data` folder.
 ```
 
 ```{r reading-data-from-multiple-fil-1-hint-1, eval = FALSE}
-list.files("data")
+...("data")
 ```
 
 ```{r reading-data-from-multiple-fil-1-test, include = FALSE}
@@ -1409,7 +1409,7 @@ list.files("data", ... = "similar")
 ```
 
 ```{r reading-data-from-multiple-fil-2-test, include = FALSE}
-
+list.files("data", pattern = "similar")
 ```
 
 ### 
@@ -1426,6 +1426,8 @@ You can also set `pattern` to ".csv" or ".delim" for those types of files in a f
 
 ### Exercise 3
 
+<!-- DK: This seems to produce a relative path. I was expecting an absolute path. -->
+
 To show the exact directory of where the files came from, set the argument `full.names` to `TRUE` in `list.files()`.
 
 ```{r reading-data-from-multiple-fil-3, exercise = TRUE}
@@ -1439,7 +1441,7 @@ list.files("data", pattern = "similar", full.names = ...)
 ```
 
 ```{r reading-data-from-multiple-fil-3-test, include = FALSE}
-
+list.files("data", pattern = "similar", full.names = TRUE)
 ```
 
 ### 
@@ -1471,12 +1473,17 @@ Now let's combine the files by piping the last call to `list_files()` directly t
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r reading-data-from-multiple-fil-4-hint-1, eval = FALSE}
-list.files("data", pattern = "similar", full.names = TRUE) |> 
-  read_csv()
+list.files("data", 
+           pattern = "similar", 
+           full.names = TRUE) |> 
+  ...
 ```
 
 ```{r reading-data-from-multiple-fil-4-test, include = FALSE}
-
+list.files("data", 
+           pattern = "similar", 
+           full.names = TRUE) |> 
+  read_csv()
 ```
 
 ### 
@@ -1485,7 +1492,7 @@ Column `b`'s type is `chr` because the "." in `similar_1.csv` makes R think the 
 
 ### Exercise 5
 
-In `read_csv()`, set the argument `na` to `"."` to get rid of the character in column `b`.
+Using the same pipleline, change `read_csv()` to set the argument `na` to `"."` to get rid of the character in column `b`.
 
 ```{r reading-data-from-multiple-fil-5, exercise = TRUE}
 
@@ -1495,11 +1502,14 @@ In `read_csv()`, set the argument `na` to `"."` to get rid of the character in c
 
 ```{r reading-data-from-multiple-fil-5-hint-1, eval = FALSE}
 ... |> 
-  read_csv(na = ".")
+  read_csv(... = ".")
 ```
 
 ```{r reading-data-from-multiple-fil-5-test, include = FALSE}
-
+list.files("data", 
+           pattern = "similar", 
+           full.names = TRUE) |> 
+  read_csv(na = ".")
 ```
 
 ### 
@@ -1531,7 +1541,10 @@ Now let's get rid of the annoying "specify column types" message by using the `s
 ```
 
 ```{r reading-data-from-multiple-fil-6-test, include = FALSE}
-
+list.files("data", 
+           pattern = "similar", 
+           full.names = TRUE) |> 
+  read_csv(na = ".", show_col_types = FALSE)
 ```
 
 ### 
@@ -1555,7 +1568,8 @@ list.files(path = ...,
 ```
 
 ```{r reading-data-from-multiple-fil-7-test, include = FALSE}
-
+list.files(path = "data", 
+           pattern = "sales")
 ```
 
 ### 
@@ -1566,7 +1580,6 @@ Although there are only 3 files here, in many cases you will need to deal with h
 
 Pipe the results from `list_files()` to `read_csv()`. Don't forget to add `full.names = TRUE` to the call to `list.files()`, otherwise `read_csv()` won't be able to *find* the files.
 
-
 ```{r reading-data-from-multiple-fil-8, exercise = TRUE}
 
 ```
@@ -1576,19 +1589,20 @@ Pipe the results from `list_files()` to `read_csv()`. Don't forget to add `full.
 ```{r reading-data-from-multiple-fil-8-hint-1, eval = FALSE}
 list.files(path = "data",
            pattern = 'sales', 
+           full.names = ...) |> 
+  ...
+```
+
+```{r reading-data-from-multiple-fil-8-test, include = FALSE}
+list.files(path = "data",
+           pattern = 'sales', 
            full.names = TRUE) |> 
   read_csv()
 ```
 
-```{r reading-data-from-multiple-fil-8-test, include = FALSE}
-
-```
-
 ### 
 
-<!-- DK: Might be better to use an example without month, which does tell us which file! Just change the text files to remove the month column.  -->
-
-Although this works, we have lost the information about which rows come from which input files.
+Although this works, we have lost the information about which rows come from which input files. This is important because the file names tell us which month the data is from.
 
 ### Exercise 9
 
@@ -1608,7 +1622,10 @@ list.files(path = "data",
 ```
 
 ```{r reading-data-from-multiple-fil-9-test, include = FALSE}
-
+list.files(path = "data",
+           pattern = 'sales', 
+           full.names = TRUE) |> 
+  read_csv(id = "file")
 ```
 
 ### 
@@ -1634,6 +1651,7 @@ students2 <- students |>
     age = if_else(age == "five", "5", age),
     age = parse_number(age)
   )
+students2
 ```
 
 ```{r writing-to-a-file-1-test, include = FALSE}
@@ -1644,6 +1662,7 @@ students2 <- students |>
     age = if_else(age == "five", "5", age),
     age = parse_number(age)
   )
+students2
 ```
 
 ### 
@@ -1674,7 +1693,7 @@ students2
 
 ### Exercise 3
 
-<!-- DK: There does not seem to be a way for students to write out a file to a location to which they will have access for reading. So, we need to stick students2.csv in data/ ahead of time, while pretending that students are doing it. And what about tests? -->
+<!-- There does not seem to be a way for students to write out a file to a location to which they will have access for reading. So, we need to stick students2.csv in data/ ahead of time, while pretending that students are doing it. -->
 
 Use `write_csv()` to write the contents of the `students2` object to a file called `"students2.csv"` which is located in the `data` directory.  Do this by setting the first argument of `write_csv()`, `x`, to `students2` and then the second argument, `file`, to `"data/students2.csv"`.
 
@@ -1707,11 +1726,11 @@ Now let’s read that csv file back in. Run `read_csv()` on `"data/students2.csv
 ```
 
 ```{r writing-to-a-file-4-hint-1, eval = FALSE}
-read_csv("data/students2.csv")
+...("data/students2.csv")
 ```
 
 ```{r writing-to-a-file-4-test, include = FALSE}
-
+read_csv("data/students2.csv")
 ```
 
 ### 
@@ -1757,12 +1776,19 @@ file saved as.
 ```
 
 ```{r writing-to-a-file-5-hint-2, eval = FALSE}
-write_rds(iris_p, 
+...(iris_p, 
           "test_1.rds")
 ```
 
 ```{r writing-to-a-file-5-test, include = FALSE}
-
+iris_p <- iris |> 
+  ggplot(aes(x = Sepal.Length, y = Sepal.Width)) +
+  geom_jitter() +
+  labs(title = "Sepal Dimensions of Various Species of Iris",
+       x = "Sepal Length",
+       y = "Sepal Width")
+write_rds(iris_p, 
+          "test_1.rds")
 ```
 
 ### 
@@ -1778,11 +1804,11 @@ Run `list.files("data")`. You should see your newly created file listed.
 ```
 
 ```{r writing-to-a-file-6-hint-1, eval = FALSE}
-list.files("data")
+...("data")
 ```
 
 ```{r writing-to-a-file-6-test, include = FALSE}
-
+list.files("data")
 ```
 
 ### 
@@ -1798,11 +1824,11 @@ Let's now use `read_rds()` to read in the newly created file! Set the `file` arg
 ```
 
 ```{r writing-to-a-file-7-hint-1, eval = FALSE}
-read_rds(file = "data/test_1.rds")
+read_rds(... = "data/test_1.rds")
 ```
 
 ```{r writing-to-a-file-7-test, include = FALSE}
-
+read_rds(file = "data/test_1.rds")
 ```
 
 ### 
@@ -1832,11 +1858,11 @@ file saved as.
 ```
 
 ```{r writing-to-a-file-8-hint-2, eval = FALSE}
-write_rds(mtcars, "test_2.rds")
+...(mtcars, "test_2.rds")
 ```
 
 ```{r writing-to-a-file-8-test, include = FALSE}
-
+write_rds(mtcars, "test_2.rds")
 ```
 
 ### 
@@ -1852,11 +1878,11 @@ Run `list.files("data")`. You should see your newly created file listed.
 ```
 
 ```{r writing-to-a-file-9-hint-1, eval = FALSE}
-list.files("data")
+list.files(...)
 ```
 
 ```{r writing-to-a-file-9-test, include = FALSE}
-
+list.files("data")
 ```
 
 ### 
@@ -1873,11 +1899,11 @@ Let's now use `read_rds()` to read in the newly created file! Set the `file` arg
 ```
 
 ```{r writing-to-a-file-10-hint-1, eval = FALSE}
-read_rds(file = "data/test_2.rds")
+read_rds(... = "data/test_2.rds")
 ```
 
 ```{r writing-to-a-file-10-test, include = FALSE}
-
+read_rds(file = "data/test_2.rds")
 ```
 
 ### 
