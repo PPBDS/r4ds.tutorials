@@ -113,8 +113,6 @@ x <- c(..., ..., ...)
 x <- c("1.2", "5.6", "1e3")
 ```
 
-
-
 ### 
 
 In most cases, you’ll get numbers already recorded in one of R’s numeric types: integer or double. In some cases, however, you’ll encounter them as strings.
@@ -138,8 +136,6 @@ x <- c("1.2", "5.6", "1e3")
 parse_double(x)
 ```
 
-
-
 ### 
 
 This should return an output of: `#> [1]    1.2    5.6 1000.0`.
@@ -161,7 +157,6 @@ y <- c(..., ..., ...)
 ```{r making-numbers-4-test, include = FALSE}
 y <- c("$1,1234", "USD 3,513", "59%")
 ```
-
 
 ### 
 
@@ -191,7 +186,6 @@ parse_number(y)
 y <- c("$1,234", "USD 3,513", "59%")
 parse_number(y)
 ```
-
 
 ### 
 
@@ -224,7 +218,6 @@ question_text(NULL,
 	rows = 3)
 ```
 
-
 ### 
 
 The functions `add_count()` and `add_tally()` are equivalents to `count()` and `tally()` but use `mutate()` instead of `summarise()` so that they add a new column with group-wise counts.
@@ -250,7 +243,6 @@ flights
 ```{r counts-2-test, include = FALSE}
 flights
 ```
-
 
 ### Exercise 3
 
@@ -292,7 +284,6 @@ flights |> count(dest, sort = ...)
 flights |> count(dest, sort = TRUE)
 ```
 
-
 ### 
 
 And remember that if you want to see all the values, you can use `|> View()` or `|> print(n = Inf)`.
@@ -318,7 +309,6 @@ flights |>
   summarize(carriers = n_distinct(carrier)) 
   
 ```
-
 
 ### 
 
@@ -537,7 +527,7 @@ x <- c(...)
 x <- c(1, 2, 10, 20)
 ```
 
-###
+### 
 
 ### Exercise 2
 
@@ -633,7 +623,7 @@ df
 df
 ```
 
-###
+### 
 
 Note that these are different to the summary functions `min()` and `max()` which take multiple observations and return a single value. You can tell that you’ve used the wrong form when all the minimums and all the maximums have the same value.
 
@@ -655,7 +645,7 @@ df |>
     min = ...)
 ```
 
-```{r numeric-transformations-3-test, include = FALSE}
+```{r numeric-transformations-6-test, include = FALSE}
 df |> 
   mutate(
     min = pmin(x, y)
@@ -690,7 +680,7 @@ df |>
   )
 ```
 
-###
+### 
 
 If na.rm is FALSE an NA value in any of the arguments will cause a value of `NA` to be returned, otherwise NA values are ignored.
 
@@ -750,6 +740,7 @@ df |>
     max = pmax(x, y, na.rm = TRUE)
   )
 ```
+
  
 ### 
 
@@ -821,8 +812,6 @@ z <- 1:10
 z %% 3
 ```
 
-
-
 ### Exercise 13
 
 Create a new pipeline. Pipe `flights` with the function `mutate()`. Within the `mutate()` function, create a new variable called `hour` and set it to `sched_dep_time %/% 100`.
@@ -844,7 +833,6 @@ flights |>
   mutate(
     hour = sched_dep_time %/% 100)
 ```
-
 
 ### 
 
@@ -873,7 +861,6 @@ flights |>
     hour = sched_dep_time %/% 100, 
     minute = sched_dep_time %% 100)
 ```
-
 
 ### 
 
@@ -906,7 +893,6 @@ flights |>
     .keep = "used"
   )
 ```
-
 
 ### 
 
@@ -941,7 +927,6 @@ flights |>
   summarize(hour = sched_dep_time %/% 100)
 ```
 
-
 ### 
 
 We can combine that with a trick using `mean(is.na(x))` to see how the proportion of cancelled flights varies over the course of the day. 
@@ -968,7 +953,6 @@ flights |>
             prop_cancelled = mean(is.na(dep_time)))
 ```
 
-
 ### 
 
 `is.na(x)` works with any type of vector and returns TRUE for missing values and FALSE for everything else, which we can use to find all the rows with a missing `dep_time`.
@@ -990,13 +974,12 @@ flights |>
             n = ...)
 ```
 
-```{r numeric-transformations-18-test, include=}
+```{r numeric-transformations-18-test, include = FALSE}
 flights |> 
   summarize(hour = sched_dep_time %/% 100, 
             prop_cancelled = mean(is.na(dep_time)), 
             n = n())
 ```
-
 
 ### 
 
@@ -1028,8 +1011,7 @@ flights |>
             .by = hour)
 ```
 
-###
-
+### 
 
 ### Exercise 20
 
@@ -1058,7 +1040,6 @@ flights |>
             .by = hour) |> 
   filter(hour > 1)
 ```
-
 
 ### Exercise 21
 
@@ -1090,7 +1071,6 @@ flights |>
   ggplot(aes(x = hour, y = prop_cancelled))
 ```
 
-
 ### 
 
 ### Exercise 22
@@ -1114,7 +1094,7 @@ flights |>
   ...
 ```
 
-```{r numeric-transformations-22-test, include=FALSE}
+```{r numeric-transformations-22-test, include = FALSE}
 flights |> 
   summarize(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
@@ -1124,7 +1104,6 @@ flights |>
   ggplot(aes(x = hour, y = prop_cancelled)) +
   geom_line()
 ```
-
 
 ### Exercise 23
 
@@ -1157,7 +1136,6 @@ flights |>
   ggplot(aes(x = hour, y = prop_cancelled)) +
   geom_line(color = "grey50")
 ```
-
 
 ### Exercise 24
 
@@ -1193,7 +1171,6 @@ flights |>
   geom_point()
 ```
 
-
 ### Exercise 25
 
 Copy your previous code. Within the function `geom_point()` map `size` to `n`. 
@@ -1227,7 +1204,6 @@ flights |>
   geom_line(color = "grey50") + 
   geom_point(aes(size = n))
 ```
-
 
 ### Exercise 26
 
@@ -1271,7 +1247,6 @@ flights |>
        y = "Probability cancelled")
 ```
 
-
 ### 
 
 What we have here is a line plot with scheduled departure hour on the x-axis, and proportion of cancelled flights on the y-axis. Cancellations seem to accumulate over the course of the day until 8pm, very late flights are much less likely to be cancelled.
@@ -1299,7 +1274,6 @@ question_text(NULL,
 	incorrect = NULL,
 	rows = 6)
 ```
-
 
 ### 
 
@@ -1366,7 +1340,6 @@ round(123.456 , digits = ...)
 ```{r other-number-functions-4-test, include = FALSE}
 round(123.456, digits = -2)
 ```
-
 
 ### 
 
@@ -1496,7 +1469,6 @@ x <- 123.456
 ceiling(x / 0.01) * 0.01
 ```
 
-
 ### 
 
 You can use the same technique if you want to round() to a multiple of some other number
@@ -1520,7 +1492,6 @@ x <- 123.456
 round(x/4) * 4
 ```
 
-
 ### Exercise 12
 
 This time let's round to the nearest 0.25. Type in `round(x / 0.25) * 0.25` and hit "Run Code".
@@ -1540,7 +1511,6 @@ x <- 123.456
 round(x / 0.25) * 0.25
 ```
 
-
 ### Exercise 13
 
 Make a new vector `x` and set it to equal `c(1, 2, 5, 10, 15, 20)`. 
@@ -1557,7 +1527,6 @@ x <- c(...)
 ```{r other-number-functions-13-test, include = FALSE}
 x <- c(1,2,5,10,15,20)
 ```
-
 
 ### 
 
@@ -1582,7 +1551,6 @@ x <- c(1, 2, 5, 10, 15, 20)
 cut(x, breaks = c(0,5,10,15,20))
 ```
 
-
 ### Exercise 15
 
 The breaks don't need to be evenly spaced. Copy the previous code and change the `breaks` argument and set it to `c(0, 5, 10, 100)`.
@@ -1601,7 +1569,6 @@ cut(x, breaks = ...)
 x <- c(1, 2, 5, 10, 15, 20)
 cut(x, breaks = c(0,5,10,100))
 ```
-
 
 ### 
 
@@ -1700,7 +1667,6 @@ x <- ...
 x <- c(1,2,3,4,NA)
 ```
 
-
 ### 
 
 dplyr provides a number of ranking functions inspired by SQL, but you should always start with dplyr::min_rank(). It uses the typical method for dealing with ties, e.g., 1st, 2nd, 2nd, 4th
@@ -1724,7 +1690,6 @@ min_rank(x)
 x <- c(1, 2, 3, 4, NA)
 min_rank(x)
 ```
-
 
 ### 
 
@@ -1750,7 +1715,6 @@ x <- c(1, 2, 3, 4, NA)
 min_rank(desc(x))
 ```
 
-
 ### 
 
 If min_rank() doesn’t do what you need, look at the variants `dplyr::row_number()`, `dplyr::dense_rank()`, `dplyr::percent_rank()`, and `dplyr::cume_dist()`. See the documentation for details.
@@ -1772,7 +1736,6 @@ ranktypes
 ```{r general-transformations-4-test, include = FALSE}
 ranktypes
 ```
-
 
 ### 
 
@@ -1800,7 +1763,6 @@ ranktypes |>
   mutate(row_number = row_number(x))
 ```
 
-
 ### Exercise 6
 
 Using the same pipe as above, create another variable, within the call to `mutate()`, called `dense_rank` equal to `dense_rank(x)`.
@@ -1824,7 +1786,6 @@ ranktypes |>
   mutate(row_number = row_number(x),
          dense_rank = dense_rank(x))
 ```
-
 
 ### Exercise 7
 
@@ -1851,7 +1812,6 @@ ranktypes |>
          dense_rank = dense_rank(x),
          percent_rank = percent_rank(x))
 ```
-
 
 ### Exercise 8
 
@@ -1990,7 +1950,6 @@ numbers |>
     three_in_each_group = row0 %/% 3)
 ```
 
-
 ### Exercise 13
 
 Create a new vector `x` and set it to `c(2, 5, 11, 11, 19, 35)`
@@ -2008,7 +1967,6 @@ x <- ...
 ```{r general-transformations-13-test, include = FALSE}
 x <- c(2, 5, 11, 11, 19, 35)
 ```
-
 
 ### 
 
@@ -2034,7 +1992,6 @@ x <- c(2, 5, 11, 11, 19, 35)
 lag(x)
 ```
 
-
 ### Exercise 15
 
 Use the function `lead()` taking in `x` as its argument. 
@@ -2055,7 +2012,6 @@ x <- c(2, 5, 11, 11, 19, 35)
 lead(x)
 ```
 
-
 ### Exercise 16
 
 Subtract `lag(x)` from  `x`.
@@ -2075,7 +2031,6 @@ x - ...
 x <- c(2, 5, 11, 11, 19, 35)
 x-lag(x)
 ```
-
 
 ### 
 
@@ -2101,7 +2056,6 @@ x <- c(2, 5, 11, 11, 19, 35)
 x==lag(x)
 ```
 
-
 ### 
 
 `x == lag(x)` tells you when the current value changes. You can lead or lag by more than one position by using the second argument, `n`.
@@ -2126,7 +2080,6 @@ times_visited
 times_visited
 ```
 
-
 ### 
 
 Sometimes you want to start a new group every time some event occurs. We've computed the time between each event, and figured out that there's a gap that's big enough to qualify.
@@ -2150,7 +2103,6 @@ times_visited |>
 times_visited |> 
   mutate(diff = lag(time, default = first(time)))
 ```
-
 
 ### Exercise 20
 
@@ -2197,7 +2149,7 @@ times_visited |>
     group = ...)
 ```
 
-```{r general-transformations-20-test, include = FALSE}
+```{r general-transformations-21-test, include = FALSE}
 times_visited |> 
   mutate(diff = lag(time, default = first(time)),
          has_gap = diff >=5,
@@ -2352,7 +2304,7 @@ flights |>
   )
 ```
 
-```{r numeric-summaries-1-test, include = FALSE}
+```{r numeric-summaries-2-test, include = FALSE}
 flights |> 
   summarize(
     mean = mean(dep_delay, na.rm = TRUE)
@@ -2381,7 +2333,7 @@ flights |>
   )
 ```
 
-```{r numeric-summaries-1-test, include = FALSE}
+```{r numeric-summaries-3-test, include = FALSE}
 flights |> 
   summarize(
     mean = mean(dep_delay, na.rm = TRUE),
@@ -2408,7 +2360,7 @@ flights |>
   )
 ```
 
-```{r numeric-summaries-1-test, include = FALSE}
+```{r numeric-summaries-4-test, include = FALSE}
 flights |> 
   summarize(
     mean = mean(dep_delay, na.rm = TRUE),
@@ -2437,7 +2389,7 @@ flights |>
   )
 ```
 
-```{r numeric-summaries-1-test, include = FALSE}
+```{r numeric-summaries-5-test, include = FALSE}
 flights |> 
   summarize(
     mean = mean(dep_delay, na.rm = TRUE),
@@ -2478,7 +2430,6 @@ flights |>
   ) |> 
   ggplot(aes(x = mean, y = median))
 ```
-
 
 ### Exercise 7
 
@@ -2910,7 +2861,7 @@ flights |>
   ggplot(aes(x = ..., group = ...))
 ```
 
-```{r numeric-summaries-21-test, eval = FALSE}
+```{r numeric-summaries-21-hint-2, eval = FALSE}
 flights |> 
   filter(dep_delay < 120) |> 
   ggplot(aes(x = dep_delay, group = interaction(day, month)))
