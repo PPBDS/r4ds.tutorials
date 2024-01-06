@@ -8,7 +8,7 @@ output:
     progressive: yes
     'allow_skip:': yes
 runtime: shiny_prerendered
-description: 'Introduction to RStudio, Git and GitHub.'
+description: Introduction to RStudio, Git and GitHub.
 ---
 
 ```{r setup, include = FALSE}
@@ -28,6 +28,14 @@ options(tutorial.exercise.timelimit = 60,
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- Should we be making much bigger use of the **gert** package? Allows you to execute most git commands. Or maybe we should only show students usethis, at least until the end of this tutorial. But I can't find usethis equivalents to functions like gert::git_log(). -->
+
+<!-- Can we add some tests? Currently, seems like lots of commands, like gert::git_log(), don't work in testing. Maybe set up a test environment of some type, perhaps by setting up all sets of scaffolding for testthat? -->
+
+<!-- Update all the images. For example, the first one shows the project as existing in OneDrive, which is a bad idea! Make sure that the png file size is small. -->
+
+<!-- It is annoying that we can't do all this from the Console. Specifically, I hate having to use `git --version`. Wish that usethis::git_version() were exported. Wish there were equivalents for things like git config --global user.name. But there don't seem to be! We set values with usethis::use_git_config(), but we can't check them. Annoying!  -->
+
 <!-- Add three exercises --- like Project 1, Project 2 and Project 3 --- each of which starts with a new Github repo, connects to RStudio, edits the .gitignore, commits, create a Quarto doc, creates a plot and publishes it on RPubs. -->
 
 <!-- Use Github pages for one of the Projects? Not sure! How would we do that? Create an index.qmd, which knits to index.html, then set up Github pages with root (not docs) as the choice. -->
@@ -37,6 +45,8 @@ options(tutorial.exercise.timelimit = 60,
 <!-- For Project 1, use the top material out of r4ds-materual-to-add.txt, especially everything in Chapter 29 section, as knowledge drops. -->
 
 <!-- For Project 2, have 5 questions, each of which adds a new code chunk, each with a different code chunk option. The question for the student is something like `cat analysis.qmd | tail -n 10`. Then, you knowledge drop. -->
+
+<!-- For project 3, give a more thorough tour of Github: explain more about the different pages you can end up on. Consider www.github.com, www.github.com/user-name, and www.github.com/user-name/this-project. -->
 
 <!-- Three times that .gitignore is editted and then committed. First, with whatever.Rproj. Second, example_files. Third, rsconnect.  -->
 
@@ -97,7 +107,7 @@ question_text(NULL,
 
 ### 
 
-We abbreviate these instructions to **c**opy/**p**aste the **c**ommand/**r**esponse as CP/CR throughout this tutorial.
+We abbreviate the instructions **c**opy/**p**aste the **c**ommand/**r**esponse as CP/CR throughout this tutorial.
 
 
 ### Exercise 2
@@ -120,7 +130,9 @@ This should return a value something like `/Users/dkane/Desktop/projects/`. Your
 
 ### 
 
-That's all you need to know about the Terminal for this tutorial. You will be completing a separate "Terminal" dedicated tutorial in the future. Make sure to pay special attention to whether given commands are supposed to be run in the *Console* or the *Terminal*.
+That's all you need to know about the Terminal for this tutorial. The **r4ds.tutorials** package includes another tutorial entirely dedicated to the Terminal. 
+
+Going forward, make sure to pay special attention to whether given commands are supposed to be run in the *Console* or the *Terminal*.
 
 ## Setting up GitHub
 ### 
@@ -135,16 +147,8 @@ Install [Git](https://git-scm.com/) by following the instructions of the [Instal
 
 After you install Git, you should quit and then restart RStudio so that it has a chance to "recognize" that Git is installed. (Note that restarting RStudio is **not** the same as restarting your R session **within** your RStudio instance. To quit RStudio you need to go to the `RStudio -> Quit RStudio` menu item.) 
 
-After restarting RStudio, click on the Terminal pane. Run `git --version` in the Terminal to make sure that Git is installed and accessible. 
+After restarting RStudio, click on the Terminal pane. Run `git --version` in the Terminal to make sure that Git is installed and accessible. CP/CR.
 
-
-```{r out.width = "700px"}
-include_graphics("images/terminalEx2.png")
-```
-
-### 
-
-CP/CR.
 
 ```{r setting-up-github-1}
 question_text(NULL,
@@ -161,7 +165,7 @@ question_text(NULL,
 
 ### Exercise 2
 
-The next step is to create a GitHub account by following the instructions at the [GitHub homepage](https://github.com/). Follow [this advice](https://happygitwithr.com/github-acct.html#username-advice) **when choosing your username.**
+The next step is to create a GitHub account by following the instructions at the [GitHub homepage](https://github.com/). Follow [this advice](https://happygitwithr.com/github-acct.html#username-advice) **when choosing your username.** We recommend using a permanent email address for this account, not one which you lose access to when, for example, you change schools or jobs.
 
 ```{r}
 include_graphics("images/github_account_creation.png")
@@ -194,7 +198,7 @@ Now that you have your GitHub account, you need to connect it to RStudio. The fi
 
 <!-- Ran into an issue here where `usethis::use_git_config(user.name = "your-username", user.email = "your@email.org")` would produce an error if you had multiple `user.name`s or `user.email`s saved (this can be checked using `usethis::git_sitrep()`). To fix this, I first used the terminal command `git config --global --replace-all user.name "newname"`. However, there seemed to be an issue where the terminal would say it is replaced but it wasn't being recognized. In the end, I was able to locate the actual global git config file under `C:/User/username/` and edit it directly. In the file, there were fields formatted like `name = ...` and `email = ...`. Deleting these lines completely seemed to work correctly. Afterwards (Good to restart R session here), running `usethis::git_sitrep()` will show that the fields are not set and you should now be able to run `usethis::use_git_config(user.name = "your-username", user.email = "your@email.org")` without error. -->
 
-Run `usethis::use_git_config(user.name = "your-username", user.email = "your@email.org")` in the Console, substituting the email and name you used for your GitHub account. Note that this will not return anything. As long as you don't get an error message, it has worked.
+Run `usethis::use_git_config(user.name = "your-username", user.email = "your@email.org")` in the Console, substituting the email and user name you used for your GitHub account. Note that this will not return anything. As long as you don't get an error message, it has worked.
 
 ### 
 
@@ -211,9 +215,7 @@ question_text(NULL,
 
 ### Exercise 4
 
-Then, run `git config --global user.email` in the *Terminal* to make sure your GitHub email is stored too.
-
-CP/CR
+Run `git config --global user.email` in the *Terminal* to make sure your GitHub email is stored too. CP/CR.
 
 ```{r setting-up-github-4}
 question_text(NULL,
@@ -221,7 +223,7 @@ question_text(NULL,
     allow_retry = TRUE,
     try_again_button = "Edit Answer",
     incorrect = NULL,
-    rows = 2)
+    rows = 3)
 ```
 
 ### 
@@ -230,11 +232,11 @@ Now, your GitHub username and email are stored so that your computer can automat
 
 ### Exercise 5
 
-**Note:** Make sure you received the expected outputs of the name and email associated with your Github account from the last two exercises.
+**Note:** Make sure you received the expected outputs of the name and email associated with your Github account in the previous two exercises.
 
 If GitHub is our Google Drive, then GitHub repositories, or "repos," are the Google folders in which we store our work. Let's make a practice repo!
 
-To begin, sign into GitHub and go to the homepage. Click the green "New" button on the left of the website.
+To begin, sign into GitHub and go to the homepage: `www.github.com`. Click the green "New" button on the upper left side of the page. 
 
 ```{r out.width = "700px"}
 include_graphics("images/github_new_repo.png")
@@ -288,40 +290,52 @@ question_text(NULL,
     rows = 2)
 ```
 
+It should look something like:
+
+`https://github.com/davidkane9/First_Repo.git`
+
 ### 
 
 This link points to your project folder stored in GitHub. It is slightly different from the url of the project page because the `.git` suffix tells you that it's a special GitHub object and not a webpage.
 
-You've created a new repository on GitHub.
-
-Now, let's connect your `First_Repo` repository to RStudio.
-
 
 ### Exercise 7
 
-We start by making a new project. While you are making a new project, you will not be able to access this tutorial. Read **all instructions** before making your project.
+To connect your Github repo to an R project, we first make a new project. While you are making a new project, you will not be able to access this tutorial. 
+
+**Read all instructions before making your project.**
 
 ### 
 
-Click the dropdown menu in the top right of the R Studio window, and click "New Project".
+* Click the "File" dropdown menu in the top left of the R Studio window.
 
-Now, instead of clicking "New Directory" like we did previously, click on "Version Control". Then, click on "Git". These screens should look like the ones shown below.
+* Click "New Project ...".
 
-In the following screen, paste the link you copied from GitHub into "Repository URL". Then make sure your project is in the `projects` directory you made in the RStudio and Code tutorial. If it is not, click on "Browse...", and select your `projects` folder. Click "Create Project".
+* Instead of clicking "New Directory" as we did previously, click on "Version Control". 
 
-Here's a quick pic displaying the process.
+* Click on "Git". 
 
-```{r}
-include_graphics("images/new_git_project.png")
-```
+* Paste the link you copied from GitHub into "Repository URL". Make sure your project is in the `projects` directory you made in the "RStudio and Code" tutorial. If it is not, click on "Browse...", and select your `projects` folder. 
 
-### 
+* Hit the "tab" key. This will copy the name of the repo into the box for the "Project directory name." It is a good idea for your repos and project names to be identical.
 
-Navigate to the Terminal tab and run `git remote -v`. Then copy and paste both the command and the output into the space below. The output should contain the original link you pasted.
+* Click "Create Project".
 
-<!-- Delete? **Note:** If the output does not contain the link, try switching from Terminal to the Console tab and run `system("git remote -v")`. If the output still does not contain the link, stop the tutorial and **reach out on Discord for help**. -->
+This last step will cause RStudio to restart. Go ahead and follow these steps now. Then, return to the tutorial.
 
-```{r setting-up-github-7}
+### Exercise 8
+
+Reminder: You just completed these steps:
+
+* `File -> New Project ... -> Version Control -> Git`
+
+* Paste repo url. Hit "tab" key.
+
+* Click "Create Project".
+
+In the Terminal, run `git remote -v`. CP/CR.
+
+```{r setting-up-github-8}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -330,17 +344,24 @@ question_text(NULL,
     rows = 2)
 ```
 
+It should look something like:
+
+````
+Davids-MBP:First_Repo dkane$ git remote -v
+origin  https://github.com/davidkane9/First_Repo.git (fetch)
+origin  https://github.com/davidkane9/First_Repo.git (push)
+Davids-MBP:First_Repo dkane$ 
+````
+
+Don't worry too much about the details. You've successfully linked a repo to RStudio!
+
+### Exercise 9
+
+You have linked your GitHub repo to your R project, but you haven't proven that you are someone with editing access to the project. If we just let anyone with the GitHub link edit our repo, that's obviously going to lead to problems with security down the line. This is why we use something called a **P**ersonal **A**ccess **T**oken, or a **PAT**.
+
 ### 
 
-You've successfully linked a repo to RStudio!
-
-### Exercise 8
-
-Now, you've linked your GitHub repo to your project, but you haven't proven that you are someone with editing access to the project. If we just let anyone with the GitHub link edit, that's obviously going to lead to problems with security down the line. This is why we use something called a **P**ersonal **A**ccess **T**oken, or a **PAT**.
-
-### 
-
-A PAT is just a special computer-generated password between your computer and GitHub that lets GitHub connect your GitHub account and your computer. If you want to learn more, see section "[Personal access token for HTTPS](https://happygitwithr.com/https-pat.html)" from [*Happy Git and GitHub for the useR*](https://happygitwithr.com/)
+A PAT is just a special computer-generated password between your computer and GitHub that lets GitHub connect your GitHub account and your computer. If you want to learn more, see  "[Personal access token for HTTPS](https://happygitwithr.com/https-pat.html)" from [*Happy Git and GitHub for the useR*](https://happygitwithr.com/)
 
 ### 
 
@@ -356,11 +377,11 @@ include_graphics("images/pat.png")
 
 ### 
 
-Press "Generate Token" at the bottom of the page to finalize your PAT.
+Press "Generate Token" at the bottom of the page to finalize your PAT. If you have trouble, the function `usethis::gh_token_help()` may be helpful. 
 
-### Exercise 9
+### Exercise 10
 
-Now that we've created our PAT, first temporarily copy and paste it somewhere you have easy access to (ex: notes). We will store it in RStudio to make sure the computer doesn't forget.
+Now that we've created our PAT, first temporarily copy it somewhere you have easy access to. We will store it in RStudio to make sure the computer doesn't forget.
 
 ### 
 
@@ -368,48 +389,7 @@ Run `gitcreds::gitcreds_set()` in the Console and follow the prompts, providing 
 
 ### 
 
-Now, restart your R session. Remember to do this in the session where your github repo is running, **not the session where the tutorial is**. Restart your R session by going to "Session" at the top bar and clicking the option to Restart R, which should be under that tab. Then run `usethis::git_sitrep()` in the Console and copy-paste the result in the space below.
-
-```{r setting-up-github-9}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 2)
-```
-
-### 
-
-It should look similar to this:
-
-```{r}
-include_graphics("images/sitrep.png")
-```
-
-If there are any errors, you may need to recreate your PAT and go through the process again.
-
-### Exercise 10
-
-It's also a good idea to save your GitHub PAT to your `.Renviron` file. This is a file that stores information on your computer rather than on your project, making it a safe place to store sensitive information like your GitHub PAT or API keys.
-
-### 
-
-Run `usethis::edit_r_environ()` in the Console to open your `.Renviron` file. If you can't open the file, it's likely due to you using OneDrive or a cloud drive service to store your projects. **Please store your projects on your own computer in order to prevent future errors**.
-
-### 
-
-Add the line `GITHUB_PAT=` and your GitHub PAT in the first line of your .Renviron file and save it. Make sure your PAT is surrounded with "quotes" because it is a string.
-
-It should look something like this.
-
-```{r}
-include_graphics("images/save-pat.png")
-```
-
-### 
-
-Run `Sys.getenv("GITHUB_PAT")` in the Console. CP/CR. 
+Restart your R session by going to "Session" at the top menu bar and clicking the option to Restart R, which should be under that tab. (This is not the same thing as restarting RStudio.) Run `usethis::git_sitrep()` in the Console. CP/CR.
 
 ```{r setting-up-github-10}
 question_text(NULL,
@@ -417,33 +397,105 @@ question_text(NULL,
     allow_retry = TRUE,
     try_again_button = "Edit Answer",
     incorrect = NULL,
-    rows = 2)
+    rows = 12)
 ```
 
 ### 
 
-If you are nervous about sharing your GITHUB_PAT, feel free to change it after your copy/paste it into the answer. That is, we don't need to know your real GITHUB_PAT. We just want to ensure that your set up is correct.
+The key "Github user" section should look something like:
 
-### 
+````
+── GitHub user 
+• Default GitHub host: 'https://github.com'
+• Personal access token for 'https://github.com': '<discovered>'
+• GitHub user: 'davidkane9'
+````
 
-Packages like **usethis** will read your `.Renviron` file and access the `GITHUB_PAT` variable, so make sure that you use the correct formatting and name your variables correctly.
+See "[Managing Git(Hub) Credentials](https://usethis.r-lib.org/articles/git-credentials.html)" for more details.
+
+
 
 ## Updating .gitignore
 ### 
 
-One of the first things you should do when working with a new repo is updating the `.gitignore` file. You can open this file from the bottom right window under the Files tab. The purpose of `.gitignore` is to list all the files that you don't want to be uploaded to GitHub. This can come in handy when you are working with big datasets or files with private information.
+The `.gitignore` file determines which files git should *ignore*. You should be able to see your `.gitignore` file in the Files tab in the File pane. 
+
+(To see any files which are "hidden" --- those that begin with a period `.` --- you may need to click on the gear symbol in the Files tab (next to the "Rename" button) and then select "Show Hidden Files".)
+
 
 ### Exercise 1
 
-Open the `.gitignore` and add a new line with `First_Repo.Rproj`. This tells git to ignore any file named `First_Repo.Rproj`. We could also have used `*.Rproj`. The \* tells your computer that we want to prevent all files ending in `.Rproj` from being uploaded.
+From the Console, run `list.files()`. CP/CR.
 
-```{r}
-include_graphics("images/rproj.png")
+```{r updating-gitignore-1}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
 ```
+
+```{r updating-gitignore-1-test, include = FALSE}
+list.files()
+```
+
+### 
+
+In the "RStudio and Code" tutorial, we saw that an R project begins with just one file, the `.Rproj` file, which is "First_Repo.Rproj" in this case. But, because this R project started by connecting to a Github repo --- and because we initialized that repo with a README --- we also have a `README.md` file.
 
 ### Exercise 2
 
-Save the `.gitignore` file and on your top right panel, navigate to the Git tab. You should see `.gitignore` listed but not `First_Repo.Rproj`. The Git tab shows all the changes you have made on your local computer. Since you added `First_Repo.Rproj` in `.gitignore`, it shouldn't show up as one of the changed files that the GitHub version should be synced with.
+From the Console, run `list.files(all.files = TRUE)`. CP/CR
+
+```{r updating-gitignore-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+```{r updating-gitignore-2-test, include = FALSE}
+list.files(all.files = TRUE)
+```
+
+### 
+
+Because `.gitignore` is a "hidden" file, since its name begins with a `.`, we need to set `all.files = TRUE` in `list.files()` if we want it to be returned. Don't worry about hidden directories like `.git` and `.Rproj.user`. We won't be using them.
+
+
+### Exercise 3
+
+The purpose of `.gitignore` is to list all the files that you don't want to be uploaded to GitHub. This is especially useful when you are working with big datasets or files with private information.
+
+Open the `.gitignore` and add a new line with `First_Repo.Rproj`. This tells git to ignore any file named `First_Repo.Rproj`. Save the file, but make sure that the last line in the file in blank.  
+
+Run `readLines(".gitignore")` in the Console. CP/CR.
+
+
+```{r updating-gitignore-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+<!-- No test case because .gitignore won't exist in testing. -->
+
+### 
+
+This should output all of the lines in your `.gitignore` file, which should include `First_Repo.Rproj`.
+
+We could also have used `*.Rproj`. The \* tells your computer that we want to prevent all files ending in `.Rproj` from being uploaded.
+
+
+### Exercise 4
+
+Navigate to the Git tab in the Environment pane. You should see `.gitignore` listed but not `First_Repo.Rproj`. The Git tab shows all the changes you have made on your local computer. Since you added `First_Repo.Rproj` in `.gitignore`, `First_Repo.Rproj` should not show up as one of the changed files that the GitHub version needs to be synced with.
 
 If you do see `First_Repo.Rproj`, try clicking on the refresh button --- a small clockwise swirl --- in the upper right. Or make sure you have it spelled correctly.
 
@@ -451,24 +503,7 @@ If you do see `First_Repo.Rproj`, try clicking on the refresh button --- a small
 include_graphics("images/updated_gitignore.png")
 ```
 
-### 
-
-Run `readLines(".gitignore")` in the Console. CP/CR.
-
-```{r updating-gitignore-2}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 2)
-```
-
-### 
-
-This should output all of the lines in your `.gitignore` file, which should include `First_Repo.Rproj`.
-
-### Exercise 3
+### Exercise 5
 
 Now that we've updated our `.gitignore` file, we want to upload this new version to GitHub. Otherwise, GitHub doesn't know that we want to hide our `First_Repo.Rproj` file.
 
@@ -484,27 +519,11 @@ include_graphics("images/commit.png")
 
 This will open a new window where you will write a commit message. The message is meant to note what you're adding/changing within the repo. And yes, it's mandatory. Just a few (sensible) words are enough.
 
-### Exercise 4
+### Exercise 6
 
-Let's fill out this window.
+Run `gert::git_log() |> select(-commit, -merge, -files) |> slice(1)` in the Console, which returns the author, time, and message of the last commit.  CP/CR.
 
-### 
-
-Check all of the boxes on the left-hand side. Then, write the commit message "Updated .gitignore" and press `Commit`.
-
-<!-- Add to close pop-up window that appears after pressing commit. -->
-
-<!-- Image is weird, need to change to get rid of the `push` arrow. -->
-
-```{r}
-include_graphics("images/commit_push.png")
-```
-
-### 
-
-Run `gert::git_log() |> select(-commit, -merge, -files) |> slice(1)` in the Console, which returns the author, time, and message of the last commit. If the error "could not find slice function" is thrown then load the library "dplyr" with `library(dplyr)` and try again. CP/CR.
-
-```{r updating-gitignore-4}
+```{r updating-gitignore-6}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -513,15 +532,18 @@ question_text(NULL,
     rows = 2)
 ```
 
-### Exercise 5
 
-Next, press `Push`, i.e.,  the green arrow on the top right. This pushes or uploads the changes to GitHub! Open up GitHub and refresh the project page to see the  commit message you just made at the top of your repo page.
+If the error "could not find slice function" is thrown then load the library "dplyr" with `library(dplyr)` and try again.
+
+### Exercise 7
+
+Next, press `Push`, i.e.,  the green arrow on the top right. This pushes or uploads the changes to GitHub. Open up GitHub and refresh the project page to see the  commit message you just made at the top of your repo page.
 
 ### 
 
 Run `gert::git_ahead_behind()$ahead` in the Console. CP/CR.
 
-```{r updating-gitignore-5}
+```{r updating-gitignore-7}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -562,11 +584,7 @@ You should see `example.qmd` somewhere in the output. Note that the title inside
 
 ### Exercise 2
 
-Render this Quarto document by pressing the "Render" button.
-
-### 
-
-Run `list.files()` in the Console and copy-paste the output below.
+Render this Quarto document by pressing the "Render" button. Run `list.files()` in the Console. CP/CR.
 
 ```{r publishing-to-r-pubs-2}
 question_text(NULL,
@@ -608,7 +626,7 @@ Now, press the `Push` button with the green arrow. Your changes have now been sa
 
 ### 
 
-Run `gert::git_ahead_behind()$ahead` in the Console. Copy and paste the command and result below. This should return "0" just like before.
+Run `gert::git_ahead_behind()$ahead` in the Console. This should return "0" just like before. CP/CR.
 
 ```{r publishing-to-r-pubs-4}
 question_text(NULL,
@@ -621,9 +639,9 @@ question_text(NULL,
 
 Nice work! You've created another Rpubs page and your changes should be saved to GitHub.
 
-###
+### 
 
-We now understand the entire data science work cycle. Begin with Github repository, connect to an RStudio project, create a Quarto document (including a plot or another analysis), and, finally, publish your results to RPubs. Let's practice these schools in new projects.
+We now understand the entire data science work cycle. Begin with Github repository, connect to an RStudio project, create a Quarto document (including a plot or another analysis), and, finally, publish your results to RPubs. Let's practice these skills in new projects.
 
 ## Project 1
 ### 
@@ -874,120 +892,115 @@ question_text(NULL,
 
 And that is it! You have completed a simple example of the data science workflow cycle. You started with nothing, created a Github repository, connected it to an R Project on your computer, created a Quarto document, rendered it into a plot and pubished it on Rpubs.
 
-<!-- Commented out project 2 because I didn't have time to fix it up before the release. -->
 
 <!-- DK: How about cleaning up this whole thing before we end? Edit the .gitignore by adding `quarto-1_files`. Then, commit and push everything. test this with `git log | head -n 10`. -->
 
-<!-- ## Project 2 -->
-<!-- ###  -->
+## Project 2
+### 
 
-<!-- The most important set of options controls if your code block is executed and what results are inserted in the finished report: -->
+The most important set of options controls if your code block is executed and what results are inserted in the finished report:
 
-<!-- `eval: false`, `include: false`, `echo: false`, `message: false`, `results: hide`, `error: true`  -->
+`eval: false`, `include: false`, `echo: false`, `message: false`, `results: hide`, `error: true`
 
-<!-- As you work more with knitr, you will discover that some of the default chunk options don’t fit your needs and you want to change them. -->
+As you work more with knitr, you will discover that some of the default chunk options don’t fit your needs and you want to change them.
 
-<!-- ### Exercise 1 -->
+### Exercise 1
 
-<!-- Create a Github repo (called "project-2"). Make sure to click the "Add a README file" check box. Copy/paste the url for its Github location. -->
+Create a Github repo (called "project-2"). Make sure to click the "Add a README file" check box. Copy/paste the url for its Github location.
 
-<!-- ```{r project-2-1} -->
-<!-- question_text(NULL, -->
-<!-- 	answer(NULL, correct = TRUE), -->
-<!-- 	allow_retry = TRUE, -->
-<!-- 	try_again_button = "Edit Answer", -->
-<!-- 	incorrect = NULL, -->
-<!-- 	rows = 3) -->
-<!-- ``` -->
+```{r project-2-1}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
 
-<!-- ###  -->
+### 
 
-<!-- Your answer should look something like: -->
+Your answer should look something like:
 
-<!-- ``` -->
-<!-- https://github.com/davidkane9/project-2 -->
-<!-- ``` -->
+```
+https://github.com/davidkane9/project-2
+```
 
-<!-- It is a good idea to always start a new data science project with a Github repo. -->
-
-
-<!-- ### Exercise 2 -->
-
-<!-- Connect the `project-2` Github repo to an R project on your computer. Name the R project `project-2` also. Keeping the names of repos/projects aligned makes organization simpler. From the Terminal, run `ls`. CP/CR. -->
-
-<!-- ```{r project-2-2} -->
-<!-- question_text(NULL, -->
-<!-- 	answer(NULL, correct = TRUE), -->
-<!-- 	allow_retry = TRUE, -->
-<!-- 	try_again_button = "Edit Answer", -->
-<!-- 	incorrect = NULL, -->
-<!-- 	rows = 3) -->
-<!-- ``` -->
-
-<!-- ###  -->
-
-<!-- Your answer should look something like this: -->
-
-<!-- ``` -->
-<!-- Davids-MBP:project-2 dkane$ ls -->
-<!-- README.md               project-2.Rproj -->
-<!-- Davids-MBP:project-2 dkane$ -->
-<!-- ``` -->
-
-<!-- The default README has an "md" suffix to indicate that it is a **M**ark**d**own document. -->
-
-<!-- RStudio will automatically restart and place you within the `project-1` R project. You should also have a directory called `project-1` in the location in which you store your projects. -->
-
-<!-- ### Exercise 3 -->
-
-<!-- Go to File, New File, Quarto Document. Name it `Quarto-2`. From the Terminal, run `ls`. CP/CR. -->
-
-<!-- ```{r project-2-3} -->
-<!-- question_text(NULL, -->
-<!-- 	message = "Place correct answer here.", -->
-<!-- 	answer(NULL, correct = TRUE), -->
-<!-- 	allow_retry = FALSE, -->
-<!-- 	incorrect = NULL, -->
-<!-- 	rows = 6) -->
-<!-- ``` -->
-
-<!-- ###  -->
-
-<!-- <!-- Knowledge Drop --> -->
-
-<!-- ### Exercise 4 -->
-
-<!-- We will start with `eval: false`. Create a new code chunk and within it put  -->
-
-<!-- ```{r project-2-4} -->
-<!-- question_text(NULL, -->
-<!-- 	message = "Place correct answer here.", -->
-<!-- 	answer(NULL, correct = TRUE), -->
-<!-- 	allow_retry = FALSE, -->
-<!-- 	incorrect = NULL, -->
-<!-- 	rows = 6) -->
-<!-- ``` -->
-
-<!-- ### -->
-
-<!-- eval: false prevents code from being evaluated. (And obviously if the code is not run, no results will be generated). This is useful for displaying example code, or for disabling a large block of code without commenting each line. -->
-
-<!-- ### Exercise 5 -->
+It is a good idea to always start a new data science project with a Github repo.
 
 
+### Exercise 2
 
-<!-- ```{r project-2-5} -->
-<!-- question_text(NULL, -->
-<!-- 	message = "Place correct answer here.", -->
-<!-- 	answer(NULL, correct = TRUE), -->
-<!-- 	allow_retry = FALSE, -->
-<!-- 	incorrect = NULL, -->
-<!-- 	rows = 6) -->
-<!-- ``` -->
+Connect the `project-2` Github repo to an R project on your computer. Name the R project `project-2` also. Keeping the names of repos/projects aligned makes organization simpler. From the Terminal, run `ls`. CP/CR.
 
-<!-- ### -->
+```{r project-2-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
 
+### 
 
+Your answer should look something like this:
+
+```
+Davids-MBP:project-2 dkane$ ls
+README.md               project-2.Rproj
+Davids-MBP:project-2 dkane$
+```
+
+The default README has an "md" suffix to indicate that it is a **M**ark**d**own document.
+
+RStudio will automatically restart and place you within the `project-1` R project. You should also have a directory called `project-1` in the location in which you store your projects.
+
+### Exercise 3
+
+Go to File, New File, Quarto Document. Name it `Quarto-2`. From the Terminal, run `ls`. CP/CR.
+
+```{r project-2-3}
+question_text(NULL,
+	message = "Place correct answer here.",
+	answer(NULL, correct = TRUE),
+	allow_retry = FALSE,
+	incorrect = NULL,
+	rows = 6)
+```
+
+### 
+
+<!-- Knowledge Drop -->
+
+### Exercise 4
+
+We will start with `eval: false`. Create a new code chunk and within it put
+
+```{r project-2-4}
+question_text(NULL,
+	message = "Place correct answer here.",
+	answer(NULL, correct = TRUE),
+	allow_retry = FALSE,
+	incorrect = NULL,
+	rows = 6)
+```
+
+### 
+
+eval: false prevents code from being evaluated. (And obviously if the code is not run, no results will be generated). This is useful for displaying example code, or for disabling a large block of code without commenting each line.
+
+### Exercise 5
+
+```{r project-2-5}
+question_text(NULL,
+	message = "Place correct answer here.",
+	answer(NULL, correct = TRUE),
+	allow_retry = FALSE,
+	incorrect = NULL,
+	rows = 6)
+```
+
+### 
 
 ## Summary
 ### 
