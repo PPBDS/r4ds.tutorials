@@ -1,3 +1,4 @@
+
 <!-- README is generated from README.Rmd, edit ONLY this file if needed. But, after you edit it, you NEED TO KNIT IT BY HAND in order to create the new README.md, which is the thing which is actually used. -->
 
 # Tutorials for *R for Data Science (2e)*
@@ -62,7 +63,7 @@ remotes::install_github("PPBDS/r4ds.tutorials")
 ```
 
 If R offers you the option to update some packages, you should do so.
-For packages that need compilation, feel free to answer “no”.
+For packages that need compilation, feel free to answer “no.”
 
 Then **restart your R session** or **restart RStudio**.
 
