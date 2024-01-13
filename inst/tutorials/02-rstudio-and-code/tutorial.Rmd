@@ -29,8 +29,6 @@ options(tutorial.exercise.timelimit = 60,
 
 <!-- Given the changes we have made to default settings, lots of these images should be redone. -->
 
-<!-- If we ever change the default settings so that Source with Echo is the default, we will need to revisit the String 1 instructions. -->
-
 <!-- Will we ever move from Rpubs to Quarto Pub? Maybe. The help page for the quarto package does not look useful, but ChatGPT assures me that this is possible with quarto_render() and quarto_publish(). But, maybe not . . . I think that, for now, you need to issue a terminal command to put something on Rpubs. -->
 
 <!-- Do more to bring the new RStudio user docs into the discussion. -->
@@ -51,7 +49,8 @@ options(tutorial.exercise.timelimit = 60,
 
 <!-- Hardest part is creating an R project the first time. We can break it into separate steps? Can we show them the two different Project drop down methods? Actually, this should be taught from the File menu. Fix the gif to do that!  -->
 
-<!-- MAYBE NOT! Restart R session several times. Restart RStudio session at least twice. Once for R projects and once before starting R scripts.  -->
+
+<!-- Mention: https://rstudio.github.io/visual-markdown-editing/options.html in the context of setting global options, like avoiding Visual. -->
 
 
 ## Introduction
@@ -117,6 +116,7 @@ The result should be FALSE. If the result was not FALSE, you should run this com
 
 This function ensures that your settings for RStudio are sensible.
 
+
 ### Exercise 3
 
 Look at the top left of your R Console. Here you should see the version of R you are running. It should look something like the image below.
@@ -125,7 +125,7 @@ Look at the top left of your R Console. Here you should see the version of R you
 include_graphics("images/r_version.png")
 ```
 
-Type `R.version` into the Console and hit return. CP/CR.
+Type `R.version$version.string` into the Console and hit return. CP/CR.
 
 ```{r checking-your-setup-3}
 question_text(NULL,
@@ -138,7 +138,8 @@ question_text(NULL,
 
 ### 
 
-This should return a list of variables, including "major" and "minor", which tell you your R Version. This should be the same as the version you saw at the top left of the Console. `R.version` does not include parentheses at the end. It is a built-in R constant, not a function.
+This should be the same as the version you saw at the top left of the Console.
+
 
 ### Exercise 4
 
@@ -157,7 +158,7 @@ question_text(NULL,
 
 ### 
 
-This function returns the "path" to your R working directory. A path is simply the information which allows you to reach a location on your computer. In this case, if you wanted to find the folder from which R is running, you would follow the path returned by `getwd()`.
+This function returns the "path" to your current R working directory. A path is simply the information which allows you to reach a location on your computer. In this case, if you wanted to find the folder from which R is running, you would follow the path returned by `getwd()`.
 
 More info on paths can be found on the [UC Berkeley website](https://people.ischool.berkeley.edu/~kevin/unix-tutorial/section3.html).
 
@@ -165,13 +166,41 @@ More info on paths can be found on the [UC Berkeley website](https://people.isch
 
 Whenever you start a new R project, you will want to store it in a location which you can easily find. Right now, you are likely in an arbitrary location on your computer. It would be much more useful to have a location dedicated to your R projects.
 
-Let's make a folder, and call it `projects`
+From the Console, run `dir.exists("~/Desktop/")`. CP/CR.
 
-If you need help making a folder, helpful resources can be found [here](https://support.microsoft.com/en-us/office/create-a-new-folder-cbbfb6f5-59dd-4e5d-95f6-a12577952e17) for Windows, and [here](https://support.apple.com/guide/mac-help/organize-files-using-folders-mh26885/mac) for macOS.
+```{r checking-your-setup-5}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
 
-It would also be a good idea to store this folder on your desktop, so that it can be found easily. **NOTE: Do not store this folder inside of a cloud storage directory such as OneDrive.** This can cause heaps of unforeseen problems for you in the future.
+### 
 
-The path to this folder should not include any folders with spaces (or other weird characters) in their names. For example, this is a reasonable location for R projects:
+If this returns `TRUE`, then you have a "normal" computer set up, with a Desktop in your home directory. We recommend that you store your R projects there. However, more experienced computer users should feel free to ignore this advice. If the return is `FALSE`, you will need to create a location by hand.
+
+### Exercise 6
+
+Let's make a folder, and call it `projects`, and store it on our desktop. From the Console, run `dir.create("~/Desktop/projects/")`. CP/CR. (This command will only work if `dir.exists("~/Desktop/")` returned `TRUE`.)
+
+```{r checking-your-setup-6}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+If that command works, you are all set. If not, you will need to create a `projects` directory by hand. Helpful resources can be found [here](https://support.microsoft.com/en-us/office/create-a-new-folder-cbbfb6f5-59dd-4e5d-95f6-a12577952e17) for Windows, and [here](https://support.apple.com/guide/mac-help/organize-files-using-folders-mh26885/mac) for macOS.
+
+**NOTE: Do not store this folder inside of a cloud storage directory such as OneDrive.** This can cause heaps of unforeseen problems for you in the future.
+
+The path to your R projects should not include any folders with spaces (or other weird characters) in their names. For example, this is a reasonable location for R projects:
 
 > /Users/dkane/Desktop/projects/
 
@@ -190,7 +219,9 @@ See this [Posit resource](https://support.posit.co/hc/en-us/articles/200526207-U
 
 <!-- These images are excellent and work quite well. -->
 
-Please read all of the instructions before moving on, as you will be locked out of this tutorial while making your project.
+**Read all of the instructions before starting this exercise.**
+
+You will be locked out of this tutorial while making your project.
 
 The first step is to click `File -> New Project` from the main menu:
 
@@ -216,11 +247,11 @@ Yes, it is confusing that this is the second time you have selected `New Project
 include_graphics("images/new_project_4.png")
 ```
 
-Click `Create Project`. 
+Ensure that all the check boxes are unchecked. Click "Create Project." 
 
-Now that you have read all the directions, we can go through the steps. But note that, when you first click `File -> New Project`, you will get the "Terminate Jobs" warning. (Recall the discussion from the "Getting Started" tutorial.)
+Now that you have read all the directions, we can go through the steps. But note that, when you first click `File -> New Project`, you will get the "Terminate Jobs" warning. (Recall the discussion from the "Getting Started" tutorial in the **tutorial.helpers** package.)
 
-And that is Ok! Go ahead and click "Terminate Jobs" and follow the above steps. You will need to restart the tutorial but, once you do, you will be in this new project. For the rest of this tutorial, we will be working in `analysis-1`.
+And that is OK! Go ahead and click "Terminate Jobs" and follow the above steps. You will need to restart the tutorial but, once you do, you will be in this new project. For the rest of this tutorial, we will be working in `analysis-1`.
 
 ### 
 
@@ -245,7 +276,8 @@ include_graphics("images/path_example.png")
 
 ### 
 
-If your path does not include your `projects` folder, you likely did not select the `projects` directory when making `analysis-1`.
+If your path does not include your `projects` folder, you probably did not fill in the "Create project as subdirectory of:" box correctly. It should be the path to your `projects` folder, including `projects` itself.
+
 
 ### Exercise 2
 
@@ -266,11 +298,11 @@ question_text(NULL,
 
 Keeping all the files associated with a given project (input data, R scripts, analytical results, and figures) together in one directory is such a wise and common practice that RStudio has built-in support for this via projects.
 
-Then everything you need is in one place and cleanly separated from all the other projects that you are working on.
+Everything you need is in one place and cleanly separated from all the other projects that you are working on.
 
 ### Exercise 3
 
-Type `readLines("analysis-1.Rproj")` in the R Console and hit enter. CP/CR.
+Run `readLines("analysis-1.Rproj")` in the R Console. CP/CR.
 
 ```{r r-projects-3}
 question_text(NULL,
@@ -300,11 +332,13 @@ Create an R script by clicking the `File -> New File` drop down menu at the top 
 
 ### 
 
-An untitled, empty file should pop up above the R Console. This is your R script file. You can also create a new R script using the keyboard shortcut `Cmd/Ctrl + Shift + N`. The `Cmd/Ctrl` usage here means that Apple users type the Command key and Windows users type the Control key.
+An untitled, empty file should pop up above the R Console. By opening a script, you have caused the Source pane to open, the fourth common pane within RStudio.
+
+You can also create a new R script using the keyboard shortcut `Cmd/Ctrl + Shift + N`. The `Cmd/Ctrl` usage here means that Mac users type the Command key and Windows users type the Control key.
 
 ### 
 
-Type `5 * 5` into your R script file. Save the file. Name it `script-1.R`. (Note that R will provide the `.R` suffix, so you only need to typr `script-1`.) 
+Type `5 * 5` into your R script file. Save the file. Name it `script-1.R`. (Note that R will provide the `.R` suffix, so you only need to type `script-1`.) 
 
 Run `readLines("script-1.R")`. CP/CR.
 
@@ -319,41 +353,23 @@ question_text(NULL,
 
 ### 
 
-R scripts include permanent copies of your code. You can save them and also work with them interactively.
+You might have gotten this warning:
+
+````
+Warning message:
+In readLines("script-1.R") : incomplete final line found on 'script-1.R'
+````
+
+This means that your file need a blank line at the end. As a rule of thumb, it is always a good idea to have th last line of any text file be blank.
+
+R scripts are permanent copies of your code. You can save them and also work with them interactively.
 
 ### Exercise 2
 
-Note the "Source" button, which is in the top right corner of the Code Editor pane. Note the little black upside down triangle next to "Source".  If you click on it you will see two choices: "Source" and "Source with Echo". Click on "Source". See what happens in the Console. CP/CR.
+Note the "Source" button, which is in the top right corner of the Source pane. Press it. Note what happens in the Console. CP/CR.
 
 
 ```{r script-1-2}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 2)
-```
-
-You answer should look like this:
-
-````
-> source("~/Desktop/projects/analysis-1/script-1.R")
-> 
-````
-
-### 
-
-Whenever you run an R script file by hitting the "Source" button, Rstudio will send all the code in the file to the R Console. Since our code does not call, directly, for anything to be printed, nothing happens.
-
-### Exercise 3
-
-There are often "short-cut key" combinations which perform the same task as clicking a button. Placing your cursor inside the R script window and hit or using the keyboard shortcut `Cmd/Ctrl + Shift + S` is the same as hitting the "Source" button.
-
-The short-cut key for "Source with Echo" is `Cmd/Ctrl + Shift + Enter`. Try it now. CP/CR.
-
-
-```{r script-1-3}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -369,17 +385,34 @@ You answer should look like this:
 
 > 5 * 5
 [1] 25
+> 
 ````
 
 ### 
 
-Clicking buttons or typing short-cut keys does the same thing under the hood: they cause specific R commands to be issued. In this course, we cause RStudio to run the `source()` function, as before, but with the `echo=TRUE` option. This causes RStudio to run the code, show the code and show the results of the code.
+Whenever you run an R script file by hitting the "Source" button, Rstudio will send all the code in the file to the R Console. Because `echo=TRUE`, the Console prints out both the code itself (that is the "echo") and the result of executing that code.
 
-Using short-cut keys is quicker and more professional than clicking buttons.
+### Exercise 3
+
+There are often "short-cut key" combinations which perform the same task as clicking a button. Placing your cursor inside the R script window and using the keyboard shortcut `Cmd/Ctrl + Shift + Enter` is the same as hitting the "Source" button. Try it now. CP/CR.
+
+
+```{r script-1-3}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 2)
+```
+
+### 
+
+Using short-cut keys is quicker and more professional than clicking buttons. 
 
 ### Exercise 4
 
-In your R script, type `6 + 3` in the line after `5 * 5`. Save the file with `Cmd/Cntrl + s`. "Source with Echo" this file. CP/CR.
+In your R script, type `6 + 3` in the line after `5 * 5`. Save the file with `Cmd/Cntrl + s`. "Source" this file. CP/CR.
 
 ```{r script-1-4}
 question_text(NULL,
@@ -405,7 +438,7 @@ The answer is what you might expect:
 
 ### 
 
-Every line in the file is executed. Each line is also echoed. Finally, the results of each line, if there are any, is printed.
+Each line is echoed. Each line is executed.  Finally, the results of each line, if there are any, are printed.
 
 The output you see is the same as what would happen if you copied each line to the Console and hit return after each one.
 
@@ -449,15 +482,43 @@ question_text(NULL,
 
 ### 
 
-`Cmd/Ctrl + Enter` is probably the single most commonly used short-cut key because it is very handy to execute your code line-by-line.
+Only the first line of the script is executed. `Cmd/Ctrl + Enter` is probably the single most commonly used short-cut key because it is very handy to execute your code line-by-line.
 
 ### Exercise 7
 
-Go back to the first line in your R script. Change `5 * 5` to `x <- 5 * 5`, thereby creating an object named `x` with a value of 25. Save the file. Click the "Source" button.
+Go back to the first line in your R script. Change `5 * 5` to `x <- 5 * 5`, thereby creating an object named `x` with a value of 25. Save the file. Click the "Source" button. CP/CR.
+
+```{r script-1-7}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+Your answer should look like:
+
+````
+> source("~/Desktop/projects/analysis-1/script-1.R", echo=TRUE)
+
+> x <- 5 * 5
+
+> 6 + 3
+[1] 9
+> 
+````
+
+### 
+
+Note how the `x <- 5 * 5` is executed (and echoed) but nothing is printed. The assignment operator (`<-`) does not generate a printed result.
+
+
+### Exercise 8
 
 In the Console tab, run `ls()`. CP/CR.
 
-```{r script-1-7}
+```{r script-1-8}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -468,14 +529,14 @@ question_text(NULL,
 
 ### 
 
-`ls()` returns a list of objects present in your environment. These are the same objects displayed in your Environment tab in the Environment Pane in the top right corner of RStudio. You should see that it returned `x`, since you defined `x` using your R script.
+`ls()` returns a list of objects present in your environment. These are the same objects displayed in your Environment tab in the Environment pane in the top right corner of RStudio. You should see that it returned `x`, since you defined `x` using your R script.
 
 
 
 ## Script 2
 ### 
 
-Now that we're settled in and have started working with R scripts, let's get to plotting. We will be making the following plot, step by step.
+Let's create this plot:
 
 ```{r}
 hist_p <- ggplot(data = diamonds,
@@ -493,7 +554,7 @@ hist_p
 
 ### Exercise 1
 
-Click `File -> New File -> R Script`. At the top of the Code Editor Pane, the file should be called `Untitled1`. You will see that the text is in red, with an asterisk. This indicates that there are unsaved changes in the file.
+Click `File -> New File -> R Script`. At the top of the Source pane, the file should be called `Untitled1`. You will see that the text is in red, with an asterisk. This indicates that there are unsaved changes in the file.
 
 ```{r}
 include_graphics("images/untitled_script.png")
@@ -501,7 +562,7 @@ include_graphics("images/untitled_script.png")
 
 ### 
 
-Click the save icon below the script title, or use the shortcut `Cmd/Ctrl + s` to save the script. Let's call this file `script-2`. The `.R` suffix is added automatically.
+Click the save icon -- the disk image next to "Source on Save" box and below the script title. Or use the shortcut `Cmd/Ctrl + s` to save the script. Let's call this file `script-2`. The `.R` suffix is added automatically.
 
 In the Console, run `list.files()`. CP/CR.
 
@@ -516,12 +577,47 @@ question_text(NULL,
 
 ### 
 
-Save your scripts (with informative names) in the project, edit them, run them in bits or as a whole. Restart R frequently to make sure you’ve captured everything in your scripts.
+Save your scripts (with informative names) in the project, edit them, run them line-by-line or in their entirety. Restart R frequently to make sure you’ve captured everything in your scripts.
 
 Scripts and projects give you a solid workflow that will serve you well in the future. Always remember to create one RStudio project for each data analysis project. That project may contain multiple scripts files, along with other material.
 
-
 ### Exercise 2
+
+Restart your R session using `Session -> Restart R`. This will cause R to bring up the "Terminate Jobs" box. Go ahead and terminate the tutorial. Then, restart the tutorial once R restarts. 
+
+From the Console, run `list.files()`. CP/CR.
+
+```{r script-2-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+All the files we had from before --- `analysis-1.Rproj`, `script-1.R`, and `script-2.R` --- still exist. Our work, if we have saved it, is preserved even when R (or RStudio) restarts. 
+
+### Exercise 3
+
+From the Console, run `ls()`. CP/CR.
+
+```{r script-2-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+`x` is gone! The environment --- the place in the computer where R creates and uses objects --- is cleaned, by default, each time R restarts. This is a good thing! For our work to be "reproducible," we want to be able to start from nothing except our code.   
+
+### Exercise 4
 
 At the top of `script-2.R`, type
 
@@ -531,13 +627,11 @@ library(tidyverse)
 
 Run the entire file with `Cmd/Ctrl + Shift + Enter`. Note how much material --- the "Attaching core tidyverse packages" and so on --- is produced because, by default, we are sourcing the file with `echo=TRUE`. 
 
-If you have already loaded the **tidyverse** package in this session, and have not restarted R, then you will see no output because RStudio has already provided you with this message previously.
-
 ### 
 
 Run `search()` in the Console. CP/CR.
 
-```{r script-2-2}
+```{r script-2-4}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -550,7 +644,7 @@ question_text(NULL,
 
 This function returns a list of loaded packages. This should include the string `package:tidyverse`.
 
-### Exercise 3
+### Exercise 5
 
 Skip a line and add the following comment to the file:
 
@@ -560,7 +654,7 @@ Skip a line and add the following comment to the file:
 
 Save the file. In the Console, run `readLines("script-2.R")`. CP/CR.
 
-```{r script-2-3}
+```{r script-2-5}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -577,24 +671,14 @@ Use comments to explain the why of your code, not the how or the what. The what 
 
 For data analysis code, use comments to explain your overall plan of attack and record important insights as you encounter them. There’s no way to re-capture this knowledge from the code itself.
 
-### 
 
-You might have gotten this warning:
-
-````
-Warning message:
-In readLines("script-2.R") : incomplete final line found on 'script-2.R'
-````
-
-This means that your file need a blank line at the end. As a rule of thumb, it is always a good idea to have th last line of any text file be blank.
-
-### Exercise 4
+### Exercise 6
 
 Change the code comment in `script-2.R` from "This is an example of a code comment within an R script." to a one sentence description of one of your recent meals.
 
 Save the file. In the Console, run `readLines("script-2.R")`. CP/CR.
 
-```{r script-2-4}
+```{r script-2-6}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -610,7 +694,7 @@ Get in the habit of adding comments.
 Figuring out *why* something was done is much more difficult than understanding *how* it was done. For example, `geom_smooth()` has an argument called `span`, which controls the smoothness of the curve, with larger values yielding a smoother curve. Suppose you decide to change the value of `span` from its default of 0.75 to 0.9: it’s easy for a future reader to understand what is happening, but unless you note your thinking in a comment, no one will understand why you changed the default.
 
 
-### Exercise 5
+### Exercise 7
 
 Skip a line after your comment. Call `ggplot()`, setting `data` to `diamonds` and mapping `x` to `carat` with the following code.
 
@@ -625,7 +709,7 @@ Run the entire file again. This should generate a blank plot in the Plots tab at
 
 In the Console, run `readLines("script-2.R")`. CP/CR.
 
-```{r script-2-5}
+```{r script-2-7}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -638,7 +722,7 @@ question_text(NULL,
 
 `ggplot()` will generate a blank plot, at least until a `geom` layer is added. 
 
-### Exercise 6
+### Exercise 8
 
 Add a layer with `geom_histogram()`. Change the border color in our graph by setting `color` to `"white"` within `geom_histogram`, and change the number of columns in our plot by setting the `bins` argument to `100`. Remember that, to connect the `ggplot()` call to `geom_histogram()`, we need a `+`. 
 
@@ -657,7 +741,7 @@ This should generate bars on your plot. Did you remember to place a `+` after th
 
 In the Console tab, run `readLines("script-2.R")`. CP/CR.
 
-```{r script-2-6}
+```{r script-2-8}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -670,7 +754,7 @@ question_text(NULL,
 
 The `color` argument used here modifies the border color of our columns. To change the fill color, use the `fill` argument.
 
-### Exercise 7
+### Exercise 9
 
 Now let's make our graph look a little nicer by adding a `labs()` layer with an appropriate title, subtitle, and axis labels.
 
@@ -686,7 +770,7 @@ Run your R script file to see your completed plot. Again, note the language here
 
 In the Console tab, run `readLines("script-2.R")`. CP/CR.
 
-```{r script-2-7}
+```{r script-2-9}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -716,7 +800,7 @@ ggplot(data = diamonds,
 Note the nice formatting. After the `ggplot()` call, the next two commands --- `geom_histogram()` and `labs()` --- are both indented the same amount. Similarly, arguments to a given function --- like `bins` and `color` --- are lined up with each other.
 
 
-### Exercise 8
+### Exercise 10
 
 Now we have the code which creates a plot in `script-2.R`. How do we use this plot for other things? Right now we have to run `script-2.R` every time we want to see the plot, which is a little inconvenient.
 
@@ -724,7 +808,7 @@ Now we have the code which creates a plot in `script-2.R`. How do we use this pl
 
 We can use the `ggsave()` function. Type `?ggsave` in the R Console. This will open the help page for `ggsave()`. Copy and paste the Description from the help page into the space below.
 
-```{r script-2-8}
+```{r script-2-10}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -735,7 +819,7 @@ question_text(NULL,
 
 `ggsave()` is used to save plots as individual files, separate from the code which created the plot. In this case we will be using the "png" format.
 
-### Exercise 9
+### Exercise 11
 
 We want to save our entire graph to an object, which can be done by setting our plot equal to a variable. Call this variable `hist_p`.
 
@@ -767,7 +851,7 @@ Run your code.
 
 In the Console, run `list.files()`. CP/CR.
 
-```{r script-2-9}
+```{r script-2-11}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -797,7 +881,7 @@ Add “My First Quarto Document” as the "Title." Add your name as the "Author.
 
 Toward the botton of the "New Quarto Document" box is the "Use visual markdown editor" check box. Make sure that this is **not** checked. Uncheck it if it is checked.
 
-Click "Create".
+Click "Create."
 
 ### 
 
@@ -821,7 +905,7 @@ Quarto is a command line interface tool, not an R package. This means that help 
 
 ### Exercise 2
 
-Save the Quarto document with `File -> Save`. You can also click the disk icon toward the upper right of the Code Editor pane or by use the shortcut `Cmd/Ctrl + s`. Name the file `quarto-1`. The `.qmd` file extension is added automatically.
+Save the Quarto document with `File -> Save`. You can also click the disk icon toward the upper right of the Source pane or by use the shortcut `Cmd/Ctrl + s`. Name the file `quarto-1`. The `.qmd` file extension is added automatically.
 
 Now that the document is saved, run `list.files()`. CP/CR.
 
@@ -838,7 +922,7 @@ question_text(NULL,
 
 This should return `quarto-1.qmd`, as well as `analysis-1.Rproj`, `script-1.R`, `script-2.R`, and `diamonds.png`. Note how different suffixes are used for different types of files.
 
-Note that there is no necessary connection between the **title** of a Quarto document and the **name** of the file.
+Again, there is no necessary connection between the **title** of a Quarto document and the **name** of the file.
 
 
 ### Exercise 3
@@ -869,18 +953,40 @@ question_text(NULL,
 
 The default Quarto file should look like this:
 
-<!-- DK: Replace the png with the actual text. -->
+````markdown
+---
+title: "My First Quarto Document"
+author: "David Kane"
+format: html
+---
 
-```{r out.width = "875px"}
-knitr::include_graphics("images/qmd_source.png")
+## Quarto
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
 ```
+
+You can add options to executable code like this 
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+````
 
 ### 
 
 As you can see, a lot of the text is regular plain text, not code. However, there are code chunks which allow us to execute code when the document is rendered. Here's an example of an R code chunk:
 
+<!-- DK: Very annoying that this use of verbatim messes up the formating of the rest of the file, both greying out text and hiding the Outline. But changing to using ```` just makes the R code chunk disappear. -->
 
-````
+````{verbatim, echo = TRUE}
 ```{r}
 1 + 1
 ```
@@ -893,7 +999,7 @@ Quarto documents utilize Markdown (an easy-to-write plain text format), which ca
 
 The [YAML header](https://bookdown.org/yihui/rmarkdown-cookbook/rmarkdown-anatomy.html) is everything between the dashed lines at the top of the file, including the dashed lines themselves. Copy-and-paste the YAML header of the file below.
 
-```{r quarto-1-4}
+```{r running-code-0}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -909,13 +1015,13 @@ The YAML header includes "metadata" about the document itself, things like the t
 Depending on your RStudio set up, the YAML header might include  the line `editor: visual`. This would tell RStudio, when opening the file on a new occasion, to set the editor to "Visual" mode. This is the same thing as pressing the "Visual" button. If this line is not present, don't worry about it. We recommend working in "Source" mode, at least for now.
 
 
-### Exercise 5
+### Exercise 1
 
 To "render" our Quarto document, click the "Render" arrow at the top of the Code pane, or use the shortcut `Cmd/Ctrl + Shift + k`.
 
 Run `list.files()`. CP/CR.
 
-```{r quarto-1-5}
+```{r running-code-1}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -926,16 +1032,16 @@ question_text(NULL,
 
 ### 
 
-You should see a new file, `quarto-1.html`. This is the file created by rendering. The Viewer tab in the Files pane in the lower right of your workspace should also display the file.
+You should see a new file, `quarto-1.html`. This is the file created by rendering. The Viewer tab in the Output pane in the lower right of your workspace should also display the file.
 
-### Exercise 6
+### Exercise 2
 
 Note how the html document shows both the code `1 + 1` and the result of the addition. This is the magic of Quarto. We can easily document and reproduce our work. In `quarto-1.qmd`, change `1 + 1` to `6 + 3`. Save the file. Render it again.
 
 Run `readLines("quarto-1.qmd")[grepl("6", readLines("quarto-1.qmd"))]`. CP/CR.
 
 
-```{r quarto-1-6}
+```{r running-code-2}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -948,15 +1054,15 @@ question_text(NULL,
 
 This should return a single character vector with `"6 + 3"`, the line which you added to the file. Apologies for the complexity of the call needed to pull out that line.
 
-### Exercise 7
+### Exercise 3
 
-Delete everything except the YAML header -- the text in the box at the top of the file, as well as the dashes. Add "This is my first Markdown text." at the bottom of the document.
+Delete everything except the YAML header, which is the text in the box at the top of the file, including the dashes. Add "This is my first Markdown text." at the bottom of the document.
 
 ### 
 
 Save the file and run `readLines("quarto-1.qmd")`. CP/CR.
 
-```{r quarto-1-7}
+```{r running-code-3}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -977,14 +1083,14 @@ In readLines("quarto-1.qmd") :
 
 The solution is to add an empty line to the end of the file. This is always a good idea with text files.
 
-### Exercise 8
+### Exercise 4
 
 Render the document. This will replace the current `quarto-1.html` file, both in the current directory and in the Viewer pane.
 
 In the following box, copy all of the text from your rendered Quarto document, from the Viewer tab within the Output pane.
 
 
-```{r quarto-1-8}
+```{r running-code-4}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -1004,7 +1110,7 @@ Quarto files are designed to be used in three ways:
 * As an environment in which to do data science, as a modern-day lab notebook where you can capture not only what you did, but also what you were thinking.
 
 
-### Exercise 9
+### Exercise 5
 
 In Quarto documents, you can use [Markdown syntax](https://quarto.org/docs/authoring/markdown-basics.html). You can use this to create **bold** or *italic* text, and headers.
 
@@ -1016,7 +1122,7 @@ Make the text created in the previous exercise a header by adding `##` at the be
 
 Run `readLines("quarto-1.qmd") |> tail()` in the Console. CP/CR.
 
-```{r quarto-1-9}
+```{r running-code-5}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1029,9 +1135,7 @@ question_text(NULL,
 
 You can find a full list of Markdown formatting styles and commands [here](https://www.markdownguide.org/basic-syntax/).
 
-### Exercise 10
-
-<!-- DK: From here to the end of the section could use some clean up. -->
+### Exercise 6
 
 In the top left corner of the Code pane, you should be able to see two buttons: "Source" and "Visual". "Source" shows you all the code while "Visual" shows you (mostly) how the document will look after being rendered. You can edit a Quarto document while in either "Source" or "Visual" mode.
 
@@ -1043,7 +1147,7 @@ We are going to switch to "Visual" and explore how we can edit while still in "V
 
 Type "I made this through Quarto" below "This is my first Markdown text" while still in "Visual". Copy and paste everything in your document (while still in "Visual") into the box below.
 
-```{r quarto-1-10}
+```{r running-code-6}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1056,9 +1160,13 @@ question_text(NULL,
 
 Save the file. Render the document, just to make sure it worked.
 
+For the most part, we work in Source mode because it is easier to see how things work. Visual mode is most useful when you are adding images to the document.
+
 
 ## Quarto 2
 ### 
+
+Restart your R session. (Recall that we do this from the "Session" menu. This is not the same thing as restarting RStudio.) This will require you to Terminate this tutorial. And that is OK! All your work is saved. Just restart the tutorial from the Tutorial tab once your R session restarts.
 
 Let's create another Quarto document so that we can explore how to include R code within the document.
 
@@ -1083,7 +1191,7 @@ The listing should include `quarto-2.qmd` and `quarto-2.html`.
 
 ### Exercise 2
 
-Delete everything in `quarto-2.qmd` except for the YAML header. Delete the `editor: visual` line from within the YAML header. Do not delete the dashes which provide the border for the YAML header. The file should look like:
+Delete everything in `quarto-2.qmd` except for the YAML header. Do not delete the dashes which provide the border for the YAML header. The file should look like:
 
 ````
 ---
@@ -1106,18 +1214,15 @@ question_text(NULL,
 
 ### 
 
-The `editor: visual` line tells RStudio to switch to "Visual" mode, rather than "Source" mode, when you first open the file. Most people prefer to work in Source mode, which is the default.
-
-If you uncheck the "Editor: Use visual markdown editor" box at the bottom of the "New Quarto Document" box, then the `editor: visual` line will not appear in the initial YAML header.
+If you have unchecked the "Editor: Use visual markdown editor" box at the bottom of the "New Quarto Document" box, then the `editor: visual` line will not appear in the initial YAML header. If it did appear, delete it.
 
 
 ### Exercise 3
 
-Add a code chunk either by pressing the Add Chunk command at the top of the editor on the right (the green C button with a plus sign next to it) or by using the shortcut key combination: `Cmd + Option + i` / `Ctrl + Alt + i`.
+Add a code chunk either by pressing the Add Chunk command at the top of the Source pane on the right (the green C button with a plus sign next to it) or by using the shortcut key combination: `Cmd + Option + i` / `Ctrl + Alt + i`.
 
 The newly created code chunk will be empty, looking like:
 
-<!-- DK: Very annoying that this use of verbatim messes up the formating of the rest of the file, both greying out text and hiding the Outline. But changing to using ```` just makes the R code chunk disappear. -->
 
 ````{verbatim, echo = TRUE}
 ```{r}
@@ -1125,7 +1230,6 @@ The newly created code chunk will be empty, looking like:
 ```
 
 ````
-
 
 Save the file, and run `readLines("quarto-2.qmd") |> tail()` in the Console. CP/CR.
 
@@ -1147,9 +1251,8 @@ In this tutorial, we will only include R code within our code chunks. But you ca
 
 ### Exercise 4
 
-Put `2 * 2` within the code chunk. Render the document. Copy and paste the entire html document here.
+Put `2 * 2` within the code chunk. Render the document. Copy and paste the entire html document here. (This allows us to confirm that your html file is correct.)
 
-<!-- DK: Is it clear enough what "paste the entire html" means? -->
 
 ```{r quarto-2-4}
 question_text(NULL,
@@ -1210,6 +1313,8 @@ question_text(NULL,
 ### 
 
 The `label` option has no effect on the output. Your chunk labels should be short but evocative and should not contain spaces. We recommend using dashes (`-`) to separate words (instead of underscores, `_`) and avoiding other special characters in chunk labels.
+
+<!-- DK: Explain why labels are good. -->
 
 ### Exercise 7
 
@@ -1363,11 +1468,11 @@ Make sure to format your code so that it looks neat and tidy. Specifically:
 
 * If the function you’re piping into has named arguments (like `mutate()` or `summarize()`), put each argument on a new line. If the function doesn’t have named arguments (like `select()` or `filter()`), keep everything on one line unless it doesn’t fit, in which case you should put each argument on its own line.
 
-<!-- DK: Maybe split these up. -->
+<!-- DK: Maybe split the above points up into separate knowledge drops. -->
 
 ### Exercise 13
 
-To add a geom layer, add `geom_point()` to your plot. You will need to render the file again. Now our plot isn't empty! It shows a scatterplot!
+To add a geom layer, add `geom_point()` to your plot. Render the file again. Now our plot isn't empty! It shows a scatterplot!
 
 ### 
 
@@ -1441,7 +1546,7 @@ question_text(NULL,
 
 ### 
 
-The files `quarto-3.qmd` and `quarto-3.html` should appear in this list.
+The files `quarto-3.qmd` and `quarto-3.html` should appear in this list.  
 
 ### Exercise 2
 
@@ -1481,7 +1586,7 @@ question_text(NULL,
 
 ### 
 
-Because we have not added any code chunk options, we see the code in the html file, along with the title and author. But there is no output because assignment of a value does not result in output in R.
+Because we have not added any code chunk options, we see the code in the html file, along with the title and author. But there is no output because assignment of a value does not result in printed output in R.
 
 ### Exercise 4
 
@@ -1533,7 +1638,7 @@ We want the actual value of `x` to appear in the document, in place of the `?`. 
 
 ### Exercise 6
 
-<!--Formatting this in this Rmd is very tricky. If you try to include the inline code in the middle of a sentence, all hell breaks loose, even if you comment out that line! So, we hack. -->
+<!-- DK: Formatting this in this Rmd is very tricky. If you try to include the inline code in the middle of a sentence, all hell breaks loose, even if you comment out that line! So, we hack. -->
 
 Replace the `?` in your sentence with:
 
@@ -1541,7 +1646,7 @@ Replace the `?` in your sentence with:
 `r x`
 ```
 
-Include the backticks. They tell Quarto that you want to evaluate the code `x` using the R lanaguge. In this case, that code is just the letter `x`, which evaluates to (prints out) the number we have assigned. Render the document.
+Include the backticks. They tell Quarto that you want to evaluate the code `x` using the R lanaguge. In this case, that code is just the letter `x`, which evaluates to (i.e., prints out) the number we have assigned to it. Render the document.
 
 Copy/paste the resulting html.
 
@@ -1590,8 +1695,6 @@ With *inline* code, we can insert R code of arbitrary complexity directly in the
 ## Quarto 4
 ### 
 
-Let's make another Quarto document so that we can practice our skills.
-
 Restart your R session. (Recall that we do this from the "Session" menu. This is not the same thing as restarting RStudio.) This will require you to Terminate this tutorial. And that is OK! All your work is saved. Just restart the tutorial from the Tutorial tab once your R session restarts.
 
 ### Exercise 1
@@ -1609,11 +1712,11 @@ question_text(NULL,
 
 ### 
 
-The short-cut key to restart R is `Cmd/Cntrl - Shift - 0`. You should restart your R session regularly. Indeed, one of our catch phrases is:
+The short-cut key to restart R is `Cmd/Cntrl + Shift + 0`. You should restart your R session regularly. Indeed, one of our catch phrases is:
 
 **You can't restart R too often.**
 
-`search()` should not return packages like **tidyverse**. (However, the default packages like **stats** and **graphics** should be there.) This is a new R session, and you have not loaded any non-default packages yet.
+`search()` should **not** return packages like **tidyverse**. (However, the default packages like **stats** and **graphics** should be there.) This is a new R session, and you have not loaded any non-default packages yet.
 
 
 ### Exercise 2
@@ -1644,9 +1747,9 @@ It might be tempting to name your files `code.R` or `myscript.R`, but you should
 
 ### Exercise 3
 
-We are going to make a setup code chunk, where you can load your libraries. Add a new code chunk.
+We are going to make a setup code chunk, where you can load your libraries. 
 
-In the first line, write `#| label: setup` in order to give the code chunk the label/name "setup."
+Add a new code chunk. In the first line, write `#| label: setup` in order to give the code chunk the label/name "setup."
 
 Put `library(tidyverse)` and `library(knitr)` in the code chunk.
 
@@ -1656,9 +1759,9 @@ Put `library(tidyverse)` and `library(knitr)` in the code chunk.
 
 ### 
 
-Putting the character strings `library(tidyverse)` and `library(knitr)` inside the `setup` code chunk is enough to "load" these packages in QMD World because, whenever we render a file, every line of code in the file is sent to R for processing. Those characters, however, have no connection to Console World until we explicitly execute them by hand, generally with `Cmd/Cntrl - Return`.
+Putting the character strings `library(tidyverse)` and `library(knitr)` inside the `setup` code chunk is enough to "load" these packages in QMD World because, whenever we render a file, every line of code in the file is sent to R for processing. Those characters, however, have no connection to Console World until we explicitly execute them by hand, generally with `Cmd/Cntrl + Enter`.
 
-Do that now. Place the cursor next to the `library()` calls and hit `Cmd/Cntrl-return` twice.
+Do that now. Place the cursor next to the `library()` calls and hit `Cmd/Cntrl + Enter` twice.
 
 ### 
 
@@ -1677,7 +1780,7 @@ question_text(NULL,
 
 The output of the call to `search()` should include the strings `package:tidyverse` and  `package:knitr`, indicating that both **tidyverse** and **knitr** are loaded.
 
-The key lesson is that we are operating in two worlds simultaneously: QMD World and Console World. We are responsible for keeping them in sync with tools like `Cmd/Cntrl - Return`.
+The key lesson is that we are operating in two worlds simultaneously: QMD World and Console World. We are responsible for keeping them in sync with tools like `Cmd/Cntrl + Enter`.
 
 ### Exercise 4
 
@@ -1705,15 +1808,15 @@ Alternatively, if you don’t use keyboard shortcuts, you can go to `Session > R
 
 ### Exercise 5
 
-Make a new header with the title "Diamonds Histogram". Remember we do this using `##`, followed by a space. Skip a line under this header, and then create a new code chunk. Use the code chunk argument `echo: false` to stop your code from showing up when you render the file.
+Make a new header with the title "Diamonds Histogram". Remember we do this using `##`, followed by a space. Skip a line under this header, and then create a new code chunk. Use the code chunk option `echo: false` to stop your code from showing up when you render the file.
 
 ### 
 
 In your new code chunk, use the function `include_graphics()`. Set the argument to the name of your .png. Remember to use quotes. The command should look like
 
-```{verbatim echo = TRUE}
+````
 include_graphics("diamonds.png")
-```
+````
 
 Render the document. Run `readLines("quarto-4.qmd") |> tail(6)`. CP/CR.
 
@@ -1733,6 +1836,8 @@ This should cause the graphic to appear in the html file. If you get an error, m
 
 ## Publishing
 ### 
+
+<!-- DK: I think that this section could be improved. Maybe show all the steps together, like we do with creating a project? -->
 
 We'll be publishing our Quarto documents on the Internet by using [Rpubs](https://rpubs.com/), a free web publishing service. Rpubs is managed by [Posit](https://posit.co/) (formerly RStudio), a leading company in the data science world. You will need to create an Rpubs account.
 
@@ -1775,17 +1880,13 @@ include_graphics("images/publish_button.png")
 
 Press that button.
 
-<!-- DK: Poor organization. What are students submitting? -->
-
-### Exercise 3
-
 You will be asked whether you want to publish to Rpubs or to Posit Connect. Use Rpubs. (Posit Connect costs money.) You will get a reminder that all documents you publish on RPubs are publicly visible. Click "Publish".
 
 ```{r}
 include_graphics("images/rpubs-6.png")
 ```
 
-### Exercise 4
+### Exercise 3
 
 This will take you to the RPubs website. You will need to create an account. Follow the steps as prompted.
 
@@ -1793,13 +1894,13 @@ This will take you to the RPubs website. You will need to create an account. Fol
 include_graphics("images/rpubs-7.png")
 ```
 
-### Exercise 5
+### Exercise 4
 
 Add document details. Name your document. Add a meaningful slug (a unique website name that's often just the name of your project), otherwise you will end up with an ugly, long address you didn't choose and can't remember. You can leave the description blank if you don't want to add one.
 
 Put the link to your RPubs page in the space below.
 
-```{r publishing-5}
+```{r publishing-4}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
