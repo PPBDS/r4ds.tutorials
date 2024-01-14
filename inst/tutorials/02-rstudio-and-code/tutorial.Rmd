@@ -27,7 +27,9 @@ options(tutorial.exercise.timelimit = 60,
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- Biggest hackery comes in Quarto 1 section when we display the example Quarto document. See the discussion there. Good summer project for someone! -->
+<!-- Biggest hackery is our use of the "file =" trick to bring in code examples which would mess up the formatting of this document (and, even worse, mess up the use of format_tutorial()) if we just included them raw, like with ```` or ````mardown or ````{verbatim}. The trick works in that nothing breaks. But it is annoying! We wold much rather see the code which we are including **right there** instead of having to look it up in a separate file. -->
+
+<!-- More details: parsermd(), used by format_tutorial(), is finicky. We don't want it to consider the headers in this example qmd as "real" headers. We want them to be ignored. Seems like the only way to do that is to include the entire document in an R code chunk with three backticks. Then, format_tutorial() does what we want. But! Then knitting the tutorial fails totally. You need to switch to four backticks, at the start and end. Knitting is now fine, but, if you run format_tutorial(), you will mess up the exercise numbering and chunk labels. Could not solve this! So, just use "file =" trick. Using other code examples, like empty chunks, does not mess up format_tutoria() but does mess up the displayed outline of this document, which is annoying. -->
 
 <!-- Given the changes we have made to default settings, lots of these images should be redone. -->
 
@@ -35,11 +37,8 @@ options(tutorial.exercise.timelimit = 60,
 
 <!-- Do more to bring the new RStudio user docs into the discussion. -->
 
-<!-- Explain throughout, starting in the R script section, that there is a difference between the current workspace and the Quarto document itself. Maybe restart the R session more often? -->
-
 <!-- There are often two or more ways to do the same thing: like create a new project or a new script. We should mention and explain this throughout. We should also standardize the approach we use, at least the first time through. -->
 
-<!-- Maybe discuss dot files and directories, and why they appear and don't appear? -->
 
 <!-- Things from chapter 3 and 5 that might be discussed/quoted: -->
 
@@ -926,19 +925,9 @@ question_text(NULL,
 
 This should return `quarto-1.qmd`, as well as `analysis-1.Rproj`, `script-1.R`, `script-2.R`, and `diamonds.png`. Note how different suffixes are used for different types of files.
 
-Again, there is no necessary connection between the **title** of a Quarto document and the **name** of the file.
-
-Note the several different ways in which we use the word "Source." First, there is there "Source" pane, the 1/4 of the RStudio workspace which displays you code for editing. Second, there is the "Source" button, the think to click when you want to source your R scripts. Third, you can edit a Quarto document in either "Source" or "Visual" mode.
-
-
 ### Exercise 3
 
-In the top left corner above your Quarto document, you should see the buttons "Source", and "Visual". "Source" should be selected. If it is not, select it. 
-
-This will revert how we see our Quarto document to be more similar to our R script. We will explore the "Visual" option later.
-
-Run `readLines("quarto-1.qmd") |> tail()` in the Console. CP/CR.
-
+Run `readLines("quarto-1.qmd") |> head(n = 2)` in the Console. CP/CR.
 
 ```{r quarto-1-3}
 question_text(NULL,
@@ -951,33 +940,51 @@ question_text(NULL,
 
 ### 
 
-`readLines()` reads in each line in a text file into a character vector. Each line in `quarto-1.qmd` is placed in its own element in the vector. With `tail()`, we only see the last 6 lines.
+`readLines()` reads in each line in a text file into a character vector. Each line in `quarto-1.qmd` is placed in its own element in the vector. With `head(n = 2)`, we only see the first 2 lines.
+
+Again, there is no necessary connection between the **title** of a Quarto document --- which “My First Quarto Document” in this case --- and the **name** of the file --- which is `quarto-1.qmd`.
 
 
 
 ### Exercise 4
 
+In the top left corner above your Quarto document, you should see the buttons "Source", and "Visual". Click back and forth between them. Note how the display of the Quarto document changes.
+
+Finish with "Source" selected. 
+
+This will revert how we see our Quarto document to be more similar to our R script. We will explore the "Visual" option later.
+
+Run `readLines("quarto-1.qmd") |> tail()` in the Console. CP/CR.
+
+
+```{r quarto-1-4}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Note the several different ways in which we use the word "Source." First, there is there "Source" pane, the 1/4 of the RStudio workspace which displays your code for editing. Second, there is the "Source" button, the thing to click when you want to source your R script. Third, you can edit a Quarto document in either "Source" or "Visual" mode.
+
+### Exercise 5
+
 The default Quarto file should look like this:
 
-<!-- The initial version just copy/pasted the example Quarto file, using just markdown. But parsermd(), used by format_tutorial(), is finicky. We don't want it to consider the headers in this example qmd as "real" headers. We want them to be ignored. Seems like the only way to do that is to include the entire document in an R code chunk with three backticks. Then, format_tutorial() does what we want. But! Then knitting the tutorial fails totally. You need to switch to four backticks, at the start and end. Knitting is now fine, but, if you run format_tutorial(), you will mess up the exercise numbering and chunk labels. Could not solve this! So, just want back to an image. -->
+<!-- The "file =" trick works well, but I sure which there were a way to just include text directly without this hackery. It is a pain to keep track of a bunch of separate text files. -->
 
-
-```{r echo = FALSE}
-knitr::include_graphics("images/quarto-example.png")
+```{r, file = "quarto-example.txt", echo = TRUE, eval = FALSE}
 ```
 
 ### 
 
 As you can see, a lot of the text is regular plain text, not code. However, there are code chunks which allow us to execute code when the document is rendered. Here's an example of an R code chunk:
 
-<!-- DK: Very annoying that this use of verbatim messes up the formating of the rest of the file, both greying out text and hiding the Outline. But changing to using ```` just makes the R code chunk disappear. -->
-
-````{verbatim, echo = TRUE}
-```{r}
-1 + 1
+```{r, file = "chunk-example.txt", echo = TRUE, eval = FALSE}
 ```
-
-````
 
 Quarto documents utilize Markdown (an easy-to-write plain text format), which can contain chunks of embedded code. These code chunks can be written in many languages, including R and Python. Code chunks allow you to use R to create plots and other graphics.
 
@@ -985,7 +992,7 @@ Quarto documents utilize Markdown (an easy-to-write plain text format), which ca
 
 The [YAML header](https://bookdown.org/yihui/rmarkdown-cookbook/rmarkdown-anatomy.html) is everything between the dashed lines at the top of the file, including the dashed lines themselves. Copy-and-paste the YAML header of the file below.
 
-```{r quarto-1-4}
+```{r quarto-1-5}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1001,13 +1008,13 @@ The YAML header includes "metadata" about the document itself, things like the t
 Depending on your RStudio set up, the YAML header might include  the line `editor: visual`. This would tell RStudio, when opening the file on a new occasion, to set the editor to "Visual" mode. This is the same thing as pressing the "Visual" button. If this line is not present, don't worry about it. We recommend working in "Source" mode, at least for now.
 
 
-### Exercise 5
+### Exercise 6
 
 To "render" our Quarto document, click the "Render" arrow at the top of the Code pane, or use the shortcut `Cmd/Ctrl + Shift + k`.
 
 Run `list.files()`. CP/CR.
 
-```{r quarto-1-5}
+```{r quarto-1-6}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -1020,14 +1027,14 @@ question_text(NULL,
 
 You should see a new file, `quarto-1.html`. This is the file created by rendering. The Viewer tab in the Output pane in the lower right of your workspace should also display the file.
 
-### Exercise 6
+### Exercise 7
 
 Note how the html document shows both the code `1 + 1` and the result of the addition. This is the magic of Quarto. We can easily document and reproduce our work. In `quarto-1.qmd`, change `1 + 1` to `6 + 3`. Save the file. Render it again.
 
 Run `readLines("quarto-1.qmd")[grepl("6", readLines("quarto-1.qmd"))]`. CP/CR.
 
 
-```{r quarto-1-6}
+```{r quarto-1-7}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -1040,7 +1047,7 @@ question_text(NULL,
 
 This should return a single character vector with `"6 + 3"`, the line which you added to the file. Apologies for the complexity of the call needed to pull out that line.
 
-### Exercise 7
+### Exercise 8
 
 Delete everything except the YAML header, which is the text in the box at the top of the file, including the dashes. Add "This is my first Markdown text." at the bottom of the document.
 
@@ -1048,7 +1055,7 @@ Delete everything except the YAML header, which is the text in the box at the to
 
 Save the file and run `readLines("quarto-1.qmd")`. CP/CR.
 
-```{r quarto-1-7}
+```{r quarto-1-8}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -1069,14 +1076,14 @@ In readLines("quarto-1.qmd") :
 
 The solution is to add an empty line to the end of the file. This is always a good idea with text files.
 
-### Exercise 8
+### Exercise 9
 
 Render the document. This will replace the current `quarto-1.html` file, both in the current directory and in the Viewer pane.
 
 In the following box, copy all of the text from your rendered Quarto document, from the Viewer tab within the Output pane.
 
 
-```{r quarto-1-8}
+```{r quarto-1-9}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -1096,7 +1103,7 @@ Quarto files are designed to be used in three ways:
 * As an environment in which to do data science, as a modern-day lab notebook where you can capture not only what you did, but also what you were thinking.
 
 
-### Exercise 9
+### Exercise 10
 
 In Quarto documents, you can use [Markdown syntax](https://quarto.org/docs/authoring/markdown-basics.html). You can use this to create **bold** or *italic* text, and headers.
 
@@ -1108,7 +1115,7 @@ Make the text created in the previous exercise a header by adding `##` at the be
 
 Run `readLines("quarto-1.qmd") |> tail()` in the Console. CP/CR.
 
-```{r quarto-1-9}
+```{r quarto-1-10}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1121,7 +1128,7 @@ question_text(NULL,
 
 You can find a full list of Markdown formatting styles and commands [here](https://www.markdownguide.org/basic-syntax/).
 
-### Exercise 10
+### Exercise 11
 
 In the top left corner of the Code pane, you should be able to see two buttons: "Source" and "Visual". "Source" shows you all the code while "Visual" shows you (mostly) how the document will look after being rendered. You can edit a Quarto document while in either "Source" or "Visual" mode.
 
@@ -1133,7 +1140,7 @@ We are going to switch to "Visual" and explore how we can edit while still in "V
 
 Type "I made this through Quarto" below "This is my first Markdown text" while still in "Visual". Copy and paste everything in your document (while still in "Visual") into the box below.
 
-```{r quarto-1-10}
+```{r quarto-1-11}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1221,13 +1228,8 @@ Add a code chunk either by pressing the Add Chunk command at the top of the Sour
 
 The newly created code chunk will be empty, looking like:
 
-
-````{verbatim, echo = TRUE}
-```{r}
-
+```{r, file = "empty-chunk-example.txt", echo = TRUE, eval = FALSE}
 ```
-
-````
 
 Save the file, and run `readLines("quarto-2.qmd") |> tail()` in the Console. CP/CR.
 
@@ -1269,14 +1271,9 @@ We see both the code itself and the result of the code. This is an example of a 
 
 You can add options to executable code. For example, add `#| echo: false` within the code chunk, above the `2 * 2` calculation. It should look like:
 
-````{verbatim, echo = TRUE}
-```{r}
-#| echo: false
 
-2 * 2
+```{r, file = "label-chunk-example.txt", echo = TRUE, eval = FALSE}
 ```
-
-````
 
 Render the document. Copy/paste the html below.
 
@@ -1590,10 +1587,10 @@ Because we have not added any code chunk options, we see the code in the html fi
 
 Instead of using the `echo: false` code chunk option in every code chunk in a document, we can set this option in the YAML header itself. Add
 
-```{verbatim echo = TRUE}
+````
 execute:
   echo: false
-```
+````
 
 to the botton of the YAML header. This sets `echo` to `false` throughout the document. Render `quarto-3.qmd`. The resulting html is empty, other than the title and author.
 
@@ -1640,9 +1637,9 @@ We want the actual value of `x` to appear in the document, in place of the `?`. 
 
 Replace the `?` in your sentence with:
 
-```{verbatim echo = TRUE}
-`r x`
+```{r, file = "inline-example-1.txt", echo = TRUE, eval = FALSE}
 ```
+
 
 Include the backticks. They tell Quarto that you want to evaluate the code `x` using the R lanaguge. In this case, that code is just the letter `x`, which evaluates to (i.e., prints out) the number we have assigned to it. Render the document.
 
@@ -1667,8 +1664,8 @@ But, depending on your system and settings, the result is often ugly. I get "1.2
 
 Replace the inline code in your sentence with 
 
-```{verbatim echo = TRUE}
-`r scales::comma(x)`
+
+```{r, file = "inline-example-2.txt", echo = TRUE, eval = FALSE}
 ```
 
 Render the document. You might notice that, strictly speaking, you do not need to save the document before you render it. With the usual default settings, RStudio will automatically save a document which you try to render.
