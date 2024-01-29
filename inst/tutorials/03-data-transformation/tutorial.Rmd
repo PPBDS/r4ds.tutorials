@@ -135,10 +135,12 @@ Run `glimpse(flights)`.
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r rows-5-hint-1, eval = FALSE}
 glimpse(...)
+```
+
+```{r rows-5-test, echo = FALSE}
+glimpse(flights)
 ```
 
 ### 
@@ -157,9 +159,13 @@ The pipe, ` |>`, takes the thing on its left and passes it along to the function
 
 ```{r rows-6-hint-1, eval = FALSE}
 flights |> 
-  print()
+  ...()
 ```
 
+```{r rows-6-test, echo = FALSE}
+flights |>
+  print()
+```
 ### 
 
 The easiest way to pronounce the pipe is “then”. So, in words we would describe the above code as "flights then print."
@@ -174,6 +180,11 @@ The easiest way to pronounce the pipe is “then”. So, in words we would descr
 
 ```{r rows-7-hint-1, eval = FALSE}
 flights |> 
+  filter(...)
+```
+
+```{r rows-7-test, echo = FALSE}
+flights |>
   filter(dep_delay > 120)
 ```
 
@@ -194,6 +205,11 @@ flights |>
   filter(... & day == 1)
 ```
 
+```{r rows-8-test, echo = FALSE}
+flights |>
+  filter(month == 1 & day == 1)
+```
+
 ### 
 
 Instead of `&`, you could have used a simple comma, `,`, because `filter()` treats statements separated by commas as all being required. For example, `filter(month == 1, day == 1)` would produce the same set of rows as this example.
@@ -206,9 +222,16 @@ Pipe `flights` to `filter()` with the same argument as exercise 8, but use a com
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r rows-9-hint-1, eval = FALSE}
 flights |> 
   filter(month == 1 ... day == 1)
+```
+
+```{r rows-9-test, echo = FALSE}
+flights |>
+  filter(month = 1, day == 1)
 ```
 
 ### 
@@ -225,6 +248,11 @@ There’s a useful shortcut when you’re combining `|` and `==`: `%in%`. It kee
 
 ```{r rows-10-hint-1, eval = FALSE}
 flights |> 
+  filter(month ... c(1, 2))
+```
+
+```{r rows-10-test, echo = FALSE}
+flights |>
   filter(month %in% c(1, 2))
 ```
 
@@ -250,8 +278,13 @@ Create a new object, `jan1` which is the result of filtering `flights` to just i
 ```
 
 ```{r rows-11-hint-1, eval = FALSE}
-jan1 <- flights |> 
+... <- flights |> 
   filter(month == 1 & day == 1)
+```
+
+```{r rows-11-test, echo = FALSE}
+jan1 <- flights |>
+  filter(month == 1 & day ==1)
 ```
 
 ### 
@@ -270,7 +303,12 @@ Use the same code from the previous Exercise but, this time, create the `jan1` o
 
 ```{r rows-12-hint-1, eval = FALSE}
 flights |> 
-  filter(month == 1 & day == 1) -> jan1
+  filter(month == 1 & day == 1) -> ...
+```
+
+```{r rows-12-test, echo = FALSE}
+flights |>
+  filter(month ==1 & day == 1) -> jan1
 ```
 
 ### 
@@ -289,6 +327,11 @@ Pipe `flights` to `arrange()`, passing in the arguments `year, month, day, dep_t
 
 ```{r rows-13-hint-1, eval = FALSE}
 flights |> 
+  arrange(...)
+```
+
+```{r rows-13-test, echo = FALSE}
+flights |>
   arrange(year, month, day, dep_time)
 ```
 
@@ -306,7 +349,12 @@ You can use `desc()` on a column inside of `arrange()` to re-order the data fram
 
 ```{r rows-14-hint-1, eval = FALSE}
 flights |> 
-  arrange(...)
+  arrange(...(dep_delay))
+```
+
+```{r rows-14-test, echo = FALSE}
+flights |>
+  arrange(desc(dep_delay))
 ```
 
 ### 
@@ -323,7 +371,12 @@ Although `filter()` and `arrange()` are the most commonly used **dplyr** command
 
 ```{r rows-15-hint-1, eval = FALSE}
 flights |> 
-  ...
+  ...()
+```
+
+```{r rows-15-test, echo = FALSE}
+flights |>
+  distinct()
 ```
 
 ### 
@@ -339,9 +392,16 @@ Most of the time, however, you’ll want the distinct combination of some variab
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r rows-16-hint-1, eval = FALSE}
 flights |> 
   distinct(...)
+```
+
+```{r rows-16-test, echo = FALSE}
+flights |>
+  distinct(origin)
 ```
 
 ### 
@@ -363,6 +423,11 @@ flights |>
   distinct(origin, ...)
 ```
 
+```{r rows-17-test, echo = FALSE}
+flights |>
+  distinct(origin, dest)
+```
+
 ### Exercise 18
 
 It is often handy to keep values for all the other variables when using `distinct()`. Run the same command as above, but add the `.keep_all` argument with a value of `TRUE`.
@@ -371,9 +436,16 @@ It is often handy to keep values for all the other variables when using `distinc
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r rows-18-hint-1, eval = FALSE}
 flights |> 
   distinct(origin, dest, .keep_all = ...)
+```
+
+```{r rows-18-test, echo = FALSE}
+flights |>
+  distinct(origin, dest, .keep_all = TRUE)
 ```
 
 ### 
@@ -391,6 +463,11 @@ If you want to find the number of occurrences instead, you’re better off swapp
 ```{r rows-19-hint-1, eval = FALSE}
 flights |>
   count(origin, dest, ... = TRUE)
+```
+
+```{r rows-19-test, echo = FALSE}
+flights |>
+  count(origin, dest, sort = TRUE)
 ```
 
 ### 
@@ -417,9 +494,14 @@ flights |>
   mutate(... = dep_delay - ...)
 ```
 
+``` {r columns-1-test, echo = FALSE}
+flights |>
+  mutate(gain = dep_delay - arr_delay)
+```
+
 ### 
 
-If there is only one new variable created in a `mutate()` command, we generally just place it within the parantheses. However, if there is more than one new variable, we normally skip a line, both before and after the variables.
+If there is only one new variable created in a `mutate()` command, we generally just place it within the parenthesis. However, if there is more than one new variable, we normally skip a line, both before and after the variables.
 
 ### Exercise 2
 
@@ -437,6 +519,12 @@ flights |>
     gain = dep_delay - arr_delay,
     ... = distance / ... * 60
   )
+```
+
+``` {r columns-2-test, echo = FALSE}
+flights |>
+  mutate(gain = dep_delay - arr_delay,
+         speed = distance / air_time * 60)
 ```
 
 ### 
@@ -464,6 +552,13 @@ flights |>
   )
 ```
 
+``` {r columns-3-test, echo = FALSE}
+flights |>
+  mutate(gain = dep_delay - arr_delay,
+         speed = distance / air_time * 60,
+         .before = 1)
+```
+
 ### 
 
 The `.` is a sign that `.before` is an argument to the function, not the name of a third new variable we are creating. Remember that in RStudio, the easiest way to see a dataset with many columns is `View()`.
@@ -487,6 +582,15 @@ flights |>
   )
 ```
 
+``` {r columns-4-test, echo = FALSE}
+flights |> 
+  mutate(
+    gain = dep_delay - arr_delay,
+    speed = distance / air_time * 60,
+    .after = day
+    )
+```
+
 ### 
 
 `.after`, like .`before` and many **tidyverse** functions, uses the [`<tidy-select>`](https://dplyr.tidyverse.org/reference/dplyr_tidy_select.html) argument modifier which enables multiple ways of selecting columns other than just providing a column name.
@@ -507,8 +611,17 @@ flights |>
   mutate(
     gain = dep_delay - arr_delay,
     hours = air_time / 60,
-    .keep = ...
+    .keep = "..."
   )
+```
+
+``` {r columns-5-test, echo = FALSE}
+flights |> 
+  mutate(
+    gain = dep_delay - arr_delay,
+    speed = distance / air_time * 60,
+    .keep = "used"
+    )
 ```
 
 ### 
@@ -538,6 +651,11 @@ Pipe `flights` to `select(year, month, day)`.
 
 ```{r columns-6-hint-1, eval = FALSE}
 flights |> 
+  select(...)
+```
+
+``` {r columns-6-test, echo = FALSE}
+flights |>
   select(year, month, day)
 ```
 
@@ -553,9 +671,16 @@ Instead of listing the columns to keep, we can provide a range of columns by usi
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r columns-7-hint-1, eval = FALSE}
 flights |> 
   select(year:...)
+```
+
+``` {r columns-7-test, echo = FALSE}
+flights |>
+  select(year:day)
 ```
 
 ### 
@@ -582,9 +707,16 @@ Put an explanation point, `!`, in front of `year:day` from the previous answer.
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r columns-8-hint-1, eval = FALSE}
 flights |> 
-  select(! ...:day)
+  select(... year:day)
+```
+
+``` {r columns-8-test, echo = FALSE}
+flights |>
+  select(! year:day)
 ```
 
 ### 
@@ -604,6 +736,11 @@ flights |>
   select(...)
 ```
 
+``` {r columns-9-test, echo = FALSE}
+flights |>
+  select(where(is.character))
+```
+
 ### 
 
 There are a number of helper functions you can use within `select()`:
@@ -617,7 +754,7 @@ There are a number of helper functions you can use within `select()`:
 
 ### Exercise 10
 
-You can rename variables as you `select()` them by using `=`. The new name appears on the left hand side of the `=`, and the old variable appears on the right hand side. Pipe `flights` to `select()` with `tail_num = tailnum` within the parantheses.
+You can rename variables as you `select()` them by using `=`. The new name appears on the left hand side of the `=`, and the old variable appears on the right hand side. Pipe `flights` to `select()` with `tail_num = tailnum` within the parenthesis.
 
 ```{r columns-10, exercise = TRUE}
 
@@ -628,6 +765,11 @@ flights |>
   select(tail_num = ...)
 ```
 
+``` {r columns-10-test, echo = FALSE}
+flights |>
+  select(tail_num = tailnum)
+```
+
 ### 
 
 This both keeps only the variable `tailnum` from `flights` *and* renames it to `tail_num`.
@@ -635,7 +777,7 @@ This both keeps only the variable `tailnum` from `flights` *and* renames it to `
 
 ### Exercise 11
 
-You can also rename a variable with the `rename()` function. This has no impact on the other variables. Pipe `flights` to `rename()` with `tail_num = tailnum` within the parantheses.
+You can also rename a variable with the `rename()` function. This has no impact on the other variables. Pipe `flights` to `rename()` with `tail_num = tailnum` within the parenthesis.
 
 ```{r columns-11, exercise = TRUE}
 
@@ -644,6 +786,11 @@ You can also rename a variable with the `rename()` function. This has no impact 
 ```{r columns-11-hint-1, eval = FALSE}
 flights |> 
   rename(...)
+```
+
+``` {r columns-11-test, echo = FALSE}
+flights |>
+  rename(tail_num = tailnum)
 ```
 
 ### 
@@ -661,6 +808,11 @@ Use `relocate()` to move variables around. You might want to collect related var
 ```{r columns-12-hint-1, eval = FALSE}
 flights |> 
   ...(time_hour, air_time)
+```
+
+``` {r columns-12-test, echo = FALSE}
+flights |>
+  relocate(time_hour, air_time)
 ```
 
 ### 
@@ -694,6 +846,11 @@ flights |>
   filter(dest == "...")
 ```
 
+``` {r the_pipe-1-test, echo = FALSE}
+flights |>
+  filter(dest = "IAH")
+```
+
 ### 
 
 If you use `=` instead of `==`, R will give you a warning. One equal sign is for *assignment*. Two equal signs are for *comparisons*. Remeber that variable names, like `dest` are not quoted while the values of those variables, like `IAH` are quoted.
@@ -701,8 +858,6 @@ If you use `=` instead of `==`, R will give you a warning. One equal sign is for
 ### Exercise 2
 
 Continue the pipe to `mutate()`, creating a new variable `speed` which equals `distance / air_time`.
-
-
 
 ```{r the-pipe-2, exercise = TRUE}
 
@@ -714,6 +869,12 @@ Continue the pipe to `mutate()`, creating a new variable `speed` which equals `d
 flights |> 
   filter(dest == "IAH") |> 
   mutate(... = ... / ...)
+```
+
+``` {r the_pipe-2-test, echo = FALSE}
+flights |> 
+  filter(dest == "IAH") |> 
+  mutate(speed = distance / air_time)
 ```
 
 ### 
@@ -736,6 +897,12 @@ Add `.before = 1` to the call to `mutate()`.
   mutate(speed = distance / air_time, ... = 1)
 ```
 
+``` {r the_pipe-3-test, echo = FALSE}
+flights |> 
+  filter(dest == "IAH") |> 
+  mutate(speed = distance / air_time, .before = 1)
+```
+
 ### 
 
 The hint we give will generally just show you the last line of code, not the entire pipe. We can now see `speed`, but the values, of around 6, are strange. Planes don't go 6 miles per hour! The problem, if course, is that the current units are miles per minutes, since `distance` is in miles and `air_time` is in minutes.
@@ -755,6 +922,12 @@ Add `* 60` to the calculation of speed within the call to `mutate()` so that the
   mutate(speed = distance / air_time * ..., .before = 1)
 ```
 
+``` {r the_pipe-4-test, echo = FALSE}
+flights |> 
+  filter(dest == "IAH") |> 
+  mutate(speed = distance / air_time * 60, .before = 1)
+```
+
 ### 
 
 Of course, in steady cruise, planes go faster than 300 to 400 mile per hour, but they go more slowly during take-off and landing, and, more importantly, they don't travel in a straight line between airports. 
@@ -771,6 +944,13 @@ We don't want to deal with 20 variables. Pipe the current code to `select()` wit
 
 ```{r the-pipe-5-hint-1, eval = FALSE}
 ...
+  select(year:day, ... , ... , ... , ...)
+``` 
+
+``` {r the_pipe-5-test, echo = FALSE}
+flights |> 
+  filter(dest == "IAH") |> 
+  mutate(speed = distance / air_time * 60, .before = 1) |>
   select(year:day, dep_time, carrier, flight, speed)
 ```
 
@@ -780,7 +960,7 @@ We are now looking at just the variables which matter (for this analysis). Other
 
 ### Exercise 6
 
-Pipe the result to `arrange()` with the argument set to `desc(speed)`.
+Pipe the result to `arrange()` with the argument set to `desc(speed)`. This will order the speed from fastest to slowest.
 
 ```{r the-pipe-6, exercise = TRUE}
 
@@ -790,6 +970,14 @@ Pipe the result to `arrange()` with the argument set to `desc(speed)`.
 
 ```{r the-pipe-6-hint-1, eval = FALSE}
 ...
+  arrange(desc(speed))
+```
+
+``` {r the_pipe-6-test, echo = FALSE}
+flights |> 
+  filter(dest == "IAH") |> 
+  mutate(speed = distance / air_time * 60, .before = 1) |>
+  select(year:day, dep_time, carrier, flight, speed) |>
   arrange(desc(speed))
 ```
 
@@ -821,6 +1009,11 @@ Pipe `flights` into `summarize()`, with `mean(dep_delay)` as the argument.
 
 ```{r groups-1-hint-1, eval = FALSE}
 flights |> 
+  summarize(mean(...))
+```
+
+``` {r groups-1-test, echo = FALSE}
+flights |> 
   summarize(mean(dep_delay))
 ```
 
@@ -832,7 +1025,7 @@ The result was a tibble with 1 row and 1 column. Like `filter()`, `arrange()`, `
 
 The prior result was `NA` because there are some missing values in the `dep_delay` variable. Almost all statistical functions in R produce an `NA` result by default if any of the input values are `NA`. We can ignore the `NA` values when using `mean()` by adding `na.rm = FALSE` to `mean()`.
 
-Pipe `flights` into `summarize()`, with `mean(dep_delay, na.rm = TRUE)` as the argument.
+Add the argument `na.rm = TRUE` to `mean()`. Don't forget to separate the arguments with commas.
 
 ```{r groups-2, exercise = TRUE}
 
@@ -841,6 +1034,11 @@ Pipe `flights` into `summarize()`, with `mean(dep_delay, na.rm = TRUE)` as the a
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r groups-2-hint-1, eval = FALSE}
+flights |> 
+  summarize(mean(dep_delay, ... = TRUE))
+```
+
+``` {r groups-2-test, echo = FALSE}
 flights |> 
   summarize(mean(dep_delay, na.rm = TRUE))
 ```
@@ -869,6 +1067,13 @@ flights |>
   )
 ```
 
+``` {r groups-3-test, echo = FALSE}
+flights |> 
+  summarize(
+    delay = mean(dep_delay, na.rm = TRUE)
+  )
+```
+
 ### 
 
 The value is the same but, now, the variable in the resulting tibble has a reasonable name. Both `mutate()` and `summarize()` are all about creating new columns.
@@ -891,7 +1096,7 @@ flights |>
   )
 ```
 
-```{r unnamed-chunk-1, include = FALSE}
+```{r groups-4-test, echo = FALSE}
 flights |> 
   summarize(
     delay = mean(dep_delay, na.rm = TRUE),
@@ -921,6 +1126,15 @@ flights |>
   )
 ```
 
+```{r groups-5-test, echo = FALSE}
+flights |> 
+  summarize(
+    delay = mean(dep_delay, na.rm = TRUE),
+    n = n(),
+    .by = month
+  )
+```
+
 ### 
 
 Note that the letter `n` does two completely different things in this code. First, it is the name of a new variable which we have created. Second, it refers to a function, `n()`, which calculates the total number of rows in the tibble for each group.
@@ -942,6 +1156,11 @@ flights |>
   slice_head(n = ...)
 ```
 
+```{r groups-6-test, echo = FALSE}
+flights |> 
+  slice_head(n = 3)
+```
+
 ### 
 
 This returns the first three rows in `flights`. The default value for the `n` argument is `1`.
@@ -957,6 +1176,11 @@ This returns the first three rows in `flights`. The default value for the `n` ar
 ```{r groups-7-hint-1, eval = FALSE}
 flights |> 
   slice_tail(... = ...)
+```
+
+```{r groups-7-test, echo = FALSE}
+flights |> 
+  slice_tail(n = 8)
 ```
 
 ### 
@@ -977,6 +1201,11 @@ flights |>
   ...(n = 6)
 ```
 
+```{r groups-8-test, echo = FALSE}
+flights |> 
+  slice_sample(n = 6)
+```
+
 ### 
 
 Note how the flights come from a variety of months, unlike when we used `slice_head()` --- months all equal 1 --- and `slice_tail()` --- months all equal 9. (Note how the `flights` data is itself sorted in a weird way, with Decemmber flights sorted in between November (11) and February (2).)
@@ -993,6 +1222,11 @@ Note how the flights come from a variety of months, unlike when we used `slice_h
 ```{r groups-9-hint-1, eval = FALSE}
 flights |> 
   slice_max(... = dep_delay, n = ...)
+```
+
+```{r groups-9-test, echo = FALSE}
+flights |> 
+  slice_max(order_by = dep_delay, n = 5)
 ```
 
 ### 
@@ -1016,6 +1250,11 @@ flights |>
   slice_...(... = dep_delay, n = ...)
 ```
 
+```{r groups-10-test, echo = FALSE}
+flights |> 
+  slice_min(order_by = dep_delay, n = 5)
+```
+
 ### 
 
 Are there really flights that take off 30 minutes early? Maybe? Again, data science is about looking at our data extremely closely. You can never look at your data too much. It is your job to determine if the data is correct, or at least not obviously incorrect.
@@ -1031,6 +1270,11 @@ Most of the `slice_*()` functions also take a `by` (or `.by`) argument. Pipe `fl
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r groups-11-hint-1, eval = FALSE}
+flights |> 
+  slice_min(order_by = dep_delay, n = ..., by = ...)
+```
+
+```{r groups-11-test, echo = FALSE}
 flights |> 
   slice_min(order_by = dep_delay, n = 1, by = origin)
 ```
