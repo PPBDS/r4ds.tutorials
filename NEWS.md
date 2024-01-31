@@ -4,6 +4,8 @@
 
 * Update several tutorials to improve the overall quality.
 
+* Update to Github version of tutorial.helpers to deal with problems in version 0.1.3 of parsermd.
+
 # r4ds.tutorials 0.1.4
 
 * Initial CRAN release.
