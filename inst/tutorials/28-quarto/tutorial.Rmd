@@ -8,7 +8,8 @@ output:
     progressive: yes
     'allow_skip:': yes
 runtime: shiny_prerendered
-description: 'Tutorial for Chapter 28: Quarto and Chapter 29: Quarto formats, with a focus on Quarto websites.'
+description: 'Tutorial for Chapter 28: Quarto and Chapter 29: Quarto formats, with
+  a focus on Quarto websites.'
 ---
 
 ```{r setup, include = FALSE}
@@ -21,6 +22,7 @@ library(tutorial.helpers)
 library(ggthemes)
 library(knitr)
 library(tidyverse)
+library(quarto)
 library(dygraphs)
 library(leaflet)
 library(plotly)
@@ -32,8 +34,11 @@ library(plotly)
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- quarto create-project --type website --title "Hello"-->
 
-<!-- I have installed version 1.4 of Quarto. But that is not currently the version bundled with RStudio. Keep an eye on this. Also keep track of the CRAN version of quarto, which does not (yet) include create_quarto_project(). -->
+
+
+<!-- Until quarto 1.4 and the updated quarto R package are in production, we need to install them by hand. But that is OK! By this point in their education, students should be comfortable in in doing these sorts of installations. -->
 
 <!-- Need to cover other material in these chapters, not just websites. -->
 
@@ -101,19 +106,82 @@ Error: unexpected symbol in "cat map"
 
 This tutorial covers material from [Chapter 28 Quarto](https://r4ds.hadley.nz/quarto.html) and [Chapter 29 Quarto formats](https://r4ds.hadley.nz/quarto-formats.html) in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. Yet we will go into much more detail, especially with regard to the creation and modification of [Quarto websites](https://quarto.org/docs/websites/).
 
-## Creating a website
+## Set up environment
 ### 
 
-<!-- DK: Add some more questions, mostly taking a look at some of the files. Explain what they do!  -->
+We need to ensure that the latest version of Quarto and of the R **quarto** package are installed.
+
+### Exercise 1
+
+From the Terminal, run `quarto --version``. CP/CR.
+
+```{r set-up-environment-ex-1}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should be something like:
+
+````
+Davids-MBP:r4ds.tutorials dkane$ quarto --version
+1.4.549
+Davids-MBP:r4ds.tutorials dkane$ 
+````
+
+This should be at least version 1.4. Later versions of Quarto are fine. If the version number is lower than 1.4, [install the latest version of Quarto](https://quarto.org/docs/get-started/).  Restart R Studio once you have done so. 
+
+
+
+### Exercise 2
+
+From the Console, run `packageVersion("quarto")`. CP/CR.
+
+```{r set-up-environment-ex-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Answer should be this version or later.
+
+````
+> packageVersion("quarto")
+[1] ‘1.3.11’
+> 
+````
+
+If your version number is lower, install the development version of the [**quarto**](https://quarto-dev.github.io/quarto-r/) package by, at the Console, running:
+
+````
+remotes::install_github("quarto-dev/quarto-r")
+````
+
+### 
+
+Unfortunately, even the development version of the **quarto** package has some problems. So, we will generally interact with quarto directly from the Terminal.
+
+
+## Files for a website
+### 
 
 Let's make a [Quarto](https://quarto.org/docs/websites/) website.
-
 
 ### Exercise 1
 
 Create a Github repo (called "first-website"). Make sure to click the "Add a README file" check box. Copy/paste the url for its Github location.
 
-```{r creating-a-website-1}
+```{r files-for-a-website-ex-1}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -137,7 +205,7 @@ It is a good idea to always start a new data science project with a Github repo.
 
 Connect the `first-website` Github repo to an R project on your computer. Name the R project `first-website` also. Keeping the names of repos/projects aligned makes organization simpler. From the Terminal, run `ls`. CP/CR.
 
-```{r creating-a-website-2}
+```{r files-for-a-website-ex-2}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -160,21 +228,60 @@ The default README has an "md" suffix to indicate that it is a **M**ark**d**own 
 
 RStudio will automatically restart and place you within the `first-website` R project. You should also have a directory called `first-website` in the location in which you store your projects.
 
-
 ### Exercise 3
 
-The project is empty, except for the README file and the project file. We now add all the files necessary for making a website. From the Terminal (not from the Console), type:
+In the Console, load the **quarto** package with the `library()` command. Run `search()`. CP/CR.
 
-`quarto create-project "."  --type website`
-
-Every detail in this command must be correct. The `quarto` command invokes Quarto. The `create-project` phrase tells Quarto that we want to create a project, of which there are several possible types. The `--type website` argument/value at the end tells Quarto that we want a website type of project. The `"."` indicates that we want Quarto to create the project here, in the directory in which we are currently located. A single period `.` is how we indicate the current directory.
+```{r files-for-a-website-ex-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
 
 ### 
 
-In the Terminal, run `ls -a` to view a list of all the files in the directory. The `-a` ensures that **a**ll the files are listed, included the "hidden" ones which begin with a dot. CP/CR.
+The **quarto** package should appear in the search path. When you ask R to use a command, like `filter()` or `create_package()`, it looks in the libraries listed in the search path, in order, and uses the first version of the function which it finds.
+
+<!-- DK: Don't really need the quarto package, do we? Maybe remove it completely? -->
 
 
-```{r creating-a-website-3}
+### Exercise 4
+
+In the Terminal, run `quarto create-project --type website --title "My First Website"`. 
+
+In the Console, run `list.files()`. CP/CR.
+
+```{r files-for-a-website-ex-4}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+> list.files()
+[1] "_quarto.yml"         "about.qmd"           "first-website.Rproj" "index.qmd"          
+[5] "README.md"           "styles.css"         
+````
+
+The basic set of files necessary for making a Quarto website has been added to the current directory.
+
+
+### Exercise 5
+
+In the Console, run `list.files(all.files = TRUE)`. CP/CR. 
+
+
+```{r files-for-a-website-ex-5}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -186,24 +293,25 @@ question_text(NULL,
 Your answer should look something like:
 
 ```
-Davids-MBP:first-website dkane$ ls -a
-.                       .git                    _quarto.yml             index.qmd
-..                      .gitignore              about.qmd               styles.css
-.Rproj.user             README.md               first-website.Rproj
-Davids-MBP:first-website dkane$ 
+> list.files(all.files = TRUE)
+ [1] "_quarto.yml"         "."                   ".."                  ".git"               
+ [5] ".gitignore"          ".Rproj.user"         "about.qmd"           "first-website.Rproj"
+ [9] "index.qmd"           "README.md"           "styles.css"         
 ```
+
+### 
+
+You would get the same set of failes if, in the Terminal, you ran `ls -a`. The `-a` ensures that **a**ll the files are listed, included the "hidden" ones which begin with a dot. 
 
 ### 
 
 In general, we do not touch/manipulate "dot" directories, meaning directories whose names begin with a dot or period. Such directories are meant to be used by the operating system and other programs. For example, the program git uses the `.git` directory to store information about changes in the files in the entire project. 
 
-### Exercise 4
+### Exercise 6
 
-In the Terminal, run `ls` to view a list of the "visible" files in the directory. The "hidden" files will no longer appear. CP/CR.
+In the Console, run `list.files()`. The "hidden" files will no longer appear. CP/CR.
 
-### 
-
-```{r creating-a-website-4}
+```{r files-for-a-website-ex-6}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -216,15 +324,99 @@ question_text(NULL,
 
 A website is a more complex object than a single Quarto document. It has two main components. First is a "settings" file, `_quarto.yml`, which provides instructions for how the website should be constructed. Second are a collection of Quarto documents, like `index.qmd` and `about.qmd`, which will be rendered into the html files which viewers will see.
 
-<!-- DK: Explain what all the files do. -->
 
-### Exercise 5
+### Exercise 7
+
+In the Console, run `readr::read_lines("_quarto.yml") |> cat(sep = "\n")`. CP/CR.
+
+
+```{r files-for-a-website-ex-7}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+YAML files are how Quarto projects tell the world what they are. In this case, the initial lines specify that this is a website.
+
+````
+project:                                   
+  type: website
+````
+
+But other values for `type` are possible.
+
+### Exercise 8
+
+In the Console, run `readr::read_lines("_quarto.yml")[4:10] |> cat(sep = "\n")`. CP/CR.
+
+```{r files-for-a-website-ex-8}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+These lines provide meta-information about the website and its organization. 
+
+````
+website:                                        
+  title: "My First Website"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+````
+
+Note that the "title" has no necessary connection to the name of our Github repo or the name of our R project. 
+
+Indents and other whitespace matter in the interpretation of a YAML file.
+
+
+### Exercise 9
+
+In the Console, run `readr::read_lines("_quarto.yml")[12:16] |> cat(sep = "\n")`. CP/CR.
+
+```{r files-for-a-website-ex-9}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+These lines provide formatting information about the pages of the website. 
+
+````
+format:                                       
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+````
+
+The `css` lines tells Quarto to use the `styles.css` file, located in the same directory, for the "style" of the pages.
+
+
+### Exercise 10
 
 We don't want to put all the files on Github. So, add `*Rproj` to your `.gitignore` file. Save the file.
 
-Run `cat .gitignore` in the Terminal. CP/CR.
+Run `readLines(".gitignore")` in the Console. CP/CR.
 
-```{r creating-a-website-5}
+```{r files-for-a-website-ex-10}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -238,13 +430,11 @@ question_text(NULL,
 Good data scientists believe in transparency and reproducibility. We want people --- include "future" us --- to be able to reproduce our work. By default, almost every file belongs on Github. But settings for R projects are both not necessary for replication and often specific to each individual. 
 
 
-### Exercise 6
+### Exercise 11
 
-Commit all the files. 
+Commit and push all the files in the project. Run `git log` in the terminal. CP/CR.
 
-Run `git log` in the terminal. CP/CR.
-
-```{r creating-a-website-6}
+```{r files-for-a-website-ex-11}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -258,7 +448,42 @@ question_text(NULL,
 The output from the `git log` command is too complex for us to fully parse. If you want to learn more about how to work with git/Github and R, check out [Happy Git with R](https://happygitwithr.com/existing-github-last.html), a very useful resource.
 
 
-### Exercise 7
+## Rendering and publishing
+### 
+
+We now have the infrastructure for our website. We want to create (or "render") the webpages themselves and then "publish" them to somewhere on the web.
+
+### Exercise 1
+
+From the Terminal, run `quarto render`. CP/CR.
+
+```{r rendering-and-publishing-ex-1}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look something like:
+
+````
+Davids-MBP:first-website dkane$ quarto render
+[1/2] index.qmd
+[2/2] about.qmd
+
+Output created: _site/index.html
+
+Davids-MBP:first-website dkane$ 
+````
+
+
+
+
+### Exercise 2
 
 Now, we are going to set up a [Quarto Pub](quartopub.com) account for hosting the website. 
 
@@ -266,9 +491,31 @@ Now, we are going to set up a [Quarto Pub](quartopub.com) account for hosting th
 
 * Click the big blue button that says **Sign Up**. 
 
-* Use your Github username and password. (It is much easier this way, so you don't have to juggle around a bunch of passwords and usernames when you want to publish.)
+* We recommend using your Github username and password. (It is much easier this way, so you don't have to juggle around a bunch of passwords and usernames when you want to publish.)
+
+Copy/paste the web address of your Quarto Pub account.
+
+```{r rendering-and-publishing-ex-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+Your answer should look like:
+
+````
+https://davidkane.quarto.pub
+````
+
+
+### Exercise 3
 
 ### 
+
+<!-- DK: Tried to use various versions of quarto_publish_site(server = "https://quartopub.com") but couldn't get any of them to work, so still need to use the command line. Very annoying! -->
 
 At the Terminal, type: 
 
@@ -296,15 +543,31 @@ Rendering for publish:
 
 Davids-MBP:first-website dkane$ 
 ```
-
-###
-
 A link to your new website should be brought up in a browser.
+
+### 
+
+Copy/paste the url for your website. It should look like:
+
+````
+https://davidkane.quarto.pub/first-website
+````
+
+
+```{r rendering-and-publishing-ex-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
 
 <!-- DK: Do a lot more here to explain what is going on. Talk about _publish.yaml and _site. -->
 
 
 ## Adding visualizations
+### 
 
 Right now, your `index.qmd` just has a bunch of random links and math in it. Let's make it look a little bit better now.
 
@@ -316,7 +579,7 @@ First, we should delete the initial everything, except for the `title: "first-we
 
 Run `head index.qmd` in the Terminal. CP/CR.
 
-```{r adding-visualization-1}
+```{r adding-visualizations-ex-1}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -353,11 +616,11 @@ car_plot
 
 Create a new code chunk in `index.qmd` and load two libraries: **tidyverse** and **ggthemes**.
 
-```{r adding-visualization-2, exercise = TRUE}
+```{r adding-visualizations-ex-2, exercise = TRUE}
 
 ```
 
-```{r adding-visualization-2-hint-1, eval = FALSE}
+```{r adding-visualizations-2-hint-1, eval = FALSE}
 library(tidyverse)
 library(ggthemes)
 ```
@@ -386,11 +649,11 @@ As you build the website, we will ask you to share the updated files, using Term
 
 Start a pipe with the data set `mtcars` below.
 
-```{r adding-visualization-3, exercise = TRUE}
+```{r adding-visualizations-ex-3, exercise = TRUE}
 
 ```
 
-```{r adding-visualization-3-hint-1, eval = FALSE}
+```{r adding-visualizations-3-hint-1, eval = FALSE}
 mtcars |>
 ```
 
@@ -398,12 +661,12 @@ mtcars |>
 
 Select the columns `mpg` and `wt` using `select()`.
 
-```{r adding-visualization-4, exercise = TRUE}
+```{r adding-visualizations-ex-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
-```{r adding-visualization-4-hint-1, eval = FALSE}
+```{r adding-visualizations-4-hint-1, eval = FALSE}
 mtcars |> 
   select(..., ...)
 ```
@@ -416,13 +679,13 @@ mtcars |>
 
 Create a scatterplot with `wt` on the x-axis and `mpg` on the y-axis.
 
-```{r adding-visualization-5, exercise = TRUE}
+```{r adding-visualizations-ex-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r adding-visualization-5-hint-1, eval = FALSE}
+```{r adding-visualizations-5-hint-1, eval = FALSE}
 mtcars |> 
   select(mpg, wt) |> 
   ggplot(aes(wt, mpg)) +
@@ -434,13 +697,13 @@ mtcars |>
 Add the layer `geom_smooth()`. Set `method` to `"lm"`, `formula` to `y ~ x`,
 and `se` to `FALSE` in the arguments.
 
-```{r adding-visualization-6, exercise = TRUE}
+```{r adding-visualizations-ex-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r adding-visualization-6-hint-1, eval = FALSE}
+```{r adding-visualizations-6-hint-1, eval = FALSE}
 mtcars |> 
   select(mpg, wt) |> 
   ggplot(aes(wt, mpg)) +
@@ -452,13 +715,13 @@ mtcars |>
 
 Add `theme_clean()` to slightly alter the feel of the graph.
 
-```{r adding-visualization-7, exercise = TRUE}
+```{r adding-visualizations-ex-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r adding-visualization-7-hint-1, eval = FALSE}
+```{r adding-visualizations-7-hint-1, eval = FALSE}
 mtcars |> 
   select(mpg, wt) |> 
   ggplot(aes(wt, mpg)) +
@@ -471,13 +734,13 @@ mtcars |>
 
 Use `labs` to add an appropriate title, subtitle, axes labels, and caption to your graph based on the example plot in exercise 1.
 
-```{r adding-visualization-8, exercise = TRUE}
+```{r adding-visualizations-ex-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r adding-visualization-8-hint-1, eval = FALSE}
+```{r adding-visualizations-8-hint-1, eval = FALSE}
 mtcars |> 
   select(mpg, wt) |> 
   ggplot(aes(wt, mpg)) +
@@ -510,7 +773,7 @@ Add these code chunk options to the top of the first code chunk:
 
 In the Terminal, run `tail index.qmd `. CP/CR.
 
-```{r adding-visualization-9}
+```{r adding-visualizations-ex-9}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -540,7 +803,7 @@ Save the changes to index.qmd.
 
 In the Terminal, run `tail index.qmd `. CP/CR.
 
-```{r adding-visualization-10}
+```{r adding-visualizations-ex-10}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -563,7 +826,7 @@ Render the `index.qmd` with the render button. It should show the plot, along wi
 
 In the Terminal, run `cat index.qmd`. CP/CR
 
-```{r adding-visualization-11}
+```{r adding-visualizations-ex-11}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -580,7 +843,7 @@ Edit the `.gitignore` file to include `*_files`. Save the file.
 
 In the Terminal, run `cat .gitignore`. CP/CR
 
-```{r adding-visualization-12}
+```{r adding-visualizations-ex-12}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -606,7 +869,7 @@ In the Terminal type `quarto publish`. You don't need to include `quarto-pub` si
 
 It will not bring you to your website, but to your Quarto Pub account, where you will see the website address. Click on it and copy and paste the URL below:
 
-```{r adding-visualization-13}
+```{r adding-visualizations-ex-13}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -616,6 +879,7 @@ question_text(NULL,
 ```
 
 ## Adding text
+### 
 
 Quarto allows for a combination of plain text and R code. This same feature allows you to add plain text to your website.
 
@@ -627,7 +891,7 @@ Open `about.qmd `. Delete the "About this Website" and math, and add the followi
 
 In the Terminal, run `cat about.qmd`. CP/CR
 
-```{r adding-text-1}
+```{r adding-text-ex-1}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -648,7 +912,7 @@ Compose a short description of yourself. Write it below the header. Include your
 
 In the Terminal, run `cat about.qmd`. CP/CR
 
-```{r adding-text-2}
+```{r adding-text-ex-2}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -665,7 +929,7 @@ Let's bold your name. In the description you have already written surround your 
 
 In the Terminal, run `cat about.qmd`. CP/CR.
 
-```{r adding-text-3}
+```{r adding-text-ex-3}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -686,7 +950,7 @@ Add a new header with two hash signs, "About the Project". Underneath the header
 
 In the Terminal, run `cat about.qmd`. CP/CR
 
-```{r adding-text-4}
+```{r adding-text-ex-4}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -703,7 +967,7 @@ Let's italicize the title of your project. Surround the title of your project wi
 
 In the Terminal, run `grep "*" about.qmd`. CP/CR.
 
-```{r adding-text-5}
+```{r adding-text-ex-5}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -726,7 +990,7 @@ Let's created a bulleted list of at least two goals of your project. To create a
 
 In the Terminal, run `tail about.qmd`. CP/CR.
 
-```{r adding-text-6}
+```{r adding-text-ex-6}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -743,7 +1007,7 @@ For at least one goal in your bulleted list, add a possible challenge or complic
 
 In the Terminal, run `grep "+" about.qmd`. CP/CR
 
-```{r adding-text-7}
+```{r adding-text-ex-7}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -764,7 +1028,7 @@ Oftentimes you want to wrap text before the default margin. For example, add Pre
 
 Run `grep  "~" about.qmd`. CP/CR.
 
-```{r adding-text-8}
+```{r adding-text-ex-8}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -793,7 +1057,7 @@ Then, between the lines, add a backslash (`\`)
 
 In the Terminal, run `grep "data science" about.qmd`. CP/CR.
 
-```{r adding-text-9}
+```{r adding-text-ex-9}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -816,7 +1080,7 @@ Let's create text which is also a hyperlink to the bootcamp website. Enclose the
 In the Terminal, run `tail about.qmd`. CP/CR
 
 
-```{r adding-text-10}
+```{r adding-text-ex-10}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -833,6 +1097,7 @@ You only need a few [formatting tricks](https://quarto.org/docs/authoring/markdo
 Push all the changes to Git, and issue the `quarto publish` command in the Terminal. You need to hit return/enter at least once.
 
 ## Adding new pages
+### 
 
 Here you will learn how to create new pages for your website, accessible via the navigation bar at the top.
 
@@ -844,7 +1109,7 @@ Go to `File -> New File -> Quarto Document...`. Title it "Sources". Select "Crea
 
 Run `ls`. CP/CR
 
-```{r adding-new-pages-1}
+```{r adding-new-pages-ex-1}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -869,7 +1134,7 @@ You might also click the "Source" button in the upper left in order to exit the 
 
 In the Terminal, run the command `grep overview sources.qmd`. CP/CR
 
-```{r adding-new-pages-2}
+```{r adding-new-pages-ex-2}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -890,7 +1155,7 @@ Add the following sentence: `These are my sources. Here are some challenges. Qua
 
 Run `cat sources.qmd` in the Terminal. CP/CR
 
-```{r adding-new-pages-3}
+```{r adding-new-pages-ex-3}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -943,7 +1208,7 @@ Make the formatting and spacing match the preceding items in the navbar. **YAML 
 
 In the Terminal, run `cat _quarto.yml`. CP/CR
 
-```{r adding-new-pages-4}
+```{r adding-new-pages-ex-4}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -969,7 +1234,7 @@ Run `quarto publish` from the Terminal. You may need to hit enter once or twice.
 
 Run `ls _site/` in the Terminal. CP/CR
 
-```{r adding-new-pages-5}
+```{r adding-new-pages-ex-5}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -992,7 +1257,7 @@ In the Terminal, use `rm` to remove `sources.qmd`.
 
 Run `ls` in the Terminal again. CP/CR
 
-```{r adding-new-pages-6}
+```{r adding-new-pages-ex-6}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1015,7 +1280,7 @@ You should save them both (so they're not `untitled1` and `untitled2`). Name the
 
 In the Terminal, run the command `head source-1.qmd source-2.qmd`. CP/CR.
 
-```{r adding-new-pages-7}
+```{r adding-new-pages-ex-7}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1109,7 +1374,7 @@ knitr::include_graphics("images/exactly-how-it-looks.png")
 
 In the Terminal, run `cat _quarto.yml`. CP/CR.
 
-```{r adding-new-pages-9}
+```{r adding-new-pages-ex-9}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1150,7 +1415,7 @@ You might notice that there is a sidebar throughout the entire website. Keep in 
 
 We walked you through creating only one new page: a sources page. In your final project, disperse your code evenly throughout multiple pages; **don't just stuff everything in `index.qmd`** and call it a day. For example, if you want to make a plot, create a new plot page where you do the work for making it. Then in `index.qmd`, just include the graph object and describe it.
 
-## Using a `.rds` file
+## Using an `.rds` file
 ### 
 
 An `.rds` file allows us to save any R object in a file. When we load in an .rds, we avoid having to run the code required to make the object and simply have access to the output. This is very convenient for functions that take a long time to run, such as API requests. It can also be convenient for plots.
@@ -1163,7 +1428,7 @@ Go to `File -> New File` and then click R Script. Press save in the left of the 
 
 In the Terminal, run `ls`. CP/CR.
 
-```{r using-a-rds-file-1}
+```{r using-an-rds-file-ex-1}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1186,7 +1451,7 @@ In the R script, load the **tidyverse** and **ggthemes** packages using the `lib
 
 In the Terminal, run `grep library make-car-plot.R`. CP/CR.
 
-```{r using-a-rds-file-2}
+```{r using-an-rds-file-ex-2}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1207,7 +1472,7 @@ To run the code in the R script, place your cursor at the end of the line (or pi
 
 In the Terminal, run `cat make-car-plot.R`. CP/CR.
 
-```{r using-a-rds-file-3}
+```{r using-an-rds-file-ex-3}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1232,7 +1497,7 @@ The R script that makes the .rds is not necessary for the building of your websi
 
 In the Terminal, run `ls car*`. This should return a list which contains only "car-plot.rds". CP/CR.
 
-```{r using-a-rds-file-4}
+```{r using-an-rds-file-ex-4}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1261,7 +1526,7 @@ On a new line, type the object `car_plot` to print the plot saved in the .rds. R
 
 In the Terminal, run `grep rds index.qmd`. CP/CR.
 
-```{r using-a-rds-file-5}
+```{r using-an-rds-file-ex-5}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1278,7 +1543,9 @@ You should now see the same output as you had before when you had the code to ma
 
 Any R object can be made into an .rds file. It is most convenient for functions which take a long time to run and so will slow down your website's loading time, e.g. API requests.
 
-## Images and Comments
+## Images and comments
+### 
+
 We can add graphics and images to Quarto websites many different ways, the easiest being with the package **knitr**.
 
 ### Exercise 1
@@ -1305,7 +1572,7 @@ Render the file. You should see a file named `car-plot.png` appear in your files
 
 In the Terminal, run `ls *png`. CP/CR.
 
-```{r images-and-comments-1}
+```{r images-and-comments-ex-1}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1334,7 +1601,7 @@ In the Terminal, run `pwd` to confirm you are in the main project directory. The
 
 In the Terminal, run `ls images`. Th resulting list of files from the `images` directory should only contain one item: `car-plot.png`. CP/CR
 
-```{r images-and-comments-2}
+```{r images-and-comments-ex-2}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1359,7 +1626,7 @@ Add the `include_graphics()` function. Its argument is the path of the image you
 
 In the Terminal, run `grep graphics index.qmd`. CP/CR.
 
-```{r images-and-comments-3}
+```{r images-and-comments-ex-3}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1380,7 +1647,9 @@ Comments are very important to add. That way you know exactly what you are doing
 
 Feel free to include more comments on other pages explaining what you are doing. The way you turn text into comments is cmd + shift + c, with the cursor placed in the relevant text.
 
-## Interactive Pages
+## Interactive pages
+### 
+
 We will be making 3 interactive graphs on 3 separate pages. You can read more about interactive graphs and how to make them [here](http://www.htmlwidgets.org/showcase_dygraphs.html), and [here](https://quarto.org/docs/interactive/widgets/htmlwidgets.html). 
 
 ### 
@@ -1413,7 +1682,7 @@ In the code chunk, load in the library **dygraphs**.
 
 In the Terminal, run `cat "plane-passengers.qmd"`. CP/CR.
 
-```{r interactive-pages-1}
+```{r interactive-pages-ex-1}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1436,7 +1705,7 @@ Next, we need to start our dygraph. The data that we will be using is called Air
 
 In the Terminal, run `cat "plane-passengers.qmd"`. CP/CR.
 
-```{r interactive-pages-2}
+```{r interactive-pages-ex-2}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1465,7 +1734,7 @@ That will add a slider to the bottom of the graph so you can select the years yo
 
 In the Terminal, run `cat plane-passengers.qmd`. CP/CR.
 
-```{r interactive-pages-3}
+```{r interactive-pages-ex-3}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1494,7 +1763,7 @@ In `map-london`, change the title to be "Map of London"
 
 Add a code chunk and label it `map`. Load in the library **leaflet**. Run `cat "map-london.qmd"`. CP/CR.
 
-```{r interactive-pages-4}
+```{r interactive-pages-ex-4}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1558,7 +1827,7 @@ It uses a built-in dataset, `ChickWeight`.
 
 Visit the `ChickWeight` help page by typing `?ChickWeight` into the console and copy the description of the dataset.
 
-```{r interactive-pages-6}
+```{r interactive-pages-ex-6}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -1579,7 +1848,7 @@ Add a code chunk in which you load the libraries **plotly** and **tidyverse**.
 
 In the Terminal, run `cat plotly.qmd`. CP/CR.
 
-```{r interactive-pages-7}
+```{r interactive-pages-ex-7}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1604,7 +1873,7 @@ Start how you normally do, with `ggplot(data = ChickWeight, mapping = aes())`. S
 
 Copy and paste the code you just wrote below:
 
-```{r interactive-pages-8}
+```{r interactive-pages-ex-8}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1642,7 +1911,7 @@ ggplot(data = ChickWeight,
 
 Run `cat plotly.qmd` in the Terminal. CP/CR
 
-```{r interactive-pages-9}
+```{r interactive-pages-ex-9}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1663,7 +1932,7 @@ At the very bottom of the code chunk, copy and paste the following: `ggplotly(ch
 
 Copy and paste the code here.
 
-```{r interactive-pages-10}
+```{r interactive-pages-ex-10}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1731,6 +2000,7 @@ Save, push everything to Git, and type `quarto publish quarto-pub` in the Termin
 If you don't like how the generic website looks, you can go to the bottom of the `_quarto.yaml` file, where it says `theme: cosmo` and you can change it to [any of these](https://bootswatch.com/). Some good simple themes are: yeti, slate, flatly, darkly, sandstone, and united (all lowercase).
 
 ## Citations
+### 
 
 <!-- DK: Switch to @ usage. -->
 
@@ -1779,7 +2049,7 @@ This will allow you to put `bibliography: bib/references.bib` in any YAML header
 
 Run `cat bib/references.bib` in the Terminal. CP/CR
 
-```{r citations-1}
+```{r citations-ex-1}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1809,7 +2079,7 @@ As best we can tell, the bibliography information has to go into each of the Qua
 
 In the Terminal, run `cat source-1.qmd`. CP/CR.
 
-```{r citations-2}
+```{r citations-ex-2}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1837,7 +2107,7 @@ Render `source-1.Rmd`. You will see in the resulting html that the citation has 
 
 Run `cat source-1.qmd` in the Terminal. CP/CR.
 
-```{r citations-3}
+```{r citations-ex-3}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
