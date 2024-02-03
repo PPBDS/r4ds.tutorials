@@ -34,8 +34,13 @@ library(plotly)
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- quarto create-project --type website --title "Hello"-->
+<!-- Central problem with this tutorial, as with other document/project creation exercises, is that it is unclear what approach is best for students. There are three choices: point/clock from RStudio, quarto() R package and quarto from the command line. -->
 
+<!-- The problem with RStudio is that there is no (?) way to create the four new files in a directory which is already created. But we want to start with a directory, because we want to begin, always, with Github, then connect to an R Project. -->
+
+<!-- The problem with quarto()/quarto is that they make certain desirable things, like doing things in the current directory and providing a title, hard. See Github for discussions. Also, we need to deal with which version we will use. Also, I could not get quarto_publish_site(server = "https://quartopub.com") to work. Very annoying! -->-->
+
+<!-- It is tempting to create three website, using one of the three approaches each time, thereby learning a lot . . . But, for now, I will just use Quarto CLI. -->
 
 
 <!-- Until quarto 1.4 and the updated quarto R package are in production, we need to install them by hand. But that is OK! By this point in their education, students should be comfortable in in doing these sorts of installations. -->
@@ -109,7 +114,7 @@ This tutorial covers material from [Chapter 28 Quarto](https://r4ds.hadley.nz/qu
 ## Set up environment
 ### 
 
-We need to ensure that the latest version of Quarto and of the R **quarto** package are installed.
+We need to ensure that the latest version of [Quarto](https://quarto.org/) and of the R [**quarto**](https://quarto-dev.github.io/quarto-r/) package are installed.
 
 ### Exercise 1
 
@@ -169,7 +174,13 @@ remotes::install_github("quarto-dev/quarto-r")
 
 ### 
 
-Unfortunately, even the development version of the **quarto** package has some problems. So, we will generally interact with quarto directly from the Terminal.
+There are actually three ways to do most things associated with document/project creation: 
+
+First, we can use RStudio. This is our preferred approach, since it is the easiest for beginning students. 
+
+Second, we can use an R package like **quarto** directly. RStudio buttons are, generally, connected to R package commands.
+
+Third, we can work with Quarto directly at the Terminal. This is often referred to as working "from the command line." R packages usually call Quarto commands behind the scenes.
 
 
 ## Files for a website
@@ -245,12 +256,14 @@ question_text(NULL,
 
 The **quarto** package should appear in the search path. When you ask R to use a command, like `filter()` or `create_package()`, it looks in the libraries listed in the search path, in order, and uses the first version of the function which it finds.
 
-<!-- DK: Don't really need the quarto package, do we? Maybe remove it completely? -->
+<!-- DK: Don't really need the quarto package, do we? Maybe remove it completely? Or save it for later example!-->
 
 
 ### Exercise 4
 
-In the Terminal, run `quarto create-project --type website --title "My First Website"`. 
+In the Terminal, run `quarto create project website .`.  Don't forget the `.` at the end of the command. This indicates that the new files should be placed in the current directory. 
+
+This command will usually result in a restart of your RStudio instance. Or it might create a second R instance, also located in the `first-website` directory. If so, delete one of the instances. It does not matter which.
 
 In the Console, run `list.files()`. CP/CR.
 
@@ -273,7 +286,7 @@ Your answer should look like:
 [5] "README.md"           "styles.css"         
 ````
 
-The basic set of files necessary for making a Quarto website has been added to the current directory.
+The basic set of files necessary for making a Quarto website has been added to the current directory. Recall the `.` means the current directory while `..` means the directory one level above the current one.
 
 
 ### Exercise 5
@@ -369,7 +382,7 @@ These lines provide meta-information about the website and its organization.
 
 ````
 website:                                        
-  title: "My First Website"
+  title: "."
   navbar:
     left:
       - href: index.qmd
@@ -381,12 +394,30 @@ Note that the "title" has no necessary connection to the name of our Github repo
 
 Indents and other whitespace matter in the interpretation of a YAML file.
 
-
 ### Exercise 9
+
+In the Code pane, open the `_quarto.yml` file. Replace `title: "."` with `title: "A New Website"`. Save the file. 
+
+In the Console, run `readr::read_lines("_quarto.yml")[4:10] |> cat(sep = "\n")`. CP/CR.
+
+```{r files-for-a-website-ex-9}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+It is a flaw in quarto that there is no easy way to provide a title to a new project created in the current directory.
+
+### Exercise 10
 
 In the Console, run `readr::read_lines("_quarto.yml")[12:16] |> cat(sep = "\n")`. CP/CR.
 
-```{r files-for-a-website-ex-9}
+```{r files-for-a-website-ex-10}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -409,14 +440,66 @@ format:
 
 The `css` lines tells Quarto to use the `styles.css` file, located in the same directory, for the "style" of the pages.
 
+### Exercise 11
 
-### Exercise 10
+In the Console, run `readr::read_lines("index.qmd") |> cat(sep = "\n")`. CP/CR.
 
-We don't want to put all the files on Github. So, add `*Rproj` to your `.gitignore` file. Save the file.
+
+```{r files-for-a-website-ex-11}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+The answer should look like:
+
+````
+---                                                                                                                                    
+title: "."
+---
+
+This is a Quarto website.
+
+To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+````
+
+Whenver a web browser goes to a directory on the internet, it looks for an `index.html` file. If found, it is displayed. So, the `index.qmd` file, which we will soon render as `index.html` is important.
+
+### Exercise 12
+
+Open the `index.qmd` file in the Code pane. Replace `title: "."` with `title: "My First Website"`. Save the file.
+
+In the Console, run `readr::read_lines("index.qmd") |> cat(sep = "\n")`. CP/CR.
+
+
+```{r files-for-a-website-ex-12}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Yes, it is a bother to have to replace `"."` twice. Very annoying! With luck, Quarto will soon allow us to specify a title when we first create these files. In the meantime, it is good to have an occasion to look closely at the files which help us to create a website.
+
+Note that the "title" in `_quarto.yml` has no necessary connection to the "title" in `index.qmd`. The former is the title for the entire website. The later is the title for just the (yet-to-be-created) `index.html` page.
+
+
+### Exercise 13
+
+We don't want to put all the files on Github. So, add `*Rproj` to your `.gitignore` file. Save the file. Note that a new line, `/.quarto/` has been added to the `.gitignore`. We will discuss this file later.
 
 Run `readLines(".gitignore")` in the Console. CP/CR.
 
-```{r files-for-a-website-ex-10}
+```{r files-for-a-website-ex-13}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -430,11 +513,11 @@ question_text(NULL,
 Good data scientists believe in transparency and reproducibility. We want people --- include "future" us --- to be able to reproduce our work. By default, almost every file belongs on Github. But settings for R projects are both not necessary for replication and often specific to each individual. 
 
 
-### Exercise 11
+### Exercise 14
 
-Commit and push all the files in the project. Run `git log` in the terminal. CP/CR.
+Commit and push all the files in the project. Run `git log` in the Terminal. CP/CR.
 
-```{r files-for-a-website-ex-11}
+```{r files-for-a-website-ex-14}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -448,7 +531,7 @@ question_text(NULL,
 The output from the `git log` command is too complex for us to fully parse. If you want to learn more about how to work with git/Github and R, check out [Happy Git with R](https://happygitwithr.com/existing-github-last.html), a very useful resource.
 
 
-## Rendering and publishing
+## Rendering and previewing
 ### 
 
 We now have the infrastructure for our website. We want to create (or "render") the webpages themselves and then "publish" them to somewhere on the web.
@@ -457,7 +540,7 @@ We now have the infrastructure for our website. We want to create (or "render") 
 
 From the Terminal, run `quarto render`. CP/CR.
 
-```{r rendering-and-publishing-ex-1}
+```{r rendering-and-previewing-ex-1}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -480,12 +563,207 @@ Output created: _site/index.html
 Davids-MBP:first-website dkane$ 
 ````
 
-
-
+quarto reports to us what it has done, working on our two `qmd` files and creating a new directory, `_site`, in which it has placed an `index.html` file.
 
 ### Exercise 2
 
-Now, we are going to set up a [Quarto Pub](quartopub.com) account for hosting the website. 
+From the Console, run `list.files("_site")`. CP/CR.
+
+
+```{r rendering-and-previewing-ex-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer will probably look something like:
+
+````
+> list.files("_site")
+[1] "about.html"  "index.html"  "search.json" "site_libs"   "styles.css" 
+>
+````
+
+The `about.html` and `index.html` files are simply the rendered `about.qmd` and `index.qmd` input files. They are placed into the `_site` directory because the convention, when constructing websites and other large projects is to separate out the outputs from the inputs. 
+We won't discuss the `search.json` and `styles.css` files. The `site_libs` directory includes many files beyond the scope of this tutorial. Basic idea is that the entire `_site` directory is a functioning website, ready to be delpoyed.
+
+### Exercise 3
+
+From the Terminal, run `quarto preview`. CP/CR.
+
+```{r rendering-and-previewing-ex-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look something like this:
+
+````
+Davids-MBP:first-website dkane$ quarto preview
+Preparing to preview
+[1/1] index.qmd
+
+Watching files for changes
+Browse at http://localhost:7412/
+GET: /
+````
+
+The preview command does two things. First, it renders the `qmd` files, just like `render` does. Second, it sets up a viewer, probably your default web browser, so that you can see what the website looks like. Click around and check it out!
+
+The message at the end indicates that quarto is now "watching" your files to see if you make any changes. If you do, it will automatically update the website.
+
+### Exercise 4
+
+Look at your website in the browser. (You might need to enter the url, `http://localhost:7412/` in my case, but yours will be different, by hand.) Click on the "Home" link and then copy/paste the entire screen.
+
+
+```{r rendering-and-previewing-ex-4}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+A New Website
+
+Home
+About
+My First Website
+This is a Quarto website.
+
+To learn more about Quarto websites visit https://quarto.org/docs/websites.
+````
+
+The title of the entire project ("A New Website"), taken from the `_quarto.yml` file, appears in the upper left hand corner. The title of the main home page ("My First Website"), taken from the `index.qmd` file, appears at the top of the Home page, which, by default, is always the `index.html` file. 
+
+
+### Exercise 5
+
+Copy/paste the url for your previewed website.
+
+```{r rendering-and-previewing-ex-5}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should be something like:
+
+````
+http://localhost:3358/
+````
+
+The website is being "hosted" on your computer. That is what the word "localhost" refers to. It is not available on the web.
+
+
+### Exercise 6
+
+The advantage of using preview is that the website is automatically updated whenever you edit and save the underlying qmd file. Try it by changing the `about.qmd` file, replacing "About this site" with your name. Save the file. 
+
+At the Terminal, you should see a new message. Copy and paste it here.
+
+```{r rendering-and-previewing-ex-6}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look something like this:
+
+````
+pandoc 
+  to: html
+  output-file: about.html
+  standalone: true
+  title-prefix: A New Website
+  section-divs: true
+  html-math-method: mathjax
+  wrap: none
+  default-image-extension: png
+  css:
+    - styles.css
+  toc: true
+  
+metadata
+  document-css: false
+  link-citations: true
+  date-format: long
+  lang: en
+  theme: cosmo
+  title: About
+  
+GET: /about.html
+
+````
+
+quarto has noticed that you changed/saved the `about.qmd` file. It rendered the new version, creating a new `about.html` which it has now "gotten" and is displaying.
+
+### Exercise 7
+
+Copy/paste the About page form your browser.
+
+```{r rendering-and-previewing-ex-7}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like this, except with your name instead of mine!
+
+````
+A New Website
+
+Home
+About
+About
+David Kane
+````
+
+If you want to stop `quarto preview` you can cancel the command by hitting the red stop sign which is located in the upper right of the Terminal.
+
+
+
+## Publishing
+### 
+
+To make your website publicly visible, you need to "publish" it to the web. The Quarto documents provide a [thorough discussion](https://quarto.org/docs/publishing/) of this topic.
+
+### Exercise 1
+
+If you don't already have one, set up a [Quarto Pub](quartopub.com) account for hosting the website. 
 
 * In your browser, type `quartopub.com`, it will take you directly to the website
 
@@ -495,7 +773,7 @@ Now, we are going to set up a [Quarto Pub](quartopub.com) account for hosting th
 
 Copy/paste the web address of your Quarto Pub account.
 
-```{r rendering-and-publishing-ex-2}
+```{r publishing-ex-1}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -504,29 +782,45 @@ question_text(NULL,
 	rows = 3)
 ```
 
-Your answer should look like:
+Your answer should look like this:
 
 ````
 https://davidkane.quarto.pub
 ````
 
+Beyond [Quarto Pub](https://quarto.org/docs/publishing/quarto-pub.html), there are other free services which you can use to host your website and other data science document, examples include [GitHub Pages](https://quarto.org/docs/publishing/github-pages.html) and [Posit Cloud](https://quarto.org/docs/publishing/posit-cloud.html).
 
-### Exercise 3
+
+### Exercise 2
 
 ### 
 
-<!-- DK: Tried to use various versions of quarto_publish_site(server = "https://quartopub.com") but couldn't get any of them to work, so still need to use the command line. Very annoying! -->
+Ensure that all the files in the project have been committed and pushed. (Recall that you have, at least, edited `about.qmd` and that doing so has caused changes in other downsteam files.)
 
 At the Terminal, type: 
 
 `quarto publish quarto-pub` 
 
-You will then need to hit the Return button twice, accepting the default options for account (your email address) and site name ("first-website"). It should look like this:
+You will then need to hit the Return button twice, accepting the default options for account (your email address) and site name ("a-new-website"). CP/CR.
+
+
+```{r publishing-ex-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 10)
+```
+
+### 
+
+It should look like this:
 
 ```
 Davids-MBP:first-website dkane$ quarto publish quarto-pub
 ? Publish with account: › dave.kane@gmail.com
-? Site name: › first-website
+? Site name: › a-new-website
 
 [✓] Creating quarto-pub site
 
@@ -538,23 +832,18 @@ Rendering for publish:
 [✓] Preparing to publish site
 [✓] Uploading files (complete)
 [✓] Deploying published site
-[✓] Published site: https://davidkane.quarto.pub/first-website
+[✓] Published site: https://davidkane.quarto.pub/a-new-website
 [✓] Account site updated: https://davidkane.quarto.pub
 
 Davids-MBP:first-website dkane$ 
 ```
-A link to your new website should be brought up in a browser.
-
-### 
-
-Copy/paste the url for your website. It should look like:
-
-````
-https://davidkane.quarto.pub/first-website
-````
 
 
-```{r rendering-and-publishing-ex-3}
+### Exercise 3
+
+A link to your new website should be brought up in a browser. Copy/paste the url for your website. 
+
+```{r publishing-ex-3}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -563,34 +852,232 @@ question_text(NULL,
 	rows = 3)
 ```
 
-<!-- DK: Do a lot more here to explain what is going on. Talk about _publish.yaml and _site. -->
+### 
+
+It should look like:
+
+
+````
+https://davidkane.quarto.pub/a-new-website/
+````
+
+
+```{r publishing-ex-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### Exercise 4
+
+Check your Git pane. Assuming you committed everything before running `quarto publish quarto-pub`, as instructed, it should be easy to notice the new files. Write down the name of the new YAML file, the file with `.yml` at the end.
+
+
+```{r publishing-ex-4}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+The `_publish.yml` is where Quarto keeps track of publishing information. This file did not exist before because you had not published the website yet. 
+
+There *might* also be some new files, like `_site/robots.txt` and `_site/sitemap.xml`, but, as usual, we won't worry too much about weird files in the `_site` directory.
+
+### Exercise 5
+
+In the Console, run `readr::read_lines("_publish.yml") |> cat(sep = "\n")`. CP/CR.
+
+```{r publishing-ex-5}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look something like:
+
+````
+> readr::read_lines("_publish.yml") |> cat(sep = "\n")
+- source: project                                                                                                                      
+  quarto-pub:
+    - id: cfb2577e-312e-4717-892a-42b92619ebe3
+      url: 'https://davidkane.quarto.pub/a-new-website'
+>
+````
+
+In general, we will not edit the `_publish.yml` file directly. 
+
+### Exercise 6
+
+If you look closely, you will see a new directory, `.quarto`, in the Files pane. Neither this directory, nor any of the files within it, appear in the Git pane because of the `/.quarto/` line in the `.gitignore` file.
+
+From the Console, run `list.files(".quarto")`. CP/CR.
+
+```{r publishing-ex-6}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+The `.quarto` directory is like the `.git` and `.Rproj.user` directories. We will never look or change the files inside of them. Only the relevant programs --- quarto, R and RStudio --- should work with the contents of these directories. 
+
+
+### Exercise 7
+
+Open the `_quarto.yml` file in the Code pane. Change `title: "A New Website"` to `title: "A New Website, second edition"`. 
+
+In the Console, run `readr::read_lines("_quarto.yml")[4:5] |> cat(sep = "\n")`. CP/CR.
+
+```{r publishing-ex-7}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+> readr::read_lines("_quarto.yml")[4:5] |> cat(sep = "\n")
+website:                                 
+  title: "A New Website, second edition"
+>
+````
+
+Keep track of the three different places that the title of our project now exists. First, it is present in `_quarto.yml`. We have changed it there. But we have not changed it in the `_site` files which constitute the website nor in files uploaded to Quarto Pub.
+
+
+### Exercise 8
+
+Form the Terminal, run `quarto preview`. Copy and paste the text from the home page once it comes up on your browser.
+
+```{r publishing-ex-8}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+A New Website, second edition
+
+Home
+About
+My First Website
+This is a Quarto website.
+
+To learn more about Quarto websites visit https://quarto.org/docs/websites.
+````
+
+But, if you look at the Quarto Pub version of your website, it still uses the "A New Website" title because we have not (yet) published our new version. We have, however, changed the files in the `_site` directory, as you can tell by looking at the Git pane.
+
+### Exercise 9
+
+From the Terminal, run `quarto publish quarto-pub`. CP/CR.
+
+(You wil first need to stop the `quarto preview` command.) 
+
+
+```{r publishing-ex-9}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+Davids-MBP:first-website dkane$ quarto publish quarto-pub
+? Publish update to: › https://davidkane.quarto.pub/a-new-website (Quarto Pub - dave.kane@gmail.com)
+Rendering for publish:
+
+[1/2] index.qmd
+[2/2] about.qmd
+
+[✓] Preparing to publish site
+[✓] Uploading files (complete)
+[✓] Deploying published site
+[✓] Published site: https://davidkane.quarto.pub/a-new-website
+[✓] Account site updated: https://davidkane.quarto.pub
+
+Davids-MBP:first-website dkane$ 
+````
+
+Note that, even though we have changed the `title` in the `_quarto.yml` file, this change has not affected the url for the project, which still ends with `a-new-website`. Quarto Pub will select the title of the project as the url "slug" when the project is first created, but it won't change that url even if you change the title of the project.
+
+
+### Exercise 10
+
+Add `_publish.yml` to the `.gitignore` file. From the Console, run `readLines(".gitignore")`. CP/CR.
+
+```{r publishing-ex-10}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+The `_publish.yml` file is like the `first-website.Rproj` file. They might contain private information of some sort, like logins or passwords, and so do not belong on Github.
+
+### Exercise 11
+
+Commit and push all the files in the project. Run `git log` in the Terminal. CP/CR.
+
+```{r publishing-ex-11}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Note both the simplicity *and* the complexity of your project. It is simple in that, even if our computer blew up and  
+
 
 
 ## Adding visualizations
 ### 
 
-Right now, your `index.qmd` just has a bunch of random links and math in it. Let's make it look a little bit better now.
-
-### Exercise 1
-
-First, we should delete the initial everything, except for the `title: "first-website"` surrounded by the three dashes, above and below. Do so.
-
-### 
-
-Run `head index.qmd` in the Terminal. CP/CR.
-
-```{r adding-visualizations-ex-1}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-### 
-
-The material bracketed by the three dashes at the very top is called a **YAML Header**. These are very sensitive about all sorts of subtle formatting issues. `head` is a terminal command which shows the top (or "head") of a file.
+Let's add a visualization to your website by modifying `index.qmd`. Recall that this file will always create our "home" page because it is rendered to `index.html` *and* browsers, by default, show `index.html`, if one exists, when they visit a directory. 
 
 ### 
 
@@ -611,6 +1098,23 @@ car_plot <- mtcars |>
 
 car_plot
 ```
+
+### Exercise 1
+
+Delete everything in `index.qmd` except for the `title: "first-website"` surrounded by the three dashes, above and below. Run `head index.qmd` in the Terminal. CP/CR.
+
+```{r adding-visualizations-ex-1}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+The material bracketed by the three dashes at the very top is called a **YAML Header**. These are very sensitive about all sorts of subtle formatting issues. `head` is a terminal command which shows the top (or "head") of a file.
 
 ### Exercise 2
 
@@ -640,10 +1144,7 @@ question_text(NULL,
 
 ### 
 
-As you build the website, we will ask you to share the updated files, using Terminal commands like `head`, `tail` and `cat`. `tail` shows the end (or "tail") of the file. Both `head` and `tail` take an argument `-n` which allows you to specify.
-
-<!-- DK: Should we ask `cat` questions for each exercise? Probably not . . . But we should do some teaching each question! There is so much to explain about how websites/quarto work! -->
-
+As you build the website, we will ask you to share the updated files, using Terminal commands like `head`, `tail` and `cat`. `tail` shows the end (or "tail") of the file. Both `head` and `tail` take an argument `-n` which allows you to specify the number of lines from the file to show.
 
 ### Exercise 3
 
@@ -654,7 +1155,11 @@ Start a pipe with the data set `mtcars` below.
 ```
 
 ```{r adding-visualizations-3-hint-1, eval = FALSE}
-mtcars |>
+mtcars
+```
+
+```{r adding-visualizations-3-test, include = FALSE}
+
 ```
 
 ### Exercise 4
@@ -666,9 +1171,14 @@ Select the columns `mpg` and `wt` using `select()`.
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r adding-visualizations-4-hint-1, eval = FALSE}
 mtcars |> 
   select(..., ...)
+```
+
+```{r adding-visualizations-4-test, include = FALSE}
+
 ```
 
 ### 
@@ -692,6 +1202,10 @@ mtcars |>
   geom_point()
 ```
 
+```{r adding-visualizations-5-test, include = FALSE}
+
+```
+
 ### Exercise 6
 
 Add the layer `geom_smooth()`. Set `method` to `"lm"`, `formula` to `y ~ x`,
@@ -711,6 +1225,10 @@ mtcars |>
   geom_smooth(method = "...", formula = y ~ x, se = ...)
 ```
 
+```{r adding-visualizations-6-test, include = FALSE}
+
+```
+
 ### Exercise 7
 
 Add `theme_clean()` to slightly alter the feel of the graph.
@@ -728,6 +1246,10 @@ mtcars |>
   geom_point() +
   geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
   theme_clean()
+```
+
+```{r adding-visualizations-7-test, include = FALSE}
+
 ```
 
 ### Exercise 8
@@ -754,11 +1276,15 @@ mtcars |>
        caption = "...")
 ```
 
+```{r adding-visualizations-8-test, include = FALSE}
+
+```
+
 ### 
 
 Reminder: Your plot should look something like this
 
-```{r show-car-plot}
+```{r}
 car_plot
 ```
 
@@ -771,7 +1297,7 @@ Add these code chunk options to the top of the first code chunk:
 
 ### 
 
-In the Terminal, run `tail index.qmd `. CP/CR.
+In the Terminal, ?. CP/CR.
 
 ```{r adding-visualizations-ex-9}
 question_text(NULL,
@@ -781,10 +1307,6 @@ question_text(NULL,
     incorrect = NULL,
     rows = 3)
 ```
-
-### 
-
-The output, which prints the last ten lines of your document, should include the addition of the new code chunk options.
 
 ### 
 
