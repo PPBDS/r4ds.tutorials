@@ -51,8 +51,6 @@ library(plotly)
 
 <!-- Show how to use theme() to make the labs elements bigger for the web. -->
 
-<!-- Revisit the use of names like car_plot or map-london.png. I think that, both in the Console and the Terminal, things like the dash in map-london will be evaluated as math, and so generate an error. Perhaps underscores cause errors as well. Either way, we don't need this extra complexity here. -->
-
 <!-- Use a tibble in place of mtcars. -->
 
 <!-- Would it be better to organize this the same way as our other work? Start with Github, connect to R project, and so on. The annoyance is that you would have to create the raw files yourself. But maybe that is good, providing an excuse to look closely at the key files? And there really aren't that many of them. -->
@@ -70,17 +68,6 @@ library(plotly)
 
 <!-- Many of the images here are not helpful. First, they don't show enough of the _quarto.yml file. Second, they could just be replaced with copy/pasted text surrounded by simple triple backticks. Copy/pasted is much easier to maintain! -->
 
-<!-- Make sure to add _publish.yml to the .gitignore once it appears. -->
-
-<!-- Do we need quotes as in `cat "plane-passengers.qmd"`. It doesn't seem like we need them on a Mac. Maybe on Windows. If not, get rid of the quotes. Dashes are harmless at the Terminal. Or are they? A student reported:
-
-
-anybody have an idea on what this means?
-
-cat map-london.qmd
-Error: unexpected symbol in "cat map"
-
--->
 
 <!-- Show how to add execute: -->
 <!--                   echo: false -->
@@ -587,13 +574,34 @@ Your answer will probably look something like:
 ````
 
 The `about.html` and `index.html` files are simply the rendered `about.qmd` and `index.qmd` input files. They are placed into the `_site` directory because the convention, when constructing websites and other large projects is to separate out the outputs from the inputs. 
-We won't discuss the `search.json` and `styles.css` files. The `site_libs` directory includes many files beyond the scope of this tutorial. Basic idea is that the entire `_site` directory is a functioning website, ready to be delpoyed.
+We won't discuss the `search.json` and `styles.css` files. The `site_libs` directory includes many files beyond the scope of this tutorial. Basic idea is that the entire `_site` directory is a functioning website, ready to be deployed.
 
 ### Exercise 3
 
-From the Terminal, run `quarto preview`. CP/CR.
+Add `/_site/site_libs/` to the `.gitignore` file. Save the new file. From the Console, run `readLines(".gitignore")`. CP/CR.
+
 
 ```{r rendering-and-previewing-ex-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+This command is convenient because the `site_libs` directory contains of lot of weird files that change often enough to annoy. We don't create any of them, so we don't really need to back them up. Moreover, they will still get published directly to the web from our computer.
+
+The initial backslash in `/_site/site_libs/` helps Git to interpret `_site` correctly. See the Regular expressions tutorial for more information. `_site/site_libs/` is a directory, so it makes sense to end the expression with a backslash.
+
+
+### Exercise 4
+
+From the Terminal, run `quarto preview`. CP/CR.
+
+```{r rendering-and-previewing-ex-4}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -620,12 +628,12 @@ The preview command does two things. First, it renders the `qmd` files, just lik
 
 The message at the end indicates that quarto is now "watching" your files to see if you make any changes. If you do, it will automatically update the website.
 
-### Exercise 4
+### Exercise 5
 
 Look at your website in the browser. (You might need to enter the url, `http://localhost:7412/` in my case, but yours will be different, by hand.) Click on the "Home" link and then copy/paste the entire screen.
 
 
-```{r rendering-and-previewing-ex-4}
+```{r rendering-and-previewing-ex-5}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -652,11 +660,11 @@ To learn more about Quarto websites visit https://quarto.org/docs/websites.
 The title of the entire project ("A New Website"), taken from the `_quarto.yml` file, appears in the upper left hand corner. The title of the main home page ("My First Website"), taken from the `index.qmd` file, appears at the top of the Home page, which, by default, is always the `index.html` file. 
 
 
-### Exercise 5
+### Exercise 6
 
 Copy/paste the url for your previewed website.
 
-```{r rendering-and-previewing-ex-5}
+```{r rendering-and-previewing-ex-6}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -676,13 +684,13 @@ http://localhost:3358/
 The website is being "hosted" on your computer. That is what the word "localhost" refers to. It is not available on the web.
 
 
-### Exercise 6
+### Exercise 7
 
 The advantage of using preview is that the website is automatically updated whenever you edit and save the underlying qmd file. Try it by changing the `about.qmd` file, replacing "About this site" with your name. Save the file. 
 
 At the Terminal, you should see a new message. Copy and paste it here.
 
-```{r rendering-and-previewing-ex-6}
+```{r rendering-and-previewing-ex-7}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -723,11 +731,11 @@ GET: /about.html
 
 quarto has noticed that you changed/saved the `about.qmd` file. It rendered the new version, creating a new `about.html` which it has now "gotten" and is displaying.
 
-### Exercise 7
+### Exercise 8
 
 Copy/paste the About page form your browser.
 
-```{r rendering-and-previewing-ex-7}
+```{r rendering-and-previewing-ex-8}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -860,7 +868,7 @@ https://davidkane.quarto.pub/a-new-website/
 
 ### Exercise 4
 
-Check your Git pane. Assuming you committed everything before running `quarto publish quarto-pub`, as instructed, it should be easy to notice the new files. Write down the name of the new YAML file, the file with `.yml` at the end.
+Check your Git tab. Assuming you committed everything before running `quarto publish quarto-pub`, as instructed, it should be easy to notice the new files. Write down the name of the new YAML file, the file with `.yml` at the end.
 
 
 ```{r publishing-ex-4}
@@ -908,7 +916,7 @@ In general, we will not edit the `_publish.yml` file directly.
 
 ### Exercise 6
 
-If you look closely, you will see a new directory, `.quarto`, in the Files pane. Neither this directory, nor any of the files within it, appear in the Git pane because of the `/.quarto/` line in the `.gitignore` file.
+If you look closely, you will see a new directory, `.quarto`, in the Files tab. Neither this directory, nor any of the files within it, appear in the Git tab because of the `/.quarto/` line in the `.gitignore` file.
 
 From the Console, run `list.files(".quarto")`. CP/CR.
 
@@ -983,7 +991,7 @@ This is a Quarto website.
 To learn more about Quarto websites visit https://quarto.org/docs/websites.
 ````
 
-But, if you look at the Quarto Pub version of your website, it still uses the "A New Website" title because we have not (yet) published our new version. We have, however, changed the files in the `_site` directory, as you can tell by looking at the Git pane.
+But, if you look at the Quarto Pub version of your website, it still uses the "A New Website" title because we have not (yet) published our new version. We have, however, changed the files in the `_site` directory, as you can tell by looking at the Git tab.
 
 ### Exercise 9
 
@@ -1040,7 +1048,7 @@ question_text(NULL,
 
 ### 
 
-The `_publish.yml` file is like the `first-website.Rproj` file. They might contain private information of some sort, like logins or passwords, and so do not belong on Github.
+The `_publish.yml` file is like the `first-website.Rproj` file. In *theory*, they might contain private information of some sort, like logins or passwords, and so do not belong on Github. But, in reality, [they rarely](https://quarto.org/docs/publishing/rstudio-connect.html#publish-command) do. Still, we like you to practice the editing of configuration files like `.gitignore`.
 
 ### Exercise 11
 
@@ -1057,14 +1065,14 @@ question_text(NULL,
 
 ### 
 
-Note both the simplicity *and* the complexity of your project. It is simple in that, even if our computer blew up and  
+Note both the simplicity *and* the complexity of your project. It is simple in that, even if our computer blew up we would be able to recreate everything from the files on Github. It is complex in that there are a lot of files, interacting in a fairly sophisticated fashion.
 
 
 
 ## Adding visualizations
 ### 
 
-Let's add a visualization to your website by modifying `index.qmd`. Recall that this file will always create our "home" page because it is rendered to `index.html` *and* browsers, by default, show `index.html`, if one exists, when they visit a directory. 
+Let's add a visualization to your website by modifying `index.qmd`. Recall that this file will always create our "home" page because it is rendered to `index.html`. *And* browsers, by default, show `index.html`, if one exists, when they visit a new directory. 
 
 ### 
 
@@ -1088,7 +1096,7 @@ car_plot
 
 ### Exercise 1
 
-Delete everything in `index.qmd` except for the `title: "first-website"` surrounded by the three dashes, above and below. Run `head index.qmd` in the Terminal. CP/CR.
+Delete everything in `index.qmd` except for the `title: "My First Website"` surrounded by the three dashes, above and below. Run `head index.qmd` in the Terminal. CP/CR.
 
 ```{r adding-visualizations-ex-1}
 question_text(NULL,
@@ -1103,24 +1111,17 @@ question_text(NULL,
 
 The material bracketed by the three dashes at the very top is called a **YAML Header**. These are very sensitive about all sorts of subtle formatting issues. `head` is a terminal command which shows the top (or "head") of a file.
 
+As you build the website, we will ask you to share the updated files, using Terminal commands like `head`, `tail` and `cat`. `tail` shows the end (or "tail") of the file. Both `head` and `tail` take an argument `-n` which allows you to specify the number of lines from the file to show.
+
 ### Exercise 2
 
-Create a new code chunk in `index.qmd` and load two libraries: **tidyverse** and **ggthemes**.
+Create a new code chunk in `index.qmd` and load two libraries: **tidyverse** and **ggthemes**. Render the document by pressing the Render button at the top of the Code pane. If you website is still being previewed, this will update the displayed homepage automatically.
 
-```{r adding-visualizations-ex-2, exercise = TRUE}
+In other words, you might not have to run `quarto preview` from the Terminal. Just rendering `index.qmd` is often enough.
 
-```
+Copy and paste the new home page, leaving out the menu items.
 
-```{r adding-visualizations-2-hint-1, eval = FALSE}
-library(tidyverse)
-library(ggthemes)
-```
-
-### 
-
-Run `tail index.qmd` in the Terminal. CP/CR.
-
-```{r adding-visualization-2-again}
+```{r adding-visualizations-ex-2}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1131,162 +1132,75 @@ question_text(NULL,
 
 ### 
 
-As you build the website, we will ask you to share the updated files, using Terminal commands like `head`, `tail` and `cat`. `tail` shows the end (or "tail") of the file. Both `head` and `tail` take an argument `-n` which allows you to specify the number of lines from the file to show.
+You answer should look like this:
+
+````
+My First Website
+library(tidyverse)
+
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.4.4     ✔ tibble    3.2.1
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+library(ggthemes)
+````
+
+Because we have not yet added any code chunk options, the code is echoed and the messages displayed.
+
 
 ### Exercise 3
 
-Start a pipe with the data set `mtcars` below.
+Create another code chunk. Add this code to it:
 
-```{r adding-visualizations-ex-3, exercise = TRUE}
-
-```
-
-```{r adding-visualizations-3-hint-1, eval = FALSE}
-mtcars
-```
-
-```{r adding-visualizations-3-test, include = FALSE}
-
-```
-
-### Exercise 4
-
-Select the columns `mpg` and `wt` using `select()`.
-
-```{r adding-visualizations-ex-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r adding-visualizations-4-hint-1, eval = FALSE}
-mtcars |> 
-  select(..., ...)
-```
-
-```{r adding-visualizations-4-test, include = FALSE}
-
-```
-
-### 
-
-`wt` is weight of the car in 1000s of lbs.
-
-### Exercise 5
-
-Create a scatterplot with `wt` on the x-axis and `mpg` on the y-axis.
-
-```{r adding-visualizations-ex-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r adding-visualizations-5-hint-1, eval = FALSE}
-mtcars |> 
-  select(mpg, wt) |> 
-  ggplot(aes(wt, mpg)) +
-  geom_point()
-```
-
-```{r adding-visualizations-5-test, include = FALSE}
-
-```
-
-### Exercise 6
-
-Add the layer `geom_smooth()`. Set `method` to `"lm"`, `formula` to `y ~ x`,
-and `se` to `FALSE` in the arguments.
-
-```{r adding-visualizations-ex-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r adding-visualizations-6-hint-1, eval = FALSE}
-mtcars |> 
-  select(mpg, wt) |> 
-  ggplot(aes(wt, mpg)) +
-  geom_point() +
-  geom_smooth(method = "...", formula = y ~ x, se = ...)
-```
-
-```{r adding-visualizations-6-test, include = FALSE}
-
-```
-
-### Exercise 7
-
-Add `theme_clean()` to slightly alter the feel of the graph.
-
-```{r adding-visualizations-ex-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r adding-visualizations-7-hint-1, eval = FALSE}
-mtcars |> 
-  select(mpg, wt) |> 
-  ggplot(aes(wt, mpg)) +
-  geom_point() +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
-  theme_clean()
-```
-
-```{r adding-visualizations-7-test, include = FALSE}
-
-```
-
-### Exercise 8
-
-Use `labs` to add an appropriate title, subtitle, axes labels, and caption to your graph based on the example plot in exercise 1.
-
-```{r adding-visualizations-ex-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r adding-visualizations-8-hint-1, eval = FALSE}
+````
 mtcars |> 
   select(mpg, wt) |> 
   ggplot(aes(wt, mpg)) +
   geom_point() +
   geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
   theme_clean() +
-  labs(title = "...",
-       subtitle = "...", 
-       x = "...", 
-       y = "...", 
-       caption = "...")
-```
+  labs(title = "Fuel Efficiency and Weight",
+       subtitle = "Heavier cars are less fuel efficient", 
+       x = "Weight (1000s of lbs)", 
+       y = "MPG", 
+       caption = "Henderson and Vellerman (1981)")
+````
 
-```{r adding-visualizations-8-test, include = FALSE}
+Save the file. From the Terminal, run `tail index.qmd`. CP/CR.
 
+```{r adding-visualizations-ex-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
 ```
 
 ### 
 
-Reminder: Your plot should look something like this
+Render the page. You will see a nice plot, along with a lot of junk code and messages. 
 
-```{r}
-car_plot
-```
 
-### Exercise 9
+### Exercise 4
 
-Add these code chunk options to the top of the first code chunk:
+Add these code chunk options to the top of the first code chunk, the one which loads the libraries.
 
-`#| output: false`
+`#| message: false`
 `#| echo: false`
+`#| label: setup`
 
 ### 
 
-In the Terminal, ?. CP/CR.
+In the Terminal, run `head index.qmd `. CP/CR.
 
-```{r adding-visualizations-ex-9}
+```{r adding-visualizations-ex-4}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1297,22 +1211,20 @@ question_text(NULL,
 
 ### 
 
-Code that works during your R session will not work when your website is rendered if you have not loaded the required libraries into the document.
+Code that works during your R session will not work when your website is rendered if you have not loaded the required libraries into the document. But our readers don't want to see that code, much less the messages which it produces. So, we hide them.
 
-### Exercise 10
+Note that the term `setup` is a special code chunk label. It should only be used in the chunk which loads libraries.
 
-Create a new code chunk in `index.qmd `. Add the following code chunk options:
+### Exercise 5
+
+In the second code chunk, add the following options:
 
 `#| echo: false`
 `#| label: car-plot`
 
-Save the changes to index.qmd.
+Save the changes to `index.qmd`. In the Terminal, run `tail index.qmd `. CP/CR.
 
-### 
-
-In the Terminal, run `tail index.qmd `. CP/CR.
-
-```{r adding-visualizations-ex-10}
+```{r adding-visualizations-ex-5}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1323,49 +1235,24 @@ question_text(NULL,
 
 ### 
 
-Assigning labels to code chunks helps keeps you organized and helps others understand your code. You cannot assign the same label to multiple code chunks.
+Assigning labels to code chunks helps keeps you organized and helps others understand your code. You cannot assign the same label to multiple code chunks. We often use dashes in labels, as in `car-plot` since doing so makes for easier reading.
 
-### Exercise 11
+### Exercise 6
 
-Copy and paste your code for from Exercise 8 into the `car-plot` code chunk. Save the changes to `index.qmd`.
+Render the `index.qmd` with the render button. It should show the plot. You could also render with Cmd-Shift-K (or Ctrl + Alt + K).
 
-### 
+In the Terminal, run `cat index.qmd`. CP/CR.
 
-Render the `index.qmd` with the render button. It should show the plot, along with the code for the plot. You could also render with Cmd-Shift-K (or Ctrl + Alt + K).
-
-In the Terminal, run `cat index.qmd`. CP/CR
-
-```{r adding-visualizations-ex-11}
+```{r adding-visualizations-ex-6}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
     try_again_button = "Edit Answer",
     incorrect = NULL,
-    rows = 3)
+    rows = 12)
 ```
 
-### Exercise 12
-
-Edit the `.gitignore` file to include `*_files`. Save the file.
-
-### 
-
-In the Terminal, run `cat .gitignore`. CP/CR
-
-```{r adding-visualizations-ex-12}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-Committing/pushing files like ll the junk in the `_files` directories won't hurt anything. But you want to be organized and intentional. Other developers will judge the cleanliness of your repositories. Impress them!
-
-
-
-### Exercise 13
+### Exercise 7
 
 Go to the Git tab, then commit and push your new changes to Github. Include a descriptive commit message, e.g. "Added plot to home page".
 
@@ -1378,7 +1265,7 @@ In the Terminal type `quarto publish`. You don't need to include `quarto-pub` si
 
 It will not bring you to your website, but to your Quarto Pub account, where you will see the website address. Click on it and copy and paste the URL below:
 
-```{r adding-visualizations-ex-13}
+```{r adding-visualizations-ex-7}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1394,11 +1281,7 @@ Quarto allows for a combination of plain text and R code. This same feature allo
 
 ### Exercise 1
 
-Open `about.qmd `. Delete the "About this Website" and math, and add the following: `## About Me`. Then, render the qmd.
-
-### 
-
-In the Terminal, run `cat about.qmd`. CP/CR
+Open `about.qmd `. Delete all the current text, except for the YAML header. Add `## About Me` as the first (and only) line of text. Render the qmd. In the Terminal, run `cat about.qmd`. CP/CR.
 
 ```{r adding-text-ex-1}
 question_text(NULL,
@@ -1413,11 +1296,10 @@ question_text(NULL,
 
 Hash signs in front of text makes the text into a header. The organization of headers is determined by the number of hash signs. Fewer hash signs make higher level headers, i.e. bigger text. More hash signs make lower level headers, i.e. smaller text. 
 
+
 ### Exercise 2
 
-Compose a short description of yourself. Write it below the header. Include your name and school. You may also include interests of yours. Write until the end of the line, i.e. do not use the Enter key to wrap text. When you are finished, render the qmd.
-
-### 
+Write a one sentence description yourself. Write it below the header. Include your name and school, either the one you attend or one from which you have graduated. Write until the end of the line, i.e. do not use the Return/Enter key to wrap text. When you are finished, render the qmd.
 
 In the Terminal, run `cat about.qmd`. CP/CR
 
@@ -1430,13 +1312,20 @@ question_text(NULL,
     rows = 3)
 ```
 
-### Exercise 3
-
-Let's bold your name. In the description you have already written surround your name with two asterisks (** **) on each side, e.g. "My name is **Your Name**, and I...". When you are finished render the qmd.
-
 ### 
 
-In the Terminal, run `cat about.qmd`. CP/CR.
+You can have a Quarto document without a YAML header, if you like. You can also have an empty YAML header. But, it will often be the case that we want all the files in a project to have similar YAML headers in order to create a consistent look-and-feel.
+
+
+### Exercise 3
+
+Let's bold your name. In the description you have already written surround your name with two asterisks (** **) on each side. Example:
+
+````
+My name is **David Kane**, and I graduated from Williams College.
+````
+
+Save the file. Render the qmd. In the Terminal, run `cat about.qmd`. CP/CR.
 
 ```{r adding-text-ex-3}
 question_text(NULL,
@@ -1453,11 +1342,13 @@ Quarto, which is based on the Markdown language, has a variety of [formatting op
 
 ### Exercise 4
 
-Add a new header with two hash signs, "About the Project". Underneath the header, include a title and description of your project. Render `about.qmd`.
+Add a new header with two hash signs, "About the Project". Underneath the header, add a sentence about a hypothetical data science project, ideally one that you are actively considering. Include the title of your project in the sentence. Example:
 
-### 
+````
+In my project, "The Birth Months of Elite Footballer," I explore the distribution of the months --- like January versus June --- in which professional football/soccer players were born.
+````
 
-In the Terminal, run `cat about.qmd`. CP/CR
+Save the file. Render the qmd. In the Terminal, run `cat about.qmd`. CP/CR.
 
 ```{r adding-text-ex-4}
 question_text(NULL,
@@ -1470,11 +1361,9 @@ question_text(NULL,
 
 ### Exercise 5
 
-Let's italicize the title of your project. Surround the title of your project with one asterisk on each side, e.g. My project, *The Title of My Project*, explores..."
+Italicize the title of your project by replacing the quotation marks with a single asterisk. 
 
-### 
-
-In the Terminal, run `grep "*" about.qmd`. CP/CR.
+Save the file. Render the qmd. In the Terminal, run `grep "*" about.qmd`. CP/CR.
 
 ```{r adding-text-ex-5}
 question_text(NULL,
@@ -1489,7 +1378,7 @@ We need to include the quotes around `*` in order to cause `grep` to treat it as
 
 ### Exercise 6
 
-Add a new header, "Goals", on a lower level than the previous, using three hash signs.
+Add a new header, "Goals", on a lower section level than the previous, using three hash signs.
 
 ### 
 
@@ -1603,7 +1492,7 @@ You only need a few [formatting tricks](https://quarto.org/docs/authoring/markdo
 
 ### Exercise 11
 
-Push all the changes to Git, and issue the `quarto publish` command in the Terminal. You need to hit return/enter at least once.
+Push all the changes to Git, and issue the `quarto publish` command in the Terminal. You need to hit Return/Enter at least once.
 
 ## Adding new pages
 ### 
@@ -1616,7 +1505,7 @@ Go to `File -> New File -> Quarto Document...`. Title it "Sources". Select "Crea
 
 ### 
 
-Run `ls`. CP/CR
+In the Terminal, run `ls *qmd`. CP/CR.
 
 ```{r adding-new-pages-ex-1}
 question_text(NULL,
@@ -1629,17 +1518,11 @@ question_text(NULL,
 
 ### 
 
-You should see `index.qmd`, `about.qmd`, and `sources.qmd` in the output. If not, make sure you are in the `first-website` directory.
+You should see `index.qmd`, `about.qmd`, and `sources.qmd` in the output. If not, make sure you are in the `first-website` directory. The `*qmd` regular expression selects only files with names which end with the letters `qmd`.
 
 ### Exercise 2
 
 In the `sources.qmd` file, below the YAML header, add the text `An overview of sources used in my project.` 
-
-### 
-
-You might also click the "Source" button in the upper left in order to exit the "Visual" view. We think that working with the raw source is easier.
-
-### 
 
 In the Terminal, run the command `grep overview sources.qmd`. CP/CR
 
@@ -1654,15 +1537,18 @@ question_text(NULL,
 
 ### 
 
-Why were you automatically placed in the "Visual" view when you created this file? Because, by default, the `_quato.yml` file includes `editor: visual` at the bottom. If you change that to `editor: source`, you will start out in the "Source" view when you create new documents in the future, at least in this project.
+`grep` is handy for finding just those lines in the target file which include the word `overview`.
+
 
 ### Exercise 3
 
-Add the following sentence: `These are my sources. Here are some challenges. Quarto websites are awesome.` Render `sources.qmd`.
+Add the following sentence: 
 
-### 
+````
+These are my sources. Here are some challenges. Quarto websites are awesome.
+````
 
-Run `cat sources.qmd` in the Terminal. CP/CR
+Render `sources.qmd`. Run `cat sources.qmd` in the Terminal. CP/CR.
 
 ```{r adding-new-pages-ex-3}
 question_text(NULL,
@@ -1673,6 +1559,8 @@ question_text(NULL,
     rows = 3)
 ```
 
+A website, when you first look closely, my look overwhelming in its complexity. But it is usually created from of a simple collection of text files, each of them quite simple.
+
 ### Exercise 4
 
 Open the `_quarto.yml` file. You should see a line that says `navbar`. Below this line you should see the line `left`. Below this is the code that creates the header links for the navigation bar on your site. It should look like:
@@ -1680,7 +1568,7 @@ Open the `_quarto.yml` file. You should see a line that says `navbar`. Below thi
 
 ```
 website:
-  title: "first-website"
+  title: "A New Website, second edition"
   navbar:
     left:
       - href: index.qmd
@@ -1709,7 +1597,7 @@ Note the two additional lines.
 
 The `href` line tells Quarto to create an html page by rendering `sources.qmd` and to include that new page in the website. 
 
-The `text` line tells Quarto to format the link in the **nav**igation tool**bar** as "Sources."
+The `text` line tells Quarto to format the link in the **nav**igation tool**bar** as `"Sources"`.
 
 Make the formatting and spacing match the preceding items in the navbar. **YAML files can be very persnickety when it comes to formatting!** When you are done, save `_quarto.yml`.
 
@@ -1728,11 +1616,7 @@ question_text(NULL,
 
 ### 
 
-**YAML files are *very* tricky!** Tabs and white spaces matter. 
-
-### 
-
-The code `left` before the navbar items puts the navigation bar on the right side of your site. This can be changed to `right``.
+**YAML files are *very* tricky!** Tabs and white spaces matter. The code `left` before the navbar items puts the navigation bar on the left side of your site. This can be changed to `right``.
 
 
 ### Exercise 5
@@ -1741,7 +1625,7 @@ Run `quarto publish` from the Terminal. You may need to hit enter once or twice.
 
 ### 
 
-Run `ls _site/` in the Terminal. CP/CR
+Run `ls _site/*html` in the Terminal. CP/CR.
 
 ```{r adding-new-pages-ex-5}
 question_text(NULL,
@@ -1777,15 +1661,13 @@ question_text(NULL,
 
 ### 
 
-There should not be a `sources.qmd` file. We are practicing these skills to make you more comfortable building up and tearing down the parts of a project. You need to build more than one house to get good at house building!
+There should not be a `sources.qmd` file. We are practicing these skills to make you more comfortable building up and tearing down the parts of a project. You need to build more than one house to get good at house-building!
 
 ### Exercise 7
 
 Make two more Quarto documents in the same way as you did above. 
 
 You should save them both (so they're not `untitled1` and `untitled2`). Name them `source-1.qmd` and `source-2.qmd`. In the YAML heading at the top of both documents, change the titles to `"Source 1"` and `"Source 2"`.
-
-### 
 
 In the Terminal, run the command `head source-1.qmd source-2.qmd`. CP/CR.
 
@@ -1810,14 +1692,6 @@ Let's create a drop-down menu called "Sources" through which one could visit eit
 ### 
 
 We will be messing around with YAML settings to make this, so pay very close attention
-
-<!-- MR: this picture includes sidebar:interactive but that is not added until a later section -->
-
-```{r out.width = 500}
-knitr::include_graphics("images/yaml-stuff.png")
-```
-
-### 
 
 The Quarto [documentation](https://quarto.org/) provides an [excellent overview](https://quarto.org/docs/websites/website-navigation.html) of approaches to website navigation. 
 
@@ -1931,9 +1805,7 @@ An `.rds` file allows us to save any R object in a file. When we load in an .rds
 
 ### Exercise 1
 
-Go to `File -> New File` and then click R Script. Press save in the left of the top panel. Name the file `make-car-plot.R`. The .R suffix will be added automatically.
-
-### 
+Go to `File -> New File -> R Script`. Press save in the left of the top panel. Name the file `make_car_plot.R`. The `.R` suffix will be added automatically.
 
 In the Terminal, run `ls`. CP/CR.
 
@@ -1946,19 +1818,15 @@ question_text(NULL,
     rows = 3)
 ```
 
-Make sure that `make-car-plot.R` is one of these files.
+Make sure that `make_car_plot.R` is one of these files. We often use scripts to to record the exact steps we used in analyzing some data or in creating a graphic. We want our work to be reproducible. We will often need to perform the same work again, albeit with some changes. A script can make that much simpler.
 
 ### Exercise 2
 
 Though an R script will use the libraries you already have loaded if executed interactively in the Console, it is good practice to include these at the top of the script. Any script you create should run correctly, even if you have just re-started R.
 
-### 
+In the R script, load the **tidyverse** and **ggthemes** packages using the `library()` command. 
 
-In the R script, load the **tidyverse** and **ggthemes** packages using the `library()` command.
-
-### 
-
-In the Terminal, run `grep library make-car-plot.R`. CP/CR.
+In the Terminal, run `grep library make_car_plot.R`. CP/CR.
 
 ```{r using-an-rds-file-ex-2}
 question_text(NULL,
@@ -1969,17 +1837,13 @@ question_text(NULL,
     rows = 3)
 ```
 
+Because this is a script, you don't need to create a code chunk. Scripts are most useful for work which simply creates an object, often a graphic or new data set. 
+
 ### Exercise 3
 
-Copy the code in the `car-plot` code chunk from `index.qmd.` Paste it into `make-car-plot.R`. Assign it to an object named `car_plot`.
+Copy the code in the `car_plot` code chunk from `index.qmd.` Paste it into `make_car_plot.R`. Assign it to an object named `car_plot`. Save the R script.
 
-### 
-
-To run the code in the R script, place your cursor at the end of the line (or pipe) you want to run and press Command + Enter (or Ctrl + Enter). Save the R script.
-
-### 
-
-In the Terminal, run `cat make-car-plot.R`. CP/CR.
+In the Terminal, run `cat make_car_plot.R`. CP/CR.
 
 ```{r using-an-rds-file-ex-3}
 question_text(NULL,
@@ -1990,171 +1854,444 @@ question_text(NULL,
     rows = 3)
 ```
 
+### 
+
+The answer should look like this:
+
+````
+library(tidyverse)
+library(ggthemes)
+
+car_plot <- mtcars |> 
+  select(mpg, wt) |> 
+  ggplot(aes(wt, mpg)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  theme_clean() +
+  labs(title = "Fuel Efficiency and Weight",
+       subtitle = "Heavier cars are less fuel efficient", 
+       x = "Weight (1000s of lbs)", 
+       y = "MPG", 
+       caption = "Henderson and Vellerman (1981)")
+````
+
+To run the code in the R script interactively, place your cursor at the end of the line (or pipe) you want to run and press `Command/Cntrl + Enter`. 
+
 ### Exercise 4
 
-Under the pasted code, add the function `write_rds()`. The first argument is the R object which you want to store in an .rds file, `car_plot`. The second argument is the name of the file you want to create --- "car-plot.rds" --- which must be quoted.
+"Ssource" the entire script by pressing the "Source" button. This takes all the code from the script and feeds it, line-by-line, to the R Console.
 
-### 
-
-Place your cursor at the end of the `write_rds()` function and press Command + Enter (or Ctrl + Enter). You should now see the .rds file.
-
-### 
-
-The R script that makes the .rds is not necessary for the building of your website. However, it is useful to include it in the directory that is uploaded to Git so that people can see the code that creates the R object.
-
-### 
-
-In the Terminal, run `ls car*`. This should return a list which contains only "car-plot.rds". CP/CR.
+From the Console, run `ls()`. CP/CR.
 
 ```{r using-an-rds-file-ex-4}
 question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
 ```
+
+### 
+
+Your answer should look like:
+
+````
+> ls()
+[1] "car_plot"
+> 
+````
+
+The script has created a new object, `car_plot`, in your R environment. You can also see `car_plot` if you select the Environment tab within the Environment pane.
 
 ### Exercise 5
 
-Return to `index.qmd`. Delete the code that makes `car_plot`.
+Restart your R session. You can never restart your R session too often. The best way to do this is with the short-cut command: `Command/Cntrl-Shift-0`. (This is the number zero, not the letter "O.")
 
-### 
-
-Add the function `read_rds()`. Set the value of the `file` argument to the name of the file you want to read, `car-plot.rds`. Assign the output of the call to `read_rds()` to an R object called `car_plot`. 
-
-Example:
-
-`my_plot <- read_rds(file = "car-plot.rds")`
-
-### 
-
-On a new line, type the object `car_plot` to print the plot saved in the .rds. Render the .qmd.
-
-### 
-
-In the Terminal, run `grep rds index.qmd`. CP/CR.
+From the Console, run `ls()`. CP/CR.
 
 ```{r using-an-rds-file-ex-5}
 question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
 ```
 
 ### 
 
-You should now see the same output as you had before when you had the code to make the plot.
+Your answer should look like:
 
-### 
+````
+> ls()
+character(0)
+> 
+````
 
-Any R object can be made into an .rds file. It is most convenient for functions which take a long time to run and so will slow down your website's loading time, e.g. API requests.
+`car_plot` has disappeared! Objects in the R enviroment vanish once R restarts. An that is OK! We have the script, `make_car_plot.R`, which allows us to recreate the object whenever we want.
 
-## Images and comments
-### 
+### Exercise 6
 
-We can add graphics and images to Quarto websites many different ways, the easiest being with the package **knitr**.
+Source `make_car_plot.R`. From the Console, run `ls()`. CP/CR.
 
-### Exercise 1
 
-First, we need to make an image. 
-
-### 
-
-In the `car-plot` code chunk, use the function `ggsave()` to make a PNG image of the plot you just made. 
-
-### 
-
-The first argument is the name of the file you want to save the image to, `"car-plot.png"`. 
-
-### 
-
-The next argument is `plot`, set that equal to `car_plot`. 
-
-### 
-
-Render the file. You should see a file named `car-plot.png` appear in your files pane.
-
-### 
-
-In the Terminal, run `ls *png`. CP/CR.
-
-```{r images-and-comments-ex-1}
+```{r using-an-rds-file-ex-6}
 question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
 ```
 
 ### 
 
-With **knitr**, we can include images with different suffixes, like png, jpeg, and jpg.
+`car_plot` is back. If you type `car_plot` at the Console and hit `Return/Enter`, the plot will appear in the Plots tab within the Files pane.
 
-### Exercise 2
+### Exercise 7
+
+It is often useful to save a permanent copy of an R object like a plot or a tibble. [`write_rds()`](https://readr.tidyverse.org/reference/read_rds.html) from the **readr** package is the most common approach.
+
+From the Console, run `write_rds(car_plot, file = "mpg_v_weight_graphic.rds")`. This function does not produce any output. The first argument is the R object(s) which you want to save. The second argument is the name of the file which will hold that object.
+
+From the Console, run `list.files(patter = "mpg")`. CP/CR.
+
+```{r using-an-rds-file-ex-7}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+> list.files(pattern = "mpg")
+[1] "mpg_v_weight_graphic.rds"
+````
+
+The `pattern` argument to `list.files()` allows us to only look for files which match a regular expression.
+
+There are now three objects associated with our plot. The first is the script which we used to create it. The second is the R object, `car_plot`, which only exists in the R session in which it was created. The third is the `rds` object which contains the plot and which continues to exist even after the R session ends. Indeed, the `rds` object can be committed and pushed to Github.
+
+### Exercise 8
+
+Restart your R session with `Cmd/Cntrl-Shift-0`. When R restarts, you should still be in the `first-website` project. At the Console, run `library(tidyverse)`. We need to reload the **tidyverse** every time we restart R.
+
+At the Console, run `read_rds("mpg_v_weight_graphic.rds")`. CP/CR.
+
+
+```{r using-an-rds-file-ex-8}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+> read_rds("mpg_v_weight_graphic.rds")
+> 
+````
+
+The value returned by `read_rds()` is whatever is contained in the `rds` object. In this case, that is a plot. But, when the object at the Console is a plot, the plot is shown in the Plot tab, as it should be in this case.
+
+
+### Exercise 9
+
+Open the `index.qmd` file. In the second code chunk, delete all the plotting code and replace it with `read_rds("mpg_v_weight_graphic.rds")`. Save the file.
+
+In the Terminal, run `tail index.qmd`. CP/CR.
+
+```{r using-an-rds-file-ex-9}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+There was nothing wrong, *per se* with having the plotting code in `index.qmd` rather than `make_car_plot.R`. The problem arises when that plotting code takes a long time to run, as it often will. We don't want to re-run all the code each time we make a small change to the website. It is much better to separate out the plotting code and only run it when we need to.
+
+### Exercise 10
+
+From the Terminal, run `quarto publish`. You will need to hit `return/enter` at least once. CP/CR.
+
+
+```{r using-an-rds-file-ex-10}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like this:
+
+````
+Davids-MBP:first-website dkane$ quarto publish
+? Publish update to: › https://davidkane.quarto.pub/a-new-website (Quarto Pub - dave.kane@gmail.com)
+Rendering for publish:
+
+[1/3] index.qmd
+
+processing file: index.qmd
+                                             
+output file: index.knit.md
+
+[2/3] sources.qmd
+[3/3] about.qmd
+
+[✓] Preparing to publish site
+[✓] Uploading files (complete)
+[✓] Deploying published site
+[✓] Published site: https://davidkane.quarto.pub/a-new-website
+[✓] Account site updated: https://davidkane.quarto.pub
+
+Davids-MBP:first-website dkane$ 
+````
+
+You only need `quarto publish`, instead of `quatro publish quarto-pub` because the `_publish.yml` records that this project is published on Quarto Pub. You are simply refreshing the current project, rather than creating another.
+
+### Exercise 11
+
+In the Files tab, within the File pane, delete `mpg_v_weight_graphic.rds`. You could also delete this file from the Console with `rm("mpg_v_weight_graphic.rds")` or from the Terminal with `rm mpg_v_weight_graphic.rds`.
+
+From the Terminal, run `ls mpg_v_weight_graphic.rds`. CP/CR.
+
+```{r using-an-rds-file-ex-11}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like this:
+
+````
+Davids-MBP:first-website dkane$ ls mpg_v_weight_graphic.rds
+ls: mpg_v_weight_graphic.rds: No such file or directory
+Davids-MBP:first-website dkane$ 
+````
+
+There is no such file because we have deleted it. 
+
+### Exercise 12
+
+From the Terminal, type `quarto publish`. CP/CR. (As you might expect, this command will fail.)
+
+```{r using-an-rds-file-ex-12}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like this:
+
+````
+Davids-MBP:first-website dkane$ quarto publish
+? Publish update to: › https://davidkane.quarto.pub/a-new-website (Quarto Pub - dave.kane@gmail.com)
+Rendering for publish:
+
+[1/3] index.qmd
+
+processing file: index.qmd
+  |...............................................            |  80% [car-plot]
+
+Quitting from lines 15-19 [car-plot] (index.qmd)
+Error in `readRDS()`:
+! cannot open the connection
+Backtrace:
+ 1. readr::read_rds("mpg_v_weight_graphic.rds")
+ 2. base::readRDS(con, refhook = refhook)
+                                                                             
+Execution halted
+Davids-MBP:first-website dkane$ 
+````
+
+The error message is a little tough to parse. When problems like this occur, the best approach is to try to find the problematic qmd file and then render it alone.
+
+### Exercise 13
+
+Open `index.qmd` and render it by using the short-cut key: `Cmd/Cntrl-shift-k`. This will also fail. You should be able to see the failure message in the Background Jobs tab within the Console pane. Copy/paste the end of that failure message.
+
+```{r using-an-rds-file-ex-13}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+The error message is the same as the one we saw with `quarto publish`. But now we know that the probem is in the `index.qmd` file specifically. 
+
+### Exercise 14
+
+Open the `make_car_plot.R` script. At the bottom, as this line:
+
+````
+write_rds(car_plot, file = "mpg_v_weight_graphic.rds")
+````
+
+It is separate from, and unconnected to, the pipe which creates the `car_plot` object. 
+
+From the Terminal, run `tail make_car_plot.R`. CP/CR.
+
+```{r using-an-rds-file-ex-14}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like this:
+
+````
+Davids-MBP:first-website dkane$ tail make_car_plot.R 
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  theme_clean() +
+  labs(title = "Fuel Efficiency and Weight",
+       subtitle = "Heavier cars are less fuel efficient", 
+       x = "Weight (1000s of lbs)", 
+       y = "MPG", 
+       caption = "Henderson and Vellerman (1981)")
+
+write_rds(car_plot, file = "mpg_v_weight_graphic.rds")
+Davids-MBP:first-website dkane$ 
+````
+
+This is a common approach to scripts which are parts of larger projects. They finish by creating an object which is then used by other files in the project.
+
+### Exercise 15
+
+Source `make_car_plot.R`. The easiest way of doing so, as before, is to open the file in the Code pane and then click the "Source" button.
+
+In the Terminal, run `ls mpg*`. CP/CR.
+
+```{r using-an-rds-file-ex-15}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+Davids-MBP:first-website dkane$ ls mpg*
+mpg_v_weight_graphic.rds
+Davids-MBP:first-website dkane$ 
+````
+
+`mpg*` is a regular expression which matches any file which begins with the letters `mpg`. Keep in mind that we had to run this 
+
+### Exercise 16
+
+Instead of creating an rds object, we could have saved an image and then loaded the image back into the `index.qmd` file. Open the `make_car_plot.R` file, remove the line `write_rds(car_plot, file = "mpg_v_weight_graphic.rds")` and replace it with:
+
+````
+ggsave(filename = "mpg_v_weight_graphic.png", car_plot)
+````
+
+Save the file and source it. From the Terminal, run `ls mpg*`. CP/CR.
+
+
+```{r using-an-rds-file-ex-16}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+Davids-MBP:first-website dkane$ ls mpg*
+mpg_v_weight_graphic.png        mpg_v_weight_graphic.rds
+Davids-MBP:first-website dkane$ 
+````
+
+The new file, `mpg_v_weight_graphic.png`, is an image. If you click on it in the Files tab, the plot should open.
+
+The R script that makes the `png` file is not necessary for the building of your website. However, it is useful to include it in the directory that is uploaded to Git so that people can see the code that creates the graphic.
+
+### Exercise 17
+
+Open `index.qmd`. Add `library(knitr)` to the `setup` code chunk. Remove `read_rds("mpg_v_weight_graphic.rds")` from the second code chunk. Replace it with 
+
+````
+knitr::include_graphics("mpg_v_weight_graphic.png")
+````
+
+Save the file. From the Terminal, run `quarto publish`. From `index.qmd`, copy/paste the second code chunk here.
+
+```{r using-an-rds-file-ex-17}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 7)
+```
+
+### 
+
+Your answer should look like:
+
+````
+# | echo: false
+# | label: car-plot
+knitr::include_graphics("mpg_v_weight_graphic.png")
+````
 
 Any images you want to include on your website must be located in your project directory. While referring to images elsewhere on your computer may work when you render and build on your computer, it will not work on other people's devices or, more importantly, when you publish your site to Quarto Pub.
 
-### 
 
-It is often convenient to have a dedicated `images` directory within your main project directory.
 
-### 
+<!-- Really ought to expand this. First, make a process_data.R script which starts with raw data and then saves an rds file with clean data. Second, create a make_plot.R script which starts with rds file and then makes png. Create directories for data and for images. -->
 
-In the Terminal, run `pwd` to confirm you are in the main project directory. Then run `mkdir images`. Use the `mv` command to move `car-plot.png` into the `images` directory. Hint: `mv car-plot.png images`
 
-### 
-
-In the Terminal, run `ls images`. Th resulting list of files from the `images` directory should only contain one item: `car-plot.png`. CP/CR
-
-```{r images-and-comments-ex-2}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-### 
-
-Organization is the secret to good data science. A non-trivial project will often have several directories and more than a dozen files. You need a place for everything and everything in its place.
-
-### Exercise 3
-
-Create a new code chunk at the bottom of your `index.qmd`. Load in the library **knitr**. (Even better, place the `library(knitr)` command in the same code chunk as the other libraries you load above.)
-
-### 
-
-Add the `include_graphics()` function. Its argument is the path of the image you want to include, `"images/car-plot.png"`. Render the .qmd. You should see an image of your plot at the bottom of the page.
-
-### 
-
-In the Terminal, run `grep graphics index.qmd`. CP/CR.
-
-```{r images-and-comments-ex-3}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-### 
-
-Add a comment about the image in the code chunk with #. Describe how you made the image.
-
-### 
-
-Comments are very important to add. That way you know exactly what you are doing, and other people know exactly what you are doing.
-
-### 
-
-Feel free to include more comments on other pages explaining what you are doing. The way you turn text into comments is cmd + shift + c, with the cursor placed in the relevant text.
 
 ## Interactive pages
 ### 
@@ -2173,11 +2310,11 @@ dygraph(AirPassengers, main = "Plane Passengers 1950-1960",) |>
 
 ### Exercise 1
 
-We need to make 3 new documents for our interactive pages. Make 3 Quarto Documents called `plane-passengers`, `map-london`, and `plotly`. The suffix `.qmd` will be added automatically.
+We need to make 3 new documents for our interactive pages. Make 3 Quarto Documents called `plane_passengers`, `map_london`, and `plotly`. The suffix `.qmd` will be added automatically.
 
 ### 
 
-In `plane-passengers` change the title in the YAML header to be "Plane Passengers"
+In `plane_passengers` change the title in the YAML header to be "Plane Passengers"
 
 ### 
 
@@ -2189,7 +2326,7 @@ In the code chunk, load in the library **dygraphs**.
 
 ### 
 
-In the Terminal, run `cat "plane-passengers.qmd"`. CP/CR.
+In the Terminal, run `cat plane_passengers.qmd`. CP/CR.
 
 ```{r interactive-pages-ex-1}
 question_text(NULL,
@@ -2212,7 +2349,7 @@ Next, we need to start our dygraph. The data that we will be using is called Air
 
 ### 
 
-In the Terminal, run `cat "plane-passengers.qmd"`. CP/CR.
+In the Terminal, run `cat "plane_passengers.qmd"`. CP/CR.
 
 ```{r interactive-pages-ex-2}
 question_text(NULL,
@@ -2241,7 +2378,7 @@ That will add a slider to the bottom of the graph so you can select the years yo
 
 ### 
 
-In the Terminal, run `cat plane-passengers.qmd`. CP/CR.
+In the Terminal, run `cat plane_passengers.qmd`. CP/CR.
 
 ```{r interactive-pages-ex-3}
 question_text(NULL,
@@ -2266,11 +2403,11 @@ leaflet() |>
 
 ### 
 
-In `map-london`, change the title to be "Map of London"
+In `map_london`, change the title to be "Map of London"
 
 ### 
 
-Add a code chunk and label it `map`. Load in the library **leaflet**. Run `cat "map-london.qmd"`. CP/CR.
+Add a code chunk and label it `map`. Load in the library **leaflet**. Run `cat "map_london.qmd"`. CP/CR.
 
 ```{r interactive-pages-ex-4}
 question_text(NULL,
@@ -2486,8 +2623,8 @@ knitr::include_graphics("images/yaml.png")
 
 In `contents:`, inline with the first `n`, add the following:
 
-        - plane-passengers.qmd
-        - map-london.qmd
+        - plane_passengers.qmd
+        - map_london.qmd
         - plotly.qmd
         
 ### 
