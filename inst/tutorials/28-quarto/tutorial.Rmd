@@ -20,7 +20,6 @@ options(tutorial.exercise.timelimit = 240,
 library(learnr)
 library(tutorial.helpers)
 library(ggthemes)
-library(knitr)
 library(tidyverse)
 library(quarto)
 library(dygraphs)
@@ -69,24 +68,12 @@ library(plotly)
 <!-- Many of the images here are not helpful. First, they don't show enough of the _quarto.yml file. Second, they could just be replaced with copy/pasted text surrounded by simple triple backticks. Copy/pasted is much easier to maintain! -->
 
 
-<!-- Show how to add execute: -->
-<!--                   echo: false -->
-
 <!-- This tutorial allows for an occasion to review and explore a bunch of Quarto fun. -->
-
-<!-- Discuss why index.qmd is named that. -->
-
-<!-- Be more consistent with underscores and dashs: car_plot or car-plot. -->
-
-<!-- Standardize Command+Enter or cmd+enter and so on. -->
                   
-<!-- The first repo is called first-website. We need to better distinguish between three things: the Github repo, the R project which is connected to the repo and the website built from the latter. Help students to keep these different concepts clear in their own minds.  -->
-
 <!-- Perhaps a useful resource when we revisit this tutorial: https://ucsb-meds.github.io/creating-quarto-websites/ -->
 
 ## Introduction
 ### 
-
 
 This tutorial covers material from [Chapter 28 Quarto](https://r4ds.hadley.nz/quarto.html) and [Chapter 29 Quarto formats](https://r4ds.hadley.nz/quarto-formats.html) in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. Yet we will go into much more detail, especially with regard to the creation and modification of [Quarto websites](https://quarto.org/docs/websites/). We will learn about Quarto commands like `quarto create`, `quarto render`, `quarto preview` and `quarto publish`, all of which are run from the Terminal.
 
@@ -801,7 +788,7 @@ At the Terminal, type:
 
 `quarto publish quarto-pub` 
 
-You will then need to hit the Return button twice, accepting the default options for account (your email address) and site name ("a-new-website"). CP/CR.
+You will then need to hit the Enter button twice, accepting the default options for account (your email address) and site name ("a-new-website"). CP/CR.
 
 
 ```{r publishing-ex-2}
@@ -1074,7 +1061,7 @@ Let's add a visualization to your website by modifying `index.qmd`. Recall that 
 We are going to add the following plot to your website's home page.
 
 ```{r adding-visualization-0}
-car_plot <- mtcars |> 
+mtcars |> 
   select(mpg, wt) |> 
   ggplot(aes(wt, mpg)) +
   geom_point() +
@@ -1085,15 +1072,13 @@ car_plot <- mtcars |>
        x = "Weight (1000s of lbs)", 
        y = "MPG", 
        caption = "Henderson and Vellerman (1981)")
-
-car_plot
 ```
 
 ### Exercise 1
 
 Delete everything in `index.qmd` except for the `title: "My First Website"` surrounded by the three dashes, above and below. Run `head index.qmd` in the Terminal. CP/CR.
 
-```{r adding-visualizations-ex-1}
+```{r adding-a-plot-ex-1}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1110,13 +1095,13 @@ As you build the website, we will ask you to share the updated files, using Term
 
 ### Exercise 2
 
-Create a new code chunk in `index.qmd` and load two libraries: **tidyverse** and **ggthemes**. Render the document by pressing the Render button at the top of the Code pane. If you website is still being previewed, this will update the displayed homepage automatically.
+Create a new code chunk in `index.qmd` and load two libraries: **tidyverse** and **ggthemes**. Render the document by pressing the Render button at the top of the Code pane. If your website is still being previewed, this will update the displayed homepage automatically.
 
 In other words, you might not have to run `quarto preview` from the Terminal. Just rendering `index.qmd` is often enough.
 
 Copy and paste the new home page, leaving out the menu items.
 
-```{r adding-visualizations-ex-2}
+```{r adding-a-plot-ex-2}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1169,7 +1154,7 @@ mtcars |>
 
 Save the file. From the Terminal, run `tail index.qmd`. CP/CR.
 
-```{r adding-visualizations-ex-3}
+```{r adding-a-plot-ex-3}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -1187,11 +1172,11 @@ Render the page. You will see a nice plot, along with a lot of junk code and mes
 
 Add these code chunk options to the top of the first code chunk, the one which loads the libraries.
 
-`#| message: false`
-`#| echo: false`
-`#| label: setup`
-
-### 
+````
+# | message: false
+# | echo: false
+# | label: setup
+````
 
 In the Terminal, run `head index.qmd `. CP/CR.
 
@@ -1208,15 +1193,15 @@ question_text(NULL,
 
 Code that works during your R session will not work when your website is rendered if you have not loaded the required libraries into the document. But our readers don't want to see that code, much less the messages which it produces. So, we hide them.
 
-Note that the term `setup` is a special code chunk label. It should only be used in the chunk which loads libraries.
+Note that the term `setup` is a special code chunk label. It should only be used in the chunk which loads libraries and otherwise **setup**s the analysis.
 
 ### Exercise 5
 
 In the second code chunk, add the following options:
 
 ````
-#| echo: false
-#| label: car-plot
+# | echo: false
+# | label: car-plot
 ````
 
 Save the changes to `index.qmd`. In the Terminal, run `tail index.qmd `. CP/CR.
@@ -1249,16 +1234,50 @@ question_text(NULL,
     rows = 12)
 ```
 
+### 
+
+There are two common modes for working with larger projects. First, as here, we work with an individual file, like `index.qmd`, and ensure that it is working as we want. Second, as before, we would with the project as a whole, using commands like `quarto preview` and `quarto publish`. The former approach is quickest and is how we spend most of our time. But, at the end of the day, we need to build the entire project.
+
+### Exercise 7
+
+It is annoying to use the same code chunk option in every code chunk. In `index.qmd`, both code chunks contain `#| echo: false`. Delete both of them. Edit the YAML header so that it includes:
+
+````
+execute: 
+  echo: false
+````
+
+In the Terminal, run `head -n 5 index.qmd`. CP/CR.
+
+```{r adding-a-plot-7}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+Davids-MBP:first-website dkane$ head -n 5 index.qmd
+---
+title: "My First Website"
+execute: 
+  echo: false
+---
+Davids-MBP:first-website dkane$ 
+````
+
+
 ### Exercise 7
 
 Go to the Git tab, then commit and push your new changes to Github. Include a descriptive commit message, e.g. "Added plot to home page".
 
-### 
-
-In the Terminal type `quarto publish`. You don't need to include `quarto-pub` since that information now appears in the `_publish.yml` file. You will need to hit Return once.
-
-
-### 
+In the Terminal,run `quarto publish`. You don't need to include `quarto-pub` since that information now appears in the `_publish.yml` file. You will need to hit Enter once.
 
 It will not bring you to your website, but to your Quarto Pub account, where you will see the website address. Click on it and copy and paste the URL below:
 
@@ -1270,6 +1289,24 @@ question_text(NULL,
     incorrect = NULL,
     rows = 3)
 ```
+
+### 
+
+Your answer should look like this:
+
+````
+https://davidkane.quarto.pub/a-new-website/
+````
+
+Keep track of the three different versions of the website. 
+
+First, we have the qmd files in the project directory which are used to create the website. This is the original source, the places where changes should be made. 
+
+Second, we have the rendered version of the files which reside in the `_site` directory. We do not edit these files directly, but we do look at them when we are "previewing" the website.
+
+Third, we have the website itself, the files which other people can see. These reside on Quarto Pub, in this case, but we could put them at a different hosting service.
+
+
 
 ## Adding text
 ### 
@@ -1296,9 +1333,13 @@ Hash signs in front of text makes the text into a header. The organization of he
 
 ### Exercise 2
 
-Write a one sentence description yourself. Write it below the header. Include your name and school, either the one you attend or one from which you have graduated. Write until the end of the line, i.e. do not use the Return/Enter key to wrap text. When you are finished, render the qmd.
+Write a one sentence description yourself. Write it below the header. Include your name and school, either the one you attend or one from which you have graduated. Write until the end of the line, i.e. do not use the Enter key to wrap text. When you are finished, render the qmd. Example:
 
-In the Terminal, run `cat about.qmd`. CP/CR
+````
+My name is David Kane, and I graduated from Williams College.
+````
+
+In the Terminal, run `cat about.qmd`. CP/CR.
 
 ```{r adding-text-ex-2}
 question_text(NULL,
@@ -1339,7 +1380,7 @@ Quarto, which is based on the Markdown language, has a variety of [formatting op
 
 ### Exercise 4
 
-Add a new header with two hash signs, "About the Project". Underneath the header, add a sentence about a hypothetical data science project, ideally one that you are actively considering. Include the title of your project in the sentence. Example:
+Add a new header at the bottom of `about.qmd`, using two hash signs, "About the Project". Underneath the header, add a sentence about a hypothetical data science project, ideally one that you are actively considering. Include the title of your project in the sentence. Example:
 
 ````
 In my project, "The Birth Months of Elite Footballer," I explore the distribution of the months --- like January versus June --- in which professional football/soccer players were born.
@@ -1356,9 +1397,27 @@ question_text(NULL,
     rows = 3)
 ```
 
+### 
+
+Examples of Quarto formatting options incclude:
+
+````
+
+**bold** *italic* ~~strikeout~~ `code`
+
+superscript^2^ subscript~2~
+
+[underline]{.underline} [small caps]{.smallcaps}
+````
+
+
 ### Exercise 5
 
-Italicize the title of your project by replacing the quotation marks with a single asterisk. 
+Italicize the title of your project by replacing the quotation marks with a single asterisk. Example:
+
+````
+In my project, *The Birth Months of Elite Footballer*, I explore the distribution of the months --- like January versus June --- in which professional football/soccer players were born.
+````
 
 Save the file. Render the qmd. In the Terminal, run `grep "*" about.qmd`. CP/CR.
 
@@ -1373,17 +1432,16 @@ question_text(NULL,
 
 We need to include the quotes around `*` in order to cause `grep` to treat it as a simple character, rather than the wild card character associated with regular expressions.
 
+<!-- DK: Deleted question about lists. -->
+
+
 ### Exercise 6
 
-Add a new header, "Goals", on a lower section level than the previous, using three hash signs.
+Oftentimes you want to wrap text before the default margin. For example, add Preceptor's common saying: `"You can never restart R too often."` to the `about.qmd` file. Then on the next line add `-- Preceptor`. Render the qmd.
 
 ### 
 
-Let's created a bulleted list of at least two goals of your project. To create a bulleted list begin each line with dash and space. When you want to add a new item to the list, use enter to create a new line and add another dash and space. Render the qmd.
-
-### 
-
-In the Terminal, run `tail about.qmd`. CP/CR.
+Run `grep  "-" about.qmd`. CP/CR.
 
 ```{r adding-text-ex-6}
 question_text(NULL,
@@ -1394,13 +1452,21 @@ question_text(NULL,
     rows = 3)
 ```
 
-### Exercise 7
-
-For at least one goal in your bulleted list, add a possible challenge or complication of this goal. To do so, add the text on the line underneath the goal, use tab to indent, and add a `+`and a space before the text.
-
 ### 
 
-In the Terminal, run `grep "+" about.qmd`. CP/CR
+As you can see. The quote and its source have ended up on the same line because Quarto assumes that anything without an explicit line break can be placed in to the same paragraph.
+
+### Exercise 7
+
+To create a manual line break, separate `"You can never restart R too often."` and `-- Preceptor` with a backslash, like this:
+
+````
+"You can never restart R too often."
+\
+~ Preceptor
+````
+
+Render the qmd. In the Terminal, run `tail about.qmd`. CP/CR.
 
 ```{r adding-text-ex-7}
 question_text(NULL,
@@ -1413,69 +1479,24 @@ question_text(NULL,
 
 ### 
 
-To create a numbered list, use numbers followed by periods, i.e. 1., instead of asterisks. Sub-items for numbered lists are created in the same way as they are for bulleted lists.
+A backslash is the Quarto manual line break. 
 
 ### Exercise 8
 
-Oftentimes you want to wrap text before the default margin. For example, add Preceptor's common saying: `"This is data science"` to the `about.qmd` file. Then on the next line add `~Preceptor`. Render the qmd.
+Let's create text which is also a hyperlink to the a website. Enclose the text "Kane's Free Data Science Bootcamp" in brackets `[]`. Then, without a space intervening, add parentheses `()` which enclose a link to the relevant website: `https://bootcamp.davidkane.info`. Add this to the bottom of `about.qmd`.
+
+It should look like:
+
+````
+[Kane's Free Data Science Bootcamp](https://bootcamp.davidkane.info)
+````
 
 ### 
 
-Run `grep  "~" about.qmd`. CP/CR.
+Render the qmd. In the Terminal, run `tail about.qmd`. CP/CR.
+
 
 ```{r adding-text-ex-8}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-### 
-
-This will not work. The quote and its source will be on the same line.
-
-### Exercise 9
-
-To create a manual line break, put the `~Preceptor` two lines below the '"This is data science"', like this:
-
-```{r}
-knitr::include_graphics("images/extra-line.png")
-```
-
-### 
-
-Then, between the lines, add a backslash (`\`)
-
-### 
-
-In the Terminal, run `grep "data science" about.qmd`. CP/CR.
-
-```{r adding-text-ex-9}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-### 
-
-A backslash is the Quarto manual line break. 
-
-### Exercise 10
-
-Let's create text which is also a hyperlink to the bootcamp website. Enclose the text "Kane's Free Data Science Bootcamp" in brackets `[]`. Then, without a space intervening, add parentheses `()` which enclose a link to the bootcamp website:
-`https://bootcamp.davidkane.info`. Render the qmd.
-
-### 
-
-In the Terminal, run `tail about.qmd`. CP/CR
-
-
-```{r adding-text-ex-10}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1487,9 +1508,9 @@ question_text(NULL,
 You only need a few [formatting tricks](https://quarto.org/docs/authoring/markdown-basics.html) for working with Quarto files, but you will use those tricks repeatedly.
 
 
-### Exercise 11
+### Exercise 9
 
-Push all the changes to Git, and issue the `quarto publish` command in the Terminal. You need to hit Return/Enter at least once.
+Push all the changes to Git, and issue the `quarto publish` command in the Terminal. You need to hit Enter at least once.
 
 ## Adding new pages
 ### 
@@ -1521,7 +1542,7 @@ You should see `index.qmd`, `about.qmd`, and `sources.qmd` in the output. If not
 
 In the `sources.qmd` file, below the YAML header, add the text `An overview of sources used in my project.` 
 
-In the Terminal, run the command `grep overview sources.qmd`. CP/CR
+In the Terminal, run the command `grep overview sources.qmd`. CP/CR.
 
 ```{r adding-new-pages-ex-2}
 question_text(NULL,
@@ -1556,7 +1577,7 @@ question_text(NULL,
     rows = 3)
 ```
 
-A website, when you first look closely, my look overwhelming in its complexity. But it is usually created from of a simple collection of text files, each of them quite simple.
+A website, when you first look closely, may look overwhelming in its complexity. But it is usually created from of a simple collection of text files, each of them quite simple.
 
 ### Exercise 4
 
@@ -1620,8 +1641,6 @@ question_text(NULL,
 
 Run `quarto publish` from the Terminal. You may need to hit enter once or twice. Check out your new project! See how "Sources" now appear on the navigation toolbar. Click on "Sources" and see how the text you added to `sources.qmd` now appears on the web.
 
-### 
-
 Run `ls _site/*html` in the Terminal. CP/CR.
 
 ```{r adding-new-pages-ex-5}
@@ -1639,13 +1658,7 @@ You should see several html pages, including `sources.html`. Quarto websites, li
 
 In the `_quarto.yml` file, delete the two lines of code that create the link and header for the Sources page.
 
-### 
-
-In the Terminal, use `rm` to remove `sources.qmd`.
-
-### 
-
-Run `ls` in the Terminal again. CP/CR
+In the Terminal, use `rm` to remove `sources.qmd`. Run `ls` in the Terminal again. CP/CR.
 
 ```{r adding-new-pages-ex-6}
 question_text(NULL,
@@ -1684,116 +1697,53 @@ In many terminal commands, you can provide more than one file as the target of t
 
 ### Exercise 8
 
-Let's create a drop-down menu called "Sources" through which one could visit either the page for Source 1 or Source 2 from any page in the website.
-
-### 
+Let's create a drop-down menu called "Sources" through which one could visit either the page for "Source 1" or "Source 2" from the top menu.
 
 We will be messing around with YAML settings to make this, so pay very close attention
 
 The Quarto [documentation](https://quarto.org/) provides an [excellent overview](https://quarto.org/docs/websites/website-navigation.html) of approaches to website navigation. 
 
-### Exercise 9
+Change `_quarto.yml` so that the `navbar` section looks like this
 
-<!-- DK: This section is sloppy. -->
 
-Open `_quarto.yml`.
-
-### 
-
-Inline with `-href:`, after `- about.qmd`, add `sidebar:sources`
-
-### 
-
-Inline with `navbar`, a line away from `sidebar:sources`, add `sidebar:`
-
-### 
-
-Add `- id: sources` 4 spaces away from the edge on the next line, like this:
-
-```{r out.width = 500}
-knitr::include_graphics("images/yaml-id.png")
-```
-
-### 
-
-Make sure to spell it and capitalize it the exact same way as the `sidebar:sources`.
-
-### 
-
-The `- id: sources` will make it easier to have the dropdown menu be attached to the top navbar.
-
-### 
-
-Everything else (pretty much) will be inline with the `- id: sources`
-
-### 
-
-Inline with the `i` in `- id:`, add the following:
-
-```
-title: "Sources"
-style: "floating"
-background: "#ffffff"
-collapse-level: 2
-contents:
-```
-
-### 
-
-We will add more into `contents` very soon.
-
-### 
-
-It should look exactly like this.
-
-```{r}
-knitr::include_graphics("images/exactly-how-it-looks.png")
-```
-
-### 
+````
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - text: Sources
+        menu:
+          - href: sources-1.qmd
+            text: Source 1
+          - href: sources-2.qmd
+            text: Source 2 
+      - about.qmd
+````        
 
 In the Terminal, run `cat _quarto.yml`. CP/CR.
 
-```{r adding-new-pages-ex-9}
+```{r adding-new-pages-ex-8}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
     try_again_button = "Edit Answer",
     incorrect = NULL,
-    rows = 3)
+    rows = 10)
 ```
-
-Let's make the actual dropdown menu.
 
 ### 
 
-On the next two lines after `contents: `, indent once and add  `- source-1.qmd` and `- source-2.qmd`.
+Run `quarto preview` to see the changes. 
 
-### 
 
-It should look like this:
-
-```{r out.width = 700}
-knitr::include_graphics("images/more-yaml-stuff.png")
-```
-
-### Exercise 10
+### Exercise 9
 
 Go the Git tab, then commit and push your new changes to Github. Include a descriptive commit message, e.g. "Added source pages".
 
-### 
 
-<!-- DK: Is this right? Or are we entering Yes? -->
+After pushing, type `quarto publish` in the Terminal and enter "Yes".
 
-After pushing, type `quarto publish quarto-pub` in the Terminal and enter "Yes".
 
-### 
-
-You might notice that there is a sidebar throughout the entire website. Keep in mind Quarto is very new and there are still a couple of bugs. There is a very easy way to fix this problem, but we are going to fix that very soon
-
-### 
-
-We walked you through creating only one new page: a sources page. In your final project, disperse your code evenly throughout multiple pages; **don't just stuff everything in `index.qmd`** and call it a day. For example, if you want to make a plot, create a new plot page where you do the work for making it. Then in `index.qmd`, just include the graph object and describe it.
 
 ## Using an `.rds` file
 ### 
@@ -1944,7 +1894,7 @@ question_text(NULL,
 
 ### 
 
-`car_plot` is back. If you type `car_plot` at the Console and hit `Return/Enter`, the plot will appear in the Plots tab within the Files pane.
+`car_plot` is back. If you type `car_plot` at the Console and hit Enter, the plot will appear in the Plots tab within the Files pane.
 
 ### Exercise 7
 
