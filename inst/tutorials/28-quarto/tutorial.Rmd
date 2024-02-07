@@ -19,12 +19,8 @@ options(tutorial.exercise.timelimit = 240,
 
 library(learnr)
 library(tutorial.helpers)
-library(ggthemes)
 library(tidyverse)
 library(quarto)
-library(dygraphs)
-library(leaflet)
-library(plotly)
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -41,35 +37,18 @@ library(plotly)
 
 <!-- It is tempting to create three website, using one of the three approaches each time, thereby learning a lot . . . But, for now, I will just use Quarto CLI. -->
 
-
-<!-- Until quarto 1.4 and the updated quarto R package are in production, we need to install them by hand. But that is OK! By this point in their education, students should be comfortable in in doing these sorts of installations. -->
-
 <!-- Need (?) to cover other material in these chapters, not just websites. At the least, need to review the material in the R4DS chapters. -->
 
 <!-- Make clear whether or not students are doing this in the current RStudio instance or in a new one. Or do we not need to worry about this? -->
 
-<!-- Show how to use theme() to make the labs elements bigger for the web. -->
-
-<!-- Use a tibble in place of mtcars. -->
-
 <!-- Would it be better to organize this the same way as our other work? Start with Github, connect to R project, and so on. The annoyance is that you would have to create the raw files yourself. But maybe that is good, providing an excuse to look closely at the key files? And there really aren't that many of them. -->
-
-<!-- What is the quarto website equivalent of usethis::create_package()? We want to start with Gitgub and then connect. But then we need a function to create all the annoying files. ChatGPT says that quarto::create_site() is the function I want, but it does not seem to be exported. -->
 
 
 <!-- Make use of this exchange: https://community.rstudio.com/t/how-to-set-echo-false-for-all-files-in-a-quarto-website/159435 somewhere. -->
 
-<!-- The flow of the tutorial should be more like the flow which we show in class, and the natural flow for when you make a project. Start by creating something cool in the index.qmd file. (This corresponds to class day 1.) There will be both data download and graphics code in that first draft.  -->
 
-<!-- Then, pull out the download code to its own R script. Have it dump out a data object, then load the data in index.qmd, where the graphics code still lives.  Now, we don't re-download the data every time we fuss with something. Then put the graphic code in a different R script, which saves the graphic. index.qmd now just loads this graphic. Very quick! (This corresponds to day 2 in class. In class, might only have time to separate out the data download. Leave graphic move as an exercise. But, in this tutorial, we should do both.) -->
+<!-- Now that we have an organized/reasonable home page, we can add some other pages which do other things. Example is some of the cool interactive graphics. -->
 
-<!-- Now that we have an organized/reasonable home page, we can add some other pages which do other things. Example is some of the cool interactice graphics. Only at this stage do we dive into the _quarto.yml file so that we can add these other pages to the drop down. -->
-
-<!-- Many of the images here are not helpful. First, they don't show enough of the _quarto.yml file. Second, they could just be replaced with copy/pasted text surrounded by simple triple backticks. Copy/pasted is much easier to maintain! -->
-
-
-<!-- This tutorial allows for an occasion to review and explore a bunch of Quarto fun. -->
-                  
 <!-- Perhaps a useful resource when we revisit this tutorial: https://ucsb-meds.github.io/creating-quarto-websites/ -->
 
 ## Introduction
@@ -79,6 +58,8 @@ This tutorial covers material from [Chapter 28 Quarto](https://r4ds.hadley.nz/qu
 
 ## Set up environment
 ### 
+
+<!-- Until quarto 1.4 and the updated quarto R package are in production, we need to install them by hand. But that is OK! By this point in their education, students should be comfortable in in doing these sorts of installations. (Actually, we don't need the updated quarto package, at least in this version.) -->
 
 We need to ensure that the latest version of [Quarto](https://quarto.org/) and of the R [**quarto**](https://quarto-dev.github.io/quarto-r/) package are installed.
 
@@ -1060,18 +1041,17 @@ Let's add a visualization to your website by modifying `index.qmd`. Recall that 
 
 We are going to add the following plot to your website's home page.
 
-```{r adding-visualization-0}
-mtcars |> 
-  select(mpg, wt) |> 
-  ggplot(aes(wt, mpg)) +
-  geom_point() +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
-  theme_clean() +
-  labs(title = "Fuel Efficiency and Weight",
-       subtitle = "Heavier cars are less fuel efficient", 
-       x = "Weight (1000s of lbs)", 
-       y = "MPG", 
-       caption = "Henderson and Vellerman (1981)")
+```{r}
+diamonds |> 
+  filter(z != 0) |> 
+  filter(color == "D") |> 
+  ggplot(aes(x = carat, y = price, color = cut)) + 
+    geom_point() +
+    scale_y_continuous(labels = scales::dollar) +
+    labs(title = "Prices and Sizes for Diamonds of Color D",
+         subtitle = "'Round' carat values like 1, 1.5 and 2 are more common.",
+         x = "Carat",
+         y = "Price")
 ```
 
 ### Exercise 1
@@ -1139,17 +1119,16 @@ Because we have not yet added any code chunk options, the code is echoed and the
 Create another code chunk. Add this code to it:
 
 ````
-mtcars |> 
-  select(mpg, wt) |> 
-  ggplot(aes(wt, mpg)) +
-  geom_point() +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
-  theme_clean() +
-  labs(title = "Fuel Efficiency and Weight",
-       subtitle = "Heavier cars are less fuel efficient", 
-       x = "Weight (1000s of lbs)", 
-       y = "MPG", 
-       caption = "Henderson and Vellerman (1981)")
+diamonds |> 
+  filter(z != 0) |> 
+  filter(color == "D") |> 
+  ggplot(aes(x = carat, y = price, color = cut)) + 
+    geom_point() +
+    scale_y_continuous(labels = scales::dollar) +
+    labs(title = "Prices and Sizes for Diamonds of Color D",
+         subtitle = "'Round' carat values like 1, 1.5 and 2 are more common.",
+         x = "Carat",
+         y = "Price")
 ````
 
 Save the file. From the Terminal, run `tail index.qmd`. CP/CR.
@@ -1201,7 +1180,7 @@ In the second code chunk, add the following options:
 
 ````
 # | echo: false
-# | label: car-plot
+# | label: diamonds-plot
 ````
 
 Save the changes to `index.qmd`. In the Terminal, run `tail index.qmd `. CP/CR.
@@ -1217,7 +1196,7 @@ question_text(NULL,
 
 ### 
 
-Assigning labels to code chunks helps keeps you organized and helps others understand your code. You cannot assign the same label to multiple code chunks. We often use dashes in labels, as in `car-plot` since doing so makes for easier reading.
+Assigning labels to code chunks helps keeps you organized and helps others understand your code. You cannot assign the same label to multiple code chunks. We often use dashes in labels, as in `diamonds-plot` since doing so makes for easier reading.
 
 ### Exercise 6
 
@@ -1744,15 +1723,16 @@ Go the Git tab, then commit and push your new changes to Github. Include a descr
 After pushing, type `quarto publish` in the Terminal and enter "Yes".
 
 
-
-## Using an `.rds` file
+## Using an RDS file
 ### 
 
-An `.rds` file allows us to save any R object in a file. When we load in an .rds, we avoid having to run the code required to make the object and simply have access to the output. This is very convenient for functions that take a long time to run, such as API requests. It can also be convenient for plots.
+An RDS file allows us to save any R object in a file. When we read from an RDS, we avoid having to run the code required to make the object. Instead, we simply have access to it. This is very convenient for any code which take a long time to run, such as intensive data manipulation.
+
+Restart your R session with `Command/Ctrl + Shift + 0`.
 
 ### Exercise 1
 
-Go to `File -> New File -> R Script`. Press save in the left of the top panel. Name the file `make_car_plot.R`. The `.R` suffix will be added automatically.
+Go to `File -> New File -> R Script`. Press save in the left of the top panel. Name the file `process_data.R`. The `.R` suffix will be added automatically.
 
 In the Terminal, run `ls`. CP/CR.
 
@@ -1765,15 +1745,15 @@ question_text(NULL,
     rows = 3)
 ```
 
-Make sure that `make_car_plot.R` is one of these files. We often use scripts to to record the exact steps we used in analyzing some data or in creating a graphic. We want our work to be reproducible. We will often need to perform the same work again, albeit with some changes. A script can make that much simpler.
+Make sure that `process_data.R` is one of these files. We often use scripts to to record the exact steps we used in analyzing some data or in creating a graphic. We want our work to be reproducible. We will often need to perform the same work again, albeit with some changes. A script can make that much simpler.
 
 ### Exercise 2
 
 Though an R script will use the libraries you already have loaded if executed interactively in the Console, it is good practice to include these at the top of the script. Any script you create should run correctly, even if you have just re-started R.
 
-In the R script, load the **tidyverse** and **ggthemes** packages using the `library()` command. 
+In the R script, load the **tidyverse** package using the `library()` command. 
 
-In the Terminal, run `grep library make_car_plot.R`. CP/CR.
+In the Terminal, run `cat process_data.R`. CP/CR.
 
 ```{r using-an-rds-file-ex-2}
 question_text(NULL,
@@ -1784,13 +1764,19 @@ question_text(NULL,
     rows = 3)
 ```
 
-Because this is a script, you don't need to create a code chunk. Scripts are most useful for work which simply creates an object, often a graphic or new data set. 
+Because this is a script, you don't need to create a code chunk. Scripts are most useful for work which simply creates an object, often a new data set or a graphic. 
 
 ### Exercise 3
 
-Copy the code in the `car_plot` code chunk from `index.qmd.` Paste it into `make_car_plot.R`. Assign it to an object named `car_plot`. Save the R script.
+Skip a line after `library(tidverse)`. Again, this is a script, so there are no code chunks, but skipping a line in between substantively different parts of the code is a good idea. Add this code:
 
-In the Terminal, run `cat make_car_plot.R`. CP/CR.
+````
+diamonds |> 
+  filter(z != 0) |> 
+  filter(color == "D") 
+````
+
+In the Terminal, run `cat process_data.R`. CP/CR.
 
 ```{r using-an-rds-file-ex-3}
 question_text(NULL,
@@ -1807,28 +1793,17 @@ The answer should look like this:
 
 ````
 library(tidyverse)
-library(ggthemes)
 
-car_plot <- mtcars |> 
-  select(mpg, wt) |> 
-  ggplot(aes(wt, mpg)) +
-  geom_point() +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
-  theme_clean() +
-  labs(title = "Fuel Efficiency and Weight",
-       subtitle = "Heavier cars are less fuel efficient", 
-       x = "Weight (1000s of lbs)", 
-       y = "MPG", 
-       caption = "Henderson and Vellerman (1981)")
+diamonds |> 
+  filter(z != 0) |> 
+  filter(color == "D") 
 ````
 
-To run the code in the R script interactively, place your cursor at the end of the line (or pipe) you want to run and press `Command/Ctrl + Enter`. 
+You should try to learn how to work in two ways. First is interactively, trying things at the Console. Seeing what happens. Going line-by-line. Second is writtenly, adding code to your script/qmd and then executing all the code at once. Of course, the best approach is to use these two methods at the same time. 
 
 ### Exercise 4
 
-"Ssource" the entire script by pressing the "Source" button. This takes all the code from the script and feeds it, line-by-line, to the R Console.
-
-From the Console, run `ls()`. CP/CR.
+Place your cursor in the at the `filter(z != 0) |>`. Hit `Command/Ctrl + Enter`. (Note that this should generate an error.) CP/CR.
 
 ```{r using-an-rds-file-ex-4}
 question_text(NULL,
@@ -1841,23 +1816,141 @@ question_text(NULL,
 
 ### 
 
-Your answer should look like:
+The cause of the error is the distinction between the two worlds: the world of the Console and the world of the Script. The Script includes `library(tidyverse)`. So, when you source `process_data.R` in the next question, everything works fine. The Console, however, knows nothing about the `diamonds` tibble or about commands `select()` or `filter()`. Recall that we recently restarted R. So, the **tidyverse** library, which contains `diamonds` and those commands, has not been loaded.
 
-````
-> ls()
-[1] "car_plot"
-> 
-````
-
-The script has created a new object, `car_plot`, in your R environment. You can also see `car_plot` if you select the Environment tab within the Environment pane.
 
 ### Exercise 5
 
-Restart your R session. You can never restart your R session too often. The best way to do this is with the short-cut command: `Command/Ctrl + Shift + 0`. (This is the number zero, not the letter "O.")
+"Source" the entire script by pressing the "Source" button. This takes all the code from the script and feeds it, line-by-line, to the R Console. CP/CR.
+
+```{r using-an-rds-file-ex-5}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 10)
+```
+
+### 
+
+Your answer should look like this:
+
+````
+> library(tidyverse)
+── Attaching core tidyverse packages ───────────────────────────────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.4.4     ✔ tibble    3.2.1
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.2     
+── Conflicts ─────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package to force all conflicts to become errors
+
+> diamonds |> 
++   filter(z != 0) |> 
++   filter(color == "D") 
+# A tibble: 6,774 × 10
+   carat cut       color clarity depth table price     x     y     z
+   <dbl> <ord>     <ord> <ord>   <dbl> <dbl> <int> <dbl> <dbl> <dbl>
+ 1  0.23 Very Good D     VS2      60.5    61   357  3.96  3.97  2.4 
+ 2  0.23 Very Good D     VS1      61.9    58   402  3.92  3.96  2.44
+ 3  0.26 Very Good D     VS2      60.8    59   403  4.13  4.16  2.52
+ 4  0.26 Good      D     VS2      65.2    56   403  3.99  4.02  2.61
+ 5  0.26 Good      D     VS1      58.4    63   403  4.19  4.24  2.46
+ 6  0.22 Premium   D     VS2      59.3    62   404  3.91  3.88  2.31
+ 7  0.3  Premium   D     SI1      62.6    59   552  4.23  4.27  2.66
+ 8  0.3  Ideal     D     SI1      62.5    57   552  4.29  4.32  2.69
+ 9  0.3  Ideal     D     SI1      62.1    56   552  4.3   4.33  2.68
+10  0.24 Very Good D     VVS1     61.5    60   553  3.97  4     2.45
+# ℹ 6,764 more rows
+# ℹ Use `print(n = ...)` to see more rows
+> 
+````
+
+The output of the pipe is our new tibble with 6,764 rows.
+
+
+### Exercise 6
+
+Change the code so that the pipe, instead of just vomitting out its result for printing, assigns that result to a new object, named `D_diamonds`. You script should look like:
+
+````
+library(tidyverse)
+
+D_diamonds <- diamonds |> 
+  filter(z != 0) |> 
+  filter(color == "D") 
+````
+
+Source the new script. CP/CR.
+
+```{r using-an-rds-file-ex-6}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like this:
+
+````
+> library(tidyverse)
+
+> D_diamonds <- diamonds |> 
++   filter(z != 0) |> 
++   filter(color == "D") 
+>
+````
+
+Notice how different this looks from the previous output. 
+
+First, none of the messages associated with the **tidyverse** package are displayed. R only shows these messages the first time you load the package in a session. 
+
+Second, the rows of the tibble are not shown because the pipe no longer just vomits them out at the end. Instead, the results of the pipe are assigned to a new object: `D_diamonds`. Assignment does not result in printed output. 
+
+
+### Exercise 7
 
 From the Console, run `ls()`. CP/CR.
 
-```{r using-an-rds-file-ex-5}
+```{r using-an-rds-file-ex-7}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like this:
+
+````
+> ls()
+[1] "D_diamonds"
+> 
+````
+
+### 
+
+We have created a new object in the environment called `D_diamonds`. You can also see this object if you click on the Environment tab within the Environment pane. The name `D_diamonds` is meant to remind us that all the diamonds in this tibble are of color D.
+
+
+### Exercise 8
+
+Restart your R session again. You can never restart your R session too often! The best way to do this is with the shortcut command: `Command/Ctrl + Shift + 0`. (This is the number zero, not the letter "O.")
+
+From the Console, run `ls()`. CP/CR.
+
+```{r using-an-rds-file-ex-8}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -1876,89 +1969,11 @@ character(0)
 > 
 ````
 
-`car_plot` has disappeared! Objects in the R enviroment vanish once R restarts. An that is OK! We have the script, `make_car_plot.R`, which allows us to recreate the object whenever we want.
-
-### Exercise 6
-
-Source `make_car_plot.R`. From the Console, run `ls()`. CP/CR.
-
-
-```{r using-an-rds-file-ex-6}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-### 
-
-`car_plot` is back. If you type `car_plot` at the Console and hit Enter, the plot will appear in the Plots tab within the Files pane.
-
-### Exercise 7
-
-It is often useful to save a permanent copy of an R object like a plot or a tibble. [`write_rds()`](https://readr.tidyverse.org/reference/read_rds.html) from the **readr** package is the most common approach.
-
-From the Console, run `write_rds(car_plot, file = "mpg_v_weight_graphic.rds")`. This function does not produce any output. The first argument is the R object(s) which you want to save. The second argument is the name of the file which will hold that object.
-
-From the Console, run `list.files(patter = "mpg")`. CP/CR.
-
-```{r using-an-rds-file-ex-7}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-### 
-
-Your answer should look like:
-
-````
-> list.files(pattern = "mpg")
-[1] "mpg_v_weight_graphic.rds"
-````
-
-The `pattern` argument to `list.files()` allows us to only look for files which match a regular expression.
-
-There are now three objects associated with our plot. The first is the script which we used to create it. The second is the R object, `car_plot`, which only exists in the R session in which it was created. The third is the `rds` object which contains the plot and which continues to exist even after the R session ends. Indeed, the `rds` object can be committed and pushed to Github.
-
-### Exercise 8
-
-Restart your R session with `Command/Ctrl + Shift + 0`. When R restarts, you should still be in the `first-website` project. At the Console, run `library(tidyverse)`. We need to reload the **tidyverse** every time we restart R.
-
-At the Console, run `read_rds("mpg_v_weight_graphic.rds")`. CP/CR.
-
-
-```{r using-an-rds-file-ex-8}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-### 
-
-Your answer should look like:
-
-````
-> read_rds("mpg_v_weight_graphic.rds")
-> 
-````
-
-The value returned by `read_rds()` is whatever is contained in the `rds` object. In this case, that is a plot. But, when the object at the Console is a plot, the plot is shown in the Plot tab, as it should be in this case.
-
+`D_diamonds` has disappeared! Objects in the R environment vanish once R restarts. And that is OK! We have the script, `process_data.R`, which allows us to recreate the object whenever we want.
 
 ### Exercise 9
 
-Open the `index.qmd` file. In the second code chunk, delete all the plotting code and replace it with `read_rds("mpg_v_weight_graphic.rds")`. Save the file.
-
-In the Terminal, run `tail index.qmd`. CP/CR.
+Source `process_data.R`. From the Console, run `ls()`. CP/CR.
 
 ```{r using-an-rds-file-ex-9}
 question_text(NULL,
@@ -1971,14 +1986,384 @@ question_text(NULL,
 
 ### 
 
-There was nothing wrong, *per se* with having the plotting code in `index.qmd` rather than `make_car_plot.R`. The problem arises when that plotting code takes a long time to run, as it often will. We don't want to re-run all the code each time we make a small change to the website. It is much better to separate out the plotting code and only run it when we need to.
+`D_diamonds` is back. If you type `D_diamonds` at the Console and hit `Enter`, the contents of the tibble will appear.
 
 ### Exercise 10
+
+It is often useful to save a permanent copy of an R object like a plot or a tibble. [`write_rds()`](https://readr.tidyverse.org/reference/read_rds.html) from the **readr** package is the most common approach.
+
+From the Console, run `write_rds(D_diamonds, file = "clean_data.rds")`. This function does not produce any output. The first argument is the R object(s) which you want to save. The second argument is the name of the file which will hold that object.
+
+From the Console, run `list.files(patter = "clean")`. CP/CR.
+
+```{r using-an-rds-file-ex-10}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+> list.files(patter = "clean")
+[1] "clean_data.rds"
+> 
+````
+
+The `pattern` argument to `list.files()` allows us to only look for files which match a regular expression.
+
+There are now three objects associated with our tibble. The first is the script, `process_data.R`, which we used to create it. The second is the R object, `D_diamonds`, which only exists in the R session in which it was created. The third is the RDS object, `clean_data.rds`, which contains the data and which continues to exist even after the R session ends. Indeed, the RDS object can be committed and pushed to Github.
+
+
+### Exercise 11
+
+Restart your R session with `Command/Ctrl + Shift + 0`. When R restarts, you should still be in the `first-website` project. At the Console, run `library(tidyverse)`. We need to reload the **tidyverse** every time we restart R.
+
+At the Console, run `read_rds("clean_data.rds")`. CP/CR.
+
+
+```{r using-an-rds-file-ex-11}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+> read_rds("clean_data.rds")
+# A tibble: 6,774 × 10
+   carat cut       color clarity depth table price     x     y     z
+   <dbl> <ord>     <ord> <ord>   <dbl> <dbl> <int> <dbl> <dbl> <dbl>
+ 1  0.23 Very Good D     VS2      60.5    61   357  3.96  3.97  2.4 
+ 2  0.23 Very Good D     VS1      61.9    58   402  3.92  3.96  2.44
+ 3  0.26 Very Good D     VS2      60.8    59   403  4.13  4.16  2.52
+ 4  0.26 Good      D     VS2      65.2    56   403  3.99  4.02  2.61
+ 5  0.26 Good      D     VS1      58.4    63   403  4.19  4.24  2.46
+ 6  0.22 Premium   D     VS2      59.3    62   404  3.91  3.88  2.31
+ 7  0.3  Premium   D     SI1      62.6    59   552  4.23  4.27  2.66
+ 8  0.3  Ideal     D     SI1      62.5    57   552  4.29  4.32  2.69
+ 9  0.3  Ideal     D     SI1      62.1    56   552  4.3   4.33  2.68
+10  0.24 Very Good D     VVS1     61.5    60   553  3.97  4     2.45
+# ℹ 6,764 more rows
+# ℹ Use `print(n = ...)` to see more rows
+> 
+````
+
+The value returned by `read_rds()` is whatever is contained in the RDS object. In this case, that is a tibble. But, when the object at the Console is a tibble, the contents of the tibble are just printed out, as here.
+
+
+
+
+### Exercise 12
+
+Open the `process_data`.R` script. At the bottom, as this line:
+
+````
+write_rds(D_diamonds, file = "clean_data.rds")
+````
+
+It is separate from, and unconnected to, the pipe which creates the `D_diamonds` tibble. 
+
+From the Terminal, run `tail process_data.R`. CP/CR.
+
+```{r using-an-rds-file-ex-12}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 6)
+```
+
+### 
+
+Your answer should look like this:
+
+````
+Davids-MBP:first-website dkane$ tail process_data.R
+library(tidyverse)
+
+D_diamonds <- diamonds |> 
+  filter(z != 0) |> 
+  filter(color == "D") 
+
+write_rds(D_diamonds, file = "clean_data.rds")
+Davids-MBP:first-website dkane$ 
+````
+
+This is a common approach to scripts which are parts of larger projects. They finish by creating an object which is then used by other files in the project.
+
+### Exercise 13
+
+Source `process_data.R`. The easiest way of doing so, as before, is to open the file in the Code pane and then click the "Source" button.
+
+In the Terminal, run `ls clean*`. CP/CR.
+
+```{r using-an-rds-file-ex-13}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+Davids-MBP:first-website dkane$ ls clean*
+clean_data.rds
+Davids-MBP:first-website dkane$ 
+````
+
+`clean*` is a regular expression which matches any file which begins with the letters `clean`. 
+
+
+## Using a png file
+### 
+
+A png file allows us to save any R graphic in a file. When we use a png, we avoid having to re-run the code which created it. This is very convenient for graphics which take a long time to create.
+
+### Exercise 1
+
+Go to `File -> New File -> R Script`. Press save in the left of the top panel. Name the file `make_plot.R`. The `.R` suffix will be added automatically.
+
+In the Terminal, run `ls`. CP/CR.
+
+```{r using-a-png-file-ex-1}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+Make sure that `make_plot.R` is one of these files. We often use scripts to to record the exact steps we used in creating a graphic. We want our work to be reproducible. We will often need to perform the same work again, albeit with some changes. A script can make that much simpler.
+
+### Exercise 2
+
+Though an R script will use the libraries you already have loaded if executed interactively in the Console, it is good practice to include these at the top of the script. Any script you create should run correctly, even if you have just re-started R.
+
+In the R script, load the **tidyverse** package using the `library()` command. 
+
+In the Terminal, run `grep library make_plot.R`. CP/CR.
+
+```{r using-a-png-file-ex-2}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+Naming conventions are important. It is fine to have dashes in a code chunk label. However, any object which might be used from the Terminal, like the name of a script, should avoid dashes because the Terminal interprets a dash as a special character, not as part of the file name. 
+
+### Exercise 3
+
+Copy this code into `make_plot.R`, below `library(tidyverse)`.  Save the R script.
+
+````
+x <- read_rds("clean_data.rds")
+
+x |> 
+  ggplot(aes(x = carat, y = price, color = cut)) + 
+    geom_point() +
+    scale_y_continuous(labels = scales::dollar) +
+    labs(title = "Prices and Sizes for Diamonds of Color D",
+         subtitle = "'Round' carat values like 1, 1.5 and 2 are more common.",
+         x = "Carat",
+         y = "Price")
+````
+
+
+In the Terminal, run `cat make_plot.R`. CP/CR.
+
+```{r using-a-png-file-ex-3}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+### 
+
+The answer should look like this:
+
+````
+Davids-MBP:first-website dkane$ cat make_plot.R 
+library(tidyverse)
+
+x <- read_rds("clean_data.rds")
+
+x |> 
+  ggplot(aes(x = carat, y = price, color = cut)) + 
+    geom_point() +
+    scale_y_continuous(labels = scales::dollar) +
+    labs(title = "Prices and Sizes for Diamonds of Color D",
+         subtitle = "'Round' carat values like 1, 1.5 and 2 are more common.",
+         x = "Carat",
+         y = "Price")
+Davids-MBP:first-website dkane$ 
+````
+
+The code does two things. 
+
+First, it reads the tibble from `clean_data.rds` and assigns that tibble to `x`. (The fact that, in our `process_data.R` script, this data was named `D_diamonds` is irrelevant. `write_rds()` just saves the tibble, not the *name* of the tibble.)
+
+Second, it starts a new pipe with `x` and then creates our plot. Because the plot is not assigned to an object, it is just spat back out, and then shows up in the Plots tab.
+
+### Exercise 4
+
+"Source" the entire script by pressing the "Source" button. This takes all the code from the script and feeds it, line-by-line, to the R Console. CP/CR.
+
+```{r using-a-png-file-ex-4}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+> source("~/Desktop/projects/first-website/make_plot.R", echo=TRUE)
+
+> library(tidyverse)
+
+> x <- read_rds("clean_data.rds")
+
+> x |> 
++   ggplot(aes(x = carat, y = price, color = cut)) + 
++     geom_point() +
++     scale_y_continuous(labels = scales::dollar) +
++     labs(titl .... [TRUNCATED] 
+> 
+````
+
+At this point, we face the same problem as we faced when working on `process_data.R`. The script creates the object, in this case a graphic, which we want. But we need a way to save a permanent copy of that object.
+
+### Exercise 5
+
+Edit `make_plot.R` in two ways. First, assign the plot to an object named `D_plot`. Second, insert, after the graphic pipe, `ggsave("size_v_weight.png", D_plot)`. 
+
+From the Terminal, run `cat make_plot.R`. CP/CR. 
+
+```{r using-a-png-file-ex-5}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+Davids-MBP:first-website dkane$ cat make_plot.R 
+library(tidyverse)
+
+x <- read_rds("clean_data.rds")
+
+D_plot <- x |> 
+  ggplot(aes(x = carat, y = price, color = cut)) + 
+    geom_point() +
+    scale_y_continuous(labels = scales::dollar) +
+    labs(title = "Prices and Sizes for Diamonds of Color D",
+         subtitle = "'Round' carat values like 1, 1.5 and 2 are more common.",
+         x = "Carat",
+         y = "Price")
+
+ggsave("size_v_weight.png", D_plot)
+Davids-MBP:first-website dkane$ 
+````
+
+As with `clean_data.R`, we have created a script which encapsulates, from start-to-finish, a discrete step in our analysis. In this case, we start from the tibble saved in `clean_data.rds` and finish by saving a graphic in `size_v_weight.png`.
+
+### Exercise 6
+
+Source `make_plot.R`. From the Console, run `list.files()`. CP/CR.
+
+```{r using-a-png-file-ex-6}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like this:
+
+````
+> list.files()
+ [1] "_publish.yml"        "_quarto.yml"         "_site"               "about.qmd"          
+ [5] "clean_data.rds"      "first-website.Rproj" "index.qmd"           "make_plot.R"        
+ [9] "process_data.R"      "README.md"           "size_v_weight.png"   "sources-1.qmd"      
+[13] "sources-2.qmd"       "sources.qmd"         "styles.css"         
+> 
+````
+
+That is a lot of files! Note the new script `make_plot.R`, the object with which it starts, `clean_data.rds`, and the object which it creates, `size_v_weight.png`. 
+
+
+
+### Exercise 7
+
+Open the `index.qmd` file. In the `setup` code chunk, add `library(knitr)`. In the second code chunk, delete all the plotting code. Replace it all with `knitr::include_graphics("size_v_weight.png")`. Save the file.
+
+In the Terminal, run `tail -5 index.qmd`. CP/CR.
+
+```{r using-a-png-file-ex-7}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like this:
+
+
+
+There was nothing wrong, *per se* with having the plotting code in `index.qmd` rather than `make_plot.R`. The problem arises when that plotting code takes a long time to run, as it often will. We don't want to re-run all the code each time we make a small change to the website. It is much better to separate out the plotting code and only run it when we need to.
+
+### Exercise 8
 
 From the Terminal, run `quarto publish`. You will need to hit `return/enter` at least once. CP/CR.
 
 
-```{r using-an-rds-file-ex-10}
+```{r using-a-png-file-ex-8}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -2016,227 +2401,9 @@ Davids-MBP:first-website dkane$
 
 You only need `quarto publish`, instead of `quatro publish quarto-pub` because the `_publish.yml` records that this project is published on Quarto Pub. You are simply refreshing the current project, rather than creating another.
 
-### Exercise 11
+Note the workflow. At the start, we created a pipe in `index.qmd` which does everything and then, later, we moved the code into separate scripts so that we don't need to run all the analysis each time we rebuild the website. This is a very common approach. First, get something working. Second, organize and clean it all up. 
 
-In the Files tab, within the File pane, delete `mpg_v_weight_graphic.rds`. You could also delete this file from the Console with `rm("mpg_v_weight_graphic.rds")` or from the Terminal with `rm mpg_v_weight_graphic.rds`.
-
-From the Terminal, run `ls mpg_v_weight_graphic.rds`. CP/CR.
-
-```{r using-an-rds-file-ex-11}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-### 
-
-Your answer should look like this:
-
-````
-Davids-MBP:first-website dkane$ ls mpg_v_weight_graphic.rds
-ls: mpg_v_weight_graphic.rds: No such file or directory
-Davids-MBP:first-website dkane$ 
-````
-
-There is no such file because we have deleted it. 
-
-### Exercise 12
-
-From the Terminal, type `quarto publish`. CP/CR. (As you might expect, this command will fail.)
-
-```{r using-an-rds-file-ex-12}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-### 
-
-Your answer should look like this:
-
-````
-Davids-MBP:first-website dkane$ quarto publish
-? Publish update to: › https://davidkane.quarto.pub/a-new-website (Quarto Pub - dave.kane@gmail.com)
-Rendering for publish:
-
-[1/3] index.qmd
-
-processing file: index.qmd
-  |...............................................            |  80% [car-plot]
-
-Quitting from lines 15-19 [car-plot] (index.qmd)
-Error in `readRDS()`:
-! cannot open the connection
-Backtrace:
- 1. readr::read_rds("mpg_v_weight_graphic.rds")
- 2. base::readRDS(con, refhook = refhook)
-                                                                             
-Execution halted
-Davids-MBP:first-website dkane$ 
-````
-
-The error message is a little tough to parse. When problems like this occur, the best approach is to try to find the problematic qmd file and then render it alone.
-
-### Exercise 13
-
-Open `index.qmd` and render it by using the short-cut key: `Command/Ctrl + Shift + K`. This will also fail. You should be able to see the failure message in the Background Jobs tab within the Console pane. Copy/paste the end of that failure message.
-
-```{r using-an-rds-file-ex-13}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-### 
-
-The error message is the same as the one we saw with `quarto publish`. But now we know that the probem is in the `index.qmd` file specifically. 
-
-### Exercise 14
-
-Open the `make_car_plot.R` script. At the bottom, as this line:
-
-````
-write_rds(car_plot, file = "mpg_v_weight_graphic.rds")
-````
-
-It is separate from, and unconnected to, the pipe which creates the `car_plot` object. 
-
-From the Terminal, run `tail make_car_plot.R`. CP/CR.
-
-```{r using-an-rds-file-ex-14}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-### 
-
-Your answer should look like this:
-
-````
-Davids-MBP:first-website dkane$ tail make_car_plot.R 
-  geom_point() +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
-  theme_clean() +
-  labs(title = "Fuel Efficiency and Weight",
-       subtitle = "Heavier cars are less fuel efficient", 
-       x = "Weight (1000s of lbs)", 
-       y = "MPG", 
-       caption = "Henderson and Vellerman (1981)")
-
-write_rds(car_plot, file = "mpg_v_weight_graphic.rds")
-Davids-MBP:first-website dkane$ 
-````
-
-This is a common approach to scripts which are parts of larger projects. They finish by creating an object which is then used by other files in the project.
-
-### Exercise 15
-
-Source `make_car_plot.R`. The easiest way of doing so, as before, is to open the file in the Code pane and then click the "Source" button.
-
-In the Terminal, run `ls mpg*`. CP/CR.
-
-```{r using-an-rds-file-ex-15}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-### 
-
-Your answer should look like:
-
-````
-Davids-MBP:first-website dkane$ ls mpg*
-mpg_v_weight_graphic.rds
-Davids-MBP:first-website dkane$ 
-````
-
-`mpg*` is a regular expression which matches any file which begins with the letters `mpg`. Keep in mind that we had to run this 
-
-### Exercise 16
-
-Instead of creating an rds object, we could have saved an image and then loaded the image back into the `index.qmd` file. Open the `make_car_plot.R` file, remove the line `write_rds(car_plot, file = "mpg_v_weight_graphic.rds")` and replace it with:
-
-````
-ggsave(filename = "mpg_v_weight_graphic.png", car_plot)
-````
-
-Save the file and source it. From the Terminal, run `ls mpg*`. CP/CR.
-
-
-```{r using-an-rds-file-ex-16}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-### 
-
-Your answer should look like:
-
-````
-Davids-MBP:first-website dkane$ ls mpg*
-mpg_v_weight_graphic.png        mpg_v_weight_graphic.rds
-Davids-MBP:first-website dkane$ 
-````
-
-The new file, `mpg_v_weight_graphic.png`, is an image. If you click on it in the Files tab, the plot should open.
-
-The R script that makes the `png` file is not necessary for the building of your website. However, it is useful to include it in the directory that is uploaded to Git so that people can see the code that creates the graphic.
-
-### Exercise 17
-
-Open `index.qmd`. Add `library(knitr)` to the `setup` code chunk. Remove `read_rds("mpg_v_weight_graphic.rds")` from the second code chunk. Replace it with 
-
-````
-knitr::include_graphics("mpg_v_weight_graphic.png")
-````
-
-Save the file. From the Terminal, run `quarto publish`. From `index.qmd`, copy/paste the second code chunk here.
-
-```{r using-an-rds-file-ex-17}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 7)
-```
-
-### 
-
-Your answer should look like:
-
-````
-# | echo: false
-# | label: car-plot
-knitr::include_graphics("mpg_v_weight_graphic.png")
-````
-
-Any images you want to include on your website must be located in your project directory. While referring to images elsewhere on your computer may work when you render and build on your computer, it will not work on other people's devices or, more importantly, when you publish your site to Quarto Pub.
-
-
-
-<!-- Really ought to expand this. First, make a process_data.R script which starts with raw data and then saves an rds file with clean data. Second, create a make_plot.R script which starts with rds file and then makes png. Create directories for data and for images. -->
+<!-- DK: Once students look at this plot on the web, they will notice that the labels are too small. Show how to use theme() to make the labs elements bigger for the web. -->
 
 
 ## Summary
