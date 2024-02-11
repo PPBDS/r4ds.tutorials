@@ -28,6 +28,16 @@ library(tidyverse)
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- Note how newly created Quarto documents do not have a `format: html` YAML line in the header. I think that this is an RStudio feature. It knows that this directory is a website project and that, therefore, it is unnecessary (?) to even mention the format. Note how the default text in new Quarto documents is different as well. -->
+
+<!-- Should we add /_site/ to .gitignore? https://quarto.org/docs/publishing/github-pages.html -->
+
+<!-- It’s important to note that you don’t need to check your _site or _book directory into version control (if you have done this in the past you know it makes for very messy diffs!). Before proceeding you should add the output directory of your project to .gitignore. For example: -->
+
+<!-- .gitignore -->
+<!-- /.quarto/ -->
+<!-- /_site/ -->
+
 <!-- Perhaps add something about making the graphic easier to view on the web to the end of the tutorial? I keep thinking that there must be a theme which already does this, but maybe this is enough: p + theme_minimal(base_size = 18). Nice theme article: https://rfortherestofus.com/2019/08/themes-to-improve-your-ggplot-figures. 
 
 Also relevant: https://minimaxir.com/2017/08/ggplot2-web/, with specific web commentary. Maybe just `theme_minimal(base_size=9)` and `ggsave("tutorial-0.png", p, width=4, height=3)`?
@@ -56,7 +66,7 @@ Could also add this discussion and links to an earlier tutorial, perhaps when we
 ## Introduction
 ### 
 
-This tutorial covers material from [Chapter 28 Quarto](https://r4ds.hadley.nz/quarto.html) and [Chapter 29 Quarto formats](https://r4ds.hadley.nz/quarto-formats.html) in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. Yet we will go into much more detail, especially with regard to the creation and organization of [Quarto websites](https://quarto.org/docs/websites/). We will learn about Quarto commands like `quarto create`, `quarto render`, `quarto preview` and `quarto publish`, all of which are run from the Terminal.
+This tutorial covers material from [Chapter 28 Quarto](https://r4ds.hadley.nz/quarto.html) and [Chapter 29 Quarto formats](https://r4ds.hadley.nz/quarto-formats.html) in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund, although much of the information from Chapter 28 has already appeared in the "RStudio and Github" tutorial in this package. We will go into much more detail with regard to the creation and organization of [Quarto websites](https://quarto.org/docs/websites/). We will learn about Quarto commands like `quarto create`, `quarto render`, `quarto preview` and `quarto publish`, all of which are run from the Terminal.
 
 ## Set up Quarto
 ### 
@@ -238,7 +248,7 @@ question_text(NULL,
 
 ### 
 
-A website is a more complex object than a single Quarto document. It has two main components. First is a "settings" file, `_quarto.yml`, which provides instructions for how the website should be constructed. Second are a collection of Quarto documents, like `index.qmd` and `about.qmd`, which will be rendered into the html files which viewers will see.
+A website is a more complex object than a single Quarto document. It has two main components. First is a "settings" file, `_quarto.yml`, which provides instructions for how the website should be constructed. Second are a collection of Quarto documents, like `index.qmd` and `about.qmd`, which will be rendered into the HTML files which viewers will see.
 
 
 ### Exercise 6
@@ -299,7 +309,7 @@ Indents and other whitespace matter in the interpretation of a YAML file.
 
 ### Exercise 8
 
-In the Code pane, open the `_quarto.yml` file. Replace `title: "."` with `title: "A New Website"`. Save the file. 
+In the Source pane, open the `_quarto.yml` file. Replace `title: "."` with `title: "A New Website"`. Save the file. 
 
 In the Console, run `readr::read_lines("_quarto.yml")[4:10] |> cat(sep = "\n")`. CP/CR.
 
@@ -375,7 +385,7 @@ Whenver a web browser goes to a directory on the internet, it looks for an `inde
 
 ### Exercise 11
 
-Open the `index.qmd` file in the Code pane. Replace `title: "."` with `title: "My First Website"`. Save the file.
+Open the `index.qmd` file in the Source pane. Replace `title: "."` with `title: "My First Website"`. Save the file.
 
 In the Console, run `readr::read_lines("index.qmd") |> cat(sep = "\n")`. CP/CR.
 
@@ -609,7 +619,7 @@ The website is being "hosted" on your computer. That is what the word "localhost
 
 ### Exercise 7
 
-The advantage of using preview is that the website is automatically updated whenever you edit and save the underlying qmd file. Try it by changing the `about.qmd` file, replacing "About this site" with your name. Save the file. 
+The advantage of using preview is that the website is automatically updated whenever you edit and save the underlying QMD file. Try it by changing the `about.qmd` file, replacing "About this site" with your name. Save the file. 
 
 At the Terminal, you should see a new message. Copy and paste it here.
 
@@ -859,7 +869,7 @@ The `.quarto` directory is like the `.git` and `.Rproj.user` directories. We wil
 
 ### Exercise 7
 
-Open the `_quarto.yml` file in the Code pane. Change `title: "A New Website"` to `title: "A New Website, second edition"`. 
+Open the `_quarto.yml` file in the Source pane. Change `title: "A New Website"` to `title: "A New Website, second edition"`. 
 
 In the Console, run `readr::read_lines("_quarto.yml")[4:5] |> cat(sep = "\n")`. CP/CR.
 
@@ -1036,7 +1046,7 @@ As you build the website, we will ask you to share the updated files, using Term
 
 ### Exercise 2
 
-Create a new code chunk in `index.qmd` and load the **tidyverse** package. Render the document by pressing the Render button at the top of the Code pane. If your website is still being previewed, this will update the displayed homepage automatically.
+Create a new code chunk in `index.qmd` and load the **tidyverse** package. Render the document by pressing the Render button at the top of the Source pane. If your website is still being previewed, this will update the displayed homepage automatically.
 
 In other words, you might not have to run `quarto preview` from the Terminal. Just rendering `index.qmd` directly is often enough.
 
@@ -1214,7 +1224,7 @@ execute:
 Davids-MBP:first-website dkane$ 
 ````
 
-If you added `echo: false` as an `execute` argument in `_quarto.yml`, this would affect all the qmd files in the entire project. In other words, you can set an option like `echo` in three places: individual code chunk, entire qmd file, or entire project. Options set at higher levels can be overruled by changing the setting at a lower level.
+If you added `echo: false` as an `execute` argument in `_quarto.yml`, this would affect all the QMD files in the entire project. In other words, you can set an option like `echo` in three places: individual code chunk, entire QMD file, or entire project. Options set at higher levels can be overruled by changing the setting at a lower level.
 
 
 ### Exercise 7
@@ -1244,7 +1254,7 @@ https://davidkane.quarto.pub/a-new-website/
 
 Keep track of the three different versions of the website. 
 
-First, we have the qmd files in the project directory which are used to create the website. This is the original source, the place where changes should be made. 
+First, we have the QMD files in the project directory which are used to create the website. This is the original source, the place where changes should be made. 
 
 Second, we have the rendered version of the files which reside in the `_site` directory on our computer. We do not edit these files directly, but we do look at them when we are "previewing" the website.
 
@@ -1260,7 +1270,7 @@ Quarto allows for a combination of plain text and R code. This same feature allo
 
 ### Exercise 1
 
-Open `about.qmd `. Delete all the current text, except for the YAML header. Change the `title` from your name to just `"About"`. Add `## About Me` as the first (and only) line of text. Render the qmd. In the Terminal, run `cat about.qmd`. CP/CR.
+Open `about.qmd `. Delete all the current text, except for the YAML header. Change the `title` from your name to just `"About"`. Add `## About Me` as the first (and only) line of text. Render the QMD. In the Terminal, run `cat about.qmd`. CP/CR.
 
 ```{r adding-text-ex-1}
 question_text(NULL,
@@ -1278,7 +1288,7 @@ Hash signs in front of text makes the text into a header. The organization of he
 
 ### Exercise 2
 
-Write a one sentence description yourself. Write it below the header. Include your name and school, either the one you attend or one from which you have graduated. Write until the end of the line, i.e. do not use the Enter key to wrap text. When you are finished, render the qmd. Example:
+Write a one sentence description yourself. Write it below the header. Include your name and school, either the one you attend or one from which you have graduated. Write until the end of the line, i.e. do not use the Enter key to wrap text. When you are finished, render the QMD. Example:
 
 ````
 My name is David Kane, and I graduated from Williams College.
@@ -1308,7 +1318,7 @@ Let's bold your name. In the description you have already written, surround your
 My name is **David Kane**, and I graduated from Williams College.
 ````
 
-Save the file. Render the qmd. In the Terminal, run `cat about.qmd`. CP/CR.
+Save the file. Render the QMD. In the Terminal, run `cat about.qmd`. CP/CR.
 
 ```{r adding-text-ex-3}
 question_text(NULL,
@@ -1331,7 +1341,7 @@ Add a new header at the bottom of `about.qmd`, using two hash signs, "About the 
 In my project, "The Birth Months of Elite Footballers," I explore the distribution of the months --- like January versus June --- in which professional football/soccer players were born.
 ````
 
-Save the file. Render the qmd. In the Terminal, run `cat about.qmd`. CP/CR.
+Save the file. Render the QMD. In the Terminal, run `cat about.qmd`. CP/CR.
 
 ```{r adding-text-ex-4}
 question_text(NULL,
@@ -1373,7 +1383,7 @@ Italicize the title of your project by replacing each quotation mark with an ast
 In my project, *The Birth Months of Elite Footballer*, I explore the distribution of the months --- like January versus June --- in which professional football/soccer players were born.
 ````
 
-Save the file. Render the qmd. In the Terminal, run `grep "*" about.qmd`. CP/CR.
+Save the file. Render the QMD. In the Terminal, run `grep "*" about.qmd`. CP/CR.
 
 ```{r adding-text-ex-5}
 question_text(NULL,
@@ -1389,7 +1399,7 @@ We need to include the quotes around `*` in order to cause `grep` to treat it as
 
 ### Exercise 6
 
-Oftentimes you want to wrap text before the default margin. For example, add Preceptor's common saying: `"You can never restart R too often."` to the `about.qmd` file. Then on the next line add `-- Preceptor`. Render the qmd.
+Oftentimes you want to wrap text before the default margin. For example, add Preceptor's common saying: `"You can never restart R too often."` to the `about.qmd` file. Then on the next line add `-- Preceptor`. Render the QMD.
 
 ### 
 
@@ -1406,7 +1416,7 @@ question_text(NULL,
 
 ### 
 
-As you can see in the rendered html page, the quote and its source have ended up on the same line because Quarto assumes that anything without an explicit line break can be placed in to the same paragraph.
+As you can see in the rendered HTML page, the quote and its source have ended up on the same line because Quarto assumes that anything without an explicit line break can be placed in to the same paragraph.
 
 ### Exercise 7
 
@@ -1418,7 +1428,7 @@ To create a manual line break, separate `"You can never restart R too often."` a
 ~ Preceptor
 ````
 
-Render the qmd. In the Terminal, run `tail about.qmd`. CP/CR.
+Render the QMD. In the Terminal, run `tail about.qmd`. CP/CR.
 
 ```{r adding-text-ex-7}
 question_text(NULL,
@@ -1445,7 +1455,7 @@ It should look like:
 
 ### 
 
-Render the qmd. In the Terminal, run `tail about.qmd`. CP/CR.
+Render the QMD. In the Terminal, run `tail about.qmd`. CP/CR.
 
 
 ```{r adding-text-ex-8}
@@ -1580,13 +1590,13 @@ website:
 
 Note the two additional lines. 
 
-The `href` line tells Quarto to create an html page by rendering `sources.qmd` and to include that new page in the website. 
+The `href` line tells Quarto to create an HTML page by rendering `sources.qmd` and to include that new page in the website. 
 
 The `text` line tells Quarto to format the link in the **nav**igation tool**bar** as `Sources`. This is the same process by which the home page, created from `index.qmd`, has a link labeled `Home`.
 
 Make the formatting and spacing match the preceding items in the navbar. **YAML files can be very persnickety when it comes to formatting!** When you are done, save `_quarto.yml`.
 
-Since `- about.qmd` appears without either the `href` or `text` argument, Quarto assumes that you want to the link to be the same as the title of the qmd. 
+Since `- about.qmd` appears without either the `href` or `text` argument, Quarto assumes that you want to the link to be the same as the title of the QMD. 
 
 <!-- DK: Is this true? Explain this better. -->
 
@@ -1623,7 +1633,7 @@ question_text(NULL,
     rows = 3)
 ```
 
-You should see several html pages, including `sources.html`. Quarto websites, like many similar frameworks, place all the pages which appear on the web into a single directory, like `_site` and then move that directory onto a hosting service like Quarto Pub.
+You should see several HTML pages, including `sources.html`. Quarto websites, like many similar frameworks, place all the pages which appear on the web into a single directory, like `_site` and then move that directory onto a hosting service like Quarto Pub.
 
 <!-- DK: This comment is repetitive. -->
 
@@ -2100,7 +2110,7 @@ This is a common approach to scripts which are parts of larger projects. They fi
 
 ### Exercise 13
 
-Source `process_data.R`. The easiest way of doing so, as before, is to open the file in the Code pane and then click the "Source" button.
+Source `process_data.R`. The easiest way of doing so, as before, is to open the file in the Source pane and then click the "Source" button.
 
 In the Terminal, run `ls clean*`. CP/CR.
 
@@ -2401,7 +2411,7 @@ In a complex project, we will often create directories --- like `code`, `data`, 
 ## Summary
 ### 
 
-This tutorial covered material from [Chapter 28 Quarto](https://r4ds.hadley.nz/quarto.html) and [Chapter 29 Quarto formats](https://r4ds.hadley.nz/quarto-formats.html) in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. We went into much more detail, especially with regard to the creation and organization of [Quarto websites](https://quarto.org/docs/websites/). We learned about Quarto commands like `quarto create`, `quarto render`, `quarto preview`, and `quarto publish`, all of which are run from the Terminal.
+This tutorial covered material from [Chapter 28 Quarto](https://r4ds.hadley.nz/quarto.html) and [Chapter 29 Quarto formats](https://r4ds.hadley.nz/quarto-formats.html) in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund, although much of the information from Chapter 28 has already appeared in the "RStudio and Github" tutorial in this package. We went go into much more detail with regard to the creation and organization of [Quarto websites](https://quarto.org/docs/websites/). We learned about Quarto commands like `quarto create`, `quarto render`, `quarto preview` and `quarto publish`, all of which are run from the Terminal.
 
 Sam Csik provides an [excellent overview](https://ucsb-meds.github.io/creating-quarto-websites/) of the entire process of creating Quarto websites.
 

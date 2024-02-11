@@ -28,17 +28,25 @@ options(tutorial.exercise.timelimit = 60,
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- Restart R with shortcut key at the start of every Quarto X section. Actually, this happens naturally with the new project in each section. -->
+<!-- Each project begins with repo/project. Then does base QMD/html. Then edit .gitignore and commit/push. If we had fouth project, these 6 steps might just be the first question! Always finish by publishing something and making a final commit/push. -->
+
+<!-- First project: Make the plot slowly. Do you interactive stuff in the Console. Show how we build together. -->
+
+<!-- Second project: Start with the code from the preview project. (Include it, at least the plot, in the question.) Then explore how changes in chunk options changes the output.  -->
+
+<!-- Third project: Start with the plot. Maybe main point is to put it on Github Pages instead? Note that we will need the file to be called index.qmd. Maybe rename from the command line. Or maybe we don't need this? -->
+
+<!-- Maybe we can publish individual documents with quarto publish gh-pages/quarto-pub/posit-cloud example.qmd? Could do a different example with each of the three projects. -->
+
+<!-- quarto publish quarto-pub quarto-1.qmd works! quarto publish gh-pages quarto-1.qmd also has real possibilities -->
+
+<!-- The Quarto chapter has a bunch of individual sections. Surely, we can find a place to knowledge drop a little bit about each of them! -->
+
+<!-- Examine Git user.name weird answer. See below. -->
+
+<!-- Is there an argument for waiting a bit before creating the PAT, or showing how annoying it is to login ever time you want to make a change? Could add the PAT in Project 2. -->
 
 <!-- Discuss dot files and directories, and why they appear and don't appear? -->
-
-<!-- Things from chapter 3 and 5 that might be discussed/quoted: -->
-
-<!-- 1. snake_case; functions(),   -->
-
-<!-- 2. Finally, be wary of writing very long pipes, say longer than 10-15 lines. Try to break them up into smaller sub-tasks, giving each task an informative name. The names will help cue the reader into what’s happening and makes it easier to check that intermediate results are as expected. -->
-
-<!-- 3. As your scripts get longer, you can use sectioning comments to break up your file into manageable pieces -->
 
 <!-- Add image from https://docs.posit.co/ide/user/ide/guide/ui/ui-panes.html somewhere to highlight the names of the panes. -->
 
@@ -50,15 +58,9 @@ options(tutorial.exercise.timelimit = 60,
 
 <!-- It is annoying that we can't do all this from the Console. Specifically, I hate having to use `git --version`. Wish that usethis::git_version() were exported. Maybe library(credentials) would work? Wish there were equivalents for things like git config --global user.name. But there don't seem to be! We set values with usethis::use_git_config(), but we can't check them. Annoying!  -->
 
-<!-- Add three exercises --- like Project 1, Project 2 and Project 3 --- each of which starts with a new Github repo, connects to RStudio, edits the .gitignore, commits, create a Quarto doc, creates a plot and publishes it on RPubs. -->
-
-<!-- Use Github pages for one of the Projects? Not sure! How would we do that? Create an index.qmd, which knits to index.html, then set up Github pages with root (not docs) as the choice. -->
-
-<!-- As you are creating the Projects, pull all the material out of r4ds-materual-to-add.txt, especially everything in Chapter 29 section, but also anything else there you like. Review all the material and try to add it in a sensible way. -->
+<!-- As you are creating the Projects, pull all the material out of r4ds-material-to-add.txt, especially everything in Chapter 29 section, but also anything else there you like. Review all the material and try to add it in a sensible way. -->
 
 <!-- For Project 1, use the top material out of r4ds-materual-to-add.txt, especially everything in Chapter 29 section, as knowledge drops. -->
-
-<!-- For Project 2, have 5 questions, each of which adds a new code chunk, each with a different code chunk option. The question for the student is something like `cat analysis.qmd | tail -n 10`. Then, you knowledge drop. -->
 
 <!-- For project 3, give a more thorough tour of Github: explain more about the different pages you can end up on. Consider www.github.com, www.github.com/user-name, and www.github.com/user-name/this-project. -->
 
@@ -66,39 +68,35 @@ options(tutorial.exercise.timelimit = 60,
 
 <!-- Three times that .gitignore is editted and then committed. First, with whatever.Rproj. Second, example_files. Third, rsconnect.  -->
 
-
 <!-- Consider removing all references to the Terminal. Often, there are usethis functions which do the same. Or maybe showing them the Terminal is a good thing in this exercise. -->
-
 
 ## Introduction
 ### 
 
-This tutorial covers material which is not actually in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. But the material is in keeping with the spirit of that book. The material covered in [Chapter 4 Workflow: code style](https://r4ds.hadley.nz/workflow-style.html) appears in the *RStudio and Code* tutorial in this package.
+This tutorial mostly covers material which is not actually in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. But the material is in keeping with the spirit of that book, especially  [Chapter 28  Quarto](https://r4ds.hadley.nz/quarto.html). The material covered in [Chapter 4 Workflow: code style](https://r4ds.hadley.nz/workflow-style.html) appears in the *RStudio and Code* tutorial in this package.
 
-Professionals store their work on Github, or a similar "source control" tool. If your computer blows up, you don't want to lose your work. Github is like Google Drive --- both live in the cloud --- but for your computational work rather than your documents. 
+Professionals store their work on Github, or a similar "source control" tool. If your computer blows up, you don't want to lose your work. Github is like Google Drive --- both live in the cloud --- but for your computational work rather than your documents.
 
 This tutorial will introduce you to Github and to Git, a program for keeping track of changes in your code.
 
-The most useful reference for Git/Github/RStudio is *[Happy Git and GitHub for the useR](https://happygitwithr.com/)*. Refer to that book whenever you have a problem.
+The most useful reference for Git/Github/RStudio is [*Happy Git and GitHub for the useR*](https://happygitwithr.com/). Refer to that book whenever you have a problem.
 
 ## Terminal Overview
 ### 
 
-The RStudio [Terminal](https://docs.posit.co/ide/user/ide/guide/tools/terminal.html) is how you directly communicate with the computer using commands, whereas the RStudio [Console](https://docs.posit.co/ide/user/ide/guide/code/console.html) is how you talk to R. 
+The RStudio [Terminal](https://docs.posit.co/ide/user/ide/guide/tools/terminal.html) is how you directly communicate with the computer using commands, whereas the RStudio [Console](https://docs.posit.co/ide/user/ide/guide/code/console.html) is how you talk to R.
 
-This section will help introduce you to the Terminal so that you'll be up to speed for the commands needed for the rest of the tutorial.
-
+This section will help introduce you to the Terminal so that you'll be up to speed for the commands needed later.
 
 ### Exercise 1
 
-Start by opening up the Terminal tab in RStudio. This is next to the Console tab, within the Console pane. 
+Start by opening up the Terminal tab in RStudio. This is next to the Console tab, within the Console pane.
 
 You should see some text, which is a portion of the path to the current working directory, followed by a prompt such as a dollar sign. Copy (by highlighting, then right clicking and selecting the "copy" option) and paste the entire prompt into the box below.
 
 We abbreviate the instructions **c**opy/**p**aste the **c**ommand/**r**esponse as CP/CR throughout this tutorial.
 
-
-```{r terminal-overview-ex-1}
+```{r terminal-overview-1-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -111,19 +109,17 @@ question_text(NULL,
 
 Your answer should look something like:
 
-````
+```         
 Davids-MBP:projects dkane$ 
-````
+```
 
 The path begins with the hostname of my computer: `Davids-MBP`. After a `:`, we have the current working director, which happens to be named `projects` in this case. After a space, we have my username. The entire prompt ends with a dollar sign, which indicates that I am logged in as regular user.
 
-
 ### Exercise 2
 
-To practice, type the command `pwd` into the next line of your Terminal and hit return. CP/CR.
+Type the command `pwd` in your Terminal and hit return. CP/CR.
 
-
-```{r terminal-overview-ex-2}
+```{r terminal-overview-2-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -134,11 +130,19 @@ question_text(NULL,
 
 ### 
 
-This should return a value something like `/Users/dkane/Desktop/projects/`. Your answer will be different, not least because your username is unlikely to be `dkane`. This is the location on your computer where the R program started up when you opened RStudio.
+Your answer should look like:
+
+```         
+Davids-MacBook-Pro:projects dkane$ pwd
+/Users/dkane/Desktop/projects
+Davids-MacBook-Pro:projects dkane$ 
+```
+
+Your answer will be different, not least because your username is unlikely to be `dkane`. This is the location on your computer where the R program started up when you opened RStudio.
 
 ### 
 
-That's all you need to know about the Terminal for this tutorial. The **r4ds.tutorials** package includes another tutorial entirely dedicated to the Terminal. 
+That's all you need to know about the Terminal for this tutorial. The **r4ds.tutorials** package includes another tutorial entirely dedicated to the Terminal.
 
 Going forward, make sure to pay special attention to whether given commands are supposed to be run in the *Console* or the *Terminal*.
 
@@ -153,12 +157,11 @@ Install [Git](https://git-scm.com/) by following the instructions of the [Instal
 
 ### 
 
-After you install Git, you should quit and then restart RStudio so that it has a chance to "recognize" that Git is installed. (Note that restarting RStudio is **not** the same as restarting your R session **within** your RStudio instance. To quit RStudio you need to go to the `RStudio -> Quit RStudio` menu item.) 
+After you install Git, you should quit and then restart RStudio so that it has a chance to "recognize" that Git is installed. (Note that restarting RStudio is **not** the same as restarting your R session **within** your RStudio instance. To quit RStudio you need to go to the `RStudio -> Quit RStudio` menu item.)
 
-After restarting RStudio, click on the Terminal pane. Run `git --version` in the Terminal to make sure that Git is installed and accessible. CP/CR.
+After restarting RStudio, click on the Terminal tab. Run `git --version` in the Terminal to make sure that Git is installed and accessible. CP/CR.
 
-
-```{r setting-up-github-ex-1}
+```{r setting-up-github-1-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -168,6 +171,16 @@ question_text(NULL,
 ```
 
 ### 
+
+Your answer should look like:
+
+```         
+Davids-MacBook-Pro:r4ds.tutorials dkane$ git --version
+git version 2.39.3 (Apple Git-145)
+Davids-MacBook-Pro:r4ds.tutorials dkane$ 
+```
+
+The details will differ. Don't worry if you have a different version of Git installed.
 
 [*Pro Git*](https://git-scm.com/book/en/v2) is the best reference book for Git and Github.
 
@@ -175,16 +188,9 @@ question_text(NULL,
 
 The next step is to create a GitHub account by following the instructions at the [GitHub homepage](https://github.com/). Follow [this advice](https://happygitwithr.com/github-acct.html#username-advice) **when choosing your username.** We recommend using a permanent email address for this account, not one which you lose access to when, for example, you change schools or jobs.
 
-### 
+Copy your GitHub account URL in the field below.
 
-Copy your GitHub account URL in the field below. It should look like:
-
-````
-https://github.com/your-username
-````
-
-
-```{r setting-up-github-ex-2}
+```{r setting-up-github-2-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -194,6 +200,12 @@ question_text(NULL,
 ```
 
 ### 
+
+Your answer should look like this:
+
+```         
+https://github.com/your-username
+```
 
 [Git](https://en.wikipedia.org/wiki/Git) is "software for tracking changes in any set of files, usually used for coordinating work among programmers collaboratively developing source code during software development."
 
@@ -209,9 +221,9 @@ Run `usethis::use_git_config(user.name = "your-username", user.email = "your@ema
 
 ### 
 
-Run `git config --global user.name` in the *Terminal* to make sure your computer remembers your GitHub username. CP/CR
+Run `git config --global user.name` in the *Terminal* to make sure your computer remembers your GitHub username. CP/CR.
 
-```{r setting-up-github-ex-3}
+```{r setting-up-github-3-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -220,11 +232,29 @@ question_text(NULL,
     rows = 2)
 ```
 
+<!-- DK: Wait! Why is my user.name David Kane instead of davidkane9? -->
+
+<!-- ### -->
+
+<!-- You answer should look like this: -->
+
+<!-- ```` -->
+
+<!-- Davids-MacBook-Pro:r4ds.tutorials dkane$ git config --global user.name -->
+
+<!-- David Kane -->
+
+<!-- Davids-MacBook-Pro:r4ds.tutorials dkane$  -->
+
+<!-- ```` -->
+
+<!-- Of course, it should be your name, not mine! -->
+
 ### Exercise 4
 
 Run `git config --global user.email` in the *Terminal* to make sure your GitHub email is stored too. CP/CR.
 
-```{r setting-up-github-ex-4}
+```{r setting-up-github-4-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -235,21 +265,29 @@ question_text(NULL,
 
 ### 
 
-Now, your GitHub username and email are stored so that your computer can automate a lot of the tedious actions required to communicate with GitHub.
+Your answer should look like:
+
+```         
+Davids-MacBook-Pro:r4ds.tutorials dkane$ git config --global user.email
+dave.kane@gmail.com
+Davids-MacBook-Pro:r4ds.tutorials dkane$ 
+```
+
+Now, your GitHub username and email are stored so that your computer can automate a lot of the tedious steps required to communicate with GitHub.
 
 ### Exercise 5
 
 **Note:** Make sure you received the expected outputs of the name and email associated with your Github account in the previous two exercises.
 
-If GitHub is our Google Drive, then GitHub repositories, or "repos," are the Google folders in which we store our work. Let's make a practice repo!
+If GitHub is your Google Drive, then GitHub repositories, or "repos," are the Google folders, the location in which we store our work. Let's make a practice repo!
 
-To begin, sign into GitHub and go to the homepage: `www.github.com`. Click the green "New" button on the upper left side of the page. 
+To begin, sign into GitHub and go to the homepage: `www.github.com`. Click the green "New" button on the upper left side of the page.
 
 ```{r out.width = "700px"}
 include_graphics("images/github_new_repo.png")
 ```
 
-Name your repository `First_Repo`. Then, select the "public" option for your repo and check the box saying "Add a README file". [README](https://en.wikipedia.org/wiki/README) is a document where programmers often add or explain details of their project. When in doubt follow [these instructions](https://happygitwithr.com/push-pull-github.html#make-a-repo-on-github).
+Name your repository `First_Repo`. Then, select the "public" option for your repo and check the box saying "Add a README file". [README](https://en.wikipedia.org/wiki/README) is a document where programmers explain details of their project. When in doubt follow [these instructions](https://happygitwithr.com/push-pull-github.html#make-a-repo-on-github).
 
 After you've done that, go ahead and click "Create repository" to create your first repo!
 
@@ -259,9 +297,9 @@ include_graphics("images/repo_detail.png")
 
 ### 
 
-GitHub should have directed you to a page called the project page after creating the repo. Copy the url of the project page and paste it below. The url should look something like `github.com/your-username/First_Repo`.
+GitHub should have directed you to a page called the project page after creating the repo. Copy abd paste the url of the project page below.
 
-```{r setting-up-github-ex-5}
+```{r setting-up-github-5-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -272,7 +310,13 @@ question_text(NULL,
 
 ### 
 
-The "public" option means that anyone will be able to view the repository. Only you can edit it. You might have noticed "Add .gitignore" as another option, but we we will never check this option because RStudio will automatically create a `.gitignore` file for us.
+Your answer should look like:
+
+```         
+github.com/davidkane9/First_Repo
+```
+
+The "public" option means that anyone will be able to view the repository. But only you can edit it. You might have noticed "Add .gitignore" as another option, but we we will never check this box because RStudio will automatically create a `.gitignore` file for us when we connect the Github repo to an R project on our computer.
 
 ### Exercise 6
 
@@ -284,11 +328,9 @@ To clone the repo, click on the green button that says "Code". Then, copy the li
 include_graphics("images/repo_clone.png")
 ```
 
-### 
-
 Paste the link below.
 
-```{r setting-up-github-ex-6}
+```{r setting-up-github-6-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -297,36 +339,37 @@ question_text(NULL,
     rows = 2)
 ```
 
-It should look something like:
-
-`https://github.com/davidkane9/First_Repo.git`
-
 ### 
 
-This link points to your project folder stored in GitHub. It is slightly different from the url of the project page because the `.git` suffix tells you that it's a special GitHub object and not a webpage.
+It should look something like:
 
+```         
+https://github.com/davidkane9/First_Repo.git
+```
+
+This link points to your project folder on GitHub. It is slightly different from the url of the project page because the `.git` suffix tells you that it's a special GitHub object and not a webpage.
 
 ### Exercise 7
 
-To connect your Github repo to an R project, we first make a new project. While you are making a new project, you will not be able to access this tutorial. 
+To connect your Github repo to an R project, we first make a new project. While you are making a new project, you will not be able to access this tutorial.
 
 **Read all instructions before making your project.**
 
 ### 
 
-* Click the "File" dropdown menu in the top left of the R Studio window.
+-   Click the "File" dropdown menu in the top left of the R Studio window.
 
-* Click "New Project ...".
+-   Click "New Project ...".
 
-* Instead of clicking "New Directory" as we did previously, click on "Version Control". 
+-   Instead of clicking "New Directory," as we did previously, click on "Version Control".
 
-* Click on "Git". 
+-   Click on "Git".
 
-* Paste the link you copied from GitHub into "Repository URL". Make sure your project is in the `projects` directory you made in the "RStudio and Code" tutorial. If it is not, click on "Browse...", and select your `projects` folder. 
+-   Paste the link you copied from GitHub into "Repository URL". Make sure your project is in the `projects` directory you made in the "RStudio and Code" tutorial in order to have a single location in which to place all your R projects. If it is not, click on "Browse...", and select your `projects` folder.
 
-* Hit the "tab" key. This will copy the name of the repo into the box for the "Project directory name." It is a good idea for your repos and project names to be identical.
+-   Hit the "tab" key. This will copy the name of the repo into the box for the "Project directory name." It is a good idea for your repos and project names to be identical.
 
-* Click "Create Project."
+-   Click "Create Project."
 
 This last step will cause RStudio to restart. Go ahead and follow these steps now. Then, return to the tutorial.
 
@@ -334,15 +377,15 @@ This last step will cause RStudio to restart. Go ahead and follow these steps no
 
 Reminder: You just completed these steps:
 
-* `File -> New Project ... -> Version Control -> Git`
+-   `File -> New Project ... -> Version Control -> Git`
 
-* Paste repo url. Hit "tab" key.
+-   Paste repo url. Hit "tab" key.
 
-* Click "Create Project."
+-   Click "Create Project."
 
-In the Terminal, run `git remote -v`. CP/CR.
+Let's now confirm that your setup is correct. In the Terminal, run `git remote -v`. CP/CR.
 
-```{r setting-up-github-ex-8}
+```{r setting-up-github-8-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -351,24 +394,24 @@ question_text(NULL,
     rows = 2)
 ```
 
-It should look something like:
+Your answer should look something like:
 
-````
+```         
 Davids-MBP:First_Repo dkane$ git remote -v
 origin  https://github.com/davidkane9/First_Repo.git (fetch)
 origin  https://github.com/davidkane9/First_Repo.git (push)
 Davids-MBP:First_Repo dkane$ 
-````
+```
 
 Don't worry too much about the details. You've successfully linked a repo to RStudio!
 
 ### Exercise 9
 
-You have linked your GitHub repo to your R project, but you haven't proven that you are someone with editing access to the project. If we just let anyone with the GitHub link edit our repo, that's obviously going to lead to problems with security down the line. This is why we use something called a **P**ersonal **A**ccess **T**oken, or a **PAT**.
+You have linked your GitHub repo to your R project, but you haven't proven that you are someone with editing access to the project. If we just let anyone with the GitHub link edit our repo, that's obviously going to lead to problems. This is why we use something called a **P**ersonal **A**ccess **T**oken, or a **PAT**.
 
 ### 
 
-A PAT is just a special computer-generated password between your computer and GitHub that lets GitHub connect your GitHub account and your computer. If you want to learn more, see  "[Personal access token for HTTPS](https://happygitwithr.com/https-pat.html)" from [*Happy Git and GitHub for the useR*](https://happygitwithr.com/)
+A PAT is just a special computer-generated password between your computer and GitHub that lets GitHub connect your GitHub account and your computer. If you want to learn more, see "[Personal access token for HTTPS](https://happygitwithr.com/https-pat.html)" from [*Happy Git and GitHub for the useR*](https://happygitwithr.com/)
 
 ### 
 
@@ -384,11 +427,11 @@ include_graphics("images/pat.png")
 
 ### 
 
-Press "Generate Token" at the bottom of the page to finalize your PAT. If you have trouble, the function `usethis::gh_token_help()` may be helpful. 
+Press "Generate Token" at the bottom of the page to finalize your PAT. If you have trouble, the function `usethis::gh_token_help()` may be helpful.
 
 ### Exercise 10
 
-Now that we've created our PAT, first temporarily copy it somewhere you have easy access to. We will store it in RStudio to make sure the computer doesn't forget.
+Now that we've created our PAT, first temporarily copy it somewhere you have easy access to. We will need to store it somewhere so that RStudio has easy access to it.
 
 ### 
 
@@ -396,9 +439,11 @@ Run `gitcreds::gitcreds_set()` in the Console and follow the prompts, providing 
 
 ### 
 
-Restart your R session by going to "Session" at the top menu bar and clicking the option to Restart R, which should be under that tab. (This is not the same thing as restarting RStudio.) Run `usethis::git_sitrep()` in the Console. CP/CR.
+Restart your R session by going to "Session" at the top menu bar and clicking the option to Restart R, which should be under that tab. (This is not the same thing as restarting RStudio.) You could also use `Command/Ctrl + Shift + 0` to restart R.
 
-```{r setting-up-github-ex-10}
+Run `usethis::git_sitrep()` in the Console. CP/CR.
+
+```{r setting-up-github-10-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -411,30 +456,27 @@ question_text(NULL,
 
 The key "Github user" section should look something like:
 
-````
+```         
 ── GitHub user 
 • Default GitHub host: 'https://github.com'
 • Personal access token for 'https://github.com': '<discovered>'
 • GitHub user: 'davidkane9'
-````
+```
 
 See "[Managing Git(Hub) Credentials](https://usethis.r-lib.org/articles/git-credentials.html)" for more details.
-
-
 
 ## Updating .gitignore
 ### 
 
-The `.gitignore` file determines which files git should *ignore*. You should be able to see your `.gitignore` file in the Files tab in the Output pane. 
+The `.gitignore` file determines which files **git** should **ignore**. You should be able to see your `.gitignore` file in the Files tab in the Output pane.
 
 (To see any files which are "hidden" --- those that begin with a period `.` --- you may need to click on the gear symbol in the Files tab (next to the "Rename" button) and then select "Show Hidden Files".)
-
 
 ### Exercise 1
 
 From the Console, run `list.files()`. CP/CR.
 
-```{r updating-gitignore-ex-1}
+```{r updating-gitignore-1-ex}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -449,13 +491,13 @@ list.files()
 
 ### 
 
-In the "RStudio and Code" tutorial, we saw that an R project begins with just one file, the `.Rproj` file, which is "First_Repo.Rproj" in this case. But, because this R project started by connecting to a Github repo --- and because we initialized that repo with a README --- we also have a `README.md` file.
+In the "RStudio and Code" tutorial, we saw that an R project begins with just one file, the `Rproj` file, which is "First_Repo.Rproj" in this case. But, because this R project started by connecting to a Github repo --- and because we initialized that repo with a README --- we also have a `README.md` file.
 
 ### Exercise 2
 
 From the Console, run `list.files(all.files = TRUE)`. CP/CR
 
-```{r updating-gitignore-ex-2}
+```{r updating-gitignore-2-ex}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -472,17 +514,15 @@ list.files(all.files = TRUE)
 
 Because `.gitignore` is a "hidden" file, since its name begins with a `.`, we need to set `all.files = TRUE` in `list.files()` if we want it to be returned. Don't worry about hidden directories like `.git` and `.Rproj.user`. We won't be using them.
 
-
 ### Exercise 3
 
 The purpose of `.gitignore` is to list all the files that you don't want to be uploaded to GitHub. This is especially useful when you are working with big datasets or files with private information.
 
-Open the `.gitignore` and add a new line with `First_Repo.Rproj`. This tells git to ignore any file named `First_Repo.Rproj`. Save the file, but make sure that the last line in the file in blank.  
+Open the `.gitignore` and add a new line with `First_Repo.Rproj`. This tells git to ignore any file named `First_Repo.Rproj`. Save the file, but make sure that the last line in the file in blank.
 
 Run `readLines(".gitignore")` in the Console. CP/CR.
 
-
-```{r updating-gitignore-ex-3}
+```{r updating-gitignore-3-ex}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -497,8 +537,7 @@ question_text(NULL,
 
 This should output all of the lines in your `.gitignore` file, which should include `First_Repo.Rproj`.
 
-We could also have used `*.Rproj`. The \* tells your computer that we want to prevent all files ending in `.Rproj` from being uploaded.
-
+We could also have used `*.Rproj`. The \* tells your computer that we want to prevent all files ending in `Rproj` from being uploaded.
 
 ### Exercise 4
 
@@ -528,9 +567,9 @@ This will open a new window where you will write a commit message. The message i
 
 ### Exercise 6
 
-Run `gert::git_log() |> select(-commit, -merge, -files) |> slice(1)` in the Console, which returns the author, time, and message of the last commit.  CP/CR.
+Run `gert::git_log() |> select(-commit, -merge, -files) |> slice(1)` in the Console, which returns the author, time, and message of the last commit. CP/CR.
 
-```{r updating-gitignore-ex-6}
+```{r updating-gitignore-6-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -543,13 +582,13 @@ If the error "could not find slice function" is thrown then load the library "dp
 
 ### Exercise 7
 
-Next, press `Push`, i.e.,  the green arrow on the top right. This pushes or uploads the changes to GitHub. Open up GitHub and refresh the project page to see the  commit message you just made at the top of your repo page.
+Next, press `Push`, i.e., the green arrow on the top right. This pushes or uploads the changes to GitHub. Open up GitHub and refresh the project page to see the commit message you just made at the top of your repo page.
 
 ### 
 
 Run `gert::git_ahead_behind()$ahead` in the Console. CP/CR.
 
-```{r updating-gitignore-ex-7}
+```{r updating-gitignore-7-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -569,13 +608,11 @@ Let's publish a file from our project onto the internet using [R Pubs](https://r
 
 ### Exercise 1
 
-First let's make a new Quarto document. Select `File -> New File -> Quarto Document ...`. Change the title to "Example" and keep the other fields as the default values. Save the file with `Command/Ctrl - s` and name the file `example`. RStudio will automatically add the `.qmd` suffix.
-
-### 
+First let's make a new Quarto document. Select `File -> New File -> Quarto Document ...`. Change the title to "Example" and keep the other fields as the default values. Save the file with `Command/Ctrl + S` and name the file `example`. RStudio will automatically add the `.qmd` extension.
 
 Run `list.files()`. CP/CR.
 
-```{r publishing-to-r-pubs-ex-1}
+```{r publishing-to-r-pubs-1-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -586,13 +623,13 @@ question_text(NULL,
 
 ### 
 
-You should see `example.qmd` somewhere in the output. Recall that the title inside of the document ("Example") has no necessary connection to the name of the file (`example.qmd`).
+You should see `example.qmd` somewhere in the output. Recall that the title inside of the document ("Example") has no *necessary* connection to the name of the file (`example.qmd`). However, it is often the case that they will be similar, as here.
 
 ### Exercise 2
 
 Render this Quarto document by pressing the "Render" button. Run `list.files()` in the Console. CP/CR.
 
-```{r publishing-to-r-pubs-ex-2}
+```{r publishing-to-r-pubs-2-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -607,9 +644,11 @@ question_text(NULL,
 
 ### Exercise 3
 
-Notice the blue button at the top of your qmd. Click that and select Rpubs. (If you do not already have an account, you will need to create one. Always choose the free option.) Create a slug --- the file name for the last part of the url --- like "my-project" and publish. Put the URL of your Rpubs Page below:
+Notice the blue button at the top of your QMD. Click that and select Rpubs. (If you completed the "RStudio and Code" tutorial, you should already have an RPubs account.) If you do not have an account, you will need to create one. Always choose the free option.)
 
-```{r publishing-to-r-pubs-ex-3}
+Create a slug --- the file name for the last part of the url --- like "my-project" and publish. Put the URL of your Rpubs Page below:
+
+```{r publishing-to-r-pubs-3-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -634,7 +673,7 @@ Now, press the `Push` button with the green arrow. Your changes have now been sa
 
 Run `gert::git_ahead_behind()$ahead` in the Console. This should return "0" just like before. CP/CR.
 
-```{r publishing-to-r-pubs-ex-4}
+```{r publishing-to-r-pubs-4-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -643,24 +682,26 @@ question_text(NULL,
     rows = 2)
 ```
 
-Nice work! You've created a Rpubs page. All your work is backed up to GitHub.
+Nice work! You've created a Ppubs page. All your work is backed up to GitHub.
 
 ### 
 
-We now understand the entire data science work cycle. Begin with Github repository, connect to an RStudio project, create a Quarto document (including a plot or another analysis), publish your results to RPubs, and, finally, commit/push all your work to Github. Let's practice these skills in new projects.
+We now understand the entire data science work cycle. Begin with Github repository, connect to an RStudio project, create a Quarto document (including a plot or another analysis), publish your results to RPubs, and, finally, commit/push all your work to Github. Let's practice these skills in some new projects.
 
 ## Project 1
 ### 
 
-This first project will simply review the steps which we have already learned. Making the data science work cycle second nature requires practice. 
+Restart the R session with `Command/Ctrl + Shift + 0`.
 
-We don't need to set up git/Github/Rpubs again, having already done so above.
+This first project will simply review the steps which we have already learned. Making the data science work cycle second nature requires practice.
+
+We don't need to set up Git/Github/Rpubs again, having already done so above.
 
 ### Exercise 1
 
-Create a Github repo (called "project-1"). Make sure to click the "Add a README file" check box. Copy/paste the url for its Github location.
+Create a Github repo (called `project-1`). Make sure to click the "Add a README file" check box. Copy/paste the url for its Github location.
 
-```{r project-1-ex-1}
+```{r project-1-1-ex}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -673,30 +714,29 @@ question_text(NULL,
 
 Your answer should look something like:
 
-```
+```         
 https://github.com/davidkane9/project-1
 ```
 
-It is a good idea to always start a new data science project with a Github repo.
-
+It is a good idea to always start a new data science project with a new Github repo.
 
 ### Exercise 2
 
 Connect the `project-1` Github repo to an R project on your computer. Recall the steps:
 
-* `File -> New Project ... -> Version Control -> Git`
+-   `File -> New Project ... -> Version Control -> Git`
 
-* Paste the repo url into the "Repository URL" box. 
+-   Paste the repo url into the "Repository URL" box.
 
-* Hit "tab" key so that the "Project directory name" box is filled in.
+-   Hit "tab" key so that the "Project directory name" box is filled in. This should generate the same name for the R project as for the Github repo, which is `project-1` in this case.
 
-* Click "Create Project."
+-   Click "Create Project."
 
-The new R project will be named `project-1` by default. That "tab" key trick is very handy!  Keeping the names of repos/projects aligned makes organization simpler. 
+That "tab" key trick is very handy! Keeping the names of repos/projects aligned makes organization simpler.
 
 From the Console, run `list.files()`. CP/CR.
 
-```{r project-1-ex-2}
+```{r project-1-2-ex}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -713,7 +753,7 @@ list.files()
 
 Your answer should look something like this:
 
-```
+```         
 > list.files()
 [1] "project-1.Rproj" "README.md"      
 > 
@@ -725,11 +765,11 @@ RStudio has automatically restarted and placed you within the `project-1` R proj
 
 ### Exercise 3
 
-Go to `File -> New File -> Quarto Document...`. Title it "Quarto 1". Name it `quarto-1`.  RStudio will automatically add the `qmd` suffix. Save the file.
+Go to `File -> New File -> Quarto Document...`. Title it "Quarto 1". Name it `quarto-1`. RStudio will automatically add the `qmd` suffix. Save the file.
 
 From the Console, run `list.files()`. CP/CR.
 
-```{r project-1-ex-3}
+```{r project-1-3-ex}
 question_text(NULL,
 	message = "Place correct answer here.",
 	answer(NULL, correct = TRUE),
@@ -740,15 +780,15 @@ question_text(NULL,
 
 ### 
 
-Titles should be in title case, obviously. File names are usually all lower case. Spaces in titles are fine, but there should never be spaces (or other weird characters --- other than dashes/underlines) in file names.
+Titles should be in title case, obviously. File names are usually all lower case. Spaces in titles are fine, but there should never be spaces (or other weird characters --- other than underlines) in file names.
 
 ### Exercise 4
 
-To produce a complete report containing all text, code, and results, click “Render” or press `Command/Ctrl + Shift + K`. You can also do this programmatically with `quarto::quarto_render("quarto-1.qmd")`, although that requires installing the **quarto** package first. This will create an HTML file and display it in the Viewer tab in the Files pane.
+To produce a complete report containing all text, code, and results, click “Render” or press `Command/Ctrl + Shift + K`. You can also do this programmatically with `quarto::quarto_render("quarto-1.qmd")`, although that requires installing the **quarto** package first. This will create an HTML file and display it in the Viewer tab in the Output pane.
 
 From the Console, run `list.files()`. CP/CR.
 
-```{r project-1-ex-4}
+```{r project-1-4-ex}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -759,16 +799,75 @@ question_text(NULL,
 
 ### 
 
-You should now have both `quarto-1.qmd` and `quarto-1.html` files. 
+You should now have both `quarto-1.qmd` and `quarto-1.html` files.
 
 
 ### Exercise 5
 
-Switch to "Source" (from "Viewer" right next to it) in the tab above the Source Editor pane. As you are getting used to Quarto documents, it is best to look at the actual source, at least at the start.
+Edit the `.gitignore` file to include `*Rproj`. Save the file.
 
-Delete everything in `quarto-1.qmd` except the top box with title, format, and editor. CP/CR everything in `quarto-1.qmd` here.
+In the Console, run `readr::read_lines(".gitignore") |> cat(sep = "\n")`. CP/CR.
 
-```{r project-1-ex-5}
+(Note that the code for this instruction is a bit confusing. The **readr** package includes a function, `read_lines()`, which reads in a text file and creates a character vector in which each element corresponds to a line from the text file. We then pipe this object to `cat()` which, like the Terminal command `cat`, con**cat**enates those lines together, separating each element with `\n`, the newline special character.)
+
+```{r project-1-5-ex}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+
+````
+
+Note that Github looks different depending on which page you go to, whether it is the main page (`github.com`), your account page (`github.com/your-user-name`) or the repository tab on your account page `github.com/your-user-name?tab=repositories`. The green button to create a new repo only appears on the main page (upper left) and the repository tab on your account page (upper right). 
+
+### Exercise 6
+
+Go to the Git tab within the Environment pane. Commit all the files which have not been committed yet. Your commit message should be something like "Initial version." Push all the files.
+
+From the 
+
+```{r project-1-6-ex}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+### Exercise 7
+
+```{r project-1-7-ex}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+### Exercise 8
+
+Note the "Source" and "Visual" boxes in the menu above the Source pane. As you are getting used to Quarto documents, it is best to look at the actual source, at least at the start. By default, the "Source" box should be selected. If you click on the "Visual" box, you will see a [WYSIWYG](https://en.wikipedia.org/wiki/WYSIWYG) display of what your document should look like after rendering.
+
+Delete everything in `quarto-1.qmd` except the YAML header.
+
+In the Console, run `readr::read_lines("quarto-1.qmd") |> cat(sep = "\n")`. CP/CR.
+
+```{r project-1-8-ex}
 question_text(NULL,
 	message = "Place correct answer here.",
 	answer(NULL, correct = TRUE),
@@ -779,13 +878,15 @@ question_text(NULL,
 
 ### 
 
-When you render the document, Quarto sends the qmd file to **knitr**, which executes all of the code chunks and creates a new markdown (.md) document which includes the code and its output. The markdown file generated by **knitr** is then processed by [pandoc](https://pandoc.org/), which is responsible for creating the finished file.
+When you render the document, Quarto sends the QMD file to **knitr**, which executes all of the code chunks and creates a new Markdown (`.md`) document which includes the code and its output. The Markdown file generated by **knitr** is then processed by [pandoc](https://pandoc.org/), which is responsible for creating the finished HTML file.
 
-### Exercise 6
+### Exercise 9
 
-Add a code chunk within your document and add `library(tidyverse)` and `library(palmerpenguins)`. Render the document to ensure that everything works. (Fix any errors if it doesn't.) CP/CR everything in the quarto doc here.
+Add a code chunk within your document and add `library(tidyverse)` and `library(palmerpenguins)`. Render the document to ensure that everything works. (Fix any errors if it doesn't.)
 
-```{r project-1-ex-6}
+In the Console, run `readr::read_lines("quarto-1.qmd") |> cat(sep = "\n")`. CP/CR.
+
+```{r project-1-9-ex}
 question_text(NULL,
 	message = "Place correct answer here.",
 	answer(NULL, correct = TRUE),
@@ -798,15 +899,15 @@ question_text(NULL,
 
 Recall that you can add a code chunk by either pressing the “Insert” button icon in the editor toolbar (the green button with the letter C and a tiny plus sign) or by using the shortcut key combination: `Command + Option + i` / `Ctrl + Alt + i`.
 
-You could also manually type the chunk delimiters ```` ```{r}```` and ```` ``` ````, but, obviously, that is the worst option.
+You could also manually type the chunk delimiters ```` ```{r} ```` and ```` ``` ````, but, obviously, that is the worst option.
 
+### Exercise 10
 
+We need to make it so that we do not see this code or the output in the render `quarto-1.html` document. To do this, we will put `#| echo: false` and `#| message: false` before `library(tidyverse)` in the code chunk.
 
-### Exercise 7
+In the Console, run `readr::read_lines("quarto-1.qmd") |> cat(sep = "\n")`. CP/CR.
 
-We need to make it so that we do not see this code or the output in the Quarto Doc. To do this, we will put `#| echo: false` and `#| output: false` before `library(tidyverse)` in the code chunk. CP/CR everything in the quarto doc here.
-
-```{r project-1-ex-7}
+```{r project-1-10-ex}
 question_text(NULL,
 	message = "Place correct answer here.",
 	answer(NULL, correct = TRUE),
@@ -817,28 +918,58 @@ question_text(NULL,
 
 ### 
 
-`#| echo: false` makes it so that the code in the code chunk does not appear in the rendered Quarto Doc.`#| output: false` makes it so that the output of the code chunk does not appear in the rendered Quarto Doc. So, the previous code makes the whole code chunk with the libraries in it not visible in the final doc.
+`#| echo: false` makes it so that the code in the code chunk does not appear in the rendered HTML file.`#| message: false` prevents the display of any R messages, in this case ones generated by loading the **tiydverse** package. So, the previous code makes the whole code chunk with the libraries in it not visible in the final doc.
 
-### Exercise 8
+### Exercise 11
 
-Add a new code chunk, and type `penguins`. Run code. CP/CR the output.
+<!-- DK: Need more standardized words for "copy the HTML here" instruction. -->
 
-```{r project-1-ex-8}
+Add a new code chunk, which just includes `penguins`. Render the document. Copy the displayed contents of `quarto-1.html` below.
+
+```{r project-1-11-ex}
 question_text(NULL,
 	message = "Place correct answer here.",
 	answer(NULL, correct = TRUE),
 	allow_retry = FALSE,
 	incorrect = NULL,
-	rows = 6)
+	rows = 15)
 ```
 
 ### 
 
-Inserting images and customizing how they are displayed is also facilitated with the visual editor. You can either paste an image from your clipboard directly into the visual editor (and RStudio will place a copy of that image in the project directory and link to it) or you can use the visual editor’s Insert > Figure / Image menu to browse to the image you want to insert or paste it’s URL. In addition, using the same menu you can resize the image as well as add a caption, alternative text, and a link.
+Your answer should look like:
+
+```         
+Quarto 1
+AUTHOR
+David Kane
+
+penguins
+
+# A tibble: 344 × 8
+   species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+   <fct>   <fct>              <dbl>         <dbl>             <int>       <int>
+ 1 Adelie  Torgersen           39.1          18.7               181        3750
+ 2 Adelie  Torgersen           39.5          17.4               186        3800
+ 3 Adelie  Torgersen           40.3          18                 195        3250
+ 4 Adelie  Torgersen           NA            NA                  NA          NA
+ 5 Adelie  Torgersen           36.7          19.3               193        3450
+ 6 Adelie  Torgersen           39.3          20.6               190        3650
+ 7 Adelie  Torgersen           38.9          17.8               181        3625
+ 8 Adelie  Torgersen           39.2          19.6               195        4675
+ 9 Adelie  Torgersen           34.1          18.1               193        3475
+10 Adelie  Torgersen           42            20.2               190        4250
+# ℹ 334 more rows
+# ℹ 2 more variables: sex <fct>, year <int>
+```
+
+Because the code is just the name of the tibble, R prints out the first 10 rows of the tibble, along with the some other information, just like it would do if you typed `penguins` at the Console.
 
 ### Exercise 9
 
-Before `penguins`, add `#| echo: false` and `#| warning: false`. It should give you a tibble: 344 × 8.
+Before `penguins`, add `#| echo: false`. Render the document.
+
+In the Console, run `readr::read_lines("quarto-1.qmd") |> cat(sep = "\n")`. CP/CR.
 
 ```{r project-1-ex-9}
 question_text(NULL,
@@ -851,7 +982,7 @@ question_text(NULL,
 
 ### 
 
-The `#| echo: false` makes it so that the code in the code chunk does not appear in the rendered Quarto Doc.`#| warning: false` makes it so that the warning of the code chunk does not appear in the Quarto Doc. Now, we will create a simple plot.
+The `#| echo: false` makes it so that the code in the code chunk --- in this case, just the single word `penguins` --- does not appear in the rendered HTML.
 
 ### Exercise 10
 
@@ -870,11 +1001,11 @@ question_text(NULL,
 
 ### 
 
-`tail -n 7 quarto-1.qmd` gives you the last 7 lines of your `quarto-1.qmd` document. You can change the amount of lines you see by changing the 7 to another number. 
+`tail -n 7 quarto-1.qmd` gives you the last 7 lines of your `quarto-1.qmd` document. You can change the amount of lines you see by changing the 7 to another number.
 
 ### Exercise 11
 
-Within`aes()`, set `color` to `species` to sort the graph by the species and add the `geom_point()` function. Don't forget `+`. 
+Within`aes()`, set `color` to `species` to sort the graph by the species and add the `geom_point()` function. Don't forget `+`.
 
 Run `tail -n 7 quarto-1.qmd`in the Terminal. CP/CR.
 
@@ -889,13 +1020,13 @@ question_text(NULL,
 
 ### 
 
-The visual editor has many more features that we haven’t enumerated here that you might find useful as you gain experience authoring with it.
+The "Visual" editor has many more features that we haven’t enumerated here that you might find useful as you gain experience authoring with it.
 
-Most importantly, while the visual editor displays your content with formatting, under the hood, it saves your content in plain Markdown and you can switch back and forth between the visual and source editors to view and edit your content using either tool.
+Most importantly, while the Visual editor displays your content with formatting, under the hood, it saves your content in plain Markdown and you can switch back and forth between the Visual and Source editors to view and edit your content using either tool.
 
 ### Exercise 12
 
-Add `labs()` with `+`. Set `title` to `"Penguins Body Mass compared to Flipper Length"`, `x` to `"Body Mass"`, and `y` to `"Flipper Length"`.  Run `tail -n 10 quarto-1.qmd` in the Terminal. CP/CR.
+Add `labs()` with `+`. Set `title` to `"Penguins Body Mass compared to Flipper Length"`, `x` to `"Body Mass"`, and `y` to `"Flipper Length"`. Run `tail -n 10 quarto-1.qmd` in the Terminal. CP/CR.
 
 ```{r project-1-ex-12}
 question_text(NULL,
@@ -908,12 +1039,15 @@ question_text(NULL,
 
 ### 
 
-<!-- Knowledge drop. -->
+Inserting images and customizing how they are displayed is also facilitated with the Visual editor. You can either paste an image from your clipboard directly into the Visual editor (and RStudio will place a copy of that image in the project directory and link to it) or you can use the Visual editor’s `Insert > Figure / Image` menu to browse to the image you want to insert or paste it’s URL. In addition, using the same menu you can resize the image as well as add a caption, alternative text, and a link.
 
+But, since we rarely make use of this image functionality, we will almost always select the "Source" editor.
 
 ### Exercise 13
 
-Render `quarto-1.qmd`, either by hitting the "Render" button or by using `Command/Ctrl + Shift + K`. 
+Render `quarto-1.qmd`, either by hitting the "Render" button or by using `Command/Ctrl + Shift + K`.
+
+Run `list.files()` from the Console. CP/CR.
 
 ```{r project-1-ex-13}
 question_text(NULL,
@@ -926,7 +1060,7 @@ question_text(NULL,
 
 ### 
 
-Run `list.files()` from the Console. CP/CR.
+Each time you render a Quarto document, RStudio should create an HTML and then send you to view the HTML, usually in your default browser.
 
 
 ### Exercise 14
@@ -946,11 +1080,12 @@ question_text(NULL,
 
 And that is it! You have completed a simple example of the data science workflow cycle. You started with nothing, created a Github repository, connected it to an R project on your computer, created a Quarto document, rendered it into a plot and pubished it on Rpubs.
 
-
 <!-- DK: How about cleaning up this whole thing before we end? Edit the .gitignore by adding `quarto-1_files`. Then, commit and push everything. test this with `git log | head -n 10`. -->
 
 ## Project 2
 ### 
+
+Restart the R session with `Command/Ctrl + Shift + 0`.
 
 The most important set of options controls if your code block is executed and what results are inserted in the finished report:
 
@@ -960,9 +1095,9 @@ As you work more with **knitr**, you will discover that some of the default chun
 
 ### Exercise 1
 
-Create a Github repo (called "project-2"). Make sure to click the "Add a README file" check box. Copy/paste the url for its Github location.
+Create a Github repo called `project-2`. Make sure to click the "Add a README file" check box. Copy/paste the url for its Github location.
 
-```{r project-2-ex-1}
+```{r project-2-1-ex}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -975,18 +1110,19 @@ question_text(NULL,
 
 Your answer should look something like:
 
-```
+````         
 https://github.com/davidkane9/project-2
-```
+````
 
-Always start a new data science project with a Github repo.
-
+Always start a new data science project with a new Github repo.
 
 ### Exercise 2
 
-Connect the `project-2` Github repo to an R project on your computer. Name the R project `project-2` also. (Don't forget the Tab-key trick.) Keeping the names of repos/projects aligned makes organization simpler. From the Terminal, run `ls`. CP/CR.
+Connect the `project-2` Github repo to an R project on your computer. Name the R project `project-2` also. (Don't forget the "tab" key trick.) Keeping the names of repos/projects aligned makes organization simpler. 
 
-```{r project-2-ex-2}
+From the Terminal, run `ls`. CP/CR.
+
+```{r project-2-2-ex}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -999,21 +1135,21 @@ question_text(NULL,
 
 Your answer should look something like this:
 
-````
+```         
 Davids-MBP:project-2 dkane$ ls
 README.md               project-2.Rproj
 Davids-MBP:project-2 dkane$
-````
-
-The default README has an "md" suffix to indicate that it is a **M**ark**d**own document.
+```
 
 RStudio will automatically restart and place you within the `project-2` R project. You should also have a directory called `project-2` in the location in which you store your projects.
 
 ### Exercise 3
 
-Go to File, New File, Quarto Document. Name it `Quarto-2`. From the Terminal, run `ls -a`. CP/CR.
+Select `File -> New File -> Quarto Document ...`. Provide a title ("Quarto 2") and an author (you). 
 
-```{r project-2-ex-3}
+From the Terminal, run `ls -a`. CP/CR.
+
+```{r project-2-3-ex}
 question_text(NULL,
 	message = "Place correct answer here.",
 	answer(NULL, correct = TRUE),
@@ -1024,35 +1160,63 @@ question_text(NULL,
 
 ### 
 
-<!-- Knowledge Drop -Explain -a. Discuss dot files and directories. -->
+Render the document.
 
-### Exercise 4
+Edit .gitignore.
 
-We will start with `eval: false`. Create a new code chunk and within it put
+Push everything.
 
-```{r project-2-ex-4}
+## Project 3
+### 
+
+Restart the R session with `Command/Ctrl + Shift + 0`.
+
+### Exercise 1
+
+Create a new Github repo called `project-3`. Connect this repo to a new R project on your computer, also named `project-3`. 
+
+From the Console, run `list.files()`. CP/CR.
+
+```{r project-3-1-ex}
 question_text(NULL,
-	message = "Place correct answer here.",
 	answer(NULL, correct = TRUE),
-	allow_retry = FALSE,
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
 	incorrect = NULL,
-	rows = 6)
+	rows = 3)
+```
+
+```{r project-3-1-test, include = FALSE}
+list.files()
 ```
 
 ### 
 
-`eval: false` prevents code from being evaluated. (And obviously if the code is not run, no results will be generated). This is useful for displaying example code, or for disabling a large block of code without commenting each line.
+This is the fourth project we have created in this tutorial. Note how, each time, we have provided less and less guidance to you. Instead of walking you through each step in detail, we are now just providing a road map. To be a good data scientist, you must be able to work independently.
 
+### Exercise 2
 
+Create Quarto doc. Render it. Adjust .gitignore. Commit/push everything.
+
+```{r project-3-2-ex}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
 
 ## Summary
 ### 
 
-This tutorial covered material which is not actually in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. But the material is in keeping with the spirit of that book. The material covered in [Chapter 4  Workflow: code style](https://r4ds.hadley.nz/workflow-style.html) appears in the *RStudio and Code* tutorial in this package.
+This tutorial mostly covered material which is not actually in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. But the material is in keeping with the spirit of that book, especially  [Chapter 28  Quarto](https://r4ds.hadley.nz/quarto.html). The material covered in [Chapter 4 Workflow: code style](https://r4ds.hadley.nz/workflow-style.html) appears in the *RStudio and Code* tutorial in this package.
 
 You should now have Git working on your computer. You should have a Github account and know how to connect Github *repositories* to RStudio *projects*.
 
-The most useful reference for Git/Github/RStudio is *[Happy Git and GitHub for the useR](https://happygitwithr.com/)*. Bookmark it!
+The most useful reference for Git/Github/RStudio is [*Happy Git and GitHub for the useR*](https://happygitwithr.com/). Bookmark it!
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
