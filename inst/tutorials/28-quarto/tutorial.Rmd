@@ -1830,7 +1830,7 @@ Type `quarto publish` in the Terminal and hit Enter. Explore the use of the "Sou
 
 An RDS file allows us to save any R object in a file. When we read from an RDS, we avoid having to run the code which created the object again. Instead, we simply have access to the object. This is very convenient for any code which takes a long time to run, such as intensive data manipulation.
 
-Restart your R session with `Command/Ctrl + Shift + 0`.
+Restart your R session with `Command/Ctrl + Shift + 0`. As always, this will require you to "Terminate Jobs" your tutorial.
 
 ### Exercise 1
 
@@ -1847,13 +1847,15 @@ question_text(NULL,
     rows = 3)
 ```
 
+### 
+
 Make sure that `process_data.R` is one of these files. We often use scripts to to record the exact steps we used in analyzing some data or in creating a graphic. We want our work to be reproducible. We will often need to perform the same work again, albeit with some changes. A script can make that much simpler.
 
 ### Exercise 2
 
 Though an R script will use the libraries you already have loaded if executed interactively in the Console, it is good practice to include these at the top of the script. Any script you create should run correctly, even if you have just re-started R.
 
-In the R script, load the **tidyverse** package using the `library()` command. 
+In `process_data.R`, load the **tidyverse** package using the `library()` command. 
 
 In the Terminal, run `cat process_data.R`. CP/CR.
 
@@ -1901,11 +1903,15 @@ diamonds |>
   filter(color == "D") 
 ````
 
-You should try to learn how to work in two ways. First is interactively, trying things at the Console. Seeing what happens. Going line-by-line. Second is writtenly, adding code to your script/QMD and then executing all the code at once. Of course, the best approach is to use these two methods at the same time. 
+You should try to learn how to work in two ways. First is interactively, trying things at the Console. Seeing what happens. Going line-by-line. Second is writtenly, adding code to your script/QMD and then executing all the code at once. 
+
+<!-- DK: Could explain this better, maybe illustrate some step-by-step examples. Maybe in another tutorial, like Chaoter 29? -->
+
+Of course, the best approach is to use these two methods during your analysis, depending on which is best for the next step you need to take. 
 
 ### Exercise 4
 
-Place your cursor in `process_data.R` at `filter(z != 0) |>`. Hit `Command/Ctrl + Enter`. (Note that this should generate an error.) CP/CR.
+Place your cursor in `process_data.R` at `filter(z != 0) |>`. Hit `Command/Ctrl + Enter`. This will cause the pipe to be pasted to the Console and then executed there. (Note that this should generate an error.) CP/CR.
 
 ```{r using-an-rds-file-4-ex}
 question_text(NULL,
@@ -2173,7 +2179,7 @@ The value returned by `read_rds()` is whatever is contained in the RDS object. I
 
 ### Exercise 12
 
-Open the `process_data`.R` script. At the bottom, as this line:
+Open the `process_data`.R` script. At the bottom, skip a line after the pipe and then add this line (the same one we just executed at the Console):
 
 ````
 write_rds(D_diamonds, file = "clean_data.rds")
@@ -2237,6 +2243,8 @@ Davids-MBP:first-website dkane$
 
 `clean*` is a regular expression which matches any file which begins with the letters `clean`. 
 
+<!-- DK: Awkward ending. -->
+
 
 ## Using a PNG file
 ### 
@@ -2279,11 +2287,11 @@ question_text(NULL,
 
 ### 
 
-Naming conventions are important. It is fine to have dashes in a code chunk label. However, any object which might be used from the Terminal, like the name of a script, should avoid dashes because the Terminal interprets a dash as a special character, not as part of the file name. 
+Naming conventions are important. It is fine to have dashes in a code chunk label. However, any object which might be used from the Terminal, like the name of a script, should avoid dashes because the Terminal interprets a dash as a special character, not necessarily as part of the file name. 
 
 ### Exercise 3
 
-Copy this code into `make_plot.R`, below `library(tidyverse)`.  Save the R script.
+Copy this code into `make_plot.R`, after skipping a line after `library(tidyverse)`.  Save the R script.
 
 ````
 x <- read_rds("clean_data.rds")
@@ -2408,7 +2416,7 @@ ggsave("size_v_weight.png", D_plot)
 Davids-MBP:first-website dkane$ 
 ````
 
-As with `clean_data.R`, we have created a script which encapsulates, from start-to-finish, a discrete step in our analysis. In this case, we start from the tibble saved in `clean_data.rds` and finish by saving a graphic in `size_v_weight.png`.
+As with `clean_data.R`, we have created a script which encapsulates, from start-to-finish, a discrete part of our analysis. In this case, we start from the tibble saved in `clean_data.rds` and finish by saving a graphic in `size_v_weight.png`.
 
 ### Exercise 6
 
@@ -2467,7 +2475,7 @@ There was nothing wrong, *per se* with having the plotting code in `index.qmd` r
 
 ### Exercise 8
 
-From the Terminal, run `quarto publish`. You will need to hit `return/enter` at least once. CP/CR.
+From the Terminal, run `quarto publish`. You will need to hit Enter at least once. CP/CR.
 
 
 ```{r using-a-png-file-8-ex}
@@ -2509,7 +2517,7 @@ output file: index.knit.md
 Davids-MBP:first-website dkane$ 
 ````
 
-Note the workflow. At the start, we created a pipe in `index.qmd` which does everything and then, later, we moved the code into separate scripts so that we don't need to run all the analysis each time we rebuild the website. This is a very common approach. First, get something working. Second, organize and clean it all up. 
+Note the workflow. At the start, we created a pipe in `index.qmd` which does everything and then, later, we moved the code into separate scripts so that we don't need to run all the analysis each time we render the website. This is a very common approach. First, get something working. Second, organize and clean it all up. 
 
 In a complex project, we will often create directories --- like `code`, `data`, and `images` --- into which we will place files like `process_data.R`, `clean_data.rds`, and `size_v_weight.png`, respectively.
 
