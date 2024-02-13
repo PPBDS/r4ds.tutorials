@@ -30,6 +30,8 @@ library(tidyverse)
 
 <!-- Note how newly created Quarto documents do not have a `format: html` YAML line in the header. I think that this is an RStudio feature. It knows that this directory is a website project and that, therefore, it is unnecessary (?) to even mention the format. Note how the default text in new Quarto documents is different as well. -->
 
+<!-- There is an "annoying" bug discussed above. Should provide a reprex of this to RStudio folks. -->
+
 <!-- Should we add /_site/ to .gitignore? https://quarto.org/docs/publishing/github-pages.html -->
 
 <!-- It’s important to note that you don’t need to check your _site or _book directory into version control (if you have done this in the past you know it makes for very messy diffs!). Before proceeding you should add the output directory of your project to .gitignore. For example: -->
@@ -60,6 +62,8 @@ Could also add this discussion and links to an earlier tutorial, perhaps when we
 <!-- It is tempting to create three website, using one of the three approaches each time, thereby learning . . . a lot . . . But, for now, I will just use Quarto CLI. Given that choice, we don't need to install nor discuss the quarto package. -->
 
 <!-- Need (?) to cover other material in these chapters, not just websites. Perhaps some examples of interactive pages. At the least, need to review the material in the R4DS chapters. -->
+
+<!-- Figure out what is happening at the start of the Adding a plot section wrt background jobs. -->
 
 
 ## Introduction
@@ -141,7 +145,9 @@ Always start a new data science project with a Github repo.
 
 ### Exercise 2
 
-Connect the `first-website` Github repo to an R project on your computer. Name the R project `first-website` also. Keeping the names of repos/projects aligned makes organization simpler. 
+Connect the `first-website` Github repo to an R project on your computer. Name the R project `first-website` also. Keeping the names of repos/projects aligned makes organization simpler.
+
+You will need to "Terminate Jobs" this tutorial. And you will be placed into the new project after RStudio restarts, as usual. Just restart the tutorial once this happens.
 
 From the Terminal, run `ls`. CP/CR.
 
@@ -165,9 +171,6 @@ Davids-MBP:first-website dkane$
 ```
 
 The default README has an "md" suffix to indicate that it is a **M**ark**d**own document.
-
-RStudio will automatically restart and place you within the `first-website` R project. This should be in a directory called `first-website` in the location in which you store your R projects.
-
 
 ### Exercise 3
 
@@ -196,9 +199,9 @@ Your answer should look like:
 [5] "README.md"           "styles.css"         
 ````
 
-Note how we can work with the current directory either from the Terminal, with commands like `ls`, or from the Console, with commands like `list.files()`.
+The basic set of files necessary for making a Quarto website has been added to the current directory. Note how we can work with the current directory either from the Terminal, with commands like `ls`, or from the Console, with commands like `list.files()`.
 
-The basic set of files necessary for making a Quarto website has been added to the current directory. Recall the `.` means the current directory while `..` means the directory one level above the current one. 
+
 
 
 ### Exercise 4
@@ -226,7 +229,7 @@ Your answer should look something like:
 
 ### 
 
-You would get the same set of files if, in the Terminal, you ran `ls -a`. The `-a` ensures that **a**ll the files are listed, included the "hidden" ones which begin with a dot. 
+You would get the same set of files if, in the Terminal, you ran `ls -a`. The `-a` ensures that **a**ll the files are listed, included the "hidden" ones which begin with a dot. Recall the `.` means the current directory while `..` means the directory one level above the current one.
 
 ### 
 
@@ -234,7 +237,7 @@ In general, we do not touch/manipulate "dot" directories, meaning directories wh
 
 ### Exercise 5
 
-In the Console, run `list.files()`. The "hidden" files will no longer appear. CP/CR.
+In the Termina, run `ls`. The "hidden" files will not appear because we did not include the `-a` option to `ls`. CP/CR.
 
 ```{r files-for-a-website-5-ex}
 question_text(NULL,
@@ -261,12 +264,12 @@ question_text(NULL,
 	allow_retry = TRUE,
 	try_again_button = "Edit Answer",
 	incorrect = NULL,
-	rows = 3)
+	rows = 10)
 ```
 
 ### 
 
-YAML files are how Quarto projects tell the world what they are. In this case, the initial lines specify that this is a website.
+YAML files are how [Quarto projects](https://quarto.org/docs/projects/quarto-projects.html) tell the world what they are. In this case, the initial lines specify that this is a website.
 
 ````
 project:                                   
@@ -382,7 +385,7 @@ This is a Quarto website.
 To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
 ````
 
-Whenver a web browser goes to a directory on the internet, it looks for an `index.html` file. If found, that file is displayed. So, the `index.qmd` file, which we will soon render as `index.html` is important.
+Whenver a web browser goes to a directory on the internet, it looks for an `index.html` file. If found, that file is displayed. So, the `index.qmd` file, which we will soon render as `index.html`, is important.
 
 ### Exercise 11
 
@@ -409,7 +412,7 @@ Note that the "title" ("A New Website") in `_quarto.yml` has no necessary connec
 
 ### Exercise 12
 
-We don't want to put all the files on Github. So, add `*Rproj` to your `.gitignore` file. Save the file. Note that a new line, `/.quarto/` has been added to the `.gitignore`. We will discuss this file later.
+We don't want to put all the files on Github. So, add `*Rproj` to your `.gitignore` file. Save the file. 
 
 In the Terminal, run `cat .gitignore`. CP/CR.
 
@@ -423,6 +426,10 @@ question_text(NULL,
 ```
 
 ### 
+
+Note that a new line, `/.quarto/`, had already been added to the `.gitignore`. This happened when we ran `quarto create`.  The leading `/` escapes the `.`. In other words, we need the leading `/` if we want to ignore the files in a dotted directory.
+
+In fact, this directory does not yet exist. But the `quarto` command wanted to ensure that, once it does, Git would ignore the contents.
 
 Good data scientists believe in transparency and reproducibility. We want people --- include "future" us --- to be able to reproduce our work. By default, almost every file belongs on Github. But settings for R projects are both not necessary for replication and often specific to each individual. 
 
@@ -442,7 +449,7 @@ question_text(NULL,
 
 ### 
 
-The output from the `git log` command is too complex for us to fully parse. If you want to learn more about how to work with git/Github and R, check out [Happy Git with R](https://happygitwithr.com/existing-github-last.html), a very useful resource.
+The output from the `git log` command is too complex for us to fully parse. If you want to learn more about how to work with Git/Github and R, check out [Happy Git with R](https://happygitwithr.com/existing-github-last.html), a very useful resource.
 
 
 ## Rendering and previewing
@@ -478,7 +485,9 @@ Output created: _site/index.html
 Davids-MBP:first-website dkane$ 
 ````
 
-quarto reports to us what it has done, working on our two `qmd` files and creating a new directory, `_site`, in which it has placed an `index.html` file. (I believe that it is a bug in the version of quarto I used that it does not also report the creation of `about.html`.)
+Quarto reports to us what it has done, working on our two `qmd` files and creating a new directory, `_site`, in which it has placed an `index.html` file. 
+
+<!-- DK: Why isn't `about.html` mentioned? Because the website shows `index.html` by default, so, there is no need to create it? But can't I see that it has been created? I am confused. Is this a bug in Quarto? -->
 
 ### Exercise 2
 
@@ -504,7 +513,7 @@ Your answer will probably look something like:
 >
 ````
 
-The `about.html` and `index.html` files are simply the rendered `about.qmd` and `index.qmd` input files. They are placed into the `_site` directory because the convention, when constructing websites and other large projects is to separate out the outputs from the inputs.
+The `about.html` and `index.html` files are simply the rendered `about.qmd` and `index.qmd` input files. They are placed into the `_site` directory because the convention, when constructing websites and other large projects, is to separate out the outputs from the inputs.
 
 The webpages which make up a website are often placed in a directory named either `_site` or `docs`, depending on the setup of your web hosting service.
 
@@ -512,7 +521,9 @@ We won't discuss the `search.json` and `styles.css` files. The `site_libs` direc
 
 ### Exercise 3
 
-Add `/_site/site_libs/` to the `.gitignore` file. Save the new file. From the Console, run `readLines(".gitignore")`. CP/CR.
+Add `/_site` to the `.gitignore` file. Don't forget that the last line of a `.gitignore` should always be blank. Save the file. 
+
+From the Console, run `cat .gitignore`. CP/CR.
 
 
 ```{r rendering-and-previewing-3-ex}
@@ -526,9 +537,9 @@ question_text(NULL,
 
 ### 
 
-This command is convenient because the `site_libs` directory contains of lot of weird files that change often enough to annoy. We don't create any of them, so we don't really need to back them up. Moreover, they will still get published directly to the web from our computer.
+This command is convenient because the `_sites` directory contains of lot of weird files that change often enough to annoy. We don't create any of them, so we don't really need to back them up. Moreover, they will still get published directly to the web from our computer.
 
-The initial backslash in `/_site/site_libs/` helps git to interpret `_site` correctly. See the Regular expressions tutorial for more information. `_site/site_libs/` is a directory, so it makes sense to end the expression with a backslash.
+The initial backslash in `/_site` allows Git to interpret `_site` correctly. The `/` escapes the `_`, allowing it to be treated as a literal, rather than special, character. See the Regular expressions tutorial for more information. `_site` is a directory, so we could end the expression with a backslash, but Git, like most programs interpret `_site` and `_site/` to refer to the same thing, which they do.
 
 
 ### Exercise 4
@@ -560,14 +571,45 @@ GET: /
 
 The preview command does two things. First, it renders the `qmd` files, just like `render` does. Second, it sets up a viewer, probably your default web browser, so that you can see what the website looks like. Click around and check it out!
 
-The message at the end indicates that quarto is now "watching" your files to see if you make any changes. If you do, it will automatically update the website.
+The message at the end indicates that Quarto is now "watching" your files to see if you make any changes. If you do, it will automatically update the website.
 
 ### Exercise 5
 
-Look at your website in the browser. (You might need to enter the url, `http://localhost:7412/` in my case, but yours will be different, by hand.) Click on the "Home" link and then copy/paste the entire screen.
+Look at your website in the browser. (You might need to enter the url, `http://localhost:7412/` in my case, but yours will be different, by hand.) Click on the "About" link. 
 
+Now, go to the Terminal. Copy-and-paste everything from the previous invocation of `quarto preview`.
 
 ```{r rendering-and-previewing-5-ex}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like this:
+
+````
+Davids-MBP:first-website dkane$ quarto preview
+Preparing to preview
+
+Watching files for changes
+Browse at http://localhost:7193/
+GET: /
+GET: /about.html
+````
+
+`quarto` is hanging out, still running in the background, monitoring your website. So, when you clicked the "About" link, it "got" the `about.html` page to show to you.
+
+### Exercise 6
+
+Look again at your website in the browser. Click on the "Home" link and then copy/paste the entire screen.
+
+
+```{r rendering-and-previewing-6-ex}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -594,11 +636,11 @@ To learn more about Quarto websites visit https://quarto.org/docs/websites.
 The title of the entire project ("A New Website"), taken from the `_quarto.yml` file, appears in the upper left hand corner. The title of the main home page ("My First Website"), taken from the `index.qmd` file, appears at the top of the Home page, which, by default, is always the `index.html` file. 
 
 
-### Exercise 6
+### Exercise 7
 
 Copy/paste the url for your previewed website.
 
-```{r rendering-and-previewing-6-ex}
+```{r rendering-and-previewing-7-ex}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -618,13 +660,13 @@ http://localhost:3358/
 The website is being "hosted" on your computer. That is what the word "localhost" refers to. It is not available on the web.
 
 
-### Exercise 7
+### Exercise 8
 
-The advantage of using preview is that the website is automatically updated whenever you edit and save the underlying QMD file. Try it by changing the `about.qmd` file, replacing "About this site" with your name. Save the file. 
+The advantage of using `quarto preview` is that the website is automatically updated whenever you edit and save the underlying QMD file. Try it by changing the `about.qmd` file, replacing "About this site" with your name. Save the file. 
 
 At the Terminal, you should see a new message. Copy and paste it here.
 
-```{r rendering-and-previewing-7-ex}
+```{r rendering-and-previewing-8-ex}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -663,13 +705,13 @@ GET: /about.html
 
 ````
 
-quarto has noticed that you changed/saved the `about.qmd` file. It rendered the new version, creating a new `about.html` which it has now *gotten* and is displaying.
+Quarto has noticed that you changed/saved the `about.qmd` file. It rendered the new version, creating a new `about.html` which it has now *gotten* and is displaying.
 
-### Exercise 8
+### Exercise 9
 
 Copy/paste the About page form your browser.
 
-```{r rendering-and-previewing-8-ex}
+```{r rendering-and-previewing-9-ex}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -709,7 +751,12 @@ If you don't already have one, set up a [Quarto Pub](quartopub.com) account for 
 
 * We recommend using your Github username and password. (It is much easier this way, so you don't have to juggle around a bunch of passwords and usernames when you want to publish.)
 
-Copy/paste the web address of your Quarto Pub account.
+Copy/paste the web address of your Quarto Pub account. Your answer should look like this:
+
+````
+https://davidkane.quarto.pub
+````
+
 
 ```{r publishing-1-ex}
 question_text(NULL,
@@ -720,13 +767,9 @@ question_text(NULL,
 	rows = 3)
 ```
 
-Your answer should look like this:
+### 
 
-````
-https://davidkane.quarto.pub
-````
-
-Beyond [Quarto Pub](https://quarto.org/docs/publishing/quarto-pub.html), there are other free services which you can use to host your website and other data science document, examples include [GitHub Pages](https://quarto.org/docs/publishing/github-pages.html) and [Posit Cloud](https://quarto.org/docs/publishing/posit-cloud.html).
+Beyond [Quarto Pub](https://quarto.org/docs/publishing/quarto-pub.html), there are other free services which you can use to host your website and other data science projects, examples include [GitHub Pages](https://quarto.org/docs/publishing/github-pages.html) and [Posit Cloud](https://quarto.org/docs/publishing/posit-cloud.html).
 
 
 ### Exercise 2
@@ -774,7 +817,7 @@ Rendering for publish:
 Davids-MBP:first-website dkane$ 
 ````
 
-`quarto publish`, like `quarto preview`, first renders all the files on the project. Note the phrase "Rendering for publish" in the output,  
+`quarto publish`, like `quarto preview`, first renders all the files on the project. Note the phrase "Rendering for publish" in the output. You are provided with the URL for the new site, `https://davidkane.quarto.pub/a-new-website` in this case, and the URL for the main account site, which is `https://davidkane.quarto.pub` for me.
 
 ### Exercise 3
 
@@ -797,6 +840,14 @@ It should look like:
 https://davidkane.quarto.pub/a-new-website/
 ````
 
+Note that, in addition to this website for public viewing, there is a corresponding site from which you can change various Quarto Pub options, as well as just delete the entire site. That location for me is:
+
+````
+https://quartopub.com/sites/ce7610ad-76d9-4356-a2cb-586d31992254
+````
+
+It will be somewhere different, but equally weird, for you. You can access this site by logging in to Quarto Pub.
+
 The **quarto** package, which we have not installed, provides R commands for accomplishing these same goals. We do not use it in this tutorial.
 
 
@@ -818,7 +869,7 @@ question_text(NULL,
 
 The `_publish.yml` is where Quarto keeps track of publishing information. This file did not exist before because you had not published the website yet. 
 
-There *might* also be some new files, like `_site/robots.txt` and `_site/sitemap.xml`, but, as usual, we won't worry too much about weird files in the `_site` directory.
+There *might* also be some new files, like `_site/robots.txt` and `_site/sitemap.xml`, but, as usual, we won't worry too much about weird files in the `_site` directory since we added `/_site` to `.gitignore`.
 
 ### Exercise 5
 
@@ -865,12 +916,12 @@ question_text(NULL,
 
 ### 
 
-The `.quarto` directory is like the `.git` and `.Rproj.user` directories. We will never look or change the files inside of them. Only the relevant programs --- quarto, R and RStudio --- should work with the contents of these directories. 
+The `.quarto` directory is like the `.git` and `.Rproj.user` directories. We will never look or change the files inside of them. Only the relevant programs --- Quarto, R and RStudio --- should work with the contents of these directories. 
 
 
 ### Exercise 7
 
-Open the `_quarto.yml` file in the Source pane. Change `title: "A New Website"` to `title: "A New Website, second edition"`. 
+Open the `_quarto.yml` file in the Source pane. Change `title: "A New Website"` to `title: "A New Website, second edition"`. Save the file.
 
 In the Console, run `readr::read_lines("_quarto.yml")[4:5] |> cat(sep = "\n")`. CP/CR.
 
@@ -925,12 +976,11 @@ This is a Quarto website.
 To learn more about Quarto websites visit https://quarto.org/docs/websites.
 ````
 
-But, if you look at the Quarto Pub version of your website, it still uses the "A New Website" title because we have not (yet) published our new version. We have, however, changed the files in the `_site` directory, as you can tell by looking at the Git tab.
+But, if you look at the Quarto Pub version of your website, it still uses the "A New Website" title because we have not (yet) published our new version. We have, however, changed the files in the `_site` directory.
 
 ### Exercise 9
 
 Stop the `quarto preview` command by hitting the red stop sign on the upper right of the Terminal tab. From the Terminal, run `quarto publish`. CP/CR.
-
 
 You only need `quarto publish`, instead of `quatro publish quarto-pub` because the `_publish.yml` records that this project is published on Quarto Pub. You are simply refreshing the current project, rather than creating another.
 
@@ -987,7 +1037,9 @@ The `_publish.yml` file is like the `first-website.Rproj` file. In *theory*, the
 
 ### Exercise 11
 
-Commit and push all the files in the project. Run `git log` in the Terminal. CP/CR.
+Commit and push all the files in the project. Run `git log -n 2` in the Terminal. CP/CR. 
+
+The `-n 2` option causes Git to just provide the information on the last two commits.
 
 ```{r publishing-11-ex}
 question_text(NULL,
@@ -1026,6 +1078,12 @@ diamonds |>
          y = "Price")
 ```
 
+### 
+
+<!-- DK: Not sure if this step is really necessary, but it does guarantee (?) a simple set of stuff to paste from the Background Jobs tab in a few questions . . . -->
+
+First, however, you should restart RStudio, not just the current R instance. The reason for this is that we want to ensure a clean environment after our prior usage of various Quarto commands. After your restart RStudio, make sure you are within the `first-website` R project.
+
 ### Exercise 1
 
 Delete everything in `index.qmd` except for the `title: "My First Website"` surrounded by the three dashes, above and below. Run `head index.qmd` in the Terminal. CP/CR.
@@ -1047,19 +1105,110 @@ As you build the website, we will ask you to share the updated files, using Term
 
 ### Exercise 2
 
-Create a new code chunk in `index.qmd` and load the **tidyverse** package. Render the document by pressing the Render button at the top of the Source pane. If your website is still being previewed, this will update the displayed homepage automatically.
+Create a new code chunk in `index.qmd` and load the **tidyverse** package. Save the file.
 
-In other words, you might not have to run `quarto preview` from the Terminal. Just rendering `index.qmd` directly is often enough.
-
-Copy and paste the new home page, leaving out the menu items.
+From the Terminal, run `cat index.qmd`. CP/CR.
 
 ```{r adding-a-plot-2-ex}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+Davids-MacBook-Pro:first-website dkane$ cat index.qmd 
+---
+title: "My First Website"
+---
+
+```{r}
+library(tidyverse)
+```
+
+Davids-MacBook-Pro:first-website dkane$
+````
+
+
+### Exercise 3
+
+Render the document by pressing the "Render" button at the top of the Source pane. You will probably be sent to a local preview of the new homepage. 
+
+Click on the "Background Jobs" tab in the Console pane. Copy-and paste the text which appears there.
+ 
+
+```{r adding-a-plot-3-ex}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 10)
+```
+
+### 
+
+Your answer should look like this:
+
+````
+==> quarto preview index.qmd --to html --no-watch-inputs --no-browse
+
+processing file: index.qmd
+                                                    
+output file: index.knit.md
+
+pandoc 
+  to: html
+  output-file: index.html
+  standalone: true
+  title-prefix: 'A New Website, second edition'
+  section-divs: true
+  html-math-method: mathjax
+  wrap: none
+  default-image-extension: png
+  css:
+    - styles.css
+  toc: true
+  
+metadata
+  document-css: false
+  link-citations: true
+  date-format: long
+  lang: en
+  theme: cosmo
+  title: My First Website
+  
+Output created: _site/index.html
+
+Terminating existing preview server....DONE
+
+Preparing to preview
+
+Watching files for changes
+Browse at http://localhost:5829/
+GET: /index.html
+````
+
+In other words, RStudio figures that, if you are rendering an `index.qmd` which is part of a Quarto website project, you probably want to preview your new homepage. So, it calls `quarto preview` behind the scenes. The "Background Jobs" tab is where RStudio reports to you what is happening in the background.
+
+
+### Exercise 4
+
+In other words, you might not have to run `quarto preview` from the Terminal. Just rendering `index.qmd` directly is often enough. Copy and paste the new home page, leaving out the menu items.
+
+```{r adding-a-plot-4-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
     try_again_button = "Edit Answer",
     incorrect = NULL,
-    rows = 3)
+    rows = 10)
 ```
 
 ### 
@@ -1082,10 +1231,10 @@ library(tidyverse)
 ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 ````
 
-Because we have not yet added any code chunk options, the code is echoed and the package startup messages displayed.
+Because we have not yet added any code chunk options, the code is echoed and the package startup message displayed.
 
 
-### Exercise 3
+### Exercise 5
 
 Create another code chunk. Add this code to it:
 
@@ -1104,7 +1253,7 @@ diamonds |>
 
 Save the file. From the Terminal, run `tail index.qmd`. CP/CR.
 
-```{r adding-a-plot-3-ex}
+```{r adding-a-plot-5-ex}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -1118,19 +1267,19 @@ question_text(NULL,
 Render the page. You will see a nice plot, along with a lot of junk code and messages. 
 
 
-### Exercise 4
+### Exercise 6
 
 Add these code chunk options to the top of the first code chunk, the one which loads the library.
 
-````
-# | message: false
-# | echo: false
-# | label: setup
-````
+<!-- DK: These reason these aren't in a four backticks area is because format_tutorial() would, for unknown reasons, add a space between # and | if we did that, and such a space makes these no longer function as chunk options when pastes into the students' index.qmd. -->
+
+`#| message: false`
+`#| echo: false`
+`#| label: setup`
 
 In the Terminal, run `head index.qmd `. CP/CR.
 
-```{r adding-visualizations-ex-4}
+```{r adding-a-plot-6-ex}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -1146,16 +1295,17 @@ Code that works during your R session will not work when your website is rendere
 You are generally free to label your chunks however you like, but there is one chunk name that imbues special behavior in RStudio: `setup`. When you first open a Quarto document, the chunk named `setup`, if there is one, will be run automatically once, before any other code is run.
 
 
-### Exercise 5
+### Exercise 7
 
 In the second code chunk, add the following options:
 
-````
-# | echo: false
-# | label: diamonds-plot
-````
+<!-- DK: See above comment. Really need to fix format_tutorial so that, first step, it totally ignores anything within four backticks. But, I suspect the real problem is in parsermd. -->
 
-Save the changes to `index.qmd`. In the Terminal, run `tail index.qmd `. CP/CR.
+`#| echo: false`
+`#| label: diamonds-plot`
+
+
+Save the changes to `index.qmd`. In the Terminal, run `grep "#" index.qmd`. CP/CR.
 
 ```{r adding-visualizations-ex-5}
 question_text(NULL,
@@ -1167,6 +1317,18 @@ question_text(NULL,
 ```
 
 ### 
+
+Your answer should look like this:
+
+````
+Davids-MBP:first-website dkane$ grep "#" index.qmd 
+# | message: false
+# | echo: false
+# | label: setup
+# | echo: false
+# | label: diamonds-plot
+Davids-MBP:first-website dkane$ 
+````
 
 Assigning labels to code chunks helps keeps you organized and helps others understand your code. You cannot assign the same label to multiple code chunks. 
 
@@ -2365,7 +2527,6 @@ Your answer should look like this:
 
 ```{r file = "images/index-example.txt", echo = TRUE, eval = FALSE}
 ```
-
 
 There was nothing wrong, *per se* with having the plotting code in `index.qmd` rather than `make_plot.R`. The problem arises when that plotting code takes a long time to run, as it often will. We don't want to re-run all the code each time we make a small change to the website. It is much better to separate out the plotting code and only run it when we need to.
 
