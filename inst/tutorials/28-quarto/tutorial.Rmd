@@ -28,38 +28,9 @@ library(tidyverse)
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- Note how newly created Quarto documents do not have a `format: html` YAML line in the header. I think that this is an RStudio feature. It knows that this directory is a website project and that, therefore, it is unnecessary (?) to even mention the format. Note how the default text in new Quarto documents is different as well. -->
+<!-- Need to test the last two sections. -->
 
-<!-- There is an "annoying" bug discussed above. Should provide a reprex of this to RStudio folks. -->
-
-<!-- Should we add /_site/ to .gitignore? https://quarto.org/docs/publishing/github-pages.html -->
-
-<!-- It’s important to note that you don’t need to check your _site or _book directory into version control (if you have done this in the past you know it makes for very messy diffs!). Before proceeding you should add the output directory of your project to .gitignore. For example: -->
-
-<!-- .gitignore -->
-<!-- /.quarto/ -->
-<!-- /_site/ -->
-
-<!-- Perhaps add something about making the graphic easier to view on the web to the end of the tutorial? I keep thinking that there must be a theme which already does this, but maybe this is enough: p + theme_minimal(base_size = 18). Nice theme article: https://rfortherestofus.com/2019/08/themes-to-improve-your-ggplot-figures. 
-
-Also relevant: https://minimaxir.com/2017/08/ggplot2-web/, with specific web commentary. Maybe just `theme_minimal(base_size=9)` and `ggsave("tutorial-0.png", p, width=4, height=3)`?
-
-Could require them, as last exercise, to choose new theme on their own. Perhaps relevant (from ggplot book):
-
-"For raster graphics (i.e. .png, .jpg), the dpi argument controls the resolution of the plot. It defaults to 300, which is appropriate for most printers, but you may want to use 600 for particularly high-resolution output, or 96 for on-screen (e.g., web) display." 
-
-
-Could also add this discussion and links to an earlier tutorial, perhaps when we first teach ggsave()?
-
--->
-
-<!-- Central problem with this tutorial, as with other document/project creation exercises, is that it is unclear what approach is best for students. There are three choices: point/click from RStudio, quarto() R package, and quarto from the command line. -->
-
-<!-- The problem with RStudio is that there is no (?) way to create the four new files in a directory which is already created. But we want to start with a directory, because we want to begin, always, with Github, then connect to an R Project. -->
-
-<!-- The problem with quarto()/quarto is that they make certain desirable things, like doing things in the current directory and providing a title, hard. See Github for discussions. Also, we need to deal with which version we will use. Also, I could not get quarto_publish_site(server = "https://quartopub.com") to work. Very annoying! -->-->
-
-<!-- It is tempting to create three website, using one of the three approaches each time, thereby learning . . . a lot . . . But, for now, I will just use Quarto CLI. Given that choice, we don't need to install nor discuss the quarto package. -->
+<!-- There is an "annoying" bug discussed below. Should provide a reprex of this to RStudio folks. -->
 
 <!-- Need (?) to cover other material in these chapters, not just websites. Perhaps some examples of interactive pages. At the least, need to review the material in the R4DS chapters. -->
 
@@ -74,7 +45,7 @@ This tutorial covers material from [Chapter 28 Quarto](https://r4ds.hadley.nz/qu
 ## Set up Quarto
 ### 
 
-<!-- Until quarto 1.4 is installed by default, should be upcoming with  Chocolate Cosmos release, we need to check and update by hand  if necessary. -->
+<!-- Until quarto 1.4 is installed by default, should be upcoming with Chocolate Cosmos release, we need to check and update by hand  if necessary. -->
 
 We need to ensure that a modern version of [Quarto](https://quarto.org/) is installed.
 
@@ -112,6 +83,12 @@ First, we can use RStudio. This is our preferred approach, since it is the easie
 Second, we can use an R package like **quarto** directly. RStudio buttons are, generally, connected to R package commands.
 
 Third, we can work with Quarto directly at the Terminal. This is often referred to as working "from the command line." R packages often call Terminal commands behind the scenes.
+
+### 
+
+In this tutorial, we will work with Quarto directly from the Terminal. This is "Quarto CLI", where the initials stand for **C**ommand **L**ine **I**nterface. We make this choice in order to get you more comfortable with the command line, a useful skill in your data science journey. 
+
+<!-- DK: It is somewhat tempting to create three websites, one from CLI, one from the **quarto** package and one from RStudio point-and-click. That would be educational! But also time consuming and annoying . . . -->
 
 
 ## Files for a website
@@ -537,7 +514,7 @@ question_text(NULL,
 
 ### 
 
-This command is convenient because the `_sites` directory contains of lot of weird files that change often enough to annoy. We don't create any of them, so we don't really need to back them up. Moreover, they will still get published directly to the web from our computer.
+This command is [convenient](https://quarto.org/docs/publishing/github-pages.html) because the `_site` directory contains of lot of weird files that change often enough to annoy. We don't create any of them, so we don't really need to back them up. Moreover, they will still get published directly to the web from our computer.
 
 The initial backslash in `/_site` allows Git to interpret `_site` correctly. The `/` escapes the `_`, allowing it to be treated as a literal, rather than special, character. See the Regular expressions tutorial for more information. `_site` is a directory, so we could end the expression with a backslash, but Git, like most programs interpret `_site` and `_site/` to refer to the same thing, which they do.
 
@@ -780,7 +757,7 @@ At the Terminal, type:
 
 `quarto publish quarto-pub` 
 
-You will then need to hit the Enter button twice, accepting the default options for account (your email address) and site name ("a-new-website"). CP/CR.
+You will then need to hit the "Enter" button twice, accepting the default options for account (your email address) and site name ("a-new-website"). CP/CR.
 
 
 ```{r publishing-2-ex}
@@ -1341,7 +1318,7 @@ Your chunk labels should be short but evocative and should not contain spaces. W
 
 ### Exercise 8
 
-Render the `index.qmd` with the Render button. It should show the plot. You could also render with `Command/Ctrl + Shift + K`.
+Render the `index.qmd` with the "Render" button. It should show the plot. You could also render with `Command/Ctrl + Shift + K`.
 
 In the Terminal, run `cat index.qmd`. CP/CR.
 
@@ -1397,9 +1374,9 @@ If you added `echo: false` as an `execute` argument in `_quarto.yml`, this would
 
 ### Exercise 10
 
-Go to the Git tab, then commit and push your new changes to Github. Include a descriptive commit message, e.g. "Added plot to home page".
+Go to the Git tab. Commit and push your new changes to Github. Include a descriptive commit message, e.g. "Added plot to home page".
 
-In the Terminal,run `quarto publish`. You don't need to include `quarto-pub` since that information now appears in the `_publish.yml` file. You will need to hit Enter once.
+In the Terminal, run `quarto publish`. You don't need to include `quarto-pub` since that information now appears in the `_publish.yml` file. You will need to hit "Enter" once.
 
 It will not bring you to your website, but to your Quarto Pub account, where you will see the website address. Click on it and copy and paste the URL below:
 
@@ -1459,7 +1436,7 @@ Keep in mind that your browser now has two tabs which show your website. First, 
 
 ### Exercise 2
 
-Write a one sentence description yourself. Write it below the header. Include your name and school, either the one you attend or one from which you have graduated. Write until the end of the line, i.e. do not use the Enter key to wrap text. When you are finished, render the QMD. Example:
+Write a one sentence description yourself. Write it below the header. Include your name and school, either the one you attend or one from which you have graduated. Write until the end of the line, i.e. do not use the "Enter" key to wrap text. When you are finished, render the QMD. Example:
 
 ````
 My name is David Kane, and I graduated from Williams College.
@@ -1554,7 +1531,7 @@ You only need a few [formatting tricks](https://quarto.org/docs/authoring/markdo
 
 ### Exercise 5
 
-Push all the changes to Git, and issue the `quarto publish` command in the Terminal. You need to hit Enter at least once. CP/CR.
+Push all the changes to Git, and issue the `quarto publish` command in the Terminal. You need to hit "Enter" at least once. CP/CR.
 
 ```{r adding-text-5-ex}
 question_text(NULL,
@@ -1614,7 +1591,9 @@ question_text(NULL,
 
 ### 
 
-`grep` is handy for finding just those lines in the target file which match the provided pattern.
+Note how newly created Quarto documents like `sources.qmd` differ from that we have previously created in two ways. First, they do not have a `format: html` YAML line in the header. Second, they feature different default text. 
+
+This is an RStudio feature. It knows that this directory is a website project and that, therefore, it is unnecessary to even mention the format, which is best controlled from `_quarto.yml`. 
 
 
 ### Exercise 3
@@ -1703,7 +1682,7 @@ question_text(NULL,
 
 ### Exercise 5
 
-Run `quarto preview` from the Terminal. You will need to hit Enter once. Check out your new project! See how "Sources" now appears on the navigation toolbar. Click on "Sources" and see how the text you added to `sources.qmd` now appears on the web.
+Run `quarto preview` from the Terminal. You will need to hit "Enter" once. Check out your new project! See how "Sources" now appears on the navigation toolbar. Click on "Sources" and see how the text you added to `sources.qmd` now appears on the web.
 
 Run `ls _site/*html` in the Terminal. CP/CR.
 
@@ -1822,7 +1801,7 @@ question_text(NULL,
 
 ### 
 
-Type `quarto publish` in the Terminal and hit Enter. Explore the use of the "Sources" menu on your website.
+Type `quarto publish` in the Terminal and hit "Enter." Explore the use of the "Sources" menu on your website.
 
 
 ## Using an RDS file
@@ -2100,7 +2079,7 @@ question_text(NULL,
 
 ### 
 
-`D_diamonds` is back! If you type `D_diamonds` at the Console and hit `Enter`, the contents of the tibble will appear.
+`D_diamonds` is back! If you type `D_diamonds` at the Console and hit "Enter," the contents of the tibble will appear.
 
 ### Exercise 10
 
@@ -2346,7 +2325,7 @@ Second, it starts a new pipe with `x` and then creates our plot. Because the plo
 
 ### Exercise 4
 
-"Source" the entire script by pressing the "Source" button. This takes all the code from the script and feeds it, line-by-line, to the R Console. CP/CR.
+Source the entire script by pressing the "Source" button. This takes all the code from the script and feeds it, line-by-line, to the R Console. CP/CR.
 
 ```{r using-a-png-file-4-ex}
 question_text(NULL,
@@ -2475,7 +2454,7 @@ There was nothing wrong, *per se* with having the plotting code in `index.qmd` r
 
 ### Exercise 8
 
-From the Terminal, run `quarto publish`. You will need to hit Enter at least once. CP/CR.
+From the Terminal, run `quarto publish`. You will need to hit "Enter" at least once. CP/CR.
 
 
 ```{r using-a-png-file-8-ex}
@@ -2521,6 +2500,41 @@ Note the workflow. At the start, we created a pipe in `index.qmd` which does eve
 
 In a complex project, we will often create directories --- like `code`, `data`, and `images` --- into which we will place files like `process_data.R`, `clean_data.rds`, and `size_v_weight.png`, respectively.
 
+### Exercise 9
+
+Look up the help page for `theme_minimal()` by running `?theme_minimal` at the Console. Copy-and-paste the Description.
+
+```{r using-a-png-file-9-ex}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Graphics on the web often appear differently than graphics on your computer, so [many people find it useful](https://rfortherestofus.com/2019/08/themes-to-improve-your-ggplot-figures) to increase the size of the text in their graphics. [A simple way](https://minimaxir.com/2017/08/ggplot2-web/) to do that is to add `theme_minimal(base_size = 18)` to your plot creation code. Fortunately, doing so is as simple as editing and then re-running `make_plot.R`.
+
+### Exercise 10
+
+Look up the help page for `ggsave()`. Copy-and-paste the Description.
+
+```{r using-a-png-file-10-ex}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+When saving graphics for web display, it is often useful to specify their exact size with a command like `ggsave("your-file.png", your-plot, width = 4, height = 3)`. An earlier edition of [*ggplot2: Elegant Graphics for Data Analysis*](https://ggplot2-book.org/) also [notes](https://bookdown.dongzhuoer.com/hadley/ggplot2-book/saving) that:
+
+> For raster graphics (i.e. .png, .jpg), the dpi argument controls the resolution of the plot. It defaults to 300, which is appropriate for most printers, but you may want to use 600 for particularly high-resolution output, or 96 for on-screen (e.g., web) display.
 
 ## Summary
 ### 
