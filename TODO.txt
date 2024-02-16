@@ -1,11 +1,24 @@
 ## Priorities
 
+Q&A sections, at least in RStudio and Code.
+
+Make more clear that you can pull out the tutorial into its own window. But is that really a good idea? Explain to students how to move border pane around.
+
+ In the introduction to the setting of RStudio, there could be more information on how to manipulate the size of each pane (ex. to view the content of the tutorial, to have more space for coding).
+
 Maybe much of the material in Quarto R4DS chapter belongs in RStudio and Github chapter, allowing Quarto tutorial to focus on projects.
 
 Do RStudio and Code and RStudio and Github tutorials link up well together? Note that the former does do an Rpubs publishing at the end. 
 
-
 Release new version to CRAN
+
+## format_tutorial hackery
+
+Biggest hackery is our use of the "file =" trick to bring in code examples which would mess up the formatting of this document (and, even worse, mess up the use of format_tutorial()) if we just included them raw, like with ```` or ````markdown or ````{verbatim}. The trick works in that nothing breaks. But it is annoying! We would much rather see the code which we are including **right there** instead of having to look it up in a separate file.
+
+More details: parsermd(), used by format_tutorial(), is finicky. We don't want it to consider the headers in this example QMD as "real" headers. We want them to be ignored. Seems like the only way to do that is to include the entire document in an R code chunk with three backticks. Then, format_tutorial() does what we want. But! Then knitting the tutorial fails totally. You need to switch to four backticks, at the start and end. Knitting is now fine, but, if you run format_tutorial(), you will mess up the exercise numbering and chunk labels. Could not solve this! So, just use "file =" trick. Using other code examples, like empty chunks, does not mess up format_tutoria() but does mess up the displayed outline of this document, which is annoying.
+
+## Other Stuff
 
 Once RStudio release Chocolate Cosmos comes out (meaning Quarto 1.4 installed by default) and the **quarto** packae is updated, we can revisit getting rid of RPubs and/or making use of quarto:: commands.
 
