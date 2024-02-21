@@ -191,22 +191,52 @@ flights |>
 
 ### 
 
-Note that only `r scales::comma(nrow(nycflights13::flights |> filter(dep_delay > 120)))` rows remain after we filter for such a long departure delay.
+Note that only `r scales::comma(nrow(nycflights13::flights |> filter(dep_delay > 120)))` rows remain after we filter for such a long departure delay. Why do we only see 1,000 rows here? Because Quarto, by default, only keeps 1,000 rows for display purposes.
 
 ### Exercise 8
 
-You can use boolean logic when filtering. For example, `&` means "and" and `|` means "or." Pipe `flights` to `filter()` with the argument set to `month == 1 & day == 1` to get all the flights on the first day of January.
+Continue the pipe with `nrow()`.
+
 
 ```{r rows-8, exercise = TRUE}
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r rows-8-hint-1, eval = FALSE}
+flights |>
+  filter(dep_delay > 120) |> 
+  ...
+```
+
+```{r rows-8-test, include = FALSE}
+flights |>
+  filter(dep_delay > 120) |> 
+  nrow()
+```
+
+### 
+
+It is often useful to, temporarily add a simple function to the end of a pipe to confirm that the resulting tibble is what we expect it to be. Then, we remove that function and go back to working on the pipe.
+
+
+### Exercise 9
+
+Remove `nrow()` from the pipe.
+
+You can use boolean logic when filtering. For example, `&` means "and" and `|` means "or." Pipe `flights` to `filter()` with the argument set to `month == 1 & day == 1` to get all the flights on the first day of January.
+
+```{r rows-9, exercise = TRUE}
+
+```
+
+```{r rows-9-hint-1, eval = FALSE}
 flights |> 
   filter(... & day == 1)
 ```
 
-```{r rows-8-test, include = FALSE}
+```{r rows-9-test, include = FALSE}
 flights |>
   filter(month == 1 & day == 1)
 ```
@@ -215,22 +245,22 @@ flights |>
 
 Instead of `&`, you could have used a simple comma, `,`, because `filter()` treats statements separated by commas as all being required. For example, `filter(month == 1, day == 1)` would produce the same set of rows as this example.
 
-### Exercise 9
+### Exercise 10
 
 Pipe `flights` to `filter()` with the same argument as exercise 8, but use a comma (`,`) instead of `&`. It should produce the same set of rows.
 
-```{r rows-9, exercise = TRUE}
+```{r rows-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r rows-9-hint-1, eval = FALSE}
+```{r rows-10-hint-1, eval = FALSE}
 flights |> 
   filter(month == 1 ... day == 1)
 ```
 
-```{r rows-9-test, include = FALSE}
+```{r rows-10-test, include = FALSE}
 flights |>
   filter(month == 1, day == 1)
 ```
@@ -239,20 +269,20 @@ flights |>
 
 When you’re starting out with R, the easiest mistake to make is to use `=` instead of `==` when testing for equality. `filter()` will let you know when this happens.
 
-### Exercise 10
+### Exercise 11
 
 There’s a useful shortcut when you’re combining `|` and `==`: `%in%`. It keeps rows where the variable equals one of the values on the right. Pipe `flights` to `filter()` with the argument `month %in% c(1, 2)`.
 
-```{r rows-10, exercise = TRUE}
+```{r rows-11, exercise = TRUE}
 
 ```
 
-```{r rows-10-hint-1, eval = FALSE}
+```{r rows-11-hint-1, eval = FALSE}
 flights |> 
   filter(month ... c(1, 2))
 ```
 
-```{r rows-10-test, include = FALSE}
+```{r rows-11-test, include = FALSE}
 flights |>
   filter(month %in% c(1, 2))
 ```
@@ -268,22 +298,22 @@ flights |>
 
 This “works”, in the sense that it doesn’t throw an error, but it doesn’t do what you want because `|` first checks the condition `month == 1` and then checks the condition 2, which is not a sensible condition to check.
 
-### Exercise 11
+### Exercise 12
 
 When you run `filter()`, **dplyr** executes the filtering operation, creating a new data frame, and then prints it. It doesn’t modify the existing flights dataset because **dplyr** functions never modify their inputs.
 
 Create a new object, `jan1` which is the result of filtering `flights` to just including flights from January 1. In other words, put `jan1 <- ` in front of the code for Exercise 8 (`flights |> filter(month == 1 & day == 1)`).
 
-```{r rows-11, exercise = TRUE}
+```{r rows-12, exercise = TRUE}
 
 ```
 
-```{r rows-11-hint-1, eval = FALSE}
+```{r rows-12-hint-1, eval = FALSE}
 ... <- flights |> 
   filter(month == 1 & day == 1)
 ```
 
-```{r rows-11-test, include = FALSE}
+```{r rows-12-test, include = FALSE}
 jan1 <- flights |>
   filter(month == 1 & day ==1)
 ```
@@ -292,22 +322,22 @@ jan1 <- flights |>
 
 The most common workflow is to build a pipe of commands, each time checking that the pipe generates the answer you expect. Only at the end of the process would you assign the result to a permanent object.
 
-### Exercise 12
+### Exercise 13
 
 Use the same code from the previous Exercise but, this time, create the `jan1` object at the end of the pipe, rather than the beginning. In other words, place `-> jan1` at after the call to `filter()`.
 
-```{r rows-12, exercise = TRUE}
+```{r rows-13, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r rows-12-hint-1, eval = FALSE}
+```{r rows-13-hint-1, eval = FALSE}
 flights |> 
   filter(month == 1 & day == 1) -> ...
 ```
 
-```{r rows-12-test, include = FALSE}
+```{r rows-13-test, include = FALSE}
 flights |>
   filter(month ==1 & day == 1) -> jan1
 ```
@@ -316,22 +346,22 @@ flights |>
 
 The assignment is usually placed at the start of the pipe, but the result is the same if the assignment is at the end.
 
-### Exercise 13
+### Exercise 14
 
 `arrange()` changes the order of the rows based on the value of the columns. It takes a data frame and a set of column names (or more complicated expressions) to order by. If you provide more than one column name, each additional column will be used to break ties in the values of preceding columns. 
 
 Pipe `flights` to `arrange()`, passing in the arguments `year, month, day, dep_time`.
 
-```{r rows-13, exercise = TRUE}
+```{r rows-14, exercise = TRUE}
 
 ```
 
-```{r rows-13-hint-1, eval = FALSE}
+```{r rows-14-hint-1, eval = FALSE}
 flights |> 
   arrange(...)
 ```
 
-```{r rows-13-test, include = FALSE}
+```{r rows-14-test, include = FALSE}
 flights |>
   arrange(year, month, day, dep_time)
 ```
@@ -340,20 +370,20 @@ flights |>
 
 The first flight of the year was United (the `carrier` was "UA").
 
-### Exercise 14
+### Exercise 15
 
 You can use `desc()` on a column inside of `arrange()` to re-order the data frame based on that column in descending (big-to-small) order. Pipe `flights` to `arrange()` with `desc(dep_delay)` as its argument.
 
-```{r rows-14, exercise = TRUE}
+```{r rows-15, exercise = TRUE}
 
 ```
 
-```{r rows-14-hint-1, eval = FALSE}
+```{r rows-15-hint-1, eval = FALSE}
 flights |> 
   arrange(...(dep_delay))
 ```
 
-```{r rows-14-test, include = FALSE}
+```{r rows-15-test, include = FALSE}
 flights |>
   arrange(desc(dep_delay))
 ```
@@ -362,20 +392,20 @@ flights |>
 
 Note that the number of rows has not changed – we’re only arranging the data, we’re not filtering it.
 
-### Exercise 15
+### Exercise 16
 
 Although `filter()` and `arrange()` are the most commonly used **dplyr** commands for working with rows, other functions are also useful. `distinct()` finds all the unique rows in a dataset, so in a technical sense, it primarily operates on the rows. Pipe `flights` to `distinct()` with no arguments.
 
-```{r rows-15, exercise = TRUE}
+```{r rows-16, exercise = TRUE}
 
 ```
 
-```{r rows-15-hint-1, eval = FALSE}
+```{r rows-16-hint-1, eval = FALSE}
 flights |> 
   ...()
 ```
 
-```{r rows-15-test, include = FALSE}
+```{r rows-16-test, include = FALSE}
 flights |>
   distinct()
 ```
@@ -385,33 +415,9 @@ flights |>
 Each row in `flights` is already distinct so we get back the same number of rows as we started with.  
 
 
-### Exercise 16
-
-Most of the time, however, you’ll want the distinct combination of some variables, so you can also optionally supply column names. Pipe `flights` to `distinct()` with the argument `origin`.
-
-```{r rows-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r rows-16-hint-1, eval = FALSE}
-flights |> 
-  distinct(...)
-```
-
-```{r rows-16-test, include = FALSE}
-flights |>
-  distinct(origin)
-```
-
-### 
-
-There are only three distinct values for the `origin` variable because `flights` only contains data for the departures from the three major airports around New York City.
-
 ### Exercise 17
 
-`distinct()`, like most **dplyr** functions, can accept more than one variable as an argument. Pipe `flights` to `distinct()` with the argument `(origin, dest)`.
+Most of the time, however, you’ll want the distinct combination of some variables, so you can also optionally supply column names. Pipe `flights` to `distinct()` with the argument `origin`.
 
 ```{r rows-17, exercise = TRUE}
 
@@ -421,17 +427,21 @@ There are only three distinct values for the `origin` variable because `flights`
 
 ```{r rows-17-hint-1, eval = FALSE}
 flights |> 
-  distinct(origin, ...)
+  distinct(...)
 ```
 
 ```{r rows-17-test, include = FALSE}
 flights |>
-  distinct(origin, dest)
+  distinct(origin)
 ```
+
+### 
+
+There are only three distinct values for the `origin` variable because `flights` only contains data for the departures from the three major airports around New York City.
 
 ### Exercise 18
 
-It is often handy to keep values for all the other variables when using `distinct()`. Run the same command as above, but add the `.keep_all` argument with a value of `TRUE`.
+`distinct()`, like most **dplyr** functions, can accept more than one variable as an argument. Pipe `flights` to `distinct()` with the argument `(origin, dest)`.
 
 ```{r rows-18, exercise = TRUE}
 
@@ -441,10 +451,30 @@ It is often handy to keep values for all the other variables when using `distinc
 
 ```{r rows-18-hint-1, eval = FALSE}
 flights |> 
-  distinct(origin, dest, .keep_all = ...)
+  distinct(origin, ...)
 ```
 
 ```{r rows-18-test, include = FALSE}
+flights |>
+  distinct(origin, dest)
+```
+
+### Exercise 19
+
+It is often handy to keep values for all the other variables when using `distinct()`. Run the same command as above, but add the `.keep_all` argument with a value of `TRUE`.
+
+```{r rows-19, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r rows-19-hint-1, eval = FALSE}
+flights |> 
+  distinct(origin, dest, .keep_all = ...)
+```
+
+```{r rows-19-test, include = FALSE}
 flights |>
   distinct(origin, dest, .keep_all = TRUE)
 ```
@@ -453,20 +483,20 @@ flights |>
 
 Now, the dataset should show where the planes lifted off, and where they landed, along with everything else. 
 
-### Exercise 19
+### Exercise 20
 
 If you want to find the number of occurrences instead, you’re better off swapping `distinct()` for `count()`, and with the `sort = TRUE` argument you can arrange them in descending order of number of occurrences. Pipe `flights` to `count()` with `origin, dest, sort = TRUE` as the arguments.
 
-```{r rows-19, exercise = TRUE}
+```{r rows-20, exercise = TRUE}
 
 ```
 
-```{r rows-19-hint-1, eval = FALSE}
+```{r rows-20-hint-1, eval = FALSE}
 flights |>
   count(origin, dest, ... = TRUE)
 ```
 
-```{r rows-19-test, include = FALSE}
+```{r rows-20-test, include = FALSE}
 flights |>
   count(origin, dest, sort = TRUE)
 ```
@@ -1024,7 +1054,7 @@ The result was a tibble with 1 row and 1 column. Like `filter()`, `arrange()`, `
 
 ### Exercise 2
 
-The prior result was `NA` because there are some missing values in the `dep_delay` variable. Almost all statistical functions in R produce an `NA` result by default if any of the input values are `NA`. We can ignore the `NA` values when using `mean()` by adding `na.rm = FALSE` to `mean()`.
+The prior result was `NA` because there are some missing values in the `dep_delay` variable. Almost all statistical functions in R produce an `NA` result by default if any of the input values are `NA`. We can ignore the `NA` values when using `mean()` by adding `na.rm = TRUE` to `mean()`.
 
 Add the argument `na.rm = TRUE` to `mean()`. Don't forget to separate the arguments with commas.
 
