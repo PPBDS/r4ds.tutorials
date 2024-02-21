@@ -1,4 +1,4 @@
-# r4ds.tutorials (development version)
+# r4ds.tutorials 0.2.0
 
 * Re-number chapters to follow changes made in R4DS.
 

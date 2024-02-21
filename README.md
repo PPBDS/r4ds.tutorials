@@ -43,9 +43,8 @@ of the course.
 Note that most of the tutorials follow the associated chapters from [*R
 for Data Science (2e)*](https://r4ds.hadley.nz/). This is *not* true,
 however, for these tutorials: Introduction, RStudio and Code, RStudio
-and Github, Terminal, Quarto Websites, and Visualization Case Studies.
-In those tutorials, we cover material which we feel belongs in any
-introductory data science course.
+and Github, Terminal, and Quarto. In those tutorials, we cover material
+which we feel belongs in any introductory data science course.
 
 ## Installation
 
