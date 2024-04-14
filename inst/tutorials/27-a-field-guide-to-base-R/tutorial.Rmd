@@ -82,7 +82,6 @@ indexes <- seq_along(tb4)
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-
 ## Introduction
 ### 
 
@@ -181,7 +180,7 @@ When you run the code above, you should see that it extracts "two", "three", and
 
 ### Exercise 5
 
-You can also pass in a vector of negative values. In the code chunk below, type `x[]`, placing the vector `c(-1, -2)` inside the brackets. Oberseve what happens.
+You can also pass in a vector of negative values. In the code chunk below, type `x[]`, placing the vector `c(-1, -2)` inside the brackets. Observe what happens.
 
 ```{r subsetting-with-the-single-bra-5, exercise = TRUE}
 
@@ -201,7 +200,7 @@ Negative values drop the elements at the specified positions; the code above dro
 
 ### Exercise 6
 
-Subsetting with logical vectors are another type of thing that you can subset a vector with. Create a vector with the values `10`, `3`, `NA`, `5`, `8`, `1`, and `NA`. Save this to a variable named `x2`.
+Logical vectors are another type of thing that you can subset a vector with. Create a vector with the values `10`, `3`, `NA`, `5`, `8`, `1`, and `NA`. Save this to a variable named `x2`.
 
 
 ```{r subsetting-with-the-single-bra-6, exercise = TRUE}
@@ -356,6 +355,8 @@ df <- tibble(
 
 There are many ways to use `[` with data sets, but the most common way is to subset by selecting rows and columns, with the syntax `df[row, col]`.
 
+Also, the `runif` function is part of the Uniform Distribution set of functions. For more details type `?runif` in the console or go [here.](https://readr.tidyverse.org/articles/locales.html)
+
 ### Exercise 13
 
 Using `df`, let's extract the letter "a". On a new line, type `df` followed by a pair of brackets. In the brackets, type `1,2`.
@@ -376,7 +377,7 @@ df[1,2]
 
 ### 
 
-This extracts the element in the 1st row, 2nd column, which is the letter "a".
+This extracts the element in the 1st row(contains first element for variables x, y and z), and in the 2nd column(variable x represents this column), which is the letter "a".
 
 ### Exercise 14
 
@@ -405,7 +406,7 @@ As you can see, by leaving the first part of the subset blank (the part before t
 
 There's an important difference between tibbles and data frames when it comes to `[` . In the tutorials, we've mainly used tibbles, which are data frames, but tibbles tweak some behaviors to make your life a little easier. In most places, you can use "tibble" and "data frame" interchangeably, so when we want to draw particular attention to R's built-in data frame, we'll write data.frame.
 
-Press "Run Code".
+Create a data table with `data.frame()` and set `x` equal to all numbers 1 to 3.Then save the data frame into a variable named `df1`. Then create a tibble with `x` equaling numbers from 1 to 3. Then, save the tibble into `df2`. Lastly, display the data frame and tibble by typing the variables on two different lines.
 
 ```{r subsetting-with-the-single-bra-15, exercise = TRUE}
 df1 <- data.frame(x = 1:3)
@@ -415,13 +416,24 @@ df1
 df2
 ```
 
+```{r subsetting-with-the-single-bra-15-hint-1, eval = FALSE}
+df1 <- data.frame(x = ...:...)
+df2 <- tibble(x = ...:...)
+
+...
+...
+```
+
 ### 
 
 If `df` is a data.frame, then `df[, cols]` will return a vector if `col` selects a single column and a data frame if it selects more than one column. If `df` is a tibble, then `[` will always return a \`tibble.
 
 ### Exercise 16
 
-Press "Run code".
+Several dplyr verbs are special cases of `[`.
+
+Create a tibble with three columns, `x`, `y`, and `z`. For `x`, create a vector consisting of the values `2, 3, 1, 1, NA`. For `y`, create a list of letters from a to e. Make `z` equal to `runif(5)`. Save the dibble into `df0` and run that in a new line.
+
 
 ```{r subsetting-with-the-single-bra-16, exercise = TRUE}
 df0 <- tibble(
@@ -486,6 +498,8 @@ df0[order(df0$x, df0$y), ]
 ```
 
 ### 
+
+$ is specialized for access by name.
 
 You can use `order(decreasing = TRUE)` to sort all columns in descending order or `-rank(col)` to sort columns in decreasing order individually.
 
@@ -628,7 +642,9 @@ There are several other base R approaches to creating new columns including with
 
 ### Exercise 6
 
-Press "Run code".
+Let's take a  glance at the **diamonds** package. 
+
+Type `diamonds` in the code chunk below.
 
 ```{r subsetting-with-double-brackes-6, exercise = TRUE}
 diamonds
@@ -688,11 +704,16 @@ Just like the previous exercise, the code returns the maximum carat, which is `5
 
 An important difference between tibbles and data frames is that tibbles are much more strict when extracting columns with `$`.
 
-Press "Run code".
+Create a data frame and set `x1` equal to `1`. Save th data frame in `df2`. Then on a new line type `df2$x` to extract a column from the data frame.
 
 ```{r subsetting-with-double-brackes-9, exercise = TRUE}
 df2 <- data.frame(x1 = 1)
 df2$x
+```
+
+```{r subsetting-with-double-brackes-9-hint-1, eval = FALSE}
+... <- data.frame(...)
+...$x
 ```
 
 ```{r subsetting-with-double-brackes-9-test, include = FALSE}
@@ -708,14 +729,19 @@ Although there is no column named `x` in `df2`, the code is still able to output
 
 However, tibbles are much stricter: they only ever match variable names exactly and they will generate a warning if the column you are trying to access doesn't exist.
 
-Press "Run code".
+Create a tibble and set `x1` equal to `1`. Save the tibble in `tb2`. Then on a new line type `tb2$x` to extract a column from the tibble.
 
-```{r subsetting-with-double-brackes-10, exercise = TRUE}
+```{r subsetting-with-double-brackets-10, exercise = TRUE}
 tb2 <- tibble(x1 = 1)
 tb2$x
 ```
 
-```{r subsetting-with-double-brackes-10-test, include = FALSE}
+```{r subsetting-with-double-brackes-10-hint, exercise = TRUE}
+... <- tibble(...)
+...$x
+```
+
+```{r subsetting-with-double-brackets-10-test, include = FALSE}
 tb2 <- tibble(x1 = 1)
 tb2$x
 ```
@@ -728,7 +754,7 @@ Since there is no column named exactly `x1` in the tibble `tb2`, the code will p
 
 The double bracket operator `[[` and dollar sign `$` are really important when working with lists, and have differences compared to the single bracket operator `[`.
 
-Using the `list()` function, create a list. Set the first list element to `a`, which is equal to a range of integers from 1 to 3. Set the second list element to `b`, which is equal to the string `"a string"`. Set the third list element to `c`, which is equal to `pi`, and set the fourth list element to `d`, which is equal to another list containing `-1` and `-5`. Then, set the entire list equal to the variable `list1`.
+Using the `list()` function, create a list. Set the first list element to `a`, which is equal to a range of integers from 1 to 3. Set the second list element to `b`, which is equal to the string `"a string"`. Set the third list element to `c`, which is equal to `pi`, and set the fourth list element to `d`, which is equal to another list containing `-1` and `-5`. Then, set the entire list equal to the variable `list1`. Type `list1` on the next line to see the result.
 
 ```{r subsetting-with-double-brackes-11, exercise = TRUE}
 
@@ -780,7 +806,7 @@ As you can see, the code returns two lists: one list for `a` and one list for `b
 
 Unlike the single bracket operator, which extracts a sub-list, the double bracket operator, `[[`, extracts a single component from a list.
 
-In the code chunk below, type in `str()`. Inside the function, type in `list1`, followed by double brackets, `[[]]`. Inside the double brackets, type in `4`. `d` is the 4th element inside `list1`, which is why we need to type in `4`.
+In the code chunk below, type in `str()`. Inside the function, type in `list1`, followed by double brackets, `[[]]`. Inside the double brackets, type in `4`. This will extract the list `d`. We can also replace the `4` with a `d` and obtain the same result because `[[]]` works with both variable names as well as the element number. 
 
 ```{r subsetting-with-double-brackes-13, exercise = TRUE}
 
@@ -802,7 +828,7 @@ As you can see, the double bracket operator, `[[`, extracts all the components o
 
 Like the double bracket operator, the `$` operator also extracts a single component from a list. 
 
-In the code chunk below, type in `str()`, placing `list1` inside the function. Right next to `list1`, type in `$d`.
+In the code chunk below, type in `str()`, placing `list1` inside the function. Right next to `list1`, type in `$d`. 
 
 ```{r subsetting-with-double-brackes-14, exercise = TRUE}
 
@@ -864,10 +890,14 @@ question_text(NULL,
 
 ### Exercise 3
 
-Press "Run code"
+Create a tibble where `a = 1`, `b = 2`, `c= "a"`, `d = "b"` and `e = 4`. Then save the tibble into variable `df4`.
 
 ```{r apply-family-3, exercise = TRUE}
 df4 <- tibble(a = 1, b = 2, c = "a", d = "b", e = 4)
+```
+
+```{r apply-family-3-hint-1, eval = FALSE}
+df4 <- tibble(..., ..., ..., ..., e = 4)
 ```
 
 ### 
@@ -896,7 +926,7 @@ As mentioned previously, `sapply()` always tries to simplify the results, hence 
 
 ### Exercise 5
 
-Now, lets transform each column with `lapply()` and then replace the original values. In the code chunk below, type in `lapply()`. In the first argument, pass in `df4[, num_cols, drop = FALSE]`. In the second column, type in `\(x) x * 2`. Save the results to `df4[, num_cols]`. Then on a new line, type `df4`.
+Now, lets transform each column with `lapply()` and then replace the original values. In the code chunk below, type in `lapply()`. In the first argument, pass in `df4[, num_cols, drop = FALSE]`. In the second argument, type in `\(x) x * 2`. Save the results to `df4[, num_cols]`. Then on a new line, type `df4`.
 
 ```{r apply-family-5, exercise = TRUE}
 
@@ -955,6 +985,8 @@ diamonds
 
 If you want to see how you might use `tapply()` or other base techniques to perform other grouped summaries, Hadley has collected a [few techniques](https://gist.github.com/hadley/c430501804349d382ce90754936ab8ec).
 
+<!-- LD: Add exercises and follow steps from the book.  -->
+
 ### Exercise 8
 
 In the code chunk below, type `tapply()`. The first element should be `diamonds$price`, the second element should be `diamonds$cut`, and the third element should be `mean`. Press "Run Code" after you are done.
@@ -993,12 +1025,19 @@ for (element in vector) {
 
 ### Exercise 1
 
-Press "Run Code"
+Use `list()` to create a list of values from 15 to 19. Save that into variable `L`. Then use a `for` loop to print out each element of list `L`.
 
 ```{r for-loops-1, exercise = TRUE}
 L <- list(15, 16, 17, 18, 19)
 for (element in L) {
   print(element)
+}
+```
+
+```{r for-loops-1-hint-1, eval = FALSE}
+L <- list(15, ..., ..., ..., 19)
+for (element in ...) {
+  print(...)
 }
 ```
 
@@ -1035,15 +1074,17 @@ As you can see, the code calculates the square root of each number inside the ve
 
 ### Exercise 3
 
+Create a `list()` with numbers from 6 to 10 and save it in `L1`.
+
 The `print()` function is used to display the output of code to the console. In the code chunk below, pass in `L1` to the `print()` function.
 
 ```{r for-loops-3, exercise = TRUE}
 L1 <- list(6, 7, 8, 9, 10)
-
+print(L1)
 ```
 
 ```{r for-loops-3-hint-1, eval = FALSE}
-L1 <- list(6, 7, 8, 9, 10)
+L1 <- list(6, ..., ..., ..., 10)
 print(...)
 ```
 
@@ -1054,7 +1095,9 @@ print(L1)
 
 ### 
 
-As you can see, the `print()` displayed the values inside `L2` in the console.
+As you can see, the `print()` displayed the values inside `L` in the console.
+
+<!-- LD: This part is a bit confusing -->
 
 ### Exercise 4
 
@@ -1079,6 +1122,8 @@ L2 <- list(4, 16, 25, 49, 64)
 ### Exercise 5
 
 The most straightforward use of `for` loops is to achieve the same effect as `walk()`: call some function with a side-effect on each element of a list.
+
+<!-- LD: Could provide more clarification on walk() -->
 
 Create a `for` loop, placing `element in L2` inside the parenthesis. Inside the loop, type in `print()`, passing in the `sqrt()` function. Inside `sqrt()`, type in `element`.
 
