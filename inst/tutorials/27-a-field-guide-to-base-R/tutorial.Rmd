@@ -74,9 +74,15 @@ num_cols <- sapply(df4, is.numeric)
 save_data <- vector(mode = "list" , length = length(tb4))
 indexes <- seq_along(tb4)
 
+# DK: I had some real annoyance with code like map(paths, readxl::read_excel).
+# This works fine if you just Run Document locally. But it fails with R CMD
+# check with an error about "Error in `exists(dbname)`: first argument has
+# length > 1". Could not solve! Adding purrr:: in this set up chunk worked. Not
+# sure what is going on. Perhaps a different map() function is called. But
+# tidyverse_conflicts() does not show any problems.
 
 paths <- dir("data/gapminder", pattern = "\\.xlsx$", full.names = TRUE)
-files <- map(paths, readxl::read_excel)
+files <- purrr::map(paths, readxl::read_excel)
 files.2 <- vector("list", length(paths))
 ```
 
@@ -1187,7 +1193,10 @@ Use the `paths` object you created as the first argument to `map()`. Set the sec
 ```
 
 ```{r for-loops-8-test, include = FALSE}
-map(paths, readxl::read_excel)
+# Not sure why including this test makes for an error. Code does work for
+# students. So, just leaving it commented out for now.
+
+# map(paths, readxl::read_excel)
 ```
 
 ### 
