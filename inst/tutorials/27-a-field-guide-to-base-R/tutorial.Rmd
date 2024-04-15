@@ -76,7 +76,8 @@ indexes <- seq_along(tb4)
 
 
 paths <- dir("data/gapminder", pattern = "\\.xlsx$", full.names = TRUE)
-
+files <- map(paths, readxl::read_excel)
+files.2 <- vector("list", length(paths))
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -1064,7 +1065,238 @@ dir("data/gapminder")
 
 Recall that `dir()` lists all the files in a given location.
 
-<!-- DK: Continue from here. -->
+### Exercise 3
+
+Add `"\\.xlsx$"` as the value for the `pattern` argument to the `dir("data/gapminder")` command you used for the previous question.
+
+```{r for-loops-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r for-loops-3-hint-1, eval = FALSE}
+dir("data/gapminder", pattern = "...")
+```
+
+```{r for-loops-3-test, include = FALSE}
+dir("data/gapminder", pattern = "\\.xlsx$")
+```
+
+### 
+
+This `pattern` argument ensures that only files which match the pattern are returned by `dir()`. In this case, the file names must end with ".xlsx". One of the two forward slashes is needed to "escape" the period, and second slash escapes the first slash. Using an R fraw string, `r"(.xlsx)"`, would produce the same answer and probably be easier to interpret.
+
+### Exercise 4
+
+Add `TRUE` as the value for the `full.names` argument to the `dir("data/gapminder", , pattern = "\\.xlsx$")` command you used for the previous question.
+
+```{r for-loops-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r for-loops-4-hint-1, eval = FALSE}
+dir("data/gapminder", pattern = "\\.xlsx$", full.names = ...)
+```
+
+```{r for-loops-4-test, include = FALSE}
+dir("data/gapminder", pattern = "\\.xlsx$", full.names = TRUE)
+```
+
+### 
+
+Setting `full.names` to `TRUE` provides the relative directory path to the files which match the `pattern` and are located in the `path`, which is the first argument to `dir()`.
+
+
+### Exercise 5
+
+Assign the result of the `dir()` command to a new variable, `paths`.
+
+```{r for-loops-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r for-loops-5-hint-1, eval = FALSE}
+... <- dir("data/gapminder", pattern = "\\.xlsx$", full.names = TRUE)
+```
+
+```{r for-loops-5-test, include = FALSE}
+paths <- dir("data/gapminder", pattern = "\\.xlsx$", full.names = TRUE)
+```
+
+### 
+
+Whenever we need to do the same thing to a bunch of files, we first need to create a list of those files, along with their locations.
+
+### Exercise 6
+
+Let's take a look at one of these files. Use `readxl::read_excel()` with the `path` argument set to the last file, which is `"data/gapminder/2007.xlsx"`.
+
+```{r for-loops-6, exercise = TRUE}
+
+```
+
+```{r for-loops-6-hint-1, eval = FALSE}
+readxl::read_excel(... = "data/gapminder/2007.xlsx")
+```
+
+```{r for-loops-6-test, include = FALSE}
+readxl::read_excel(path = "data/gapminder/2007.xlsx")
+```
+
+### 
+
+This returns a tibble with 142 rows, each corresponding to a different country. But we don't want to have to type out this command for every file. That would be a bother with the 12 files we have in this case. It would be impossible with hundreds or thousands of files.
+
+### Exercise 7
+
+Because we have all the locations of the files stored in the `paths` vector, we can use (elements from) it instead. Run the same `readxl::read_excel()` again but, instead of providing the location by hand, use `paths[12]` as the argument to `path`.
+
+```{r for-loops-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r for-loops-7-hint-1, eval = FALSE}
+readxl::read_excel(path = ...)
+```
+
+```{r for-loops-7-test, include = FALSE}
+readxl::read_excel(path = paths[12])
+```
+
+### 
+
+Keep track of which name refers to what. `path` is the first argument in the `readxl()` function. `paths` is a character vector, which we created with `dir()`, of paths to the gapminder data.
+
+### Exercise 8
+
+Use the `paths` object you created as the first argument to `map()`. Set the second argument to `readxl::read_excel()`.
+
+```{r for-loops-8, exercise = TRUE}
+
+```
+
+```{r for-loops-8-hint-1, eval = FALSE}
+...(paths, readxl::...)
+```
+
+```{r for-loops-8-test, include = FALSE}
+map(paths, readxl::read_excel)
+```
+
+### 
+
+`map()` takes the function in the second argument and applies each to each element of the vector in the first argument, returning a list of the same length as the latter. The last element of the list is a tibble with 142 rows, the same object as we created when we applied `readxl::read_excel()` to the last element of `paths`.
+
+### Exercise 9
+
+It is useful to see how we might accomplish this same task "by hand," using an explicit `for` loop. Start by creating an object in which we can store the results. Run this code.
+
+```{r for-loops-9, exercise = TRUE}
+files.2 <- vector("list", length(paths))
+files.2
+```
+
+```{r for-loops-9-test, include = FALSE}
+files.2 <- vector("list", length(paths))
+files.2
+```
+
+### 
+
+`files.2` is a list of length 12. We will store one tibble in each element of `files.2`.
+
+### Exercise 10
+
+Run `seq_along()` with `paths` as its argument.
+
+```{r for-loops-10, exercise = TRUE}
+
+```
+
+```{r for-loops-10-hint-1, eval = FALSE}
+seq_along(...)
+```
+
+```{r for-loops-10-test, include = FALSE}
+seq_along(paths)
+```
+
+### 
+
+Using the indices is important because it allows us to link to each position in the input with the corresponding position in the output. `seq_along()` is the best method for generating those indices because of how well it handles edge cases, like a zero length input vector. 
+
+### Exercise 11
+
+Write a `for()` loop. The argument in the `()` after `for` should be `i in seq_along(paths)`. The code in the body of the `for()` loop should be `files[[i]] <- readxl::read_excel(paths[i])`.
+
+```{r for-loops-11, exercise = TRUE}
+
+```
+
+```{r for-loops-11-hint-1, eval = FALSE}
+for (... in seq_along(paths)) {
+  ... <- readxl::read_excel(paths[...])
+}
+```
+
+```{r for-loops-11-test, include = FALSE}
+for (i in seq_along(paths)) {
+  files[[i]] <- readxl::read_excel(paths[i])
+}
+```
+
+### 
+
+The trickiest part of this code is that we have `files[[i]]` with two pairs of nested brackets and `paths[i]` with only one pair. The reason for the difference is that `paths` is a simple vector. We just need one pair of brackets to access each element of a vector. `files`, on the other hand, is a list and, therefore, needs nested brackets.
+
+### Exercise 12
+
+To combine the list of tibbles into a single tibble you can use `do.call()` and `rbind()`. Run `do.call()` with two arguments: `rbind` and `files`.
+
+```{r for-loops-12, exercise = TRUE}
+
+```
+
+```{r for-loops-12-hint-1, eval = FALSE}
+...(rbind, ...)
+```
+
+```{r for-loops-12-test, include = FALSE}
+do.call(rbind, files)
+```
+
+### 
+
+Functions from the **purrr** package have largely replaced `do.call()` in modern R code.
+
+### Exercise 13
+
+Rather than making a list and saving the results as we go, a simpler approach is to build up the data frame piece-by-piece. Run this code.
+
+```{r for-loops-13, exercise = TRUE}
+out <- NULL
+for (path in paths) {
+  out <- rbind(out, readxl::read_excel(path))
+}
+```
+
+```{r for-loops-13-test, include = FALSE}
+out <- NULL
+for (path in paths) {
+  out <- rbind(out, readxl::read_excel(path))
+}
+```
+
+### 
+
+We recommend avoiding this pattern because it can become very slow when the vector is very long. This is the source of the persistent canard that for loops are slow: they’re not, but iteratively growing a vector is.
 
 
 ## Plots
