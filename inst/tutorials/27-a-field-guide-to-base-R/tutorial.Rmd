@@ -15,6 +15,7 @@ description: 'Tutorial for Chapter 27: A field guide to base R'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
+library(readxl)
 
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
@@ -68,12 +69,21 @@ tb4 <- tibble(
 
 num_cols <- sapply(df4, is.numeric)
 
+# DK: Delete objects we don't use.
 
 save_data <- vector(mode = "list" , length = length(tb4))
 indexes <- seq_along(tb4)
 
+# DK: I had some real annoyance with code like map(paths, readxl::read_excel).
+# This works fine if you just Run Document locally. But it fails with R CMD
+# check with an error about "Error in `exists(dbname)`: first argument has
+# length > 1". Could not solve! Adding purrr:: in this set up chunk worked. Not
+# sure what is going on. Perhaps a different map() function is called. But
+# tidyverse_conflicts() does not show any problems.
 
-
+paths <- dir("data/gapminder", pattern = "\\.xlsx$", full.names = TRUE)
+files <- purrr::map(paths, readxl::read_excel)
+files.2 <- vector("list", length(paths))
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -82,11 +92,8 @@ indexes <- seq_along(tb4)
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-
 ## Introduction
 ### 
-
-*This is a ROUGH, UNFINISHED, draft.*
 
 This tutorial covers [Chapter 27: A field guide to base R](https://r4ds.hadley.nz/base-r) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
 
@@ -181,7 +188,7 @@ When you run the code above, you should see that it extracts "two", "three", and
 
 ### Exercise 5
 
-You can also pass in a vector of negative values. In the code chunk below, type `x[]`, placing the vector `c(-1, -2)` inside the brackets. Oberseve what happens.
+You can also pass in a vector of negative values. In the code chunk below, type `x[]`, placing the vector `c(-1, -2)` inside the brackets. Observe what happens.
 
 ```{r subsetting-with-the-single-bra-5, exercise = TRUE}
 
@@ -201,7 +208,7 @@ Negative values drop the elements at the specified positions; the code above dro
 
 ### Exercise 6
 
-Subsetting with logical vectors are another type of thing that you can subset a vector with. Create a vector with the values `10`, `3`, `NA`, `5`, `8`, `1`, and `NA`. Save this to a variable named `x2`.
+Logical vectors are another type of thing that you can subset a vector with. Create a vector with the values `10`, `3`, `NA`, `5`, `8`, `1`, and `NA`. Save this to a variable named `x2`.
 
 
 ```{r subsetting-with-the-single-bra-6, exercise = TRUE}
@@ -356,6 +363,8 @@ df <- tibble(
 
 There are many ways to use `[` with data sets, but the most common way is to subset by selecting rows and columns, with the syntax `df[row, col]`.
 
+Also, the `runif` function is part of the Uniform Distribution set of functions. For more details type `?runif` in the console or go [here.](https://readr.tidyverse.org/articles/locales.html)
+
 ### Exercise 13
 
 Using `df`, let's extract the letter "a". On a new line, type `df` followed by a pair of brackets. In the brackets, type `1,2`.
@@ -376,7 +385,7 @@ df[1,2]
 
 ### 
 
-This extracts the element in the 1st row, 2nd column, which is the letter "a".
+This extracts the element in the 1st row(contains first element for variables x, y and z), and in the 2nd column(variable x represents this column), which is the letter "a".
 
 ### Exercise 14
 
@@ -405,7 +414,7 @@ As you can see, by leaving the first part of the subset blank (the part before t
 
 There's an important difference between tibbles and data frames when it comes to `[` . In the tutorials, we've mainly used tibbles, which are data frames, but tibbles tweak some behaviors to make your life a little easier. In most places, you can use "tibble" and "data frame" interchangeably, so when we want to draw particular attention to R's built-in data frame, we'll write data.frame.
 
-Press "Run Code".
+Create a data table with `data.frame()` and set `x` equal to all numbers 1 to 3.Then save the data frame into a variable named `df1`. Then create a tibble with `x` equaling numbers from 1 to 3. Then, save the tibble into `df2`. Lastly, display the data frame and tibble by typing the variables on two different lines.
 
 ```{r subsetting-with-the-single-bra-15, exercise = TRUE}
 df1 <- data.frame(x = 1:3)
@@ -415,13 +424,24 @@ df1
 df2
 ```
 
+```{r subsetting-with-the-single-bra-15-hint-1, eval = FALSE}
+df1 <- data.frame(x = ...:...)
+df2 <- tibble(x = ...:...)
+
+...
+...
+```
+
 ### 
 
 If `df` is a data.frame, then `df[, cols]` will return a vector if `col` selects a single column and a data frame if it selects more than one column. If `df` is a tibble, then `[` will always return a \`tibble.
 
 ### Exercise 16
 
-Press "Run code".
+Several dplyr verbs are special cases of `[`.
+
+Create a tibble with three columns, `x`, `y`, and `z`. For `x`, create a vector consisting of the values `2, 3, 1, 1, NA`. For `y`, create a list of letters from a to e. Make `z` equal to `runif(5)`. Save the dibble into `df0` and run that in a new line.
+
 
 ```{r subsetting-with-the-single-bra-16, exercise = TRUE}
 df0 <- tibble(
@@ -486,6 +506,8 @@ df0[order(df0$x, df0$y), ]
 ```
 
 ### 
+
+$ is specialized for access by name.
 
 You can use `order(decreasing = TRUE)` to sort all columns in descending order or `-rank(col)` to sort columns in decreasing order individually.
 
@@ -628,7 +650,9 @@ There are several other base R approaches to creating new columns including with
 
 ### Exercise 6
 
-Press "Run code".
+Let's take a  glance at the **diamonds** package. 
+
+Type `diamonds` in the code chunk below.
 
 ```{r subsetting-with-double-brackes-6, exercise = TRUE}
 diamonds
@@ -688,11 +712,16 @@ Just like the previous exercise, the code returns the maximum carat, which is `5
 
 An important difference between tibbles and data frames is that tibbles are much more strict when extracting columns with `$`.
 
-Press "Run code".
+Create a data frame and set `x1` equal to `1`. Save th data frame in `df2`. Then on a new line type `df2$x` to extract a column from the data frame.
 
 ```{r subsetting-with-double-brackes-9, exercise = TRUE}
 df2 <- data.frame(x1 = 1)
 df2$x
+```
+
+```{r subsetting-with-double-brackes-9-hint-1, eval = FALSE}
+... <- data.frame(...)
+...$x
 ```
 
 ```{r subsetting-with-double-brackes-9-test, include = FALSE}
@@ -708,11 +737,16 @@ Although there is no column named `x` in `df2`, the code is still able to output
 
 However, tibbles are much stricter: they only ever match variable names exactly and they will generate a warning if the column you are trying to access doesn't exist.
 
-Press "Run code".
+Create a tibble and set `x1` equal to `1`. Save the tibble in `tb2`. Then on a new line type `tb2$x` to extract a column from the tibble.
 
 ```{r subsetting-with-double-brackes-10, exercise = TRUE}
 tb2 <- tibble(x1 = 1)
 tb2$x
+```
+
+```{r subsetting-with-double-brackes-10-hint, exercise = TRUE}
+... <- tibble(...)
+...$x
 ```
 
 ```{r subsetting-with-double-brackes-10-test, include = FALSE}
@@ -728,7 +762,7 @@ Since there is no column named exactly `x1` in the tibble `tb2`, the code will p
 
 The double bracket operator `[[` and dollar sign `$` are really important when working with lists, and have differences compared to the single bracket operator `[`.
 
-Using the `list()` function, create a list. Set the first list element to `a`, which is equal to a range of integers from 1 to 3. Set the second list element to `b`, which is equal to the string `"a string"`. Set the third list element to `c`, which is equal to `pi`, and set the fourth list element to `d`, which is equal to another list containing `-1` and `-5`. Then, set the entire list equal to the variable `list1`.
+Using the `list()` function, create a list. Set the first list element to `a`, which is equal to a range of integers from 1 to 3. Set the second list element to `b`, which is equal to the string `"a string"`. Set the third list element to `c`, which is equal to `pi`, and set the fourth list element to `d`, which is equal to another list containing `-1` and `-5`. Then, set the entire list equal to the variable `list1`. Type `list1` on the next line to see the result.
 
 ```{r subsetting-with-double-brackes-11, exercise = TRUE}
 
@@ -780,7 +814,7 @@ As you can see, the code returns two lists: one list for `a` and one list for `b
 
 Unlike the single bracket operator, which extracts a sub-list, the double bracket operator, `[[`, extracts a single component from a list.
 
-In the code chunk below, type in `str()`. Inside the function, type in `list1`, followed by double brackets, `[[]]`. Inside the double brackets, type in `4`. `d` is the 4th element inside `list1`, which is why we need to type in `4`.
+In the code chunk below, type in `str()`. Inside the function, type in `list1`, followed by double brackets, `[[]]`. Inside the double brackets, type in `4`. This will extract the list `d`. We can also replace the `4` with a `d` and obtain the same result because `[[]]` works with both variable names as well as the element number. 
 
 ```{r subsetting-with-double-brackes-13, exercise = TRUE}
 
@@ -802,7 +836,7 @@ As you can see, the double bracket operator, `[[`, extracts all the components o
 
 Like the double bracket operator, the `$` operator also extracts a single component from a list. 
 
-In the code chunk below, type in `str()`, placing `list1` inside the function. Right next to `list1`, type in `$d`.
+In the code chunk below, type in `str()`, placing `list1` inside the function. Right next to `list1`, type in `$d`. 
 
 ```{r subsetting-with-double-brackes-14, exercise = TRUE}
 
@@ -864,10 +898,14 @@ question_text(NULL,
 
 ### Exercise 3
 
-Press "Run code"
+Create a tibble where `a = 1`, `b = 2`, `c= "a"`, `d = "b"` and `e = 4`. Then save the tibble into variable `df4`.
 
 ```{r apply-family-3, exercise = TRUE}
 df4 <- tibble(a = 1, b = 2, c = "a", d = "b", e = 4)
+```
+
+```{r apply-family-3-hint-1, eval = FALSE}
+df4 <- tibble(..., ..., ..., ..., e = 4)
 ```
 
 ### 
@@ -896,7 +934,7 @@ As mentioned previously, `sapply()` always tries to simplify the results, hence 
 
 ### Exercise 5
 
-Now, lets transform each column with `lapply()` and then replace the original values. In the code chunk below, type in `lapply()`. In the first argument, pass in `df4[, num_cols, drop = FALSE]`. In the second column, type in `\(x) x * 2`. Save the results to `df4[, num_cols]`. Then on a new line, type `df4`.
+Now, lets transform each column with `lapply()` and then replace the original values. In the code chunk below, type in `lapply()`. In the first argument, pass in `df4[, num_cols, drop = FALSE]`. In the second argument, type in `\(x) x * 2`. Save the results to `df4[, num_cols]`. Then on a new line, type `df4`.
 
 ```{r apply-family-5, exercise = TRUE}
 
@@ -955,6 +993,8 @@ diamonds
 
 If you want to see how you might use `tapply()` or other base techniques to perform other grouped summaries, Hadley has collected a [few techniques](https://gist.github.com/hadley/c430501804349d382ce90754936ab8ec).
 
+<!-- Add exercises and follow steps from the book.  -->
+
 ### Exercise 8
 
 In the code chunk below, type `tapply()`. The first element should be `diamonds$price`, the second element should be `diamonds$cut`, and the third element should be `mean`. Press "Run Code" after you are done.
@@ -981,9 +1021,7 @@ The final member of the apply family is the titular `apply()`, which works with 
 ## For loops
 ### 
 
-`for` loops are the fundamental building block of iteration that both the *apply* and *map* families use under the hood. `for` loops are powerful and general tools that are important to learn as you become a more experienced R programmer.
-
-The structure for `for` loops looks like this:
+`for` loops are the fundamental building block of iteration that both the *apply()* and *map()* families use under the hood. The structure for `for` loops looks like this:
 
 ```         
 for (element in vector) {
@@ -993,261 +1031,282 @@ for (element in vector) {
 
 ### Exercise 1
 
-Press "Run Code"
+Use `c()` to create a vector of values from 15 to 19. Assign that vector `x`. Then use a `for` loop to print out each element of vector `x`.
 
 ```{r for-loops-1, exercise = TRUE}
-L <- list(15, 16, 17, 18, 19)
-for (element in L) {
-  print(element)
+x <- c(15, 16, 17, 18, 19)
+for (i in x) {
+  print(i)
 }
 ```
 
 ```{r for-loops-1-test, include = FALSE}
-L <- list(1, 2, 3, 4, 5)
-for (element in L) {
-  print(element)
+x <- c(15, 16, 17, 18, 19)
+for (i in x) {
+  print(i)
 }
 ```
 
 ### 
 
-As you can see, the `for` loop iterates through each element in the list, printing out the element.
+The `for` loop iterates through each element in the vector, printing it out.
 
 ### Exercise 2
 
-The `sqrt()` is a function that takes the square root of a number. In the code chunk below, type in `sqrt()`, placing the vector `c(4, 16, 121)` inside the parenthesis.
+Type `dir()` with `"data/gapminder"` as the first argument.
 
 ```{r for-loops-2, exercise = TRUE}
 
 ```
 
 ```{r for-loops-2-hint-1, eval = FALSE}
-sqrt(c(... , ... , ...))
+dir("data/...")
 ```
 
 ```{r for-loops-2-test, include = FALSE}
-sqrt(c(4 , 16 , 121))
+dir("data/gapminder")
 ```
 
 ### 
 
-As you can see, the code calculates the square root of each number inside the vector.
+Recall that `dir()` lists all the files in a given location.
 
 ### Exercise 3
 
-The `print()` function is used to display the output of code to the console. In the code chunk below, pass in `L1` to the `print()` function.
+Add `"\\.xlsx$"` as the value for the `pattern` argument to the `dir("data/gapminder")` command you used for the previous question.
 
 ```{r for-loops-3, exercise = TRUE}
-L1 <- list(6, 7, 8, 9, 10)
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r for-loops-3-hint-1, eval = FALSE}
-L1 <- list(6, 7, 8, 9, 10)
-print(...)
+dir("data/gapminder", pattern = "...")
 ```
 
 ```{r for-loops-3-test, include = FALSE}
-L1 <- list(6, 7, 8, 9, 10)
-print(L1)
+dir("data/gapminder", pattern = "\\.xlsx$")
 ```
 
 ### 
 
-As you can see, the `print()` displayed the values inside `L2` in the console.
+This `pattern` argument ensures that only files which match the pattern are returned by `dir()`. In this case, the file names must end with ".xlsx". One of the two forward slashes is needed to "escape" the period, and second slash escapes the first slash. Using an R fraw string, `r"(.xlsx)"`, would produce the same answer and probably be easier to interpret.
 
 ### Exercise 4
 
-Type in `list()`, placing in the elements `4, 16, 25, 49, 64` inside the parenthesis. Save this to a variable called `L2`.
+Add `TRUE` as the value for the `full.names` argument to the `dir("data/gapminder", , pattern = "\\.xlsx$")` command you used for the previous question.
 
 ```{r for-loops-4, exercise = TRUE}
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r for-loops-4-hint-1, eval = FALSE}
-... <- list(..., ..., ..., ..., ...)
+dir("data/gapminder", pattern = "\\.xlsx$", full.names = ...)
 ```
 
 ```{r for-loops-4-test, include = FALSE}
-L2 <- list(4, 16, 25, 49, 64)
+dir("data/gapminder", pattern = "\\.xlsx$", full.names = TRUE)
 ```
 
 ### 
 
-`for()` loops can iterate over many objects, including vectors, tibbles, lists, and dataframes.
+Setting `full.names` to `TRUE` provides the relative directory path to the files which match the `pattern` and are located in the `path`, which is the first argument to `dir()`.
+
 
 ### Exercise 5
 
-The most straightforward use of `for` loops is to achieve the same effect as `walk()`: call some function with a side-effect on each element of a list.
-
-Create a `for` loop, placing `element in L2` inside the parenthesis. Inside the loop, type in `print()`, passing in the `sqrt()` function. Inside `sqrt()`, type in `element`.
+Assign the result of the `dir()` command to a new variable, `paths`.
 
 ```{r for-loops-5, exercise = TRUE}
 
 ```
 
-```{r for-loops-5-hint-1, eval = FALSE}
-for (element in L2) {
-  ...(sqrt(...))
-}
+<button onclick = "transfer_code(this)">Copy previous code</button>
 
+```{r for-loops-5-hint-1, eval = FALSE}
+... <- dir("data/gapminder", pattern = "\\.xlsx$", full.names = TRUE)
 ```
 
 ```{r for-loops-5-test, include = FALSE}
-for (element in L2) {
-  print(sqrt(element))
-}
+paths <- dir("data/gapminder", pattern = "\\.xlsx$", full.names = TRUE)
 ```
 
 ### 
 
-As you can see, the `for` loop goes through each element of `L2` and utilizes the `sqrt()` and `print()` functions to print the square root of each element. `for` loops can be paired with many functions to perform various tasks.
+Whenever we need to do the same thing to a bunch of files, we first need to create a list of those files, along with their locations.
 
 ### Exercise 6
 
-Things get tricky if you want to save the output of a `for` loop. Start by creating a `tibble()` with two columns. The first column, called `col1`, should store a `list()` with the numbers `1, 2, 3, 4`. The second column, called `col2`, should store a `list()` with the numbers `11, 12, 13, 14`. Save the result to a variable named `tb4` and print it on a new line.
+Let's take a look at one of these files. Use `readxl::read_excel()` with the `path` argument set to the last file, which is `"data/gapminder/2007.xlsx"`.
 
 ```{r for-loops-6, exercise = TRUE}
 
 ```
 
 ```{r for-loops-6-hint-1, eval = FALSE}
-... <- tibble(
-  ... = list(... , ... , ... , ...),
-  col2 = ...(11, ... , ... , ...)
-)
+readxl::read_excel(... = "data/gapminder/2007.xlsx")
 ```
 
 ```{r for-loops-6-test, include = FALSE}
-tb4 <- tibble(
-  col1 = list(1, 2, 3, 4),
-  col2 = list(11, 12, 13, 14)
-)
-
-tb4
+readxl::read_excel(path = "data/gapminder/2007.xlsx")
 ```
 
 ### 
 
-By using `for` loops, we are able to iterate through data in a tibble and save its output.
+This returns a tibble with 142 rows, each corresponding to a different country. But we don't want to have to type out this command for every file. That would be a bother with the 12 files we have in this case. It would be impossible with hundreds or thousands of files.
 
 ### Exercise 7
 
-In order to store output using `for` loops, we will need to use the `vector()` function. In the console, type in `?vector()` and look at the Description section. CP/CR
+Because we have all the locations of the files stored in the `paths` vector, we can use (elements from) it instead. Run the same `readxl::read_excel()` again but, instead of providing the location by hand, use `paths[12]` as the argument to `path`.
 
-```{r for-loops-7}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
+```{r for-loops-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r for-loops-7-hint-1, eval = FALSE}
+readxl::read_excel(path = ...)
+```
+
+```{r for-loops-7-test, include = FALSE}
+readxl::read_excel(path = paths[12])
 ```
 
 ### 
 
-We will be using the `mode` and `length` arguments of the `vector()` function. In the [Arguments]{.underline} section of `?vector()`, take a look at what these arguments do.
+Keep track of which name refers to what. `path` is the first argument in the `readxl()` function. `paths` is a character vector, which we created with `dir()`, of paths to the gapminder data.
 
 ### Exercise 8
 
-There are a few different techniques that you can use to store output with `for` loops, but we recommend being explicit about what the output is going to look like upfront. In this case, we're going to want a list the same length as `tb4`.
-
-In the code chunk below, type in `vector()`. Set the first argument, called `mode`, to `"list"`. Set the second argument, called `length`, to `length(tb4)`. Save the result to the variable `save_data`. Then on a new line, print `save_data`.
+Use the `paths` object you created as the first argument to `map()`. Set the second argument to `readxl::read_excel()`.
 
 ```{r for-loops-8, exercise = TRUE}
 
 ```
 
 ```{r for-loops-8-hint-1, eval = FALSE}
-... <- vector(mode = ... , ... = length(...))
+...(paths, readxl::...)
 ```
 
 ```{r for-loops-8-test, include = FALSE}
-save_data <- vector(mode = "list", length = length(tb4))
-save_data
+# Not sure why including this test makes for an error. Code does work for
+# students. So, just leaving it commented out for now.
+
+# map(paths, readxl::read_excel)
 ```
 
 ### 
 
-This code produces a vector, which has the same length as `tb4` and is of mode "list". As mentioned previously, we recommend being explicit about what the output is going to look like, which is why we do this step.
+`map()` takes the function in the second argument and applies each to each element of the vector in the first argument, returning a list of the same length as the latter. The last element of the list is a tibble with 142 rows, the same object as we created when we applied `readxl::read_excel()` to the last element of `paths`.
 
 ### Exercise 9
 
-Now, instead of iterating over the elements of `tb4`, we'll iterate over their indices, using `seq_along()` to generate one index for each element of `tb4`.
-
-In the code chunk below, type `seq_along()`, passing in `tb4`. Save the result to the variable `indexes` and type it on a new line.
+It is useful to see how we might accomplish this same task "by hand," using an explicit `for` loop. Start by creating an object in which we can store the results. Run this code.
 
 ```{r for-loops-9, exercise = TRUE}
-
-```
-
-```{r for-loops-9-hint-1, eval = FALSE}
-... <- seq_along(...)
+files.2 <- vector("list", length(paths))
+files.2
 ```
 
 ```{r for-loops-9-test, include = FALSE}
-indexes <- seq_along(tb4)
-indexes
+files.2 <- vector("list", length(paths))
+files.2
 ```
 
 ### 
 
-The `seq_along()` function is being used to generate an index for every element of the `tb4` tibble. As you can see from printing out `indexes`, there are 2 indices created.
+`files.2` is a list of length 12. We will store one tibble in each element of `files.2`.
 
 ### Exercise 10
 
-Now, lets store the contents of `tb4` into `save_data`, with the use of `for` loops. In the code chunk below, create a `for` loop, passing in `i in indexes` in the parenthesis. Inside the `for` loop, type in `tb4[[i]]`. Then, using the `<-` operator, save the code *inside the for loop]* to `save_data[[i]]`.
+Run `seq_along()` with `paths` as its argument.
 
 ```{r for-loops-10, exercise = TRUE}
 
 ```
 
 ```{r for-loops-10-hint-1, eval = FALSE}
-for(i in ...) {
-  save_data[[...]] <- ...[[i]]
-}
+seq_along(...)
 ```
 
 ```{r for-loops-10-test, include = FALSE}
-for(i in indexes) {
-  save_data[[i]] <- tb4[[i]]
-}
+seq_along(paths)
 ```
 
 ### 
 
-Using the `for` loop, the code above iterates through each element of `tb4` and stores it inside `save_data`. Using indices are important because they allows us to link to each position in the input with the corresponding position in the output.
+Using the indices is important because it allows us to link to each position in the input with the corresponding position in the output. `seq_along()` is the best method for generating those indices because of how well it handles edge cases, like a zero length input vector. 
 
 ### Exercise 11
 
-Copy the code from the previous exercise. On a new line, type in `save_data` and press "Run Code".
+Write a `for()` loop. The argument in the `()` after `for` should be `i in seq_along(paths)`. The code in the body of the `for()` loop should be `files[[i]] <- readxl::read_excel(paths[i])`.
 
 ```{r for-loops-11, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r for-loops-11-hint-1, eval = FALSE}
-for(i in indexes) {
-  save_data[[i]] <- tb4[[i]]
+for (... in seq_along(paths)) {
+  ... <- readxl::read_excel(paths[...])
 }
-
-save_data
-
 ```
 
 ```{r for-loops-11-test, include = FALSE}
-for(i in indexes) {
-  save_data[[i]] <- tb4[[i]]
+for (i in seq_along(paths)) {
+  files[[i]] <- readxl::read_excel(paths[i])
 }
-
-save_data
 ```
 
 ### 
 
-As you can see, all of the output in `tb4` has been stored inside `save_data`.
+The trickiest part of this code is that we have `files[[i]]` with two pairs of nested brackets and `paths[i]` with only one pair. The reason for the difference is that `paths` is a simple vector. We just need one pair of brackets to access each element of a vector. `files`, on the other hand, is a list and, therefore, needs nested brackets.
+
+### Exercise 12
+
+To combine the list of tibbles into a single tibble you can use `do.call()` and `rbind()`. Run `do.call()` with two arguments: `rbind` and `files`.
+
+```{r for-loops-12, exercise = TRUE}
+
+```
+
+```{r for-loops-12-hint-1, eval = FALSE}
+...(rbind, ...)
+```
+
+```{r for-loops-12-test, include = FALSE}
+do.call(rbind, files)
+```
+
+### 
+
+Functions from the **purrr** package have largely replaced `do.call()` in modern R code.
+
+### Exercise 13
+
+Rather than making a list and saving the results as we go, a simpler approach is to build up the data frame piece-by-piece. Run this code.
+
+```{r for-loops-13, exercise = TRUE}
+out <- NULL
+for (path in paths) {
+  out <- rbind(out, readxl::read_excel(path))
+}
+```
+
+```{r for-loops-13-test, include = FALSE}
+out <- NULL
+for (path in paths) {
+  out <- rbind(out, readxl::read_excel(path))
+}
+```
+
+### 
+
+We recommend avoiding this pattern because it can become very slow when the vector is very long. This is the source of the persistent canard that for loops are slow: they’re not, but iteratively growing a vector is.
+
 
 ## Plots
 ### 
