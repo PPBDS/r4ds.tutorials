@@ -134,8 +134,10 @@ df_types <- function(df) {
     col_type = map_chr(df, vctrs::vec_ptype_full),
     n_miss = map_int(df, \(x) sum(is.na(x))))}
 
-by_clarity <- diamonds |> 
-  group_nest(clarity)
+by_clarity <- 
+  diamonds |> 
+    group_nest(clarity) |> 
+    mutate(path = str_glue("diamonds-{clarity}.csv"))
 
 carat_histogram <- function(df) {
   ggplot(df, aes(x = carat)) + geom_histogram(binwidth = 0.1)}
@@ -2527,27 +2529,35 @@ con |>
 ## Writing csv files
 ### 
 
+<!-- DK: This would be much easier without intermediary objects. Why not just a pipe? Answer seems to be that walk2() is not really designed to work with pipes. -->
+
+The same basic principle applies if we want to write multiple CSV files, one for each group. Let’s imagine that we want to take the `ggplot2::diamonds` data and save one CSV file for each value of `clarity`.
+
 ### Exercise 1
 
-Type `group_nest()` in the blank below, hit `Run Code`.
+Pipe `diamonds` to `group_nest()`.
 
 ```{r writing-csv-files-1, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r writing-csv-files-1-hint-1, eval = FALSE}
-group_nest()
+diamonds |> 
+  ...()
+```
+
+```{r writing-csv-files-1-test, include = FALSE}
+diamonds |> 
+  group_nest()
 ```
 
 ### 
 
-`group_nest()` is used to nest a tibble using a grouping specification.
+`group_nest()` is used to nest a tibble using a grouping specification. The output is a tibble with as many rows as there are values for the grouping variable. Because we did not specify a grouping variable, the output is a tibble with one row. 
 
 ### Exercise 2
 
-Add argument `clarity` to the call to `group_nest()`.
+Add the value `clarity` to the call to `group_nest()`.
 
 ```{r writing-csv-files-2, exercise = TRUE}
 
@@ -2556,18 +2566,22 @@ Add argument `clarity` to the call to `group_nest()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r writing-csv-files-2-hint-1, eval = FALSE}
-group_nest(clarity)
+diamonds |> 
+  group_nest(...)
+```
+
+```{r writing-csv-files-2-test, include = FALSE}
+diamonds |> 
+  group_nest(clarity)
 ```
 
 ### 
 
-There are several arguments within the function `group_nest()`, among which `.key` is the most important. 
-
-`.key` is the name of the list column, like `clarity` you just entered.
+The first argument to `group_nest()`, `.key`, is the most important. The resulting tibble has two columns. The first is the same name as the grouping variable and includes the individual values. The second is always called `data`. It is a list column in which each element is a tibble with all the rows from `diamonds` which have the specified value of `clarity`.
 
 ### Exercise 3
 
-Pipe `diamonds` into `group_nest()`.
+Add a call to `mutate()` with argument `path = str_glue("diamonds-{clarity}.csv"` to the pipe.
 
 ```{r writing-csv-files-3, exercise = TRUE}
 
@@ -2576,17 +2590,24 @@ Pipe `diamonds` into `group_nest()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r writing-csv-files-3-hint-1, eval = FALSE}
+... |> 
+  ...(path = str_glue("diamonds-{clarity}.csv"))
+```
+
+```{r writing-csv-files-3-test, include = FALSE}
 diamonds |> 
-  ...(clarity)
+  group_nest(clarity) |> 
+  mutate(path = str_glue("diamonds-{clarity}.csv"))
 ```
 
 ### 
 
-`diamonds` is the tibble that this function operates on.
+`str_glue()` is a glue function. You now have a 8 x 3 tibble, with a new column that gives the name of an output file.
+
 
 ### Exercise 4
 
-Assign variable `by_clarity` to the code we just created.
+Assign the result of this pipe to `by_clarity`, a new object.
 
 ```{r writing-csv-files-4, exercise = TRUE}
 
@@ -2595,9 +2616,20 @@ Assign variable `by_clarity` to the code we just created.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r writing-csv-files-4-hint-1, eval = FALSE}
-by_clarity <- ... |> 
-  group_nest(...)
+... <- 
+  diamonds |> 
+    group_nest(clarity) |> 
+    mutate(path = str_glue("diamonds-{clarity}.csv"))
 ```
+
+```{r writing-csv-files-4-test, include = FALSE}
+by_clarity <- 
+  diamonds |> 
+    group_nest(clarity) |> 
+    mutate(path = str_glue("diamonds-{clarity}.csv"))
+```
+
+Note how we first get some code which does what we want and then, once it is working, we assign the result to a new object. This is the typical way of doing data science because it is so useful, until the very end, for your code to just "spit out" whatever the current result is.
 
 ### Exercise 5
 
@@ -2607,15 +2639,17 @@ Type `by_clarity` and hit `Run Code`.
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r writing-csv-files-5-hint-1, eval = FALSE}
+by_clarity
+```
+
+```{r writing-csv-files-5-test, include = FALSE}
 by_clarity
 ```
 
 ### 
 
-This gives us a new tibble with eight rows and two columns.
+Our new tibble has eight rows and three columns.
 
 ### Exercise 6
 
@@ -2625,53 +2659,17 @@ Run the following code.
 by_clarity$data[[1]]
 ```
 
+```{r writing-csv-files-6-test, include = FALSE}
+by_clarity$data[[1]]
+```
+
 ### 
 
-Remember that `clarity` is our grouping variable and `data` is a list-column containing one tibble for each unique value of clarity.
+The `$` pulls out the `data` column, which is a list column. The `[[1]]` pulls out the first element in that list column, which is a tibble. Remember that `clarity` is our grouping variable and `data` is a list-column containing one tibble for each unique value of clarity. 
 
 ### Exercise 7
 
-Pipe `by_clarity` into `mutate()`.
-
-```{r writing-csv-files-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r writing-csv-files-7-hint-1, eval = FALSE}
-by_clarity |> 
-  mutate()
-```
-
-### 
-
-Recall that `mutate()` can create a new column.
-
-### Exercise 8
-
-Add argument `path = str_glue("diamonds-{clarity}.csv"` to the call to `mutate`.
-
-```{r writing-csv-files-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r writing-csv-files-8-hint-1, eval = FALSE}
-by_clarity |> 
-  ...(path = str_glue("diamonds-{clarity}.csv"))
-```
-
-### 
-
-`str_glue` is a glue function. 
-
-Now you should get a 8 x 3 tibble, with a new column that gives the name of output file.
-
-### 
-
-So if we were going to save these data frames by hand, we might write something like:
+If we were going to save these data frames by hand, we might write something like:
 
 ```
 write_csv(by_clarity$data[[1]], by_clarity$path[[1]])
@@ -2681,52 +2679,100 @@ write_csv(by_clarity$data[[3]], by_clarity$path[[3]])
 write_csv(by_clarity$by_clarity[[8]], by_clarity$path[[8]])
 ```
 
-### Exercise 9
+But that would be annoying, especially if there were hundreds of values for `clarity`. Type `?walk2` to the space below. hit `Run Code`.
 
-Type `walk2` to the space below. hit `Run Code`.
-
-```{r writing-csv-files-9, exercise = TRUE}
+```{r writing-csv-files-7, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+```{r writing-csv-files-7-hint-1, eval = FALSE}
+?walk2
+```
 
-```{r writing-csv-files-9-hint-1, eval = FALSE}
-walk2()
+```{r writing-csv-files-7-test, include = FALSE}
+?walk2
 ```
 
 ### 
 
 This is a little different to our previous uses of `map()` because there are two arguments that are changing, not just one. 
 
-That means we need a new function: `map2()`, which varies both the first and second arguments. 
 
-Because we again don’t care about the output, we want `walk2()` rather than `map2()`.
+### Exercise 8
 
-### Exercise 10
+Call `walk2()` with values `by_clarity$data`, `by_clarity$path`, and `write_csv`.
 
-Add arguments `by_clarity$data`, `by_clarity$path`, and `write_csv` to the call to `walk2()`.
+```{r writing-csv-files-8, exercise = TRUE}
 
-```{r writing-csv-files-10, exercise = TRUE}
+```
+
+```{r writing-csv-files-8-hint-1, eval = FALSE}
+walk2(..., by_clarity$path, ...)
+```
+
+```{r writing-csv-files-8-test, include = FALSE}
+walk2(by_clarity$data, by_clarity$path, write_csv)
+```
+
+### 
+
+We needed a new function, `map2()`, which varies both the first and second arguments. Because we again don’t care about the output, we want `walk2()` rather than `map2()`.
+
+### Exercise 9
+
+Run `list.files()` with the `pattern` argument set to  `"*.csv"`. 
+
+```{r writing-csv-files-9-ex, exercise = TRUE}
+
+```
+
+
+```{r writing-csv-files-9-hint, eval = FALSE}
+list.files(pattern = ...)
+```
+
+```{r writing-csv-files-9-test, include = FALSE}
+list.files(pattern = "*.csv")
+```
+
+###
+
+This should produce the 8 CSV files which you just created. Make sure that it does not return any files which you care about since, in the next question, we will be deleting all these files.
+
+
+### Exercise 9
+
+Always clean up the files which you create, unless you want to keep them. Pipe `list.files(pattern = "*.csv")` to `file.remove()`.
+
+```{r writing-csv-files-9-ex, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r writing-csv-files-10-hint-1, eval = FALSE}
-walk2(..., by_clarity$path, ...)
+```{r writing-csv-files-9-hint, eval = FALSE}
+list.files(pattern = "*.csv") |> 
+  ...()
 ```
 
-### 
+```{r writing-csv-files-9-test, include = FALSE}
+list.files(pattern = "*.csv") |> 
+  file.remove()
+```
+
+###
+
+This removes all the files you created. It should return a logical vector of length 8, which each element equal to `TRUE`. This is what `file.remove()` returns if the removal is successful.
+
 
 ## Saving plots
 ### 
 
-We can take the same basic approach to create many plots.
+We can take the same basic approach in order to create many plots.
 
 ### Exercise 1
 
-Create a new function that draws the plot we want. Hit `Run Code`.
+Below is a new function that draws the plot we want. Hit `Run Code`.
 
 ```{r saving-plots-1, exercise = TRUE}
 carat_histogram <- function(df) {
@@ -2743,7 +2789,7 @@ This function will only work if the tibble which you pass in as the value for th
 
 Now we can use `map()` to create a list of many plots and their eventual file paths. 
 
-Pipe `by_clarify` into `mutate()`. Add arguments `plot = map(data, carat_histogram)` and `path = str_glue("clarity-{clarity}.png")` to the function.
+Pipe `by_clarity` into `mutate()`. Add arguments `plot = map(data, carat_histogram)` and `path = str_glue("clarity-{clarity}.png")` to the function.
 
 
 ```{r saving-plots-2, exercise = TRUE}
@@ -2766,7 +2812,7 @@ This step is similar to what we did earlier.
 
 ### Exercise 3
 
-Assign name `by_clarify` to the code above.
+Assign name `by_clarity` to the code above.
 
 ```{r saving-plots-3, exercise = TRUE}
 
