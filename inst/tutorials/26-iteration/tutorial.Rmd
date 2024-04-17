@@ -16,6 +16,7 @@ library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
 library(readxl)
+library(duckdb)
 
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
@@ -2335,6 +2336,7 @@ con <- DBI::dbConnect(duckdb::duckdb())
 
 ```{r saving-multiple-outputs-1-test, include = FALSE}
 con <- DBI::dbConnect(duckdb::duckdb())
+dbDisconnect(con)
 ```
 
 ### 
@@ -2398,6 +2400,7 @@ DBI::dbCreateTable(con, "gapminder", template)
 ```{r saving-multiple-outputs-4-test, include = FALSE}
 con <- DBI::dbConnect(duckdb::duckdb())
 DBI::dbCreateTable(con, "gapminder", template)
+dbDisconnect(con)
 ```
 
 ### 
@@ -2428,6 +2431,7 @@ DBI::dbCreateTable(con, "gapminder", template)
 
 con |> 
   tbl("gapminder")
+dbDisconnect(con)
 ```
 
 ### 
@@ -2502,6 +2506,8 @@ append_file <- function(path) {
 
 paths |>
   map(append_file)
+
+dbDisconnect(con)
 ```
 
 ### 
@@ -2510,7 +2516,7 @@ Again, it is annoying that we need to repeat so much code each Exercise.
 
 ### Exercise 8
 
-Pipe `paths` into `walk(append_file)`.
+But we don’t care about the output of append_file(), so instead of map() it’s slightly nicer to use walk(). walk() does exactly the same thing as map() but throws the output away. Pipe `paths` into `walk(append_file)`.
 
 ```{r saving-multiple-outputs-8, exercise = TRUE}
 con <- DBI::dbConnect(duckdb::duckdb())
@@ -2523,8 +2529,6 @@ append_file <- function(path) {
 }
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r saving-multiple-outputs-8-hint-1, eval = FALSE}
 con <- DBI::dbConnect(duckdb::duckdb())
@@ -2552,15 +2556,16 @@ append_file <- function(path) {
 
 paths |> 
   walk(append_file)
+dbDisconnect(con)
 ```
 
 ### 
 
-Now we can check if we have all data in our table.
+
 
 ### Exercise 9
 
-Pipe `con` into `tbl("gapminder")`.
+Now we can check if we have all data in our table. Start a new line at the end of this code, piping `con` into `tbl("gapminder")`.
 
 ```{r saving-multiple-outputs-9, exercise = TRUE}
 con <- DBI::dbConnect(duckdb::duckdb())
@@ -2577,7 +2582,6 @@ paths |>
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r saving-multiple-outputs-9-hint-1, eval = FALSE}
 ...
@@ -2601,13 +2605,16 @@ paths |>
 
 con |> 
   tbl("gapminder")
+dbDisconnect(con)
 ```
 
 ### 
 
+We have successfully loaded a dozen Excel files into a database table.
+
 ### Exercise 10
 
-Pipe the code above into `count(year)`
+Pipe the code above into `count(year)`.
 
 ```{r saving-multiple-outputs-10, exercise = TRUE}
 con <- DBI::dbConnect(duckdb::duckdb())
@@ -2627,7 +2634,6 @@ con |>
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r saving-multiple-outputs-10-hint-1, eval = FALSE}
   ... |> 
@@ -2650,9 +2656,12 @@ paths |>
 con |> 
   tbl("gapminder") |> 
   count(year)
+dbDisconnect(con)
 ```
 
 ### 
+
+The gapminder data is so small that we can just work with it in memory. But, for larger amounts of data, we need to use a database like **duckdb**.
 
 ## Writing csv files
 ### 
