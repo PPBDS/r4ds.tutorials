@@ -85,6 +85,8 @@ df_paired <- tibble(
   d_wts = runif(10)
 )
 
+
+
 gapminder_1952 <- readxl::read_excel("data/gapminder/1952.xlsx")
 gapminder_1957 <- readxl::read_excel("data/gapminder/1957.xlsx")
 gapminder_1962 <- readxl::read_excel("data/gapminder/1962.xlsx")
@@ -102,12 +104,16 @@ paths <- list.files("data/gapminder",
                     pattern = "[.]xlsx$", 
                     full.names = TRUE)
 
+# Saving Multiple Outputs
+template <- readxl::read_excel(paths[[1]]) |> 
+  mutate(year = 1952)
+
+
 # Not sure why we need to specify purrr. See chapter 27 for discussion.
 
 files <- purrr::map(paths, readxl::read_excel)
 
 failed <- map_vec(files, is.null)
-template <- readxl::read_excel(paths[[1]])
 
 # DK: Had to comment out the creation of this object since it was causing a
 # weird error during Github checks. Let's look at it next time. Why does this
@@ -2311,216 +2317,338 @@ use `list.files()` to list all the files in a directory, then use `purrr::map()`
 ## Saving Multiple Outputs
 ### 
 
-<!-- DK: (add intro) -->
+<!-- Biggest annoyance is that we need to include all code in each Exercise because the `con` connection object disappears after each Exercise.  -->
+
+In the last section, you learned about `map()`, which is useful for reading multiple files into a single object. In this and the following sections, we’ll now explore sort of the opposite problem: how can you take one or more R objects and save it to one or more files? We’ll explore this challenge using three examples:
+
+* Saving multiple data frames into one database.
+* Saving multiple data frames into multiple .csv files.
+* Saving multiple plots to multiple .png files.
 
 ### Exercise 1
 
-Run the code in the code chunck below. 
+Sometimes when working with many files, it’s not possible to fit all your data into memory at once, and you can’t do `map(files, read_csv)`. One approach to deal with this problem is to load your data into a database. Run the code in the code chunk below. 
 
 ```{r saving-multiple-outputs-1, exercise = TRUE}
 con <- DBI::dbConnect(duckdb::duckdb())
 ```
 
-You'll get an error, indicating `'file' must be a character string or connection`.
+```{r saving-multiple-outputs-1-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+```
 
 ### 
 
-Sometimes when working with many files at once, it’s not possible to fit all your data into memory at once, and you can’t do `map(files, read_csv)`. One approach to deal with this problem is to load your data into a database.
+`con` is a connection to a database created by the [**duckdb**](https://r.duckdb.org/) package. Note that because of limits on **learnr** tutorials, we will need to run this command --- and any other commands which modify the database --- in each Exercise block for this tutorial. Apologies for the repetition!
 
 ### Exercise 2
 
-Assign `template` to `readxl::read_excel(paths[[1]])`. Hit `Run Code`.
+We need to start by creating a table that we will fill in with data. The easiest way to do this is by creating a template, a dummy data frame that contains all the columns we want, but only a sampling of the data. Assign `template` to `readxl::read_excel(paths[[1]])`.
 
 ```{r saving-multiple-outputs-2, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r saving-multiple-outputs-2-hint-1, eval = FALSE}
+template <- readxl::...(paths[[1]])
+```
+
+```{r saving-multiple-outputs-2-test, include = FALSE}
 template <- readxl::read_excel(paths[[1]])
 ```
 
 ### 
 
-Exercise 1 did not work because we don't have csv file. Now, we want to do it by hand.
+Other databases might allow us to load Excel files directly. With **duckdb**, however, we’re going to have to do it “by hand”. Learning to do it by hand will also help you when you have a bunch of CSVs and the database that you’re working with doesn’t have one function that will load them all in.
 
 ### Exercise 3
 
-Run the following code again.
+Take the assignment from the previous question, add a pipe, and then use `mutate()` to add a new variable, `year`, and assign it a value of 1952.
 
 ```{r saving-multiple-outputs-3, exercise = TRUE}
-con <- DBI::dbConnect(duckdb::duckdb())
-DBI::dbCreateTable(con, "gapminder", template)
+
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r saving-multiple-outputs-3-hint-1, eval = FALSE}
+template <- readxl::read_excel(paths[[1]]) |> 
+  mutate(... = 1952)
+```
 
+```{r saving-multiple-outputs-3-test, include = FALSE}
+template <- readxl::read_excel(paths[[1]]) |> 
+  mutate(year = 1952)
+```
+
+### 
+
+We are about to add in data from a bunch of different files, each from a different year. So, we need to ensure that there is a `year` column in the template in which we can store that year information.
+
+
+### Exercise 4
+
+Run this code.
+
+```{r saving-multiple-outputs-4, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+```
+
+```{r saving-multiple-outputs-4-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
 ```
 
 ### 
 
 Note that `dbCreateTable()` doesn’t use the data in template, just the variable names and types. 
 
-### Exercise 4
-
-Now, let's test it by pipe `con` into `tbl("gapminder")`.
-
-```{r saving-multiple-outputs-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-4-hint-1, eval = FALSE}
-con |> tbl("gapminder")
-```
-
-### 
-
-The `gapminder` table is empty now but it has the variables we need with the types we expect.
-
 ### Exercise 5
 
-Type `function(path)` in the space below and add `{}` after it. Hit `Run Code`.
+Now, let's test it by pipe `con` into `tbl("gapminder")`. (We provide the creation code. You add the pipe below it.)
 
 ```{r saving-multiple-outputs-5, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r saving-multiple-outputs-5-hint-1, eval = FALSE}
-function(path){}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+con |> 
+  tbl("gapminder")
 ```
 
-### 
+```{r saving-multiple-outputs-5-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
 
-Now we are building a function that takes a single file path, reads it into R, and adds the result to the gapminder table.
-
-### Exercise 6
-
-In the `{}`, add `df <- readxl::read_excel(path)` and `df$year <- parse_number(basename(path))`.
-
-```{r saving-multiple-outputs-6, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-6-hint-1, eval = FALSE}
-function(path) {
-  df <- readxl::read_excel(path)
-  df$year <- parse_number(basename(path))}
-```
-
-### 
-
-### Exercise 7
-
-Add `DBI::dbAppendTable(con, "gapminder", df)` to the call to `function(path)`.
-
-```{r saving-multiple-outputs-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-7-hint-1, eval = FALSE}
-function(path) {
-  df <- readxl::read_excel(path)
-  df$year <- parse_number(basename(path))
-  
-  DBI::dbAppendTable(con, "gapminder", df)}
-```
-
-### 
-
-### Exercise 8
-
-Assign `append_file` to the function above.
-
-```{r saving-multiple-outputs-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-8-hint-1, eval = FALSE}
-append_file <- function(path) {
-  ...
-  
-  DBI::dbAppendTable(con, "gapminder", df)}
-```
-
-### 
-
-### Exercise 9
-
-Pipe `paths` into `map(append_file)`.
-
-```{r saving-multiple-outputs-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-9-hint-1, eval = FALSE}
-paths |> map(append_file)
-```
-
-### 
-
-### Exercise 10
-
-Pipe `paths` into `walk(append_file)`.
-
-```{r saving-multiple-outputs-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-10-hint-1, eval = FALSE}
-paths |> walk(append_file)
-```
-
-### 
-
-Now we can check if we have all data in our table.
-
-### Exercise 11
-
-Pipe `con` into `tbl("gapminder")`.
-
-```{r saving-multiple-outputs-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-11-hint-1, eval = FALSE}
 con |> 
   tbl("gapminder")
 ```
 
 ### 
 
-### Exercise 12
+The `gapminder` table is empty now but it has the variables we need with the types we expect. You can see this explicitly if you add `colnames()` to the pipe and re-run the code.
 
-Pipe the code above into `count(year)`
+### Exercise 6
 
-```{r saving-multiple-outputs-12, exercise = TRUE}
+We need a function which will accept a path to a correctly formatted Excel file, read the file into a tibble, add the appropriate year variable, and then append that tibble to the `gapminder` table we have created in our **duckdb** database.
+
+Run this code.
+
+```{r saving-multiple-outputs-6, exercise = TRUE}
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+```
+
+```{r saving-multiple-outputs-6-test, include = FALSE}
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+```
+
+### 
+
+Before creating a function like this, we often write the code which accomplishes what we want for a single case. With that script as a guide, we can create a function which is often just a "wrap" around that code.
+
+### Exercise 7
+
+Pipe `paths` into `map(append_file)`.
+
+```{r saving-multiple-outputs-7, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+```
+
+```{r saving-multiple-outputs-7-hint-1, eval = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+paths |> 
+  map(...)
+```
+
+```{r saving-multiple-outputs-7-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+paths |>
+  map(append_file)
+```
+
+### 
+
+Again, it is annoying that we need to repeat so much code each Exercise.
+
+### Exercise 8
+
+Pipe `paths` into `walk(append_file)`.
+
+```{r saving-multiple-outputs-8, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r saving-multiple-outputs-12-hint-1, eval = FALSE}
+```{r saving-multiple-outputs-8-hint-1, eval = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+paths |> 
+  ...(append_file)
+```
+
+```{r saving-multiple-outputs-8-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+paths |> 
+  walk(append_file)
+```
+
+### 
+
+Now we can check if we have all data in our table.
+
+### Exercise 9
+
+Pipe `con` into `tbl("gapminder")`.
+
+```{r saving-multiple-outputs-9, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+paths |> 
+  walk(append_file)
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outputs-9-hint-1, eval = FALSE}
+...
+
 con |> 
+  tbl("gapminder")
+```
+
+```{r saving-multiple-outputs-9-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+paths |> 
+  walk(append_file)
+
+con |> 
+  tbl("gapminder")
+```
+
+### 
+
+### Exercise 10
+
+Pipe the code above into `count(year)`
+
+```{r saving-multiple-outputs-10, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+paths |> 
+  walk(append_file)
+
+con |> 
+  tbl("gapminder")
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r saving-multiple-outputs-10-hint-1, eval = FALSE}
   ... |> 
+  count(year)
+```
+
+```{r saving-multiple-outputs-10-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+paths |> 
+  walk(append_file)
+
+con |> 
+  tbl("gapminder") |> 
   count(year)
 ```
 
@@ -2529,7 +2657,7 @@ con |>
 ## Writing csv files
 ### 
 
-<!-- DK: This would be much easier without intermediary objects. Why not just a pipe? Answer seems to be that walk2() is not really designed to work with pipes. -->
+<!-- This would be much easier without intermediary objects. Why not just a pipe? Answer seems to be that walk2() is not really designed to work with pipes. -->
 
 The same basic principle applies if we want to write multiple CSV files, one for each group. Let’s imagine that we want to take the `ggplot2::diamonds` data and save one CSV file for each value of `clarity`.
 
