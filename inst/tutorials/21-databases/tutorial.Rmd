@@ -42,6 +42,12 @@ options(tutorial.exercise.timelimit = 60,
 # flights_db <- tbl(con, "flights")
 # planes_db <- tbl(con, "planes")
 
+my_sql <- "
+  SELECT carat, cut, clarity, color, price 
+  FROM diamonds 
+  WHERE price > 15000
+"
+
 summarize_query <- function(df, ...) {
   df |> 
     summarize(...) |> 
@@ -468,113 +474,216 @@ You sometimes also need to provide a login and password. In general, the owner o
 
 ### Exercise 10
 
-Now let's use `SQL` to select specific variables from the database. Create a `mpg_sql` variable and set it equal to 
-
-`"SELECT manufacturer, model, year, displ, class FROM mpg WHERE displ > 1.8"`
+Now let's use `SQL` to select specific variables from the database. Run this code.
 
 ```{r connecting-to-a-database-10, exercise = TRUE}
-
-```
-
-```{r connecting-to-a-database-10-hint-1, eval = FALSE}
-... <- "
-  SELECT manufacturer, model, year, displ, class 
-  FROM mpg 
-  WHERE displ > 1.8
+my_sql <- "
+  SELECT carat, cut, clarity, color, price 
+  FROM diamonds 
+  WHERE price > 15000
 "
 ```
 
 ```{r connecting-to-a-database-10-test, include = FALSE}
-
+my_sql <- "
+  SELECT carat, cut, clarity, color, price 
+  FROM diamonds 
+  WHERE price > 15000
+"
 ```
 
 ### 
 
-[*SQL for Data Scientists*](https://sqlfordatascientists.com/) by Renée M. P. Teate is an introduction to SQL designed specifically for the needs of data scientists, and includes examples of the sort of highly interconnected data you’re likely to encounter in real organizations.
+This SQL code selects 5 specific variables, from the `diamonds` dataset, and then filters the rows to only keep those with `price > 15000`.
 
-<!-- With the above variable, we want to select 5 specific variables, from the `mpg` dataset, with only values with `displ > 1.8`. -->
+[*SQL for Data Scientists*](https://sqlfordatascientists.com/) by Renée M. P. Teate is an introduction to SQL designed specifically for the needs of data scientists, and includes examples of the sort of highly interconnected data you’re likely to encounter in real organizations.
 
 ### Exercise 11
 
-Type `as_tibble()`. Within `as_tibble()`, add`dbGetQuery()` with the arguments `con` and `mpg_sql`
+`dbGetQuery()` is a function which takes a connection and an SQL query as a text string as inputs. It returns the result of that query as a data frame. 
+
+Type `as_tibble()`. Within `as_tibble()`, add `dbGetQuery()` with the arguments `con` and `mpg_sql`
 
 ```{r connecting-to-a-database-11, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+
 
 ```
 
 ```{r connecting-to-a-database-11-hint-1, eval = FALSE}
-as_tibble(dbGetQuery(...))
+...
+
+dbGetQuery(..., ...)
 ```
 
 ```{r connecting-to-a-database-11-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
 
+dbGetQuery(con, my_sql)
+
+dbDisconnect(con, shutdown=TRUE)
 ```
 
 ### 
 
-You can use `dbGetQuery()` to get the results of running a query on the database with `as_tibble()` we get the results in tibble format.
+If you’ve never seen SQL before, don’t worry! You’ll learn more about it shortly. But if you read it carefully, you might guess that it selects five columns of the diamonds dataset and all the rows where price is greater than 15,000.
 
-## **dbplyr** basics
-### 
+### Exercise 12
 
-Now that we’ve connected to a database and loaded up some data, we can start to learn about **dbplyr**. **dbplyr** is a dplyr backend, which means that you keep writing dplyr code but the backend executes it differently. In this, **dbplyr** translates to SQL; other backends include **dtplyr** which translates to **data.table**, and **multidplyr** which executes your code on multiple cores.
+The last Exercise returned a data frame, which is always annoying, especially when there are a lot of rows, as in this case. Reuse the code, but pipe the result from `dbQuery()` into `as_tibble()`.
 
-### Exercise 1
-
-Create a variable `mpg_db` and set that to `tbl()` on the two arguments: `con` and `"mpg"`.
-
-```{r dbplyr-basics-1, exercise = TRUE}
-
-```
-
-```{r dbplyr-basics-1-hint-1, eval = FALSE}
-mpg_db <- tbl(...)
-```
-
-### 
-
-We use `tbl()` To create an object that represents a database table.
-
-### Exercise 2
-
-Start a new pipe with `mpg_db`. Pipe that into `filter()`. Within `filter()`, add the argument `displ > 1.8`.
-
-```{r dbplyr-basics-2, exercise = TRUE}
-
-```
-
-```{r dbplyr-basics-2-hint-1, eval = FALSE}
-mpg_db |>
-  filter(...)
-```
-
-### 
-
-Similar to using `dbGetQuery()`, we can use the **dbplyr** package to select the same variables from the database that we created. This object is called *lazy*; when you use **dplyr** verbs on it, **dplyr** doesn’t do any work: it just records the sequence of operations that you want to perform and only performs them when needed.
-
-### Exercise 3
-
-Select the `manufacturer`, `model`, `displ`, and `year` through `drv` variables.
-
-```{r dbplyr-basics-3, exercise = TRUE}
+```{r connecting-to-a-database-12, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r dbplyr-basics-3-hint-1, eval = FALSE}
-mpg_db |>
-  filter(displ > 1.8)|>
-  select(..., year:drv)
+```{r connecting-to-a-database-12-hint-1, eval = FALSE}
+...
+
+dbGetQuery(con, my_sql) |> 
+  ...()
+```
+
+```{r connecting-to-a-database-12-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+
+dbGetQuery(con, my_sql) |> 
+  as_tibble()
+
+dbDisconnect(con, shutdown=TRUE)
 ```
 
 ### 
 
-This represents a database query because it prints the DBMS name at the top, and while it tells you the number of columns, it typically doesn’t know the number of rows. This is because finding the total number of rows usually requires executing the complete query, something we’re trying to avoid.
+[*Practical SQL*](https://www.practicalsql.com/) by Anthony DeBarros is written from the perspective of a data journalist (a data scientist specialized in telling compelling stories) and goes into more detail about getting your data into a database and running your own DBMS.
+
+
+## dbplyr basics
+### 
+
+Now that we’ve connected to a database and loaded up some data, we can start to learn about **dbplyr**. **dbplyr** is a **dplyr** backend, which means that you keep writing **dplyr** code but the backend executes it differently. In this, **dbplyr** translates to SQL; other backends include **dtplyr** which translates to **data.table**, and **multidplyr** which executes your code on multiple cores.
+
+### Exercise 1
+
+Run `tbl()` on the two arguments: `con` and `"diamonds"`.
+
+```{r dbplyr-basics-1, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+
+
+```
+
+```{r dbplyr-basics-1-hint-1, eval = FALSE}
+...
+
+tbl(..., ...)
+```
+
+```{r dbplyr-basics-1-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+tbl(con, "diamonds")
+
+
+dbDisconnect(con, shutdown=TRUE)
+```
+
+### 
+
+`tbl()` is a function **dtplyr** which creates a table. Note that a table is not the same thing as a tibble. Note the message at the top:
+
+````
+Source:   table<diamonds> [?? x 10]
+Database: DuckDB v0.10.0 [root@Darwin 23.4.0:R 4.3.2/:memory:]
+````
+
+Your "Database" information will probably be different.
+
+
+### Exercise 2
+
+Assign the result of your call to `tbl()` to an object called `diamonds_db`.
+
+```{r dbplyr-basics-2, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+
+
+```
+
+```{r dbplyr-basics-2-hint-1, eval = FALSE}
+...
+
+... <- tbl(con, "diamonds")
+```
+
+```{r dbplyr-basics-2-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+diamonds_db <- tbl(con, "diamonds")
+
+
+dbDisconnect(con, shutdown=TRUE)
+```
+
+### 
+
+There are two other common ways to interact with a database. First, many corporate databases are very large so you need some hierarchy to keep all the tables organized. In that case you might need to supply a schema, or a catalog and a schema, in order to pick the table you’re interested in:
+
+```
+diamonds_db <- tbl(con, in_schema("sales", "diamonds"))
+diamonds_db <- tbl(con, in_catalog("north_america", "sales", "diamonds"))
+```
+
+Other times you might want to use your own SQL query as a starting point:
+
+```
+diamonds_db <- tbl(con, sql("SELECT * FROM diamonds"))
+```
+
+### Exercise 3
+
+This object is lazy; when you use dplyr verbs on it, dplyr doesn’t do any work: it just records the sequence of operations that you want to perform and only performs them when needed. For example, skip a line and pipe `diamonds_db` to `filter(price > 15000)` and `select(carat:clarity, price)`.
+
+```{r dbplyr-basics-3, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+diamonds_db <- tbl(con, "diamonds")
+
+```
+
+```{r dbplyr-basics-3-hint-1, eval = FALSE}
+...
+
+diamonds_db |> 
+  ...(price > 15000) |> 
+  select(carat:clarity, ...)
+```
+
+```{r dbplyr-basics-3-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+diamonds_db <- tbl(con, "diamonds")
+
+diamonds_db |> 
+  filter(price > 15000) |> 
+  select(carat:clarity, price)
+
+dbDisconnect(con, shutdown=TRUE)
+```
+
+### 
+
+You can tell this object represents a database query because it prints the DBMS name at the top, and while it tells you the number of columns, it typically doesn’t know the number of rows. This is because finding the total number of rows usually requires executing the complete query, something we’re trying to avoid.
 
 ### Exercise 4
 
-Continue the pipe by adding `show_query()`.
+Using the code from the previous Exercise, extend the pipe by adding `show_query()`.
 
 ```{r dbplyr-basics-4, exercise = TRUE}
 
@@ -583,19 +692,36 @@ Continue the pipe by adding `show_query()`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r dbplyr-basics-4-hint-1, eval = FALSE}
-mpg_db |>
-  filter(displ > 1.8)|>
-  select(manufacturer, model, displ, year:drv)|>
+...
+
+diamonds_db |> 
+  filter(price > 15000) |> 
+  select(carat:clarity, price) |> 
   ...
+```
+
+```{r dbplyr-basics-4-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+diamonds_db <- tbl(con, "diamonds")
+
+diamonds_db |> 
+  filter(price > 15000) |> 
+  select(carat:clarity, price) |> 
+  show_query()
+
+dbDisconnect(con, shutdown=TRUE)
 ```
 
 ### 
 
-You can see the `SQL` code generated by the dplyr function `show_query()`. If you know `dplyr`, this is a great way to learn `SQL`! Write some **dplyr** code, get **dbplyr** to translate it to `SQL`, and then try to figure out how the two languages match up.
+You can see the SQL code generated by the **dplyr** function `show_query()`. If you know **dplyr**, this is a great way to learn SQL! Write some **dplyr** code, get **dbplyr** to translate it to SQL, and then try to figure out how the two languages match up.
 
 ### Exercise 5
 
-Take the pipe from above and remove `show_query()` and instead add `collect()` to the pipe.
+To get all the data back into R, you call `collect()`. Behind the scenes, this generates the `SQL`, calls `dbGetQuery()` to get the data, then turns the result into a tibble.
+
+Using the code from the previous Exercise, extend the pipe by adding `collect()`.
 
 ```{r dbplyr-basics-5, exercise = TRUE}
 
@@ -604,15 +730,34 @@ Take the pipe from above and remove `show_query()` and instead add `collect()` t
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r dbplyr-basics-5-hint-1, eval = FALSE}
-mpg_db |>
-  filter(displ > 1.8)|>
-  select(manufacturer, model, displ, year:drv)|>
+...
+
+diamonds_db |> 
+  filter(price > 15000) |> 
+  select(carat:clarity, price) |> 
+  show_query() |> 
   ...
+```
+
+```{r dbplyr-basics-5-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+diamonds_db <- tbl(con, "diamonds")
+
+diamonds_db |> 
+  filter(price > 15000) |> 
+  select(carat:clarity, price) |> 
+  show_query() |> 
+  collect()
+
+dbDisconnect(con, shutdown=TRUE)
 ```
 
 ### 
 
-To get all the data back into R, you call `collect()`. Behind the scenes, this generates the `SQL`, calls `dbGetQuery()` to get the data, then turns the result into a tibble.
+Typically, you’ll use **dbplyr** to select the data you want from the database, performing basic filtering and aggregation using the translations described below. Then, once you’re ready to analyse the data with functions that are unique to R, you’ll `collect()` the data to get an in-memory tibble, and continue your work with pure R code.
+
+
 
 ## SQL basics
 ### 
