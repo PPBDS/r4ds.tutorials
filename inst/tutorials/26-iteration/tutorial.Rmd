@@ -16,6 +16,7 @@ library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
 library(readxl)
+library(duckdb)
 
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
@@ -29,7 +30,7 @@ df <- tibble(
 )
 
 df2 <- tibble(
-  grp = sample(2, 10, replace = TRUE),
+  grp = sample(1:2, 10, replace = TRUE),
   a = rnorm(10),
   b = rnorm(10),
   c = rnorm(10),
@@ -85,6 +86,8 @@ df_paired <- tibble(
   d_wts = runif(10)
 )
 
+
+
 gapminder_1952 <- readxl::read_excel("data/gapminder/1952.xlsx")
 gapminder_1957 <- readxl::read_excel("data/gapminder/1957.xlsx")
 gapminder_1962 <- readxl::read_excel("data/gapminder/1962.xlsx")
@@ -101,6 +104,17 @@ gapminder_2007 <- readxl::read_excel("data/gapminder/2007.xlsx")
 paths <- list.files("data/gapminder", 
                     pattern = "[.]xlsx$", 
                     full.names = TRUE)
+
+# Saving Multiple Outputs
+template <- readxl::read_excel(paths[[1]]) |> 
+  mutate(year = 1952)
+
+
+# Not sure why we need to specify purrr. See chapter 27 for discussion.
+
+files <- purrr::map(paths, readxl::read_excel)
+
+failed <- map_vec(files, is.null)
 
 # DK: Had to comment out the creation of this object since it was causing a
 # weird error during Github checks. Let's look at it next time. Why does this
@@ -127,8 +141,10 @@ df_types <- function(df) {
     col_type = map_chr(df, vctrs::vec_ptype_full),
     n_miss = map_int(df, \(x) sum(is.na(x))))}
 
-by_clarity <- diamonds |> 
-  group_nest(clarity)
+by_clarity <- 
+  diamonds |> 
+    group_nest(clarity) |> 
+    mutate(path = str_glue("diamonds-{clarity}.csv"))
 
 carat_histogram <- function(df) {
   ggplot(df, aes(x = carat)) + geom_histogram(binwidth = 0.1)}
@@ -140,6 +156,8 @@ carat_histogram <- function(df) {
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- This tutorial is functional, but it needs a lot of work. -->
+
 <!-- DK: Only use the code button where it makes sense to do so. -->
 
 <!-- DK: Add "test chunks" for most questions. -->
@@ -149,11 +167,9 @@ carat_histogram <- function(df) {
 ## Introduction
 ### 
 
-*This is a ROUGH, UNFINISHED, draft.*
+This tutorial covers [Chapter 26: Iteration](https://r4ds.hadley.nz/iteration.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. We use the [**purrr**](https://purrr.tidyverse.org/) package to learn tools for iteration, repeatedly performing the same action on different objects. Key functions include  [`across()`](https://dplyr.tidyverse.org/reference/across.html),  [`map()`](https://purrr.tidyverse.org/reference/map.html), and user-created anonymous functions.
 
-This tutorial covers [Chapter 26: Iteration](https://r4ds.hadley.nz/iteration.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
 
-<!-- finish this part later. -->
 
 ## Modifying multiple columns
 ### 
@@ -178,7 +194,7 @@ library(tidyverse)
 
 ### 
 
-Recall that we have already learnt a number of tools that perform the same action for multiple "things." For example, `facet_wrap()` and `facet_grid()` draws a plot for each subset.
+Recall that we have already learnt a number of tools that perform the same action for multiple "things." For example, `facet_wrap()` and `facet_grid()` draw a plot for each subset of the data.
 
 
 ### Exercise 2
@@ -210,14 +226,13 @@ Type `df` and hit "Run Code".
 df
 ```
 
-```{r include = FALSE}
+```{r modifying-multiple-columns-3-test, include = FALSE}
 df
 ```
 
 ### 
 
-Our last examples of functions which perform the same action for multiple "things" are
-`unnest_wider()` and `unnest_longer()` which create new rows and columns for each element of a list-column.
+Our last examples of functions which perform the same action for multiple "things" are `unnest_wider()` and `unnest_longer()` which create new rows and columns for each element of a list-column.
 
 
 ### Exercise 4
@@ -235,7 +250,7 @@ df |>
   ...()
 ```
 
-```{r include = FALSE}
+```{r modifying-multiple-columns-4-test, include = FALSE}
 df |> 
   summarise()
 ```
@@ -259,14 +274,14 @@ df |>
   summarise(n = ...)
 ```
 
-```{r include = FALSE}
+```{r modifying-multiple-columns-5-test, include = FALSE}
 df |> 
   summarise(n = n())
 ```
 
 ### 
 
-Recall that this create a new column named `n` which records the number of observations in `df`.
+Recall that this create a new column named `n` which records the number of rows in `df`.
 
 ### Exercise 6
 
@@ -285,7 +300,7 @@ df |>
             med_b = ...(b))
 ```
 
-```{r include = FALSE}
+```{r modifying-multiple-columns-6-test, include = FALSE}
 df |> 
   summarise(n = n(),
             med_a = median(a),
@@ -294,7 +309,7 @@ df |>
 
 ### 
 
-Now you have a table of 3 columns: `n`, `med_a`, and `med_b`. 
+Now you have a tibble with 3 columns: `n`, `med_a`, and `med_b`. 
 
 ### Exercise 7
 
@@ -315,7 +330,7 @@ df |>
             med_d = median(...))
 ```
 
-```{r include = FALSE}
+```{r modifying-multiple-columns-7-test, include = FALSE}
 df |> 
   summarise(n = n(),
             med_a = median(a),
@@ -330,28 +345,36 @@ You should see a tibble with five columns: `n`, `med_a`, `med_b`, `med_c`, and `
 
 ### 
 
-You may find the above process repetitive -- we were simply copy-pasted `med_a = median(a)` 4 times --- which, violates our rule of thumb to never copy and paste more than twice.
+The above process is repetitive -- we were simply copy-pasted `med_a = median(a)` 4 times and then changing the variable name. This violates our rule of thumb to never copy and paste more than twice.
 
-This would get even more tedious if you have tens or even hundreds of columns!
-
-### 
-
-Solution? `across()` is here to make our lifes easier.
+This would get even more tedious if you have tens or even hundreds of columns! Solution? `across()` is here to make our lifes easier.
 
 ### Exercise 8
 
-Run the code below.
+Start a new pipe by sending `df` to `summarise()`. Add `n = n()` to `summarize()`.
 
 ```{r modifying-multiple-columns-8, exercise = TRUE}
+
+```
+
+```{r modifying-multiple-columns-8-hint-1, exercise = TRUE}
+df |> 
+  ...(n = n())
+```
+
+```{r modifying-multiple-columns-8-test, exercise = TRUE}
 df |> 
   summarise(n = n())
 ```
 
-<!-- DK: drop some knowledg. tells us about across. link to its help page. -->
+### 
+
+The `across()` function is the key trick 
+
 
 ### Exercise 9
 
-Copy the previous code. Now, add `across(a:d, median)` to the call to `summarise()`. Hit "Run Code," see what happens.
+Add `across(a:d, median)` to the call to `summarise()`. 
 
 ```{r modifying-multiple-columns-9, exercise = TRUE}
 
@@ -365,31 +388,29 @@ df |>
             across(..., median))
 ```
 
-```{r include = FALSE}
+```{r modifying-multiple-columns-9-test, include = FALSE}
 df |> 
   summarise(n = n(),
             across(a:d, median))
 ```
 
-<!-- DK: Do not hard code exercise numbers. Use "as above" or "as previously." -->
-
-You should get the exact same table as in Exercise 7.
-
 ### 
 
-We will discuss 3 important specifications of `across()` in the following sections.
+`across()` makes it easy to apply the same transformation to multiple columns, allowing you to use `select()` semantics inside in "data-masking" functions like `summarise()` and `mutate()`.  Note how you get the variable names `a` through `d` "for free," without having to specify them as when using `mutate()`.
 
+
+## Selecting columns with .cols
 ### 
 
-The first specification is `.cols`, used to select columns.
+We will discuss 3 important specifications of `across()` in the following sections. The first specification is `.cols`, used to select columns.
 
-### Exercise 10
+### Exercise 1
 
-Let's start by running the typed-in code. Hit "Run Code".
+Hit "Run Code".
 
-```{r modifying-multiple-columns-10, exercise = TRUE}
+```{r selecting-columns-with-cols-1, exercise = TRUE}
 df2 <- tibble(
-  grp = sample(2, 10, replace = TRUE),
+  grp = sample(1:2, 10, replace = TRUE),
   a = rnorm(10),
   b = rnorm(10),
   c = rnorm(10),
@@ -397,20 +418,22 @@ df2 <- tibble(
 )
 ```
 
-### Exercise 11
+`sample(2, 10, replace = TRUE)` produces a vector of length 10, containing 1s and 2s at random. 
+
+### Exercise 2
 
 Pipe `df2` into `summarise()`.
 
-```{r modifying-multiple-columns-11, exercise = TRUE}
+```{r selecting-columns-with-cols-2, exercise = TRUE}
 
 ```
 
-```{r modifying-multiple-columns-11-hint-1, eval = FALSE}
+```{r selecting-columns-with-cols-2-hint-1, eval = FALSE}
 df2 |> 
   summarise()
 ```
 
-```{r include = FALSE}
+```{r selecting-columns-with-cols-2-test, include = FALSE}
 df2 |> 
   summarise()
 ```
@@ -419,47 +442,47 @@ df2 |>
 
 Remember that when it comes to grouping, we always prefer `.by` instead of `group_by()` where possible.
 
-### Exercise 12
+### Exercise 3
 
 Add `.by = grp` to the call to `summarise()`
 
-```{r modifying-multiple-columns-12, exercise = TRUE}
+```{r selecting-columns-with-cols-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-columns-12-hint-1, eval = FALSE}
+```{r selecting-columns-with-cols-3-hint-1, eval = FALSE}
 df2 |> 
   summarise (.by = grp)
 ```
 
-```{r include = FALSE}
+```{r selecting-columns-with-cols-3-test, include = FALSE}
 df2 |> 
   summarise (.by = grp)
 ```
 
 ### 
 
-A reminder that `.cols` function uses the same specifications as `select()`, so you can use functions like `starts_with()` and `ends_with()` to select columns based on their name.
+Because `.cols` function uses the same specifications as `select()`, so you can use functions like `starts_with()` and `ends_with()` to select columns based on their name.
 
-### Exercise 13
+### Exercise 4
 
 Copy the previous code. Add `across (everything(), median)` to the call to `summarise ()`. You should have a comma between arguments to summarize.
 
-```{r modifying-multiple-columns-13, exercise = TRUE}
+```{r selecting-columns-with-cols-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-columns-13-hint-1, eval = FALSE}
+```{r selecting-columns-with-cols-4-hint-1, eval = FALSE}
 ... |> 
   summarise (.by = ...,
              across(everything(), ...))
 ```
 
-```{r include = FALSE}
+```{r selecting-columns-with-cols-4-test, include = FALSE}
 df2 |> 
   summarise (.by = grp,
              across(everything(), median))
@@ -467,19 +490,11 @@ df2 |>
 
 ### 
 
-You should get a 2 x 5 table.
+Grouping columns (`grp` here) are not included in `across()`, because they're automatically reserved by `summarise()`. There are 2 selection techniques that are particularly useful for `across()`: `everything()` and `where()`.
 
-Note grouping columns (`grp` here) are not included in `across()`, because they're automatically preserved by `summarise()`.
+`everything()` selects every (non-grouping) column.
 
-### 
-
-There are 2 additional selection techniques that are particularly useful for `across()`: `everything()` and `where()`.
-
-### 
-
-We have explored `everything()` in practice 12, it selects every (non-grouping) column.
-
-### 
+<!-- DK: Too much material. Should be spread out, or more exercises added. -->
 
 `where()` is a bit more complicated. It allows you to select columns based on their type:
 
@@ -501,151 +516,104 @@ You can combine these with Boolean algebra. For example:
 
 `starts_with ("a") & where (is.logical)` selects all logical columns whose name starts with "a".
 
-### 
+### Exercise 5
 
-We will now explore `.fns`, the second specification of `across()`.
+We will now explore `.fns`, the second specification of `across()`. This argument defines how each column will be transformed.
 
-This argument defines how each column will be transformed.
+Hit "Run Code".
 
-### 
+```{r selecting-columns-with-cols-5, exercise = TRUE}
+rnorm_na <- function(n, n_na, mean = 0, sd = 1) {
+  sample(c(rnorm(n - n_na, mean = mean, sd = sd), rep(NA, n_na)))
+}
 
-What happens if we have some missing values in our data? We will use the exercises below to explore.
-
-### Exercise 14
-
-Hit "Run Code" to run the following code.
-
-```{r modifying-multiple-columns-14, exercise = TRUE}
 df_miss <- tibble(
   a = rnorm_na(5, 1),
   b = rnorm_na(5, 1),
   c = rnorm_na(5, 2),
   d = rnorm(5)
 )
+
+df_miss
 ```
 
 ### 
 
-It's important to note that we're passing the function `.fns` to `across()`, so `across()` can call it; we're not calling it ourselves. That means the function name should never be followed by `()`.
+<!-- DK: Since we don't use this again, maybe just define the tibble directly? -->
 
-ie. never write `median ()`.
+We created and then used the `rnorm_na()` function in order to more easily create a tibble with variables with lots of missing values.
 
-If you forget, you'll get an error.
 
-### Exercise 15
+### Exercise 6
 
 Pipe `df_miss` into `summarize()`
 
-```{r modifying-multiple-columns-15, exercise = TRUE}
+```{r selecting-columns-with-cols-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-columns-15-hint-1, eval = FALSE}
+```{r selecting-columns-with-cols-6-hint-1, eval = FALSE}
 df_miss |> 
-  summarize ()
+  ...()
 ```
 
-```{r include = FALSE}
-df_miss |> 
-  summarize ()
-```
-
-### Exercise 16
-
-Copy the previous code. Add `across(a:d, median)` and `n = n()` to the call to `summarise ()`.
-
-```{r modifying-multiple-columns-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r modifying-multiple-columns-16-hint-1, eval = FALSE}
-df_miss |> 
-  summarize (across(..., ...), 
-             n = n())
-```
-
-```{r include = FALSE}
-df_miss |> 
-  summarize (across(a:d, median), 
-             n = n())
-```
-
-### 
-
-You should get a 1 x 5 table with N/A as median for variables `a`, `b`, and `c`.
-
-This is because `median()` propagates those missing values, giving us a suboptimal output (ie. get N/A as median).
-
-### 
-
-Solution?
-
-Recall that `na. rm = TRUE` can remove the NA values. Therefore, it would be nice if we could pass along `na.rm = TRUE` to `median()`.
-
-### Exercise 17
-
-Pipe `df_miss` into `summarize()`
-
-```{r modifying-multiple-columns-17, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r modifying-multiple-columns-17-hint-1, eval = FALSE}
+```{r selecting-columns-with-cols-6-test, include = FALSE}
 df_miss |> 
   summarize()
 ```
 
-```{r include = FALSE}
-df_miss |> 
-  summarize()
-```
+### 
 
-### Exercise 18
+It's important to note that we're passing the function `.fns` to `across()`, so `across()` can call it; we're not calling it ourselves. That means the function name should never be followed by `()`. If you forget, you'll get an error.
 
-Copy the previous code. Add `across()` and `n = n()` to the call to `summarise ()`.
 
-```{r modifying-multiple-columns-18, exercise = TRUE}
+### Exercise 7
 
-```
+Add `across(a:d, median)` and `n = n()` to the call to `summarise ()`.
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r modifying-multiple-columns-18-hint-1, eval = FALSE}
-df_miss |> 
-  summarise(across(),
-            n = n())
-```
-
-```{r include = FALSE}
-df_miss |> 
-  summarise(across(),
-            n = n())
-```
-
-### Exercise 19
-
-Continue with the previous code. add argument `a:d` and `function(x) median(x, na.rm = TRUE)` to the function `across`.
-
-```{r modifying-multiple-columns-19, exercise = TRUE}
+```{r selecting-columns-with-cols-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-columns-19-hint-1, eval = FALSE}
+```{r selecting-columns-with-cols-7-hint-1, eval = FALSE}
+df_miss |> 
+  summarize(across(..., ...), 
+             n = n())
+```
+
+```{r selecting-columns-with-cols-7-test, include = FALSE}
+df_miss |> 
+  summarize(across(a:d, median), 
+             n = n())
+```
+
+### 
+
+Several of the results are NA because `median()` propagates the missing values in `df_miss`. If we want to ignore missing values, then we need to use the `na. rm = TRUE` argument to `median()`.
+
+
+### Exercise 8
+
+Replace `median` with `function(x) median(x, na.rm = TRUE)`.
+
+```{r selecting-columns-with-cols-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r selecting-columns-with-cols-8-hint-1, eval = FALSE}
 ... |> 
   summarise(...(a:d, 
                    function(x) median(x, na.rm = ...)),
             n = n())
 ```
 
-```{r include = FALSE}
+```{r selecting-columns-with-cols-8-test, include = FALSE}
 df_miss |> 
   summarise(across(a:d, 
                    function(x) median(x, na.rm = TRUE)),
@@ -654,21 +622,19 @@ df_miss |>
 
 ### 
 
-Now you should get a 1 x 5 table with all medians as numerical numbers.
+Instead of calling `median()` directly, we created a new (anonymous) function that calls `median()` with the desired arguments. 
 
-Notice here, instead of calling `median()` directly, we created a new function, `function(x)` that calls `median()` with the desired arguments. This is how you can avoid error.
-
-### Exercise 20
+### Exercise 9
 
 Use the previous code, but replace `function` with `\`
 
-```{r modifying-multiple-columns-20, exercise = TRUE}
+```{r selecting-columns-with-cols-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-columns-20-hint-1, eval = FALSE}
+```{r selecting-columns-with-cols-9-hint-1, eval = FALSE}
 df_miss |> 
   ...
     across(..., \(x) median(x, na.rm = TRUE)),
@@ -676,60 +642,37 @@ df_miss |>
   )
 ```
 
-```{r include = FALSE}
+```{r selecting-columns-with-cols-9-test, include = FALSE}
 df_miss |> 
   summarise(across(a:d, 
-                   function(x) median(x, na.rm = TRUE)),
+                   \(x) median(x, na.rm = TRUE)),
             n = n())
 ```
 
 ### 
 
-The above showcases a less verbose way by replacing `function` with `\`.
+Using the full word `function` when creating temporary (anonymous) functions is somewhat verbose, hence the option to replace `function` with `\`.
 
-### 
 
-To know how many values were removed from the `median()`, 2 other functions can be supplied to across(): one to compute the median, the other to count the missing values.
 
-### Exercise 21
 
-Copy and paste your code from exercise 18.
+### Exercise 10
 
-```{r modifying-multiple-columns-21, exercise = TRUE}
+Replace `\(x) median(x, na.rm = TRUE))` with `list()`.
 
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r modifying-multiple-columns-21-hint-1, eval = FALSE}
-df_miss |> 
-  ...(across(),
-            n = n())
-```
-
-```{r include = FALSE}
-df_miss |> 
-  summarise(across(),
-            n = n())
-```
-
-### Exercise 22
-
-Add a new argument, `a:d` and `list()`, to the function `across`.
-
-```{r modifying-multiple-columns-22, exercise = TRUE}
+```{r selecting-columns-with-cols-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-columns-22-hint-1, eval = FALSE}
+```{r selecting-columns-with-cols-10-hint-1, eval = FALSE}
 df_miss |> 
   summarise(...(a:d, ...),
             n = n())
 ```
 
-```{r include = FALSE}
+```{r selecting-columns-with-cols-10-test, include = FALSE}
 df_miss |> 
   summarise(across(a:d, list()),
             n = n())
@@ -737,130 +680,137 @@ df_miss |>
 
 ### 
 
-You supply multiple functions by using a named list to `.fns`.
+`list()` does not do anything yet. Instead, it provides a location in which you can supply multiple functions by using a named list.
 
-### Exercise 23
+### Exercise 11
 
-Add arguments `median = \(x) median(x, na.rm = TRUE)` and `n_miss = \(x) sum(is.na(x))` to the call to `list()`.
+Add the argument `med = \(x) median(x, na.rm = TRUE)` to the call inside of `list()`.
 
-```{r modifying-multiple-columns-23, exercise = TRUE}
+```{r selecting-columns-with-cols-11, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-columns-23-hint-1, eval = FALSE}
+```{r selecting-columns-with-cols-11-hint-1, eval = FALSE}
+df_miss |> 
+  summarize(across(a:d, 
+                   list(med = \(x) median(x, na.rm = TRUE))),
+             n = n())
+```
+
+```{r selecting-columns-with-cols-11-test, include = FALSE}
+df_miss |> 
+  summarize(across(a:d, 
+                   list(med = \(x) median(x, na.rm = TRUE))),
+             n = n())
+```
+
+### 
+
+R applies the function in `list()` to every variable in the first argument to `across()`. But, because the argument to `.fns` --- the second argument to `across` --- is a list, R creates new variable names by combining the each variable with the name of the function, which is `med`, not `median`. 
+
+### Exercise 12
+
+Add the argument ``n_miss = \(x) sum(is.na(x))` to the call inside of `list()`.
+
+```{r selecting-columns-with-cols-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r selecting-columns-with-cols-12-hint-1, eval = FALSE}
 df_miss |> 
   summarize(across (a:d, 
-                     list (median = \(x) median(x, na.rm = TRUE),
-                           n_miss = \(x) sum(is.na(x)))),
+                     list(med = \(x) median(x, na.rm = TRUE),
+                          n_miss = \(x) sum(is.na(x)))),
              n = n())
 ```
 
-```{r include = FALSE}
+```{r selecting-columns-with-cols-12-test, include = FALSE}
 df_miss |> 
-  summarize(across (a:d, 
-                     list (median = \(x) median(x, na.rm = TRUE),
-                           n_miss = \(x) sum(is.na(x)))),
+  summarize(across(a:d, 
+                   list(med = \(x) median(x, na.rm = TRUE),
+                        n_miss = \(x) sum(is.na(x)))),
              n = n())
 ```
 
 ### 
 
-Recall that `sum(is.na(x))` gives you the total number of missing values in x. Here, we also use the new function `\(x)` that calls `sum()` with the desired arguments.
+There is a lot going on here. We have four variables: `a` through `d`. We have two functions: `med` and `n_miss`. The magic of `across()` is that it applies every function to eac variable, creating new names for the output columns.
 
+
+## Column names
 ### 
 
-The last specification of `across()` is `.names` argument, which we will explore next.
+The last specification of `across()` is the `.names` argument, which we will explore next.
 
-### Exercise 24
+### Exercise 1
 
-This code is from Exercise 23. Hit `Run Code`.
+Hit `Run Code`.
 
-```{r modifying-multiple-columns-24, exercise = TRUE}
+```{r column-names-1, exercise = TRUE}
 df_miss |> 
-  summarize( across (a:d, 
-                     list (median = \(x) median(x, na.rm = TRUE),
-                           n_miss = \(x) sum(is.na(x)))),
+  summarize(across(a:d, 
+                   list(med = \(x) median(x, na.rm = TRUE),
+                        n_miss = \(x) sum(is.na(x)))),
              n = n())
 ```
 
 ### 
 
-The result of across() is named according to the specification provided in the `.names` argument. We could specify our own if we wanted the name of the function to come first.
+The result of `across()` is named according to the specification provided in the `.names` argument. The default (NULL) is equivalent to "{.col}" for the single function case and "{.col}_{.fn}" for the case where a list is used for `.fns`.
 
-### Exercise 25
+
+### Exercise 2
 
 Add `.names = "{.fn}_{.col}"` to the call to `across()`.
 
-```{r modifying-multiple-columns-25, exercise = TRUE}
+```{r column-names-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-columns-25-hint-1, eval = FALSE}
+```{r column-names-2-hint-1, eval = FALSE}
 df_miss |> 
-  summarize(... (a:d, 
-                    list (...,
-                          n_miss = ...elt()),
+  summarize(across(a:d, 
+                   list(med = \(x) median(x, na.rm = TRUE),
+                        n_miss = \(x) sum(is.na(x))),
                     .names = ...),
              n = n())
 ```
 
-```{r include = FALSE}
+```{r column-names-2-test, include = FALSE}
 df_miss |> 
-  summarize( across (a:d, 
-                     list (median = \(x) median(x, na.rm = TRUE),
-                           n_miss = \(x) sum(is.na(x))),
+  summarize(across(a:d, 
+                   list(med = \(x) median(x, na.rm = TRUE),
+                        n_miss = \(x) sum(is.na(x))),
                      .names = "{.fn}_{.col}"),
              n = n())
 ```
 
 ### 
 
-You should see a 1 x 9 table. Now, compare your table to the table produced in Exercise 24. What did you notice?
+By default, columns are named using a glue specification like {.col}\_{.fn}. `.col` is the name of the original column (ie. `a`, `b`) and `.fn` is the name of the function (ie. `med`). 
 
-```         
-Table from Exercise 24:
-# > # A tibble: 1 × 9
-# >   a_median a_n_miss b_median b_n_miss c_median c_n_miss d_median d_n_miss
-# >      <dbl>    <int>    <dbl>    <int>    <dbl>    <int>    <dbl>    <int>
-# > 1    0.139        1    -1.11        1   -0.387        2     1.15        0
-```
-
-```         
-Tabble from Exercise 25:
-# > # A tibble: 1 × 9
-# >   median_a n_miss_a median_b n_miss_b median_c n_miss_c median_d n_miss_d
-# >      <dbl>    <int>    <dbl>    <int>    <dbl>    <int>    <dbl>    <int>
-# > 1    0.139        1    -1.11        1   -0.387        2     1.15        0
-```
-
-### 
-
-You should notice that the only difference is the name of columns. ie. a_median vs. median_a.
-
-By default, columns are named using a glue specification like {.col}\_{.fn}. `.col` is the name of the original column (ie. `a`, `b`) and `.fn` is the name of the function (ie. `median`). Hence the name of column in Exercise 24 is `a_median`.
-
-You can use `.names` argument to supply your own glue specification. In Exercise 25, we define `.names` as "{.fn}\_{.col}", therefore the column produced has name `median_a`.
-
-### Exercise 26
+### Exercise 3
 
 For this practice, pipe `df_miss` into `mutate()`.
 
-```{r modifying-multiple-c-26, exercise = TRUE}
+```{r column-names-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-c-26-hint, eval = FALSE}
+```{r column-names-3-hint-1, eval = FALSE}
 df_miss |> 
   mutate()
 ```
 
-```{r include = FALSE}
+```{r column-names-3-test, include = FALSE}
 df_miss |> 
   mutate()
 ```
@@ -869,23 +819,23 @@ df_miss |>
 
 The `.names` argument is particularly important when you use `across()` with `mutate()`.
 
-### Exercise 27
+### Exercise 4
 
 Add `across(a:d, \(x) coalesce(x, 0))` to the call to `mutate()`.
 
-```{r modifying-multiple-c-27, exercise = TRUE}
+```{r column-names-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-c-27-hint, eval = FALSE}
+```{r column-names-4-hint-1, eval = FALSE}
 df_miss |> 
-  mutate(across(a:d, 
-                \(x) coalesce(x, 0)))
+  mutate(...(a:d, 
+                \(x) ...(x, 0)))
 ```
 
-```{r include = FALSE}
+```{r column-names-4-test, include = FALSE}
 df_miss |> 
   mutate(across(a:d, 
                 \(x) coalesce(x, 0)))
@@ -893,111 +843,103 @@ df_miss |>
 
 ### 
 
-Recall that argument `coalesce()` replace NAs with 0.
+Recall that function `coalesce()` replaces NAs with 0.
 
-Note that by default, the output of `across()` is given the same names as the inputs. This means that `across()` inside of `mutate()` will replace existing columns, like in Exercise 27.
+Note that by default, the output of `across()` is given the same names as the inputs. This means that `across()` inside of `mutate()` will replace any existing columns with the same names. The new `a` is the same as the old `a`, but with any NA replaced by a zero.
 
 To create new columns, we need to specify `.names`.
 
-### Exercise 28
 
-Hit `Run Code`
+### Exercise 5
 
-```{r modifying-multiple-c-28, exercise = TRUE}
-df_miss |> 
-  mutate(across())
-```
+Within the call to `across()`, replace `\(x) coalesce(x, 0)` with `\(x) abs(x)`. Also, add `.names = "{.col}_abs"`. Make sure to separate each argument with comma.
 
-### Exercise 29
-
-Add arguments `a:d`, `\(x) abs(x)` and `.names = "{.col}_abs"` to the call to `across()`. Make sure to separate each argument with comma.
-
-```{r modifying-multiple-c-29, exercise = TRUE}
+```{r column-names-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-c-29-hint, eval = FALSE}
+```{r column-names-5-hint-1, eval = FALSE}
 df_miss |> 
   mutate(
-    across(a:d, \(x) abs(x), .names = "{.col}_abs"))
+    across(a:d, \(x) ...(x), 
+           ... = "{.col}_abs"))
 ```
 
-```{r include = FALSE}
+```{r column-names-5-test, include = FALSE}
 df_miss |> 
   mutate(
-    across(a:d, \(x) abs(x), .names = "{.col}_abs"))
+    across(a:d, \(x) abs(x), 
+           .names = "{.col}_abs"))
 ```
 
 ### 
 
-Now, you should get a 5 x 8 table, with 4 new columns `a_abs`, `b_abs`, `c_abs` and `d_abs`.
+Using `.names` allows you to keep the original variables and also add new ones. In this case, `a_abs` is just the absolute value of `a`, and so on for `b`, `c`, and `d`.
 
-### Exercise 30
+### Exercise 6
 
-Pipe `df_miss` into `filter()`.
+Create a new pipe by sending `df_miss` into `filter()`.
 
-```{r modifying-multiple-c-30, exercise = TRUE}
+```{r column-names-6, exercise = TRUE}
 
 ```
 
-```{r modifying-multiple-c-30-hint, eval = FALSE}
+```{r column-names-6-hint-1, eval = FALSE}
 df_miss |> 
-  filter()
+  ...()
 ```
 
-```{r include = FALSE}
+```{r column-names-6-test, include = FALSE}
 df_miss |> 
   filter()
 ```
 
 ### 
 
-`across()` is a great match for `summarize()` and `mutate()`, but it's more awkward to use with `filter()`.
+`across()` is a great match for `summarize()` and `mutate()`, but it's more awkward to use with `filter()`. We will use two variants of `across()` called `if_any()` and `if_all()` with `filter()`.
 
-We use two variants of `across()` called `if_any()` and `if_all()` with `filter()`.
-
-### Exercise 31
+### Exercise 7
 
 Add `if_any()` to the call to `filter()`
 
-```{r modifying-multiple-c-31, exercise = TRUE}
+```{r column-names-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-c-31-hint, eval = FALSE}
+```{r column-names-7-hint-1, eval = FALSE}
 df_miss |> 
-  filter(if_any())
+  filter(...())
 ```
 
-```{r include = FALSE}
+```{r column-names-7-test, include = FALSE}
 df_miss |> 
   filter(if_any())
 ```
 
 ### 
 
-`if_any()` is the same as using `|` in-between the arguments.
+`if_any()` is the same as using `|` in-between the arguments. Right now, it has no effect because we haven't provided any arguments.
 
-### Exercise 32
+### Exercise 8
 
-Add `a:d` and `is.na` to the function `if_any()`.
+Add `a:d` and `is.na`, separated by a comma, to the function `if_any()`.
 
-```{r modifying-multiple-c-32, exercise = TRUE}
+```{r column-names-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-c-32-hint, eval = FALSE}
+```{r column-names-8-hint-1, eval = FALSE}
 df_miss |> 
-  filter(if_any(a:d, is.na))
+  filter(if_any(..., is.na))
 ```
 
-```{r include = FALSE}
+```{r column-names-8-test, include = FALSE}
 df_miss |> 
   filter(if_any(a:d, is.na))
 ```
@@ -1006,37 +948,41 @@ df_miss |>
 
 The code above is the same as `df_miss |> filter(is.na(a) | is.na(b) | is.na(c) | is.na(d))`.
 
-### 
+### Exercise 9
 
-The other alternative, `if_all`, is the same as using `&`.
-
-### Exercise 33
+The other alternative, `if_all()`, is the same as using `&`.
 
 Copy and past the previous code. Change `if_any` to `if_all`, see what happens.
 
-```{r modifying-multiple-c-33, exercise = TRUE}
+```{r column-names-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-c-33-hint, eval = FALSE}
+```{r column-names-9-hint-1, eval = FALSE}
 df_miss |> 
   filter(if_all(...))
 ```
 
-```{r include = FALSE}
+```{r column-names-9-test, include = FALSE}
 df_miss |> 
   filter(if_all(a:d, is.na))
 ```
 
-You will get a 0 x 4 table!
+You will get an empty tibble because none of the rows have all the values for `a` through `d` equal to NA.
 
-### Exercise 34
+
+## across() in functions
+### 
+
+`across()` is particularly useful to program with because it allows you to operate on multiple columns.
+
+### Exercise 1
 
 Hit `Run Code`.
 
-```{r modifying-multiple-c-34, exercise = TRUE}
+```{r across-in-functions-1, exercise = TRUE}
 expand_dates <- function(df) {
   df |> 
     mutate(
@@ -1052,37 +998,36 @@ df_date <- tibble(
 
 ### 
 
-`across()` is particularly useful to program with because it allows you to operate on multiple columns. This is an example of using lubridate functions to expand all date columns into year, month, and day columns.
+`expand_dates()` uses **lubridate** functions to expand all date columns within a tibble into year, month, and day columns.
 
-### Exercise 35
+### Exercise 2
 
 Pipe `df_date` into `expand_dates()`.
 
-```{r modifying-multiple-c-35, exercise = TRUE}
+```{r across-in-functions-2, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r modifying-multiple-c-35-hint, eval = FALSE}
+```{r across-in-functions-2-hint-1, eval = FALSE}
 df_date |> 
-  expand_dates()
+  ...()
 ```
 
-```{r include = FALSE}
+```{r across-in-functions-2-test, include = FALSE}
 df_date |> 
   expand_dates()
 ```
 
 ### 
 
-This should give you a 2 x 5 table with `date_year`, `date_month`, and `date_day` broken down.
+Instead of having to specify the name of the column ahead of time --- a name which we might not even know --- we use `where(is.Date)` to automatically pick out any date columns.
 
-### Exercise 36
 
-Hit `Run Code` to run the following function.
+### Exercise 3
 
-```{r modifying-multiple-c-36, exercise = TRUE}
+Hit `Run Code` to define the following function.
+
+```{r across-in-functions-3, exercise = TRUE}
 summarize_means <- function(df, summary_vars = where(is.numeric)) {
   df |> 
     summarize(
@@ -1094,25 +1039,29 @@ summarize_means <- function(df, summary_vars = where(is.numeric)) {
 
 ### 
 
-`across()` makes it easy to supply multiple columns in a single argument.
+<!-- DK: Have students already been exposed to {{}}? -->
 
-### Exercise 37
+`across()` makes it easy to supply multiple columns in a single argument. We would not expect you to be able to create a function like this, given the current state of your R knowledge. But you should be able to read and understand this code.
+
+In this case, `summary_vars` will be all the numeric variables in `df`. The `{{ }}` syntax is used for embracing the `summary_vars` argument, allowing it to be passed as a variable or expression.
+
+### Exercise 4
 
 Pipe `diamonds` into `group_by(cut)`, then pipe into `summarize_means()`.
 
-```{r modifying-multiple-c-37, exercise = TRUE}
+```{r across-in-functions-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-c-37-hint, eval = FALSE}
+```{r across-in-functions-4-hint-1, eval = FALSE}
 diamonds |> 
-  group_by(cut) |> 
-  summarize_means()
+  group_by(...) |> 
+  ...()
 ```
 
-```{r include = FALSE}
+```{r across-in-functions-4-test, include = FALSE}
 diamonds |> 
   group_by(cut) |> 
   summarize_means()
@@ -1120,27 +1069,26 @@ diamonds |>
 
 ### 
 
-We mentioned that where possible, `.by` should be sued instead of `group_by()`. However here we encounter a situation where it is not possible to use `.by`.
+We mentioned that where possible, `.by` should be sued instead of `group_by()`. However, this is a situation where it is not possible to use `.by`.
 
-Notice that `summarize_means()` is a self-defined function, as in Exercise 36, which was not built to incorporate `.by()`. Therefore, we stick with `group_by()` in this practice.
 
-### Exercise 38
+### Exercise 5
 
 Now, add argument `c(carat, x:z)` to the function `summarize_means()`.
 
-```{r modifying-multiple-c-38, exercise = TRUE}
+```{r across-in-functions-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-c-38-hint, eval = FALSE}
+```{r across-in-functions-5-hint-1, eval = FALSE}
 diamonds |> 
   ...(cut) |> 
   summarize_means(c(...))
 ```
 
-```{r include = FALSE}
+```{r across-in-functions-5-test, include = FALSE}
 diamonds |> 
   group_by(cut) |> 
   summarize_means(c(carat, x:z))
@@ -1150,14 +1098,18 @@ diamonds |>
 
 Another interesting function associated with `across()` is `pivot_longer()`, which makes data sets longer by increasing the number of rows and decreasing the number of columns.
 
-### Exercise 39
+### Exercise 6
 
 Hit `Run Code`. Pay attention to the table generated
 
-```{r modifying-multiple-c-39, exercise = TRUE}
+```{r across-in-functions-6, exercise = TRUE}
 df |> 
   summarize(across(a:d, 
                    list(median = median, mean = mean)))
+```
+
+```{r across-in-functions-6-test, include = FALSE}
+
 ```
 
 ### 
@@ -1166,11 +1118,11 @@ What did you notice about this table? It's too wide and hence hard to compare va
 
 There's a way to compute the same values by pivoting longer and then summarizing.
 
-### Exercise 40
+### Exercise 7
 
 Hit `Run Code` to create the following tibble.
 
-```{r modifying-multiple-c-40, exercise = TRUE}
+```{r across-in-functions-7, exercise = TRUE}
 df_paired <- tibble(
   a_val = rnorm(10),
   a_wts = runif(10),
@@ -1183,21 +1135,21 @@ df_paired <- tibble(
 )
 ```
 
-### Exercise 41
+### Exercise 8
 
 Type in `df_paired` and hit `Run Code`. 
 
-```{r modifying-multiple-c-41, exercise = TRUE}
+```{r across-in-functions-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-c-41-hint, eval = FALSE}
+```{r across-in-functions-8-hint-1, eval = FALSE}
 df_paired
 ```
 
-```{r include = FALSE}
+```{r across-in-functions-8-test, include = FALSE}
 df_paired
 ```
 
@@ -1206,48 +1158,46 @@ df_paired
 Now you should see the tibble you have created!
 
 
-### Exercise 42
+### Exercise 9
+
+`pivot_longer()` makes datasets longer by increasing the number of rows and decreasing the number of columns.
 
 Pipe `df_paired` into function `pivot_longer()`.
 
-```{r modifying-multiple-c-42, exercise = TRUE}
+```{r across-in-functions-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-c-42-hint, eval = FALSE}
+```{r across-in-functions-9-hint-1, eval = FALSE}
 df_paired |> 
   pivot_longer()
 ```
 
-```{r include = FALSE}
+```{r across-in-functions-9-test, include = FALSE}
 # df_paired |> 
 #   pivot_longer()
 ```
 
-You will receive an error message, because we haven't put in any arguments. `cols` must select at least one column.
+You will receive an error message because `pivot_longer` requires a value for the `cols` argument.
 
-### 
-
-`pivot_longer()` makes datasets longer by increasing the number of rows and decreasing the number of columns.
-
-### Exercise 43
+### Exercise 10
 
 Add arguments `everything()` to the function `pivot_longer()`. 
 
-```{r modifying-multiple-c-43, exercise = TRUE}
+```{r across-in-functions-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-c-43-hint, eval = FALSE}
+```{r across-in-functions-10-hint-1, eval = FALSE}
 df_paired |> 
-  pivot_longer(everything())
+  pivot_longer(...())
 ```
 
-```{r include = FALSE}
+```{r across-in-functions-10-test, include = FALSE}
 df_paired |> 
   pivot_longer(everything())
 ```
@@ -1256,50 +1206,25 @@ df_paired |>
 
 Remember that the `cols` argument specifies which columns to pivot and `everything()` specifies that we want to pivot every column.
 
-### Exercise 44
+### Exercise 11
 
-Add a second argument, `names_to = c("group", ".value")` to the call to `pivot_longer()`.
+Add two more arguments to `pivot_longer()`: `names_to = c("group", ".value")` and `names_sep = "_"`.
 
-```{r modifying-multiple-c-44, exercise = TRUE}
 
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r modifying-multiple-c-44-hint, eval = FALSE}
-df_paired |> 
-  pivot_longer(...,
-               names_to = c(...))
-```
-
-```{r include = FALSE}
-# df_paired |>
-#   pivot_longer(everything(),
-#                names_to = c("group", ".value"))
-```
-
-### 
-
-`names_to()` is used to create variables from the column names. Here, we creates two new columns: `group` and `.value`.
-
-### Exercise 45
-
-Finally let's add argument `names_sep = "_"` to the call to `pivot_longer()`.
-
-```{r modifying-multiple-c-45, exercise = TRUE}
+```{r across-in-functions-11, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r modifying-multiple-c-45-hint, eval = FALSE}
+```{r across-in-functions-11-hint-1, eval = FALSE}
 df_paired |> 
   pivot_longer(...,
                names_to = c("group", ".value"),
                names_sep = "_")
 ```
 
-```{r include = FALSE}
+```{r across-in-functions-11-test, include = FALSE}
 df_paired |> 
   pivot_longer(everything(),
                names_to = c("group", ".value"),
@@ -1308,7 +1233,7 @@ df_paired |>
 
 ### 
 
-The `names_sep` argument tell `pivot_longer()` what separates a `group` value from a  `.value` in each of the column names. Here, that's an underscore `_`.
+The `names_sep` argument tells `pivot_longer()` what separates a `group` value from a  `.value` in each of the column names. Here, that's an underscore `_`.
 
 ### 
 
@@ -1325,7 +1250,7 @@ Here's a quick summary of the above mentioned functions:
 ## Reading multiple files
 ### 
 
-In this section, you'll learn how to use `purrr::map()` to do something to every file in a directory. Imagine you have a directory full of excel spreadsheets5 you want to read. You could do it with copy and paste:
+In this section, you'll learn how to use `purrr::map()` to do something to every file in a directory. Imagine you have a directory full of excel spreadsheets you want to read. You could do it with copy and paste:
 
 ```
 data2019 <- readxl::read_excel("data/y2019.xlsx")
@@ -1345,9 +1270,15 @@ You can imagine that this would get tedious quickly, especially if you had hundr
 
 ### Exercise 1
 
-Hit `Run Code`
+Hit `Run Code`.
 
 ```{r reading-multiple-files-1, exercise = TRUE}
+paths <- list.files("data/gapminder", pattern = "[.]xlsx$", full.names = TRUE)
+
+paths
+```
+
+```{r reading-multiple-files-1-test, include = FALSE}
 paths <- list.files("data/gapminder", pattern = "[.]xlsx$", full.names = TRUE)
 
 paths
@@ -1357,10 +1288,8 @@ paths
 
 Notice that we used function `list.files()` here, which basically lists the files in a directory.
 
-Just like `across()` in the previous section, `list.files()` also has three arguments.
 
-
-<!-- DK: Ask new question. Type ?list.files in the Console and copy/paste the Description. -->
+<!-- DK: Ask new question. Type ?list.files in the Console and copy/paste the Description. This is all handed much better in the next chapter. Make them the same. -->
 
 ### 
 
@@ -1371,8 +1300,6 @@ The first argument, `path`, is the directory to look in. In this case, it is `"d
 `pattern` is a regular expression used to filter the file names. The most common pattern is something like `[.]xlsx$` or `[.]csv$` to find all files with a specified extension.
 
 `full.names` determines whether or not the directory name should be included in the output. You almost always want this to be `TRUE`.
-
-### 
 
 Based on the 12 paths created from the last exercise, call `read_excel()` 12 times to get 12 data frames. 
 
@@ -1395,7 +1322,7 @@ gapminder_2007 <- readxl::read_excel("data/gapminder/2007.xlsx")
 
 ### 
 
-Separate excel sheets are always easier to work with once we put them into a single object. You can use `list()` to combine them together, then assign the list bto a new variable, `files`.
+Separate excel sheets are always easier to work with once we put them into a single object. You can use `list()` to combine them together, then assign the list to a new variable, `files`.
 
 your code should look like this:
 
@@ -1412,19 +1339,18 @@ files <- list(
 
 ### Exercise 2
 
-type `files[]` and hit `Run Code`, see what happens. Note that we are using `[]` here instead of `()`.
+Type `files[[3]]` and hit `Run Code`, see what happens. Note that we are using `[[]]` here instead of `()`.
 
 ```{r reading-multiple-files-2, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r reading-multiple-files-2-hint-1, eval = FALSE}
-files[]
+...[[3]]
 ```
 
-```{r include = FALSE}
+```{r reading-multiple-files-2-test, include = FALSE}
+files[[3]]
 ```
 
 ### 
@@ -1440,10 +1366,12 @@ Type `map()` in the code chunk, then hit `Run Code`.
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r reading-multiple-files-3-hint-1, eval = FALSE}
 map()
+```
+
+```{r reading-multiple-files-3-test, include = FALSE}
+
 ```
 
 ### 
@@ -1482,17 +1410,15 @@ Type `length()`, then hit `Run Code`.
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r reading-multiple-files-5-hint-1, eval = FALSE}
 length()
 ```
 
-This will give you an error because we haven't added any argumenyts yet.
+```{r reading-multiple-files-5-test, include = FALSE}
+# length()
+```
 
-### 
-
-Function `length()` can get or set the length of vectors (including lists) and factors, and of any other R object for which a method has been defined.
+This will give you an error because we haven't added any arguments yet. Function `length()` can get or set the length of vectors (including lists) and factors, and of any other R object for which a method has been defined.
 
 ### Exercise 6
 
@@ -1508,6 +1434,10 @@ Add `file`, the collection of tibbles we just created, to thew function `lenght(
 length(files)
 ```
 
+```{r reading-multiple-files-6-test, include = FALSE}
+
+```
+
 ### 
 
 Now you know how many files are in `files`.
@@ -1518,6 +1448,10 @@ Run the code below to see what happens.
 
 ```{r reading-multiple-files-7, exercise = TRUE}
 files[[1]]
+```
+
+```{r reading-multiple-files-7-test, include = FALSE}
+
 ```
 
 ### 
@@ -1538,6 +1472,10 @@ Type `list_rbind()` in the space below. Hit `Run Code`.
 list_rbind() 
 ```
 
+```{r reading-multiple-files-8-test, include = FALSE}
+
+```
+
 ### 
 
 `list_rbind()` combines elements into a data frame by row-binding them together with `vctrs::vec_rbind()`.
@@ -1554,6 +1492,10 @@ Add `files` to the call to `list_rbind()`.
 
 ```{r reading-multiple-files-9-hint-1, eval = FALSE}
 list_rbind(files)
+```
+
+```{r reading-multiple-files-9-test, include = FALSE}
+
 ```
 
 ### 
@@ -1581,6 +1523,10 @@ paths |>
   map
 ```
 
+```{r reading-multiple-files-10-test, include = FALSE}
+
+```
+
 ### Exercise 11
 
 Add `\(path) readxl::read_excel(path, n_max = 1)` into the function `map()`.
@@ -1594,6 +1540,10 @@ Add `\(path) readxl::read_excel(path, n_max = 1)` into the function `map()`.
 ```{r reading-multiple-files-11-hint-1, eval = FALSE}
 paths |> 
   map(\(path) readxl::read_excel(path, n_max = 1))
+```
+
+```{r reading-multiple-files-11-test, include = FALSE}
+
 ```
 
 ### 
@@ -1614,6 +1564,10 @@ Pipe the code above into function `list_rbind()`.
 paths |> 
   map(\(path) readxl::read_excel(path, n_max = 1)) |> 
   list_rbind()
+```
+
+```{r reading-multiple-files-12-test, include = FALSE}
+
 ```
 
 ### 
@@ -1638,6 +1592,10 @@ Pipe `paths` into `set_names(basename)`
 paths |> set_names(basename) 
 ```
 
+```{r reading-multiple-files-13-test, include = FALSE}
+
+```
+
 ### 
 
 Using `basename()` in the `set_names()` function, we can extract just the file name from the full path.
@@ -1658,6 +1616,10 @@ paths |>
   map(readxl::read_excel)
 ```
 
+```{r reading-multiple-files-14-test, include = FALSE}
+
+```
+
 ### 
 
 The names created in the last exercise automatically carried along by all the map functions, so the list of data frames will have those same names.
@@ -1676,6 +1638,10 @@ Assign a new variable `file` to the previous code.
 file <- paths |> 
   set_names(basename) |> 
   map(readxl::read_excel)
+```
+
+```{r reading-multiple-files-15-test, include = FALSE}
+
 ```
 
 ### 
@@ -1707,6 +1673,10 @@ Type `files[[""]]`, with any `year.xlsx` between the `""`
 files[["1962.xlsx"]]
 ```
 
+```{r reading-multiple-files-16-test, include = FALSE}
+
+```
+
 ### 
 
 You should get the file of the respective year you chose! 
@@ -1727,6 +1697,10 @@ paths |>
   map(readxl::read_excel)
 ```
 
+```{r reading-multiple-files-17-test, include = FALSE}
+
+```
+
 ### Exercise 18
 
 Pipe the code above into `list_rbind() `, then add argument `names_to = "year"` to this function.
@@ -1742,6 +1716,10 @@ paths |>
   set_names(basename) |> 
   map(readxl::read_excel) |> 
   ...(names_to = "year")
+```
+
+```{r reading-multiple-files-18-test, include = FALSE}
+
 ```
 
 ### 
@@ -1764,6 +1742,10 @@ paths |>
   map(readxl::read_excel) |> 
   list_rbind(names_to = "year") |> 
   mutate(year = parse_number(year))
+```
+
+```{r reading-multiple-files-19-test, include = FALSE}
+
 ```
 
 ### 
@@ -1793,17 +1775,24 @@ gapminder <- paths |>
   mutate(...)
 ```
 
-### Exercise 21
+```{r reading-multiple-files-20-test, include = FALSE}
+
+```
+
+## Save your work
+### 
+
+### Exercise 1
 
 Type `write_csv()` in the empty code chunk below, hit `Run Code`.
 
-```{r reading-multiple-files-21, exercise = TRUE}
+```{r save-your-work-1, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-21-hint-1, eval = FALSE}
+```{r save-your-work-1-hint-1, eval = FALSE}
 write_csv()
 ```
 
@@ -1811,17 +1800,17 @@ write_csv()
 
 In brief, `write_csv()` is used to write a data frame to a delimited file.
 
-### Exercise 22
+### Exercise 2
 
 Add arguments `gapminder` and `"gapminder.csv"` to the call to `write_csv()`
 
-```{r reading-multiple-files-22, exercise = TRUE}
+```{r save-your-work-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-22-hint-1, eval = FALSE}
+```{r save-your-work-2-hint-1, eval = FALSE}
 write_csv(gapminder, "gapminder.csv")
 ```
 
@@ -1829,25 +1818,25 @@ write_csv(gapminder, "gapminder.csv")
 
 This is how we save the work we have previously done, a single csv file is now created and ready for future use.
 
-### Exercise 23
+### Exercise 3
 
 Run the following code.
 
-```{r reading-multiple-files-23, exercise = TRUE}
-df <- read_csv(path)
+```{r save-your-work-3, exercise = TRUE}
+df <- read_csv(paths)
 ```
 
-### Exercise 24
+### Exercise 4
 
 Pipe the newly created variable `df` into `filter()`, with argument `!is.na(id)`.
 
-```{r reading-multiple-files-24, exercise = TRUE}
+```{r save-your-work-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-24-hint-1, eval = FALSE}
+```{r save-your-work-4-hint-1, eval = FALSE}
 df |> 
     filter(!is.na(id))
 ```
@@ -1856,32 +1845,32 @@ df |>
 
 `is.na()` is used to deal with missing values in the dataset or data frame.
 
-### Exercise 25
+### Exercise 5
 
 Pipe the code above into `mutate()` with argument `id = tolower(id)`.
-```{r reading-multiple-files-25, exercise = TRUE}
+```{r save-your-work-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-25-hint-1, eval = FALSE}
+```{r save-your-work-5-hint-1, eval = FALSE}
   df |> 
     filter(!is.na(id)) |> 
     mutate(...)
 ```
 
-### Exercise 26
+### Exercise 6
 
 Then use `pivot_longer()` and add arguments `jan:dec` and `names_to = "month"` to the call. Make sure to add a `,` between the two arguments.
 
-```{r reading-multiple-files-26, exercise = TRUE}
+```{r save-your-work-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-26-hint-1, eval = FALSE}
+```{r save-your-work-6-hint-1, eval = FALSE}
   df |> 
     filter(!is.na(id)) |> 
     mutate(id = tolower(id)) |> 
@@ -1892,17 +1881,17 @@ Then use `pivot_longer()` and add arguments `jan:dec` and `names_to = "month"` t
 
 Just a recap, `pivot_longer()` makes datasets longer by increasing the number of rows and decreasing the number of columns.
 
-### Exercise 27
+### Exercise 7
 
 Assigned variable name `process_file` to <- `function(path)`,followed by a `{}` with the previous code. 
 
-```{r reading-multiple-files-27, exercise = TRUE}
+```{r save-your-work-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-27-hint-1, eval = FALSE}
+```{r save-your-work-7-hint-1, eval = FALSE}
 process_file <- function(path) {
   df <- read_csv(path)
   
@@ -1917,47 +1906,47 @@ process_file <- function(path) {
 
 In this step, we write a function that takes a file and does all the modifications (in this case, we read a bunch of files, filter out missing values, pivot, and then combine).
 
-### Exercise 28
+### Exercise 8
 
 Pipe `paths` into `map()`.
 
-```{r reading-multiple-files-28, exercise = TRUE}
+```{r save-your-work-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-28-hint-1, eval = FALSE}
+```{r save-your-work-8-hint-1, eval = FALSE}
 paths |> 
   map()
 ```
 
-### Exercise 29
+### Exercise 9
 
 Add `process_file` as argument to `map()`.
 
-```{r reading-multiple-files-29, exercise = TRUE}
+```{r save-your-work-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-29-hint-1, eval = FALSE}
+```{r save-your-work-9-hint-1, eval = FALSE}
 paths |> 
   map(process_file)
 ```
 
-### Exercise 30
+### Exercise 10
 
 Pipe the above into `list_rbind()`.
 
-```{r reading-multiple-files-30, exercise = TRUE}
+```{r save-your-work-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-30-hint-1, eval = FALSE}
+```{r save-your-work-10-hint-1, eval = FALSE}
 paths |> 
   map(process_file) |> 
   list_rbind()
@@ -1967,17 +1956,17 @@ paths |>
 
 This is an example of doing one round of iteration with a complex function.
 
-### Exercise 31
+### Exercise 11
 
 Pipe `paths` into `map(readxl::read_excel)`
 
-```{r reading-multiple-files-31, exercise = TRUE}
+```{r save-your-work-11, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-31-hint-1, eval = FALSE}
+```{r save-your-work-11-hint-1, eval = FALSE}
 paths |> 
   map(readxl::read_excel)
 ```
@@ -1988,31 +1977,31 @@ Recall that this code helps to load all files needed.
 
 With a homogeneous data, we are able to go from `map()` straight to `list_rbind()`. However, when the data frames are heterogeneous, `list_rbind()` either fails or yields a data frame that’s not very useful. In this case, we can create a handy `df_types` function that returns a tibble with one row for each column.
 
-### Exercise 32
+### Exercise 12
 
 Type `tibble()` and hit `Run Code`.
 
-```{r reading-multiple-files-32, exercise = TRUE}
+```{r save-your-work-12, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-32-hint-1, eval = FALSE}
+```{r save-your-work-12-hint-1, eval = FALSE}
 tibble()
 ```
 
-### Exercise 33
+### Exercise 13
 
 Let's add the argument `col_name` with value `names(df)` to the call to `tibble()`.
 
-```{r reading-multiple-files-33, exercise = TRUE}
+```{r save-your-work-13, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-33-hint-1, eval = FALSE}
+```{r save-your-work-13-hint-1, eval = FALSE}
 tibble(
     col_name = names(df))
 ```
@@ -2021,17 +2010,17 @@ tibble(
 
 Recall that this argument `col_name` retrieve/set column names.
 
-### Exercise 34
+### Exercise 14
 
 Then, add the second argument, `col_type`, then set its value to be `map_chr(df, vctrs::vec_ptype_full)`.
 
-```{r reading-multiple-files-34, exercise = TRUE}
+```{r save-your-work-14, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-34-hint-1, eval = FALSE}
+```{r save-your-work-14-hint-1, eval = FALSE}
 tibble(
     col_name = names(df), 
     col_type = map_chr(df, vctrs::vec_ptype_full))
@@ -2047,17 +2036,17 @@ tibble(
 
 `vec_ptype_full()` displays the full type of the vector.
 
-### Exercise 35
+### Exercise 15
 
 Add a new argument `n_miss` to the previous code, with value `map_int(df, \(x) sum(is.na(x)))`.
 
-```{r reading-multiple-files-35, exercise = TRUE}
+```{r save-your-work-15, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-35-hint-1, eval = FALSE}
+```{r save-your-work-15-hint-1, eval = FALSE}
 tibble(
     col_name = names(df), 
     col_type = map_chr(df, vctrs::vec_ptype_full),
@@ -2068,17 +2057,17 @@ tibble(
 
 <!-- add some knowledge drop abt `map_int(df, \(x) sum(is.na(x)))`... my brain is numb at this point but i'll come back later -->
 
-### Exercise 36
+### Exercise 16
 
 To make the above code into a function, type `function(df) {}` in front of `tibble()`, remember to put`tibble()` inside `{}`.
 
-```{r reading-multiple-files-36, exercise = TRUE}
+```{r save-your-work-16, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-36-hint-1, eval = FALSE}
+```{r save-your-work-16-hint-1, eval = FALSE}
 function(df) {
   tibble(
     col_name = names(df), 
@@ -2090,17 +2079,17 @@ function(df) {
 
 The previous chapter gave a detailed break down of how a new function is defined.
 
-### Exercise 37
+### Exercise 17
 
 Assign the new function a name as `df_types`.
 
-```{r reading-multiple-files-37, exercise = TRUE}
+```{r save-your-work-17, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-37-hint-1, eval = FALSE}
+```{r save-your-work-17-hint-1, eval = FALSE}
 ... <- function(df) {
   tibble(
     col_name = names(df), 
@@ -2112,17 +2101,17 @@ Assign the new function a name as `df_types`.
 
 This assignment will make life easier for us later on!
 
-### Exercise 38
+### Exercise 18
 
 Type `df_types()` and an argument `gapminder`, hit `Run Code`, see what happens.
 
-```{r reading-multiple-files-38, exercise = TRUE}
+```{r save-your-work-18, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-38-hint-1, eval = FALSE}
+```{r save-your-work-18-hint-1, eval = FALSE}
 df_types(gapminder)
 ```
 
@@ -2138,17 +2127,17 @@ There are two additiolnal functions worth mentioning.
 
 `map_at()` allows you to selectively modify elements based on their names.
 
-### Exercise 39
+### Exercise 19
 
 Pipe `paths` into `map()`.
 
-```{r reading-multiple-files-39, exercise = TRUE}
+```{r save-your-work-19, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-39-hint-1, eval = FALSE}
+```{r save-your-work-19-hint-1, eval = FALSE}
 paths |> 
   map()
 ```
@@ -2157,17 +2146,17 @@ paths |>
 
 `map()` has a downside: it succeeds or fails as a whole. It will either successfully read all of the files in a directory or fail with an error, reading zero files. 
 
-### Exercise 40
+### Exercise 20
 
 Add an argument `possibly()` to the call to `map()`.
 
-```{r reading-multiple-files-40, exercise = TRUE}
+```{r save-your-work-20, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-40-hint-1, eval = FALSE}
+```{r save-your-work-20-hint-1, eval = FALSE}
 paths |> 
   map(possibly())
 ```
@@ -2178,17 +2167,17 @@ paths |>
 
 In particular, `possibly()` changes a function from erroring to returning a value that you specify。
 
-### Exercise 41
+### Exercise 21
 
 Add arguments `\(path) readxl::read_excel(path)` and `NULL` to the call to `possibly()`.
 
-```{r reading-multiple-files-41, exercise = TRUE}
+```{r save-your-work-21, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-41-hint-1, eval = FALSE}
+```{r save-your-work-21-hint-1, eval = FALSE}
 paths |> 
   map(possibly(\(path) readxl::read_excel(path), NULL))
 ```
@@ -2201,32 +2190,32 @@ paths |>
 
 `otherwise` is a default value to use when an error occurs.
 
-### Exercise 42
+### Exercise 22
 
 Assign the above code to variable `files`.
 
-```{r reading-multiple-files-42, exercise = TRUE}
+```{r save-your-work-22, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-42-hint-1, eval = FALSE}
+```{r save-your-work-22-hint-1, eval = FALSE}
 ... <- paths |> 
   map(possibly(\(path) readxl::read_excel(path), NULL))
 ```
 
-### Exercise 43
+### Exercise 23
 
 Pipe `files` into `list_rbind()`.
 
-```{r reading-multiple-files-43, exercise = TRUE}
+```{r save-your-work-23, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-43-hint-1, eval = FALSE}
+```{r save-your-work-23-hint-1, eval = FALSE}
 files |> list_rbind()
 ```
 
@@ -2234,39 +2223,39 @@ files |> list_rbind()
 
 This works particularly well here because `list_rbind()`, like many tidyverse functions, automatically ignores `NULLs`.
 
-### Exercise 44
+### Exercise 24
 
 With function `map_vec()`, add arguments `files` and `is.null` to the call. 
 
-```{r reading-multiple-files-44, exercise = TRUE}
+```{r save-your-work-24, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-44-hint-1, eval = FALSE}
+```{r save-your-work-24-hint-1, eval = FALSE}
 map_vec(files, is.null)
 ```
 
-### Exercise 45
+### Exercise 25
 
 Assign `failed` as a new variable of the previous code.
 
-```{r reading-multiple-files-45, exercise = TRUE}
+```{r save-your-work-25, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r reading-multiple-files-45-hint-1, eval = FALSE}
+```{r save-your-work-25-hint-1, eval = FALSE}
 failed <- map_vec(files, is.null)
 ```
 
-### Exercise 46
+### Exercise 26
 
 Hit `Run Code`.
 
-```{r reading-multiple-files-46, exercise = TRUE}
+```{r save-your-work-26, exercise = TRUE}
 paths[failed]
 ```
 
@@ -2287,366 +2276,493 @@ use `list.files()` to list all the files in a directory, then use `purrr::map()`
 ## Saving Multiple Outputs
 ### 
 
-(add intro)
+<!-- Biggest annoyance is that we need to include all code in each Exercise because the `con` connection object disappears after each Exercise.  -->
+
+In the last section, you learned about `map()`, which is useful for reading multiple files into a single object. In this and the following sections, we’ll now explore sort of the opposite problem: how can you take one or more R objects and save it to one or more files? We’ll explore this challenge using three examples:
+
+* Saving multiple data frames into one database.
+* Saving multiple data frames into multiple .csv files.
+* Saving multiple plots to multiple .png files.
 
 ### Exercise 1
 
-Run the code in the code chunck below. 
+Sometimes when working with many files, it’s not possible to fit all your data into memory at once, and you can’t do `map(files, read_csv)`. One approach to deal with this problem is to load your data into a database. Run the code in the code chunk below. 
 
 ```{r saving-multiple-outputs-1, exercise = TRUE}
 con <- DBI::dbConnect(duckdb::duckdb())
 ```
 
-You'll get an error, indicating `'file' must be a character string or connection`.
+```{r saving-multiple-outputs-1-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbDisconnect(con, shutdown=TRUE)
+```
 
 ### 
 
-Sometimes when working with many files at once, it’s not possible to fit all your data into memory at once, and you can’t do `map(files, read_csv)`. One approach to deal with this problem is to load your data into a database.
+`con` is a connection to a database created by the [**duckdb**](https://r.duckdb.org/) package. Note that because of limits on **learnr** tutorials, we will need to run this command --- and any other commands which modify the database --- in each Exercise block for this tutorial. Apologies for the repetition!
 
 ### Exercise 2
 
-Assign `template` to `readxl::read_excel(paths[[1]])`. Hit `Run Code`.
+We need to start by creating a table that we will fill in with data. The easiest way to do this is by creating a template, a dummy data frame that contains all the columns we want, but only a sampling of the data. Assign `template` to `readxl::read_excel(paths[[1]])`.
 
 ```{r saving-multiple-outputs-2, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r saving-multiple-outputs-2-hint-1, eval = FALSE}
+template <- readxl::...(paths[[1]])
+```
+
+```{r saving-multiple-outputs-2-test, include = FALSE}
 template <- readxl::read_excel(paths[[1]])
 ```
 
 ### 
 
-Exercise 1 did not work because we don't have csv file. Now, we want to do it by hand.
+Other databases might allow us to load Excel files directly. With **duckdb**, however, we’re going to have to do it “by hand”. Learning to do it by hand will also help you when you have a bunch of CSVs and the database that you’re working with doesn’t have one function that will load them all in.
 
 ### Exercise 3
 
-Run the following code again.
+Take the assignment from the previous question, add a pipe, and then use `mutate()` to add a new variable, `year`, and assign it a value of 1952.
 
 ```{r saving-multiple-outputs-3, exercise = TRUE}
-con <- DBI::dbConnect(duckdb::duckdb())
-DBI::dbCreateTable(con, "gapminder", template)
+
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r saving-multiple-outputs-3-hint-1, eval = FALSE}
+template <- readxl::read_excel(paths[[1]]) |> 
+  mutate(... = 1952)
+```
 
+```{r saving-multiple-outputs-3-test, include = FALSE}
+template <- readxl::read_excel(paths[[1]]) |> 
+  mutate(year = 1952)
+```
+
+### 
+
+We are about to add in data from a bunch of different files, each from a different year. So, we need to ensure that there is a `year` column in the template in which we can store that year information.
+
+
+### Exercise 4
+
+Run this code.
+
+```{r saving-multiple-outputs-4, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+```
+
+```{r saving-multiple-outputs-4-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+dbDisconnect(con, shutdown=TRUE)
 ```
 
 ### 
 
 Note that `dbCreateTable()` doesn’t use the data in template, just the variable names and types. 
 
-### Exercise 4
-
-Now, let's test it by pipe `con` into `tbl("gapminder")`.
-
-```{r saving-multiple-outputs-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-4-hint-1, eval = FALSE}
-con |> tbl("gapminder")
-```
-
-### 
-
-The `gapminder` table is empty now but it has the variables we need with the types we expect.
-
 ### Exercise 5
 
-Type `function(path)` in the space below and add `{}` after it. Hit `Run Code`.
+Now, let's test it by pipe `con` into `tbl("gapminder")`. (We provide the creation code. You add the pipe below it.)
 
 ```{r saving-multiple-outputs-5, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r saving-multiple-outputs-5-hint-1, eval = FALSE}
-function(path){}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+con |> 
+  tbl("gapminder")
+```
+
+```{r saving-multiple-outputs-5-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+con |> 
+  tbl("gapminder")
+dbDisconnect(con, shutdown=TRUE)
 ```
 
 ### 
 
-Now we are building a function that takes a single file path, reads it into R, and adds the result to the gapminder table.
+The `gapminder` table is empty now but it has the variables we need with the types we expect. You can see this explicitly if you add `colnames()` to the pipe and re-run the code.
 
 ### Exercise 6
 
-In the `{}`, add `df <- readxl::read_excel(path)` and `df$year <- parse_number(basename(path))`.
+We need a function which will accept a path to a correctly formatted Excel file, read the file into a tibble, add the appropriate year variable, and then append that tibble to the `gapminder` table we have created in our **duckdb** database.
+
+Run this code.
 
 ```{r saving-multiple-outputs-6, exercise = TRUE}
-
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-6-hint-1, eval = FALSE}
-function(path) {
+```{r saving-multiple-outputs-6-test, include = FALSE}
+append_file <- function(path) {
   df <- readxl::read_excel(path)
-  df$year <- parse_number(basename(path))}
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
 ```
 
 ### 
+
+Before creating a function like this, we often write the code which accomplishes what we want for a single case. With that script as a guide, we can create a function which is often just a "wrap" around that code.
 
 ### Exercise 7
 
-Add `DBI::dbAppendTable(con, "gapminder", df)` to the call to `function(path)`.
+Pipe `paths` into `map(append_file)`.
 
 ```{r saving-multiple-outputs-7, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r saving-multiple-outputs-7-hint-1, eval = FALSE}
-function(path) {
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
   df <- readxl::read_excel(path)
   df$year <- parse_number(basename(path))
-  
-  DBI::dbAppendTable(con, "gapminder", df)}
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+paths |> 
+  map(...)
+```
+
+```{r saving-multiple-outputs-7-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+}
+
+# DK: This causes a failure with R CMD check. Why?
+
+# paths |>
+#   map(append_file)
+
+dbDisconnect(con, shutdown=TRUE)
 ```
 
 ### 
 
+Again, it is annoying that we need to repeat so much code each Exercise.
+
 ### Exercise 8
 
-Assign `append_file` to the function above.
+But we don’t care about the output of append_file(), so instead of map() it’s slightly nicer to use walk(). walk() does exactly the same thing as map() but throws the output away. Pipe `paths` into `walk(append_file)`.
 
 ```{r saving-multiple-outputs-8, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r saving-multiple-outputs-8-hint-1, eval = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
 append_file <- function(path) {
-  ...
-  
-  DBI::dbAppendTable(con, "gapminder", df)}
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+paths |> 
+  ...(append_file)
+```
+
+```{r saving-multiple-outputs-8-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+paths |> 
+  walk(append_file)
+dbDisconnect(con, shutdown=TRUE)
 ```
 
 ### 
 
 ### Exercise 9
 
-Pipe `paths` into `map(append_file)`.
+Now we can check if we have all data in our table. Start a new line at the end of this code, piping `con` into `tbl("gapminder")`.
 
 ```{r saving-multiple-outputs-9, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+paths |> 
+  walk(append_file)
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r saving-multiple-outputs-9-hint-1, eval = FALSE}
-paths |> map(append_file)
-```
+...
 
-### 
-
-### Exercise 10
-
-Pipe `paths` into `walk(append_file)`.
-
-```{r saving-multiple-outputs-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-10-hint-1, eval = FALSE}
-paths |> walk(append_file)
-```
-
-### 
-
-Now we can check if we have all data in our table.
-
-### Exercise 11
-
-Pipe `con` into `tbl("gapminder")`.
-
-```{r saving-multiple-outputs-11, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-11-hint-1, eval = FALSE}
 con |> 
   tbl("gapminder")
 ```
 
+```{r saving-multiple-outputs-9-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+paths |> 
+  walk(append_file)
+
+con |> 
+  tbl("gapminder")
+dbDisconnect(con, shutdown=TRUE)
+```
+
 ### 
 
-### Exercise 12
+We have successfully loaded a dozen Excel files into a database table.
 
-Pipe the code above into `count(year)`
+### Exercise 10
 
-```{r saving-multiple-outputs-12, exercise = TRUE}
+Pipe the code above into `count(year)`.
+
+```{r saving-multiple-outputs-10, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
+
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
+
+paths |> 
+  walk(append_file)
+
+con |> 
+  tbl("gapminder")
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-12-hint-1, eval = FALSE}
-con |> 
+```{r saving-multiple-outputs-10-hint-1, eval = FALSE}
   ... |> 
   count(year)
 ```
 
-### 
+```{r saving-multiple-outputs-10-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbCreateTable(con, "gapminder", template)
 
-### Exercise 13
+append_file <- function(path) {
+  df <- readxl::read_excel(path)
+  df$year <- parse_number(basename(path))
+  DBI::dbAppendTable(con, "gapminder", df)
+  }
 
-Type `group_nest()` in the blank below, hit `Run Code`.
+paths |> 
+  walk(append_file)
 
-```{r saving-multiple-outputs-13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-13-hint-1, eval = FALSE}
-group_nest()
-```
-
-### 
-
-`group_nest()` is used to nest a tibble using a grouping specification.
-
-### Exercise 14
-
-Add argument `clarity` to the call to `group_nest()`.
-
-```{r saving-multiple-outputs-14, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-14-hint-1, eval = FALSE}
-group_nest(clarity)
+con |> 
+  tbl("gapminder") |> 
+  count(year)
+dbDisconnect(con, shutdown=TRUE)
 ```
 
 ### 
 
-There are several arguments within the function `group_nest()`, among which `.key` is the most important. 
+The gapminder data is so small that we can just work with it in memory. But, for larger amounts of data, we need to use a database like **duckdb**.
 
-`.key` is the name of the list column, like `clarity` you just entered.
+## Writing csv files
+### 
 
-### Exercise 15
+<!-- This would be much easier without intermediary objects. Why not just a pipe? Answer seems to be that walk2() is not really designed to work with pipes. -->
 
-Pipe `diamonds` into `group_nest()`.
+The same basic principle applies if we want to write multiple CSV files, one for each group. Let’s imagine that we want to take the `ggplot2::diamonds` data and save one CSV file for each value of `clarity`.
 
-```{r saving-multiple-outputs-15, exercise = TRUE}
+### Exercise 1
+
+Pipe `diamonds` to `group_nest()`.
+
+```{r writing-csv-files-1, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-15-hint-1, eval = FALSE}
+```{r writing-csv-files-1-hint-1, eval = FALSE}
 diamonds |> 
-  ...(clarity)
+  ...()
+```
+
+```{r writing-csv-files-1-test, include = FALSE}
+diamonds |> 
+  group_nest()
 ```
 
 ### 
 
-`diamonds` is the tibble that this function operates on.
+`group_nest()` is used to nest a tibble using a grouping specification. The output is a tibble with as many rows as there are values for the grouping variable. Because we did not specify a grouping variable, the output is a tibble with one row. 
 
-### Exercise 16
+### Exercise 2
 
-Assign variable `by_clarity` to the code we just created.
+Add the value `clarity` to the call to `group_nest()`.
 
-```{r saving-multiple-outputs-16, exercise = TRUE}
+```{r writing-csv-files-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r saving-multiple-outputs-16-hint-1, eval = FALSE}
-by_clarity <- ... |> 
+```{r writing-csv-files-2-hint-1, eval = FALSE}
+diamonds |> 
   group_nest(...)
 ```
 
-### Exercise 17
+```{r writing-csv-files-2-test, include = FALSE}
+diamonds |> 
+  group_nest(clarity)
+```
 
-Type `by_clarity` and hit `Run Code`.
-  
-```{r saving-multiple-outputs-17, exercise = TRUE}
+### 
+
+The first argument to `group_nest()`, `.key`, is the most important. The resulting tibble has two columns. The first is the same name as the grouping variable and includes the individual values. The second is always called `data`. It is a list column in which each element is a tibble with all the rows from `diamonds` which have the specified value of `clarity`.
+
+### Exercise 3
+
+Add a call to `mutate()` with argument `path = str_glue("diamonds-{clarity}.csv"` to the pipe.
+
+```{r writing-csv-files-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r saving-multiple-outputs-17-hint-1, eval = FALSE}
+```{r writing-csv-files-3-hint-1, eval = FALSE}
+... |> 
+  ...(path = str_glue("diamonds-{clarity}.csv"))
+```
+
+```{r writing-csv-files-3-test, include = FALSE}
+diamonds |> 
+  group_nest(clarity) |> 
+  mutate(path = str_glue("diamonds-{clarity}.csv"))
+```
+
+### 
+
+`str_glue()` is a glue function. You now have a 8 x 3 tibble, with a new column that gives the name of an output file.
+
+
+### Exercise 4
+
+Assign the result of this pipe to `by_clarity`, a new object.
+
+```{r writing-csv-files-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r writing-csv-files-4-hint-1, eval = FALSE}
+... <- 
+  diamonds |> 
+    group_nest(clarity) |> 
+    mutate(path = str_glue("diamonds-{clarity}.csv"))
+```
+
+```{r writing-csv-files-4-test, include = FALSE}
+by_clarity <- 
+  diamonds |> 
+    group_nest(clarity) |> 
+    mutate(path = str_glue("diamonds-{clarity}.csv"))
+```
+
+Note how we first get some code which does what we want and then, once it is working, we assign the result to a new object. This is the typical way of doing data science because it is so useful, until the very end, for your code to just "spit out" whatever the current result is.
+
+### Exercise 5
+
+Type `by_clarity` and hit `Run Code`.
+  
+```{r writing-csv-files-5, exercise = TRUE}
+
+```
+
+```{r writing-csv-files-5-hint-1, eval = FALSE}
+by_clarity
+```
+
+```{r writing-csv-files-5-test, include = FALSE}
 by_clarity
 ```
 
 ### 
 
-This gives us a new tibble with eight rows and two columns.
+Our new tibble has eight rows and three columns.
 
-### Exercise 18
+### Exercise 6
 
 Run the following code.
 
-```{r saving-multiple-outputs-18, exercise = TRUE}
+```{r writing-csv-files-6, exercise = TRUE}
+by_clarity$data[[1]]
+```
+
+```{r writing-csv-files-6-test, include = FALSE}
 by_clarity$data[[1]]
 ```
 
 ### 
 
-Remember that `clarity` is our grouping variable and `data` is a list-column containing one tibble for each unique value of clarity.
+The `$` pulls out the `data` column, which is a list column. The `[[1]]` pulls out the first element in that list column, which is a tibble. Remember that `clarity` is our grouping variable and `data` is a list-column containing one tibble for each unique value of clarity. 
 
-### Exercise 19
+### Exercise 7
 
-Pipe `by_clarity` into `mutate()`.
-
-```{r saving-multiple-outputs-19, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-19-hint-1, eval = FALSE}
-by_clarity |> 
-  mutate()
-```
-
-### 
-
-Recall that `mutate()` can create a new column.
-
-### Exercise 20
-
-Add argument `path = str_glue("diamonds-{clarity}.csv"` to the call to `mutate`.
-
-```{r saving-multiple-outputs-20, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-20-hint-1, eval = FALSE}
-by_clarity |> 
-  ...(path = str_glue("diamonds-{clarity}.csv"))
-```
-
-### 
-
-`str_glue` is a glue function. 
-
-Now you should get a 8 x 3 tibble, with a new column that gives the name of output file.
-
-### 
-
-So if we were going to save these data frames by hand, we might write something like:
+If we were going to save these data frames by hand, we might write something like:
 
 ```
 write_csv(by_clarity$data[[1]], by_clarity$path[[1]])
@@ -2656,167 +2772,125 @@ write_csv(by_clarity$data[[3]], by_clarity$path[[3]])
 write_csv(by_clarity$by_clarity[[8]], by_clarity$path[[8]])
 ```
 
-### Exercise 21
+But that would be annoying, especially if there were hundreds of values for `clarity`. Type `?walk2` to the space below. hit `Run Code`.
 
-Type `walk2` to the space below. hit `Run Code`.
-
-```{r saving-multiple-outputs-21, exercise = TRUE}
+```{r writing-csv-files-7, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+```{r writing-csv-files-7-hint-1, eval = FALSE}
+?walk2
+```
 
-```{r saving-multiple-outputs-21-hint-1, eval = FALSE}
-walk2()
+```{r writing-csv-files-7-test, include = FALSE}
+?walk2
 ```
 
 ### 
 
 This is a little different to our previous uses of `map()` because there are two arguments that are changing, not just one. 
 
-That means we need a new function: `map2()`, which varies both the first and second arguments. 
 
-Because we again don’t care about the output, we want `walk2()` rather than `map2()`.
+### Exercise 8
 
-### Exercise 22
+Call `walk2()` with values `by_clarity$data`, `by_clarity$path`, and `write_csv`.
 
-Add arguments `by_clarity$data`, `by_clarity$path`, and `write_csv` to the call to `walk2()`.
-
-```{r saving-multiple-outputs-22, exercise = TRUE}
+```{r writing-csv-files-8, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-22-hint-1, eval = FALSE}
+```{r writing-csv-files-8-hint-1, eval = FALSE}
 walk2(..., by_clarity$path, ...)
 ```
 
+```{r writing-csv-files-8-test, include = FALSE}
+walk2(by_clarity$data, by_clarity$path, write_csv)
+```
+
 ### 
 
-### Exercise 23
+We needed a new function, `map2()`, which varies both the first and second arguments. Because we again don’t care about the output, we want `walk2()` rather than `map2()`.
 
-Type `function(df)` and `{}` after it. Hit `Run Code`.
+### Exercise 9
 
-```{r saving-multiple-outputs-23, exercise = TRUE}
+Run `list.files()` with the `pattern` argument set to  `"*.csv"`. 
+
+```{r writing-csv-files-9, exercise = TRUE}
+
+```
+
+```{r writing-csv-files-9-hint-1, eval = FALSE}
+list.files(pattern = ...)
+```
+
+```{r writing-csv-files-9-test, include = FALSE}
+list.files(pattern = "*.csv")
+```
+
+### 
+
+This should produce the 8 CSV files which you just created. Make sure that it does not return any files which you care about since, in the next question, we will be deleting all these files.
+
+
+### Exercise 10
+
+Always clean up the files which you create, unless you want to keep them. Pipe `list.files(pattern = "*.csv")` to `file.remove()`.
+
+```{r writing-csv-files-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r saving-multiple-outputs-23-hint-1, eval = FALSE}
-function(df) {}
+```{r writing-csv-files-10-hint-1, eval = FALSE}
+list.files(pattern = "*.csv") |> 
+  ...()
+```
+
+```{r writing-csv-files-10-test, include = FALSE}
+list.files(pattern = "*.csv") |> 
+  file.remove()
 ```
 
 ### 
 
-Remember, this is an approach to create a function.
+This removes all the files you created. It should return a logical vector of length 8, which each element equal to `TRUE`. This is what `file.remove()` returns if the removal is successful.
 
-### Exercise 24
 
-Add function `ggplot()` to the call to `function(df) {}`.
-
-```{r saving-multiple-outputs-24, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-24-hint-1, eval = FALSE}
-function(df) {
-  ggplot()}
-```
-
+## Saving plots
 ### 
 
-`ggplot()` initializes a ggplot object. It can be used to declare the input data frame for a graphic and to specify the set of plot aesthetics intended to be common throughout all subsequent layers unless specifically overridden.
+We can take the same basic approach in order to create many plots.
 
-### Exercise 25
+### Exercise 1
 
-Add arguments `df` and `aes(x = carat)` to the call to `ggplot()`.
+Below is a new function that draws the plot we want. Hit `Run Code`.
 
-```{r saving-multiple-outputs-25, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-25-hint-1, eval = FALSE}
-function(...) {
-  ggplot(df, aes(...length()))}
-```
-
-### 
-
-Remember that the first argument is data (`df`), the second argument is `mapping = aes`.
-
-### Exercise 26
-
-Add another function, `geom_histogram()` to `function(df){}`. Make sure to connect the two functions with `+`.
-
-```{r saving-multiple-outputs-26, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-26-hint-1, eval = FALSE}
-function(df) {
-  ggplot(...) + geom_histogram()}
-```
-
-### 
-
-`geom_histogram()`
-
-### Exercise 27
-
-Add argument `binwidth` to `geom_histogram()` and set the vaue to `0.1`.
-
-```{r saving-multiple-outputs-27, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-27-hint-1, eval = FALSE}
-function(df) {
-  ggplot(df, aes(x = carat)) + geom_histogram(binwidth = 0.1)}
-```
-
-### 
-
-### Exercise 28
-
-Assign `carat_histogram` as the name of the function.
-
-```{r saving-multiple-outputs-28, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r saving-multiple-outputs-28-hint-1, eval = FALSE}
+```{r saving-plots-1, exercise = TRUE}
 carat_histogram <- function(df) {
-  ggplot(...) + geom_histogram(...)}
+  ggplot(df, aes(x = carat)) + geom_histogram(binwidth = 0.1)  
+}
 ```
 
 ### 
 
-### Exercise 29
+This function will only work if the tibble which you pass in as the value for the `df` argument includes a column called `carot`. If it doesn't, you will get an error like "object 'carat' not found".
+
+
+### Exercise 2
 
 Now we can use `map()` to create a list of many plots and their eventual file paths. 
 
-Pipe `by_clarify` into `mutate()`. Add arguments `plot = map(data, carat_histogram)` and `path = str_glue("clarity-{clarity}.png")` to the function.
+Pipe `by_clarity` into `mutate()`. Add arguments `plot = map(data, carat_histogram)` and `path = str_glue("clarity-{clarity}.png")` to the function.
 
 
-```{r saving-multiple-outputs-29, exercise = TRUE}
+```{r saving-plots-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r saving-multiple-outputs-29-hint-1, eval = FALSE}
+```{r saving-plots-2-hint-1, eval = FALSE}
 by_clarity |> 
   mutate(
     plot = map(data, carat_histogram),
@@ -2828,17 +2902,17 @@ by_clarity |>
 
 This step is similar to what we did earlier. 
 
-### Exercise 30
+### Exercise 3
 
-Assign name `by_clarify` to the code above.
+Assign name `by_clarity` to the code above.
 
-```{r saving-multiple-outputs-30, exercise = TRUE}
+```{r saving-plots-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r saving-multiple-outputs-30-hint-1, eval = FALSE}
+```{r saving-plots-3-hint-1, eval = FALSE}
 by_clarity <- by_clarity |> 
   mutate(
     plot = map(data, carat_histogram),
@@ -2848,17 +2922,17 @@ by_clarity <- by_clarity |>
 
 ### 
 
-### Exercise 31
+### Exercise 4
 
 Type `walk2()` then add arguments `by_clarity$path` and `by_clarity$plot`.
 
-```{r saving-multiple-outputs-31, exercise = TRUE}
+```{r saving-plots-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r saving-multiple-outputs-31-hint-1, eval = FALSE}
+```{r saving-plots-4-hint-1, eval = FALSE}
 walk2(
   by_clarity$path,
   by_clarity$plot)
@@ -2866,17 +2940,17 @@ walk2(
 
 ### 
 
-### Exercise 32
+### Exercise 5
 
 Add `\(path, plot)` and `ggsave()` to the call to `walk2()`.
 
-```{r saving-multiple-outputs-32, exercise = TRUE}
+```{r saving-plots-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r saving-multiple-outputs-32-hint-1, eval = FALSE}
+```{r saving-plots-5-hint-1, eval = FALSE}
 walk2(
   by_clarity$path,
   by_clarity$plot,
@@ -2885,17 +2959,17 @@ walk2(
 
 ### 
 
-### Exercise 33
+### Exercise 6
 
 Add arguments `path, plot, width = 6, height = 6` to `ggsave()`.
 
-```{r saving-multiple-outputs-33, exercise = TRUE}
+```{r saving-plots-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r saving-multiple-outputs-33-hint-1, eval = FALSE}
+```{r saving-plots-6-hint-1, eval = FALSE}
 walk2(
   by_clarity$path,
   by_clarity$plot,
@@ -2910,11 +2984,7 @@ Remember that `ggsave()` is a convenient function for saving a plot. It defaults
 ## Summary
 ### 
 
-This tutorial covered [Chapter 26: Iteration](https://r4ds.hadley.nz/iteration.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
-
-In this tutorial, you’ve seen how to use explicit iteration to solve three problems that come up frequently when doing data science: manipulating multiple columns, reading multiple files, and saving multiple outputs. 
-
-But in general, iteration is a super power: if you know the right iteration technique, you can easily go from fixing one problem to fixing all the problems. 
+This tutorial covered [Chapter 26: Iteration](https://r4ds.hadley.nz/iteration.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. We used the [**purrr**](https://purrr.tidyverse.org/) package to learn tools for iteration, repeatedly performing the same action on different objects. Key functions included  [`across()`](https://dplyr.tidyverse.org/reference/across.html),  [`map()`](https://purrr.tidyverse.org/reference/map.html), and user-created anonymous functions.
 
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}

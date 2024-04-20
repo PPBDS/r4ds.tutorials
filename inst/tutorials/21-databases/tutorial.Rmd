@@ -1,6 +1,6 @@
 ---
 title: Databases
-author: David Kane and Mann Talati
+author: David Kane
 tutorial:
   id: databases
 output:
@@ -15,41 +15,46 @@ description: 'Tutorial for Chapter 21: Databases'
 library(learnr)
 library(tutorial.helpers)
 
-library(tidyverse)
-library(nycflights13)
 library(DBI)
 library(dbplyr)
-library(RSQLite)
-library(RPostgres)
+library(tidyverse)
+library(duckdb)
+library(nycflights13)
+
+# library(RSQLite)
+# library(RPostgres)
 
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
-con <- dbConnect(RSQLite::SQLite(), dbname = "myDB.sqlite") 
-dbWriteTable(con, "mpg", ggplot2::mpg, overwrite = TRUE)
-dbWriteTable(con, "diamonds", ggplot2::diamonds, overwrite = TRUE)
-mpg_sql <- "
-  SELECT manufacturer, model, year, displ, class 
-  FROM mpg 
-  WHERE displ > 1.8
+my_sql <- "
+  SELECT carat, cut, clarity, color, price 
+  FROM diamonds 
+  WHERE price > 15000
 "
-mpg_db <- tbl(con, "mpg")
-diamonds_db <- tbl(con, "diamonds")
-dbplyr::copy_nycflights13(con)
-flights_db <- tbl(con, "flights")
-planes_db <- tbl(con, "planes")
 
-summarize_query <- function(df, ...) {
-  df |> 
-    summarize(...) |> 
-    show_query()
-}
-mutate_query <- function(df, ...) {
-  df |> 
-    mutate(..., .keep = "none") |> 
-    show_query()
-}
+# We use diamonds_db in a couple places, so we need a permanent version of it.
+
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+diamonds_db <- tbl(con, "diamonds")
+
+
+# Copying all the nycflights takes a long time. So, we only want to do it once,
+# here. And then use that connection in the SQL basics section. Need a way
+# to warn students when the tutorial is knitting, and gets stuck at 1% for a
+# minute or two, that there is nothing to worry about.
+
+con_nyc <- DBI::dbConnect(duckdb::duckdb())
+dbplyr::copy_nycflights13(con_nyc)
+flights <- tbl(con_nyc, "flights")
+planes <- tbl(con_nyc, "planes")
+
+# Might consider a way to delete this connection once the tutorial is over.
+# Could have a question with filled-in code which deletes the connections which
+# the student could run. Is that useful?
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -58,7 +63,11 @@ mutate_query <- function(df, ...) {
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- Databases are tricky because nothing, including connection objects, last from one Exercise to another. So, we can either repeat code in every Exercise or we can set up a set of connection objects in the setup code chunk. We follow both approaches in different sections below. A good idea? -->
 
+<!-- There is a lot of text in the first few questions. Maybe spread that out but adding a few help look up questions? -->
+
+<!-- DK: Check exercise 12 in SQL to see if backticks show correctly. -->
 
 
 ## Introduction
@@ -68,245 +77,612 @@ mutate_query <- function(df, ...) {
 
 This tutorial covers [Chapter 21: Databases](https://r4ds.hadley.nz/databases.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to use [**DBI**](https://dbi.r-dbi.org/) and the [**dbplyr**](https://dbplyr.tidyverse.org/) packages to connect to databases and execute SQL.
 
-## Connecting to a database
-###
+## Database basics
+### 
 
-To first start working a database we need to connect to one. You’ll always use `DBI` (database interface) because it provides a set of generic functions that connect to the database, upload data, run SQL queries, etc. You’ll also use a package tailored for the `DBMS` you’re connecting to. This package translates the generic `DBI` commands into the specifics needed for a given `DBMS`. There’s usually one package for each `DBMS`, e.g. `RPostgres` for PostgreSQL and `RMariaDB` for MySQL.
+In this tutorial, you’ll first learn the basics of the **DBI** package: how to use it to connect to a database and then retrieve data with a SQL query. **SQL**, short for **s**tructured **q**uery **l**anguage, is the *lingua franca* of databases, and is an important language for all data scientists to learn. That said, we’re not going to start with SQL, but instead we’ll teach you the **dbplyr** package, which can translate your dplyr code to the SQL. We’ll use that as a way to teach you some of the most important features of SQL. 
 
 ### Exercise 1
 
-Install and run the `library()` on `tidyverse`, `DBI`, and `tibble`.
+Run `library()` for the [**DBI**](https://dbi.r-dbi.org/) package.
 
-```{r connecting-to-a-data-1, exercise = TRUE}
+```{r database-basics-1, exercise = TRUE}
 
 ```
 
-```{r connecting-to-a-data-1-hint, eval = FALSE}
-library(...)
-...(DBI)
+```{r database-basics-1-hint-1, eval = FALSE}
 library(...)
 ```
 
-###
+```{r database-basics-1-test, include = FALSE}
+library(DBI)
+```
 
-At the simplest level, you can think about a database as a collection of data frames, called tables in database terminology. Like a data frame, a database table is a collection of named columns, where every value in the column is the same type. Databases are run by database management systems (DBMS’s for short), which come in three basic forms: Client-server, Cloud, and In-process.
+### 
+
+At the simplest level, you can think about a database as a collection of data frames, called tables in database terminology. Like a data frame, a database table is a collection of named columns, where every value in the column is the same type. 
 
 ### Exercise 2
 
-Set `dbConnect(RSQLite::SQLite())` to the `con` variable.
+Run `library()` for the [**dbplyr**](https://dbplyr.tidyverse.org/) package.
 
-```{r connecting-to-a-data-2, exercise = TRUE}
+```{r database-basics-2, exercise = TRUE}
 
 ```
 
-```{r connecting-to-a-data-2-hint, eval = FALSE}
-... <- dbConnect(RSQLite::SQLite()) 
+```{r database-basics-2-hint-1, eval = FALSE}
+library(...)
 ```
 
-###
+```{r database-basics-2-test, include = FALSE}
+library(dbplyr)
+```
 
-`RSQLite` is a high-performance database that’s designed very much for the needs of a data scientist. We use it here because it’s very easy to get started with, but it’s also capable of handling gigabytes of data with great speed. 
+### 
+
+There are three high level differences between data frames and database tables:
+
+* Database tables are stored on disk and can be arbitrarily large. Data frames are stored in memory, and are fundamentally limited (although that limit is still plenty large for many problems).
+
+* Database tables almost always have indexes. Much like the index of a book, a database index makes it possible to quickly find rows of interest without having to look at every single row. Data frames and tibbles don’t have indexes, but data.tables (from the [**data.table**](https://rdatatable.gitlab.io/data.table/) package) do, which is one of the reasons that they’re so fast.
+
+* Most classical databases are optimized for rapidly collecting data, not analyzing existing data. These databases are called row-oriented because the data is stored row-by-row, rather than column-by-column like R. More recently, there’s been much development of column-oriented databases that make analyzing the existing data much faster.
 
 ### Exercise 3
 
-Copy the code from above. Now within the `con` variable, add `dbname` and set it to `"myDB.sqlite"`.
+Run `library()` for the [**tidyverse**](https://tidyverse.tidyverse.org/) package.
 
-```{r connecting-to-a-data-3, exercise = TRUE}
+```{r database-basics-3, exercise = TRUE}
+
+```
+
+```{r database-basics-3-hint-1, eval = FALSE}
+...(tidyverse)
+```
+
+```{r database-basics-3-test, include = FALSE}
+library(tidyverse)
+```
+
+### 
+
+Databases are run by database management systems (DBMS’s for short), which come in three basic forms:
+
+* Client-server DBMS’s run on a powerful central server, which you connect from your computer (the client). They are great for sharing data with multiple people in an organization. Popular client-server DBMS’s include PostgreSQL, MariaDB, SQL Server, and Oracle.
+
+* Cloud DBMS’s, like Snowflake, Amazon’s RedShift, and Google’s BigQuery, are similar to client server DBMS’s, but they run in the cloud. This means that they can easily handle extremely large datasets and can automatically provide more compute resources as needed.
+
+* In-process DBMS’s, like SQLite or duckdb, run entirely on your computer. They’re great for working with large datasets where you’re the primary user.
+
+### Exercise 4
+
+Run `library()` for the [**duckdb**](https://r.duckdb.org/) package.
+
+```{r database-basics-4, exercise = TRUE}
+
+```
+
+```{r database-basics-4-hint-1, eval = FALSE}
+...(duckdb)
+```
+
+```{r database-basics-4-test, include = FALSE}
+library(duckdb)
+```
+
+### 
+
+Setting up a client-server or cloud DBMS would be a pain for this book, so we’ll instead use an in-process DBMS that lives entirely in an R package: [**duckdb**](https://r.duckdb.org/). Thanks to the magic of DBI, the only difference between using **duckdb** and any other DBMS is how you’ll connect to the database. This makes it great to teach with because you can easily run this code as well as easily take what you learn and apply it elsewhere.
+
+### Exercise 5
+
+Run `library()` for the [**nycflights13**](https://nycflights13.tidyverse.org/) package.
+
+```{r database-basics-5, exercise = TRUE}
+
+```
+
+```{r database-basics-5-hint-1, eval = FALSE}
+...(nycflights13)
+```
+
+```{r database-basics-5-test, include = FALSE}
+library(nycflights13)
+```
+
+### 
+
+In this tutorial, we’ll introduce **DBI** and **dbplyr**. **DBI** is a low-level interface that connects to databases and executes SQL; **dbplyr** is a high-level interface that translates your **dplyr** code to SQL queries then executes them with **DBI**. We will use data from the **nycflights13** package.
+
+## Connecting to a database
+### 
+
+To connect to the database from R, you’ll use a pair of packages:
+
+You’ll always use DBI (database interface) because it provides a set of generic functions that connect to the database, upload data, run SQL queries, etc.
+
+You’ll also use a package tailored for the DBMS you’re connecting to. This package translates the generic DBI commands into the specifics needed for a given DBMS. There’s usually one package for each DBMS, e.g. RPostgres for PostgreSQL and RMariaDB for MySQL.
+
+### Exercise 1
+
+You create a database connection using `dbConnect()`. The first argument selects the DBMS, then the second and subsequent arguments describe how to connect to it (i.e. where it lives and the credentials that you need to access it).
+
+Run `dbConnect()` with the argument `duckdb()`.
+
+```{r connecting-to-a-database-1, exercise = TRUE}
+
+```
+
+```{r connecting-to-a-database-1-hint-1, eval = FALSE}
+dbConnect(...())
+```
+
+```{r connecting-to-a-database-1-test, include = FALSE}
+# Need to close any connections you create, and it seems like the only way to do
+# that (?) is to explicitly assign the connection to an object.
+
+con <- dbConnect(duckdb())
+dbDisconnect(con, shutdown=TRUE)
+```
+
+### 
+
+If you can’t find a specific package for your DBMS, you can usually use the **odbc** package instead. This uses the ODBC protocol supported by many DBMS. **odbc** requires a little more setup because you’ll also need to install an ODBC driver and tell the **odbc** package where to find it.
+
+
+### Exercise 2
+
+Since we loaded the **DBI** and **duckdb** packages, we don't need to specify them using the `::` notation when we call `dbConnect` (which makes the connection) and `duckdb()` (which creates a temporary database). But, for safety, most of the time we do include the package name in these calls. So, copy the code from the previous question and replace `dbConnect` with `DBI::dbConnect` and `duckdb()` with `duckdb::duckdb()`.
+
+```{r connecting-to-a-database-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r connecting-to-a-data-3-hint, eval = FALSE}
-... <- dbConnect(RSQLite::SQLite(), dbname = "...") 
+```{r connecting-to-a-database-2-hint-1, eval = FALSE}
+DBI::dbConnect(...::duckdb())
 ```
 
-###
+```{r connecting-to-a-database-2-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbDisconnect(con, shutdown=TRUE)
+```
 
-We want to use a **Client-server** DBMS’s because they run on a powerful central server, which you connect from your computer (the client). They are great for sharing data with multiple people in an organization. Popular client-server DBMS’s include `PostgreSQL`, `MariaDB`, `SQL Server`, and `Oracle`.
+This might create warning message. Ignore it if so.
+
+### 
+
+The precise details of the connection vary a lot from DBMS to DBMS so unfortunately we can’t cover all the details here. This means you’ll need to do a little research on your own. Typically you can ask the other data scientists in your team or talk to your DBA (**d**ata**b**ase **a**dministrator). The initial setup will often take a little fiddling (and maybe some googling) to get it right, but you’ll generally only need to do it once.
+
+### Exercise 3
+
+Assign the result of the call to `DBI::dbConnect()` to an object named `con`. (There is nothing special about the name `con`, which stands for **con**nection. But using `con` to identify the connection object is fairly standard.)
+
+```{r connecting-to-a-database-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r connecting-to-a-database-3-hint-1, eval = FALSE}
+.. <- DBI::dbConnect(duckdb::duckdb())
+```
+
+```{r connecting-to-a-database-3-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbDisconnect(con, shutdown=TRUE)
+```
+
+### 
+
+Connecting to duckdb is particularly simple because the defaults create a temporary database that is deleted when you quit R. That’s great for learning because it guarantees that you’ll start from a clean slate every time you restart R. 
+
+But that it also a problem for a tutorial like this one because each Exercise is evaluated in isolation from everything else in the tutorial. That means we need to establish the connection in each Exercise. No worries though! We will provide the code for doing so, as needed.
 
 ### Exercise 4
 
-Let's write the `mpg` data to the database we just created. Use `dbWriteTable()` and within it put the arguments `con`, `"mpg"`, and `ggplot2::mpg`. This should not result in a tibble.
+If you want to use **duckdb** for a real data analysis project, you’ll also need to supply the dbdir argument to make a persistent database and tell `duckdb()` where to save it. Assuming you’re using an R project, it’s reasonable to store it in a duckdb directory for the current project.
 
-```{r connecting-to-a-data-4, exercise = TRUE}
+To do so, add `dbdir = "duckdb"` as the second argument to your call to `dbConnect()`.
+
+```{r connecting-to-a-database-4, exercise = TRUE}
 
 ```
 
-```{r connecting-to-a-data-4-hint, eval = FALSE}
-dbWriteTable(..., "mpg", ...)
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r connecting-to-a-database-4-hint-1, eval = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb(), ... = "duckdb")
 ```
 
-###
+```{r connecting-to-a-database-4-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "duckdb")
+dbDisconnect(con, shutdown=TRUE)
+invisible(file.remove(c("duckdb", "duckdb.wal")))
+```
 
-When we use `dbWriteTable()` we need to supply three arguments: a database connection, the name of the table to create in the database, and a data frame of data.
+### 
+
+We won't use a permanent database for the rest of this tutorial.
+
+duckdb is a high-performance database that’s designed very much for the needs of a data scientist. We use it here because it’s very easy to get started with, but it’s also capable of handling gigabytes of data with great speed.
 
 ### Exercise 5
 
-Let's write the `diamonds` data to the database we just created. Use `dbWriteTable()` and within it put the arguments `con`, `"diamonds"`, and `ggplot2::diamonds`. This should not result in a tibble.
+Let's write the `mpg` data to the database we just created. Use `dbWriteTable()` and within it put the arguments `con`, `"mpg"`, and `ggplot2::mpg`. 
 
-```{r connecting-to-a-data-5, exercise = TRUE}
+```{r connecting-to-a-database-5, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
 
 ```
 
-```{r connecting-to-a-data-5-hint, eval = FALSE}
-...(con, "...", ggplot2::diamonds)
+```{r connecting-to-a-database-5-hint-1, eval = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+
+dbWriteTable(..., "mpg", ...)
 ```
 
-###
+```{r connecting-to-a-database-5-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "mpg", ggplot2::mpg)
+dbDisconnect(con, shutdown=TRUE)
+```
 
-We use the packages tailored for the **DBMS** we’re connecting to. This package translates the generic DBI commands into the specifics needed for a given **DBMS**. There’s usually one package for each **DBMS**, e.g. `RPostgres` for PostgreSQL and `RMariaDB` for MySQL.
+### 
+
+When we use `dbWriteTable()` we need to supply three arguments: a database connection, the name of the table to create in the database, and a data frame of data.
 
 ### Exercise 6
 
-Run `dbListTables()` on `con`.
+Let's write the `diamonds` data to the database we just created. Use `dbWriteTable()` and within it put the arguments `con`, `"diamonds"`, and `ggplot2::diamonds`. 
 
-```{r connecting-to-a-data-6, exercise = TRUE}
+```{r connecting-to-a-database-6, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+
 
 ```
 
-```{r connecting-to-a-data-6-hint, eval = FALSE}
-dbListTables(...)
+```{r connecting-to-a-database-6-hint-1, eval = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+...(con, "...", ggplot2::diamonds)
 ```
 
-###
+```{r connecting-to-a-database-6-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+dbDisconnect(con, shutdown=TRUE)
+```
 
-You can check that the data is loaded correctly by using the `dbListTables()` function that lists all tables in the database.
+### 
+
+We use the packages tailored for the DBMS we’re connecting to. The **DBI** package translates the generic datbase commands into the specifics needed for a given DBMS. There’s usually one package for each **DBMS**, e.g. `RPostgres` for PostgreSQL and `RMariaDB` for MySQL.
 
 ### Exercise 7
 
-Let's use another DBI function: `dbReadTable()`. Start a pipe with `con` and use `dbReadTable()` on `"mpg"`.
+You can check that the data is loaded correctly by using the `dbListTables()` function that lists all tables in the database. Run `dbListTables()` on `con`.
 
-```{r connecting-to-a-data-7, exercise = TRUE}
+```{r connecting-to-a-database-7, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "mpg", ggplot2::mpg)
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+
 
 ```
 
-```{r connecting-to-a-data-7-hint, eval = FALSE}
+```{r connecting-to-a-database-7-hint-1, eval = FALSE}
+...
+
+dbListTables(...)
+```
+
+```{r connecting-to-a-database-7-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "mpg", ggplot2::mpg)
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+dbListTables(con)
+dbDisconnect(con, shutdown=TRUE)
+```
+
+### 
+
+If you’re using duckdb in a real project, we highly recommend learning about `duckdb_read_csv()` and `duckdb_register_arrow()`. These give you powerful and performant ways to quickly load data directly into duckdb, without having to first load it into R. 
+
+Note that we will need to recreate the connection, and load any required data, for each new Exercise. But don't worry! We will supply the necessary code.
+
+### Exercise 8
+
+Let's use another DBI function: `dbReadTable()`. Start a pipe with `con` and use `dbReadTable()` with `"mpg"` as the only argument.
+
+```{r connecting-to-a-database-8, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "mpg", ggplot2::mpg)
+
+
+```
+
+```{r connecting-to-a-database-8-hint-1, eval = FALSE}
+...
+
 con |>
   dbReadTable(...)
 ```
 
-###
+```{r connecting-to-a-database-8-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "mpg", ggplot2::mpg)
 
-`dbReadTable()` returns a `data.frame`. 
+con |> 
+  dbReadTable("mpg")
 
-### Exercise 8
-
-Continue the pipe with `as_tibble()` which will return our data in a nice tibble format.
-
-```{r connecting-to-a-data-8, exercise = TRUE}
-
+dbDisconnect(con, shutdown=TRUE)
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+### 
 
-```{r connecting-to-a-data-8-hint, eval = FALSE}
-con |>
-  dbReadTable("mpg")|>
-  ...
-```
-
-###
-
-To convert data into a tibble we use `as_tibble()` which allows it to print nicely.
+`dbReadTable()` returns a data frame, not a tibble. 
 
 ### Exercise 9
 
-Now let's use `SQL` to select specific variables from the database. Create a `mpg_sql` variable and set it equal to 
-`"SELECT manufacturer, model, year, displ, class FROM mpg WHERE displ > 1.8"`
+Start a pipe with `con` and use `dbReadTable()` with `"diamonds"` as the only argument. Continue the pipe with `as_tibble()`, thereby returning the data in a nice tibble format.
 
-```{r connecting-to-a-data-9, exercise = TRUE}
+```{r connecting-to-a-database-9, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+
+
 ```
 
-```{r connecting-to-a-data-9-hint, eval = FALSE}
-... <- "
-  SELECT manufacturer, model, year, displ, class 
-  FROM mpg 
-  WHERE displ > 1.8
-"
+```{r connecting-to-a-database-9-hint-1, eval = FALSE}
+...
+
+con |> 
+  dbReadTable("diamonds") |> 
+  ...()
 ```
 
-###
+```{r connecting-to-a-database-9-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
 
-With the above variable, we want to select 5 specific variables, from the `mpg` dataset, with only values with `displ > 1.8`.
+con |> 
+  dbReadTable("diamonds") |> 
+  as_tibble()
+
+dbDisconnect(con, shutdown=TRUE)
+```
+
+### 
+
+Connection requests often look more like these examples:
+
+````
+con <- DBI::dbConnect(
+  RMariaDB::MariaDB(), 
+  username = "foo"
+)
+con <- DBI::dbConnect(
+  RPostgres::Postgres(), 
+  hostname = "databases.mycompany.com", 
+  port = 1234
+)
+````
+
+You sometimes also need to provide a login and password. In general, the owner of the database will provide necessary details.
+
 
 ### Exercise 10
 
-Type `as_tibble()`. Within `as_tibble()`, add`dbGetQuery()` with the arguments `con` and `mpg_sql`
+Now let's use SQL to select specific variables from the database. Run this code.
 
-```{r connecting-to-a-data-10, exercise = TRUE}
+```{r connecting-to-a-database-10, exercise = TRUE}
+my_sql <- "
+  SELECT carat, cut, clarity, color, price 
+  FROM diamonds 
+  WHERE price > 15000
+"
+```
+
+```{r connecting-to-a-database-10-test, include = FALSE}
+my_sql <- "
+  SELECT carat, cut, clarity, color, price 
+  FROM diamonds 
+  WHERE price > 15000
+"
+```
+
+### 
+
+This SQL code selects 5 specific variables, from the `diamonds` dataset, and then filters the rows to only keep those with `price > 15000`.
+
+[*SQL for Data Scientists*](https://sqlfordatascientists.com/) by Renée M. P. Teate is an introduction to SQL designed specifically for the needs of data scientists, and includes examples of the sort of highly interconnected data you’re likely to encounter in real organizations.
+
+### Exercise 11
+
+`dbGetQuery()` is a function which takes a connection and an SQL query as a text string as inputs. It returns the result of that query as a data frame. 
+
+Type `as_tibble()`. Within `as_tibble()`, add `dbGetQuery()` with the arguments `con` and `mpg_sql`
+
+```{r connecting-to-a-database-11, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+
 
 ```
 
-```{r connecting-to-a-data-10-hint, eval = FALSE}
-as_tibble(dbGetQuery(...))
+```{r connecting-to-a-database-11-hint-1, eval = FALSE}
+...
+
+dbGetQuery(..., ...)
 ```
 
-###
+```{r connecting-to-a-database-11-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
 
-You can use `dbGetQuery()` to get the results of running a query on the database with `as_tibble()` we get the results in tibble format.
+dbGetQuery(con, my_sql)
 
-## **dbplyr** basics
-###
-
-Now that we’ve connected to a database and loaded up some data, we can start to learn about **dbplyr**. **dbplyr** is a dplyr backend, which means that you keep writing dplyr code but the backend executes it differently. In this, **dbplyr** translates to SQL; other backends include **dtplyr** which translates to **data.table**, and **multidplyr** which executes your code on multiple cores.
-
-### Exercise 1
-
-Create a variable `mpg_db` and set that to `tbl()` on the two arguments: `con` and `"mpg"`.
-
-```{r dbplyr-basics-1, exercise = TRUE}
-
+dbDisconnect(con, shutdown=TRUE)
 ```
 
-```{r dbplyr-basics-1-hint, eval = FALSE}
-mpg_db <- tbl(...)
-```
+### 
 
-###
+If you’ve never seen SQL before, don’t worry! You’ll learn more about it shortly. But if you read it carefully, you might guess that it selects five columns of the diamonds dataset and all the rows where price is greater than 15,000.
 
-We use `tbl()` To create an object that represents a database table.
+### Exercise 12
 
-### Exercise 2
+The last Exercise returned a data frame, which is always annoying, especially when there are a lot of rows, as in this case. Reuse the code, but pipe the result from `dbQuery()` into `as_tibble()`.
 
-Start a new pipe with `mpg_db`. Pipe that into `filter()`. Within `filter()`, add the argument `displ > 1.8`.
-
-```{r dbplyr-basics-2, exercise = TRUE}
-
-```
-
-```{r dbplyr-basics-2-hint, eval = FALSE}
-mpg_db |>
-  filter(...)
-```
-
-###
-
-Similar to using `dbGetQuery()`, we can use the **dbplyr** package to select the same variables from the database that we created. This object is called *lazy*; when you use **dplyr** verbs on it, **dplyr** doesn’t do any work: it just records the sequence of operations that you want to perform and only performs them when needed.
-
-### Exercise 3
-
-Select the `manufacturer`, `model`, `displ`, and `year` through `drv` variables.
-
-```{r dbplyr-basics-3, exercise = TRUE}
+```{r connecting-to-a-database-12, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r dbplyr-basics-3-hint, eval = FALSE}
-mpg_db |>
-  filter(displ > 1.8)|>
-  select(..., year:drv)
+```{r connecting-to-a-database-12-hint-1, eval = FALSE}
+...
+
+dbGetQuery(con, my_sql) |> 
+  ...()
 ```
 
-###
+```{r connecting-to-a-database-12-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
 
-This represents a database query because it prints the DBMS name at the top, and while it tells you the number of columns, it typically doesn’t know the number of rows. This is because finding the total number of rows usually requires executing the complete query, something we’re trying to avoid.
+dbGetQuery(con, my_sql) |> 
+  as_tibble()
+
+dbDisconnect(con, shutdown=TRUE)
+```
+
+### 
+
+[*Practical SQL*](https://www.practicalsql.com/) by Anthony DeBarros is written from the perspective of a data journalist (a data scientist specialized in telling compelling stories) and goes into more detail about getting your data into a database and running your own DBMS.
+
+
+## dbplyr basics
+### 
+
+Now that we’ve connected to a database and loaded up some data, we can start to learn about **dbplyr**. **dbplyr** is a **dplyr** backend, which means that you keep writing **dplyr** code but the backend executes it differently. In this, **dbplyr** translates to SQL; other backends include **dtplyr** which translates to **data.table**, and **multidplyr** which executes your code on multiple cores.
+
+### Exercise 1
+
+Run `tbl()` on the two arguments: `con` and `"diamonds"`.
+
+```{r dbplyr-basics-1, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+
+
+```
+
+```{r dbplyr-basics-1-hint-1, eval = FALSE}
+...
+
+tbl(..., ...)
+```
+
+```{r dbplyr-basics-1-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+tbl(con, "diamonds")
+
+
+dbDisconnect(con, shutdown=TRUE)
+```
+
+### 
+
+`tbl()` is a function **dtplyr** which creates a table. Note that a table is not the same thing as a tibble. Note the message at the top:
+
+````
+Source:   table<diamonds> [?? x 10]
+Database: DuckDB v0.10.0 [root@Darwin 23.4.0:R 4.3.2/:memory:]
+````
+
+Your "Database" information will probably be different.
+
+
+### Exercise 2
+
+Assign the result of your call to `tbl()` to an object called `diamonds_db`.
+
+```{r dbplyr-basics-2, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+
+
+```
+
+```{r dbplyr-basics-2-hint-1, eval = FALSE}
+...
+
+... <- tbl(con, "diamonds")
+```
+
+```{r dbplyr-basics-2-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+diamonds_db <- tbl(con, "diamonds")
+
+
+dbDisconnect(con, shutdown=TRUE)
+```
+
+### 
+
+There are two other common ways to interact with a database. First, many corporate databases are very large so you need some hierarchy to keep all the tables organized. In that case you might need to supply a schema, or a catalog and a schema, in order to pick the table you’re interested in:
+
+```
+diamonds_db <- tbl(con, in_schema("sales", "diamonds"))
+diamonds_db <- tbl(con, in_catalog("north_america", "sales", "diamonds"))
+```
+
+Other times you might want to use your own SQL query as a starting point:
+
+```
+diamonds_db <- tbl(con, sql("SELECT * FROM diamonds"))
+```
+
+### Exercise 3
+
+This object is lazy; when you use dplyr verbs on it, dplyr doesn’t do any work: it just records the sequence of operations that you want to perform and only performs them when needed. For example, skip a line and pipe `diamonds_db` to `filter(price > 15000)` and `select(carat:clarity, price)`.
+
+```{r dbplyr-basics-3, exercise = TRUE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+diamonds_db <- tbl(con, "diamonds")
+
+```
+
+```{r dbplyr-basics-3-hint-1, eval = FALSE}
+...
+
+diamonds_db |> 
+  ...(price > 15000) |> 
+  select(carat:clarity, ...)
+```
+
+```{r dbplyr-basics-3-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+diamonds_db <- tbl(con, "diamonds")
+
+diamonds_db |> 
+  filter(price > 15000) |> 
+  select(carat:clarity, price)
+
+dbDisconnect(con, shutdown=TRUE)
+```
+
+### 
+
+You can tell this object represents a database query because it prints the DBMS name at the top, and while it tells you the number of columns, it typically doesn’t know the number of rows. This is because finding the total number of rows usually requires executing the complete query, something we’re trying to avoid.
 
 ### Exercise 4
 
-Continue the pipe by adding `show_query()`.
+Using the code from the previous Exercise, extend the pipe by adding `show_query()`.
 
 ```{r dbplyr-basics-4, exercise = TRUE}
 
@@ -314,20 +690,37 @@ Continue the pipe by adding `show_query()`.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r dbplyr-basics-4-hint, eval = FALSE}
-mpg_db |>
-  filter(displ > 1.8)|>
-  select(manufacturer, model, displ, year:drv)|>
+```{r dbplyr-basics-4-hint-1, eval = FALSE}
+...
+
+diamonds_db |> 
+  filter(price > 15000) |> 
+  select(carat:clarity, price) |> 
   ...
 ```
 
-###
+```{r dbplyr-basics-4-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+diamonds_db <- tbl(con, "diamonds")
 
-You can see the `SQL` code generated by the dplyr function `show_query()`. If you know `dplyr`, this is a great way to learn `SQL`! Write some **dplyr** code, get **dbplyr** to translate it to `SQL`, and then try to figure out how the two languages match up.
+diamonds_db |> 
+  filter(price > 15000) |> 
+  select(carat:clarity, price) |> 
+  show_query()
+
+dbDisconnect(con, shutdown=TRUE)
+```
+
+### 
+
+You can see the SQL code generated by the **dplyr** function `show_query()`. If you know **dplyr**, this is a great way to learn SQL! Write some **dplyr** code, get **dbplyr** to translate it to SQL, and then try to figure out how the two languages match up.
 
 ### Exercise 5
 
-Take the pipe from above and remove `show_query()` and instead add `collect()` to the pipe.
+To get all the data back into R, you call `collect()`. Behind the scenes, this generates the SQL, calls `dbGetQuery()` to get the data, then turns the result into a tibble.
+
+Using the code from the previous Exercise, extend the pipe by adding `collect()`.
 
 ```{r dbplyr-basics-5, exercise = TRUE}
 
@@ -335,95 +728,135 @@ Take the pipe from above and remove `show_query()` and instead add `collect()` t
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r dbplyr-basics-5-hint, eval = FALSE}
-mpg_db |>
-  filter(displ > 1.8)|>
-  select(manufacturer, model, displ, year:drv)|>
+```{r dbplyr-basics-5-hint-1, eval = FALSE}
+...
+
+diamonds_db |> 
+  filter(price > 15000) |> 
+  select(carat:clarity, price) |> 
+  show_query() |> 
   ...
 ```
 
-###
+```{r dbplyr-basics-5-test, include = FALSE}
+con <- DBI::dbConnect(duckdb::duckdb())
+dbWriteTable(con, "diamonds", ggplot2::diamonds)
+diamonds_db <- tbl(con, "diamonds")
 
-To get all the data back into R, you call `collect()`. Behind the scenes, this generates the `SQL`, calls `dbGetQuery()` to get the data, then turns the result into a tibble.
+diamonds_db |> 
+  filter(price > 15000) |> 
+  select(carat:clarity, price) |> 
+  show_query() |> 
+  collect()
 
-## SQL basics
-###
+dbDisconnect(con, shutdown=TRUE)
+```
 
-The rest of the chapter will teach you a little `SQL` through the lens of **dbplyr**. It’s a rather non-traditional introduction to `SQL` but we hope it will get you quickly up to speed with the basics. Luckily, if you understand **dplyr** you’re in a great place to quickly pick up `SQL` because so many of the concepts are the same.
+### 
+
+Typically, you’ll use **dbplyr** to select the data you want from the database, performing basic filtering and aggregation using the translations described below. Then, once you’re ready to analyse the data with functions that are unique to R, you’ll `collect()` the data to get an in-memory tibble, and continue your work with pure R code.
+
+
+## SQL
+### 
+
+The rest of the chapter will teach you a little SQL through the lens of **dbplyr**. It’s a rather non-traditional introduction to SQL but we hope it will get you quickly up to speed with the basics. Luckily, if you understand **dplyr** you’re in a great place to quickly pick up SQL because so many of the concepts are the same.
+
 
 ### Exercise 1
 
-Run `dbplyr::copy_nycflights13()` with `con` as the argument.
+In the background, we have already run this code:
+
+```
+con_nyc <- DBI::dbConnect(duckdb::duckdb())
+dbplyr::copy_nycflights13(con_nyc)
+```
+
+Type `con_nyc`. Hit "Run Code".
 
 ```{r sql-1, exercise = TRUE}
 
 ```
 
-```{r sql-1-hint, eval = FALSE}
-dbplyr::copy_nycflights13(...)
+```{r sql-1-hint-1, eval = FALSE}
+con_nyc
 ```
 
-###
+```{r sql-1-test, include = FALSE}
+con_nyc
+```
 
-Here we are exploring the relationship between **dplyr** and `SQL` using the `nycflights13` package: flights and planes.
+### 
+
+This code is why the tutorial took so long to create. `con_nyc` is a connection, just like the ones we have created before. `copy_nycflights13()` is a utility function which transforms some of the *tibbles* from the **nycflights** package into *tables* in the duckdb database we have just created.
 
 ### Exercise 2
 
-Type `flights_db` set it to `tbl()`. Within `tbl()` use the `con`, `"flights"` arguments. On the next line type `planes_db` and set it to `tbl()`. Within `tbl()` use the `con` and `"planes"` arguments.
+We’ll explore the relationship between dplyr and SQL using a couple of old friends from the **nycflights13** package: flights and planes. Run `dbListTables()` on `con_nyc`. 
 
 ```{r sql-2, exercise = TRUE}
 
 ```
 
-```{r sql-2-hint, eval = FALSE}
-flights_db <- tbl(..., ...)
-... <- ...(con, "planes")
+```{r sql-2-hint-1, eval = FALSE}
+dbListTables(...)
 ```
 
-###
+```{r sql-2-test, include = FALSE}
+dbListTables(con_nyc)
+```
 
-These datasets are easy to get into our learning database because **dbplyr** comes with a function that copies the tables from `nycflights13` to our database.
+### 
 
 ### Exercise 3
 
-Start a pipe with `planes_db` and pipe it into `filter()`. Within `filter()`, add `manufacturer == "AIRBUS INDUSTRIE"` to only include the rows where the `manufacturer` is `"AIRBUS INDUSTRIE"`.
+Assign `flights` to `tbl()`. Within `tbl()`, use `con_nyc` and `"flights"` as the two arguments. On the next line, assign `planes` to `tbl()`. Within `tbl()` use `con_nyc` and `"planes"` as the first two arguments.
 
 ```{r sql-3, exercise = TRUE}
 
 ```
 
-```{r sql-3-hint, eval = FALSE}
-... |> 
-  filter(... == "AIRBUS INDUSTRIE")
+```{r sql-3-hint-1, eval = FALSE}
+flights <- tbl(..., ...)
+... <- ...(con_nyc, "planes")
 ```
 
-###
+```{r sql-3-test, include = FALSE}
+flights <- tbl(con_nyc, "flights")
+planes <- tbl(con_nyc, "planes")
+```
 
-The top-level components of `SQL` are called **statements**. Common statements include `CREATE` for defining new tables, `INSERT` for adding data, and `SELECT` for retrieving data.
+### 
+
+Again, these objects are not regular *tibbles*. They are *tables* (R class `tbl`), connections to the specified table in our duckdb database.
 
 ### Exercise 4
 
-Continue the pipe with `arrange()`. Within `arrange()`, add `year`.
+The top-level components of SQL are called **statements**. Common statements include `CREATE` for defining new tables, `INSERT` for adding data, and `SELECT` for retrieving data. We will focus on `SELECT` statements, also called **queries**, because they are almost exclusively what you’ll use as a data scientist.
+
+Pipe `flights` to `show_query()`.
 
 ```{r sql-4, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r sql-4-hint, eval = FALSE}
-planes_db |> 
-  filter(manufacturer == "AIRBUS INDUSTRIE")|> 
-  arrange(...)
+```{r sql-4-hint-1, eval = FALSE}
+flights |> 
+  ...()
 ```
 
-###
+```{r sql-4-test, include = FALSE}
+flights |> 
+  show_query()
+```
 
-We like using `SELECT` statements, also called **queries**, because they are almost exclusively what you’ll use as a data scientist.
+### 
+
+A query is made up of **clauses**. There are five important clauses: `SELECT`, `FROM`, `WHERE`, `ORDER BY`, and `GROUP BY`. Every query must have the `SELECT` and `FROM` clauses and the simplest query is `SELECT * FROM table`, which selects all columns from the specified table.
 
 ### Exercise 5
 
-Continue the pipe with `show_query()`.
+`WHERE` and `ORDER BY` control which rows are included and how they are ordered. Insert two new lines in your current (simple) pipe: `filter(dest == "IAH")` and `arrange(dep_delay)`. Don't forget `|>` as the statement separator. 
 
 ```{r sql-5, exercise = TRUE}
 
@@ -431,405 +864,464 @@ Continue the pipe with `show_query()`.
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r sql-5-hint, eval = FALSE}
-planes_db |> 
-  filter(manufacturer == "AIRBUS INDUSTRIE")|> 
-  arrange(year)|>
-  ...()
-```
-
-###
-
-A query is made up of **clauses**. There are five important clauses: `SELECT`, `FROM`, `WHERE`, `ORDER BY`, and `GROUP BY`. Every query must have the `SELECT` and `FROM` clauses and the simplest query is `SELECT * FROM` table, which selects all columns from the specified table.
-
-## SQL with `SELECT`, `FROM`, & `GROUP BY`
-###
-
-In `SQL`, order matters: you must always write the clauses in the order `SELECT`, `FROM`, `WHERE`, `GROUP BY`, `ORDER BY`. Confusingly, this order doesn’t match how the clauses actually evaluated which is first `FROM`, then `WHERE`, `GROUP BY`, `SELECT`, and `ORDER BY`.
-
-### Exercise 1
-
-Let's use the `flights_db` variable from above. Create a pipe with `flights_db`. Pipe it into the `select()` function. Within `select()`, add the arguments `carrier`, `tailnum`, `origin`, `distance`, and `year`. Make sure to separate these arguments with commas.
-
-```{r sql-select-from-grou-1, exercise = TRUE}
-
-```
-
-```{r sql-select-from-grou-1-hint, eval = FALSE}
-flights_db |>
-  select(carrier, ..., origin, ..., year)
-```
-
-###
-
-`select()` has very direct translations to `SELECT` as they just affect where a column appears (if at all) along with its name.
-
-### Exercise 2
-
-Continue the pipe with `rename()`. Within `rename()` set `year_built` to `year` using a `=`
-
-```{r sql-select-from-grou-2, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r sql-select-from-grou-2-hint, eval = FALSE}
-flights_db |>
-  select(carrier, tailnum, origin, distance, year)|>
-  rename(year_built = ...)
-```
-
-###
-
-The `SELECT` clause is the workhorse of queries and performs the same job as `rename()`.
-
-### Exercise 3
-
-Continue the pipe with `show_query()`.
-
-```{r sql-select-from-grou-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r sql-select-from-grou-3-hint, eval = FALSE}
-flights_db |>
-  select(carrier, tailnum, origin, distance, year)|>
-  rename(year_built = year)
+```{r sql-5-hint-1, eval = FALSE}
+flights |> 
+  ...(dest == "IAH") |> 
+  arrange(...) |>
   show_query()
 ```
 
-###
-
-This example also shows you how `SQL` does renaming. In `SQL` terminology renaming is called **aliasing** and is done with `AS`.
-
-### Exercise 4
-
-Start a new pipe with `mpg`. Pipe it into `summarize()` and set `avg_hwy` to the `mean()` of `hwy` and `na.rm = TRUE` using the code `avg_hwy = mean(hwy, na.rm= TRUE)`.
-
-```{r sql-select-from-grou-4, exercise = TRUE}
-
+```{r sql-5-test, include = FALSE}
+flights |> 
+  filter(dest == "IAH") |> 
+  arrange(dep_delay) |>
+  show_query()
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+### 
 
-```{r sql-select-from-grou-4-hint, eval = FALSE}
-flights_db |>
-  select(carrier, tailnum, origin, distance, year)|>
-  rename(year_built = year)
-  show_query()|>
-  summarize(... = mean(..., na.rm = TRUE))
-```
+`show_query()` allows us to see how the **dplyr** code is translated into SQL.
 
-###
-
-`group_by()` is translated to the `GROUP BY` clause, however, we like to use `.by` because `group_by()` changes our original data, and `summarize()` is translated to the `SELECT` clause.
-
-### Exercise 5
-
-Within `summarize()`, add on `.by = displ`.
-
-```{r sql-select-from-grou-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r sql-select-from-grou-5-hint, eval = FALSE}
-flights_db |>
-  select(carrier, tailnum, origin, distance, year)|>
-  rename(year_built = year)
-  show_query()|>
-  summarize(avg_hwy = mean(hwy, na.rm = TRUE),
-            .by = ...)
-```
-
-## SQL with `WHERE`, `ORDER BY`, & `Subqueries`
-###
-
-`SQL` is able to use three more important functions: `WHERE`, `ORDER BY`, and `Subqueries`. `WHERE` is used when we filter data. `ORDER BY` is used when we arrange our data. `Subqueries` are used when we mutate and select our data.
-
-### Exercise 1
-
-Start a pipe with `flights_db`. Pipe it into `filter()`. Within `filter()`, add `dest = "IAH"` and `dest = "HOU` separated with a `|`.
-
-```{r sql-with-where-order-1, exercise = TRUE}
-
-```
-
-```{r sql-with-where-order-1-hint, eval = FALSE}
-... |> 
-  ...(dest == "..." | ... == "HOU")
-```
-
-###
-
-In `SQL`, `|` becomes `OR` and `&` becomes `AND`. `SQL` uses `=` for comparison, not `==`. `SQL` doesn’t have assignment, so there’s no potential for confusion there. Also, `SQL` uses only `''` for strings, not `""`. In `SQL`, `""` is used to identify variables, like R’s ````.
-
-### Exercise 2
-
-Continue the pipe with `filter()` with the arguments `arr_delay > 0` and `arr_delay < 20`. Make sure to separate these arguments with commas.
-
-```{r sql-with-where-order-2, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r sql-with-where-order-2-hint, eval = FALSE}
-flights_db|>
-filter(dest == "IAH"| dest == "HOU")|>
-filter(... > 0 , ... < 20)
-```
-
-### Exercise 3
-
-Finish the pipe by adding `show_query()`.
-
-```{r sql-with-where-order-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r sql-with-where-order-3-hint, eval = FALSE}
-flights_db|>
-filter(dest == "IAH"| dest == "HOU")|>
-filter(arr_delay > 0, arr_delay < 20)|>
-...()
-```
-
-### Exercise 4
-
-Let's start a new pipe with `flights_db`. Let's `filter()` our data to `!is.na(dep_delay)`.
-
-```{r sql-with-where-order-4, exercise = TRUE}
-
-```
-
-```{r sql-with-where-order-4-hint, eval = FALSE}
-... |> 
-  filter(!is.na(...))
-```
-
-###
-
-In general, you can work with `NULL`s using the functions you’d use for `NA`s in R.
-
-### Exercise 5
-
-Finish the pipe by adding `show_query()`.
-
-```{r sql-with-where-order-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r sql-with-where-order-5-hint, eval = FALSE}
-flights_db|> 
-  filter(!is.na(dep_delay))|>
-  ...()
-```
-
-###
-
-This `SQL` query illustrates one of the drawbacks of **dbplyr**: while the `SQL` is correct, it isn’t as simple as you might write by hand. In this case, you could drop the parentheses and use a special operator that’s easier to read.
+SQL is either pronounced “s”-“q”-“l” or “sequel.”
 
 ### Exercise 6
 
-Let's start another new pipe with `planes_db`. Pipe it into `arrange()` and within `arrange()` add the arguments `year`, `engines`, `seats`, and `desc(speed)`.
+`GROUP BY` converts the query to a summary, causing aggregation to happen.  Remove the middle two lines from the previous pipe, replacing them with `group_by(dest)` and `summarize(dep_delay = mean(dep_delay, na.rm = TRUE))`.
 
-```{r sql-with-where-order-6, exercise = TRUE}
-
-```
-
-```{r sql-with-where-order-6-hint, eval = FALSE}
-... |> 
-  ...(year, engines, seats, desc(speed))
-```
-
-###
-
-Ordering rows involves a straightforward translation from `arrange()` to the `ORDER BY` clause.
-
-### Exercise 7
-
-Finish the pipe by adding `show_query()`.
-
-```{r sql-with-where-order-7, exercise = TRUE}
+```{r sql-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r sql-with-where-order-7-hint, eval = FALSE}
-planes_db|>
-arrange(year, engines, desc(seats), desc(speed))|>
-...()
-```
-
-###
-
-Notice how `desc()` is translated to `DESC`: this is one of the many **dplyr** functions whose name was directly inspired by `SQL`.
-
-### Exercise 8
-
-Let's start another new pipe with `flights_db`. Pipe it into `mutate()`and within `mutate()`, set `year1` to `year + 1`.
-
-```{r sql-with-where-order-8, exercise = TRUE}
-
-```
-
-```{r sql-with-where-order-8-hint, eval = FALSE}
-... |> 
-  ...(year1 = year + 1)
-```
-
-###
-
-Sometimes it’s not possible to translate a **dplyr** pipeline into a single `SELECT` statement and you need to use a **subquery**. A **subquery** is just a query used as a data source in the `FROM` clause, instead of the usual table.
-
-### Exercise 9
-
-Continue the pipe with `filter()`. Within `filter()` set `year1` equal to `2014`.
-
-```{r sql-with-where-order-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r sql-with-where-order-9-hint, eval = FALSE}
-flights_db|>
-mutate(year1 = year + 1)|>
-  filter(year1 == ...)
-```
-
-###
-
-When we use `filter()`, **dbplyr** uses subqueries to work around limitations of `SQL`. Remember, even though `WHERE` is written after `SELECT`, it’s evaluated before it, so we need a **subquery** in this example
-
-### Exercise 10
-
-Finish the pipe by adding `show_query()`.
-
-```{r sql-with-where-order-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r sql-with-where-order-10-hint, eval = FALSE}
-flights_db|>
-mutate(year1 = year + 1)|>
-filter(year1 == 2014)|>
-show_query()
-```
-
-###
-
-Sometimes **dbplyr** will create a subquery where it’s not needed because it doesn’t yet know how to optimize that translation. As **dbplyr** improves over time, these cases will get rarer but will probably never go away
-
-## SQL with `Joins` & Other Verbs
-###
-
-You’re likely to need many joins when working with data from a database. That’s because database tables are often stored in a highly normalized form, where each “fact” is stored in a single place and to keep a complete dataset for analysis you need to navigate a complex network of tables connected by primary and foreign keys.
-
-### Exercise 1
-
-Start a pipe with `flights_db`. Pipe it into `left_join()` and add `planes|> rename(year_built = year)`
-
-```{r sql-with-joins--othe-1, exercise = TRUE}
-
-```
-
-```{r sql-with-joins--othe-1-hint, eval = FALSE}
-... |> 
-  ...(planes_db |> rename(year_built = year)
-```
-
-### Exercise 2
-
-Within `left_join` add `by` and set it to `"tailnum"`.
-
-```{r sql-with-joins--othe-2, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r sql-with-joins--othe-2-hint, eval = FALSE}
-flights_db|>
-left_join(planes_db|>
-          rename(year_built = year),
-          by = "..."
-```
-
-###
-
-**dplyr**’s names for these functions are so closely connected to `SQL` that you can easily guess the equivalent `SQL` for `inner_join()`, `right_join()`, and `full_join()`.
-
-### Exercise 3
-
-Finish the pipe by adding `show_query()`.
-
-```{r sql-with-joins--othe-3, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r sql-with-joins--othe-3-hint, eval = FALSE}
-flights_db|>
-left_join(planes_db|>
-          rename(year_built = year),
-          by = "tailnum"|>
+```{r sql-6-hint-1, eval = FALSE}
+flights |> 
+  group_by(...) |> 
+  ...(dep_delay = mean(dep_delay, na.rm = TRUE)) |> 
   show_query()
 ```
 
-###
+```{r sql-6-test, include = FALSE}
+flights |> 
+  group_by(dest) |> 
+  summarize(dep_delay = mean(dep_delay, na.rm = TRUE)) |> 
+  show_query()
+```
 
-The main thing to notice here is the syntax: `SQL` joins use sub-clauses of the `FROM` clause to bring in additional tables, using `ON` to define how the tables are related.
+### 
 
-###
+Study the SQL code returned by `show_query()`. Compare it to the original **dplyr** code.
 
-**dbplyr** also translates other verbs like `distinct()`, `slice_*()`, and `intersect()`, and a growing selection of **tidyr** functions like `pivot_longer()` and `pivot_wider()`. Visit [**dbplyr**](https://dbplyr.tidyverse.org/reference/) to view other verbs.
+In SQL, case doesn’t matter: you can write `select`, `SELECT`, or even `SeLeCt`. In this tutorial we’ll stick with the common convention of writing SQL keywords in uppercase to distinguish them from table or variables names.
+
+
+### Exercise 7
+
+The `SELECT` clause is the workhorse of queries and performs the same job as `select()`, `mutate()`, `rename()`, `relocate()`, and, as you’ll learn in a later Exercise, `summarize()`.
+
+Start a new pipe with `planes`. Second line is `select(tailnum, type, manufacturer, model, year)`. Finish the pipe with `show_query()`.
+
+```{r sql-7, exercise = TRUE}
+
+```
+
+```{r sql-7-hint-1, eval = FALSE}
+planes |> 
+  ...(tailnum, type, manufacturer, model, year) |> 
+  show_query()
+```
+
+```{r sql-7-test, include = FALSE}
+planes |> 
+  select(tailnum, type, manufacturer, model, year) |> 
+  show_query()
+```
+
+### 
+
+In SQL, order matters: you must always write the clauses in the order `SELECT`, `FROM`, `WHERE`, `GROUP BY`, `ORDER BY`. Confusingly, this order doesn’t match how the clauses actually evaluated which is first `FROM`, then `WHERE`, `GROUP BY`, `SELECT`, and `ORDER BY`.
+
+### Exercise 8
+
+`select()`, `rename()`, and `relocate()` have very direct translations to `SELECT` as they just affect where a column appears (if at all) along with its name. Add `rename(year_built = year)` to the previous pipeline, right before `show_query()`.
+
+```{r sql-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r sql-8-hint-1, eval = FALSE}
+planes |> 
+  select(tailnum, type, manufacturer, model, year) |> 
+  ...(year_built = ...) |> 
+  show_query()
+```
+
+```{r sql-8-test, include = FALSE}
+planes |> 
+  select(tailnum, type, manufacturer, model, year) |> 
+  rename(year_built = year) |> 
+  show_query()
+```
+
+### 
+
+In the examples above note that "year" and "type" are wrapped in double quotes. That’s because these are reserved words in duckdb, so dbplyr quotes them to avoid any potential confusion between column/table names and SQL operators.
+
+When working with other databases you’re likely to see every variable name quotes because only a handful of client packages, like duckdb, know what all the reserved words are, so they quote everything to be safe.
+
+
+### Exercise 9
+
+In the code from the previous Exercise, replace `rename(year_built = year)` with `relocate(manufacturer, model, .before = type)`.
+
+```{r sql-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r sql-9-hint-1, eval = FALSE}
+planes |> 
+  select(tailnum, type, manufacturer, model, year) |> 
+  ...(manufacturer, model, ... = type) |> 
+  show_query()
+```
+
+```{r sql-9-test, include = FALSE}
+planes |> 
+  select(tailnum, type, manufacturer, model, year) |> 
+  relocate(manufacturer, model, .before = type) |> 
+  show_query()
+```
+
+### 
+
+Note that while SQL is a standard, it is extremely complex and no database follows it exactly. While the main components that we’ll focus on in this book are very similar between DBMS’s, there are many minor variations.
+
+### Exercise 10
+
+The translations for `mutate()` are similarly straightforward: each variable becomes a new expression in `SELECT`. Pipe `flights` to `mutate(speed = distance / (air_time / 60))` and then finish with `show_query()`.
+
+```{r sql-10, exercise = TRUE}
+
+```
+
+```{r sql-10-hint-1, eval = FALSE}
+flights |> 
+  mutate(speed = distance / (air_time / 60)) |> 
+  show_query()
+```
+
+```{r sql-10-test, include = FALSE}
+flights |> 
+  mutate(speed = distance / (air_time / 60)) |> 
+  show_query()
+```
+
+### 
+
+This example also shows you how SQL does renaming. In SQL terminology renaming is called aliasing and is done with `AS`. Note that unlike `mutate()`, the old name is on the left and the new name is on the right
+
+### Exercise 11
+
+Let's start working with `diamonds_db` again. `group_by()` is translated to the `GROUP BY` clause and `summarize()` is translated to the `SELECT` clause. Run this code:
+
+
+```{r sql-11, exercise = TRUE}
+diamonds_db |> 
+  group_by(cut) |> 
+  summarize(
+    n = n(),
+    avg_price = mean(price, na.rm = TRUE)
+  ) |> 
+  show_query()
+```
+
+```{r sql-11-test, include = FALSE}
+diamonds_db |> 
+  group_by(cut) |> 
+  summarize(
+    n = n(),
+    avg_price = mean(price, na.rm = TRUE)
+  ) |> 
+  show_query()
+```
+
+### 
+
+Note the use of SQL functions like `COUNT()` and `AVG()`.
+
+The `FROM` clause defines the data source. It’s going to be rather uninteresting for a little while, because we’re just using single tables. You’ll see more complex examples once we hit the join functions.
+
+### Exercise 12
+
+`filter()` is translated to the `WHERE` clause. Pipe `flights` to `filter()` with the argument set to `dest == "IAH" | dest == "HOU"`. Finish the pipe with `show_query()`.
+
+```{r sql-12, exercise = TRUE}
+
+```
+
+```{r sql-12-hint-1, eval = FALSE}
+... |> 
+  filter(dest == "..." | ... == "HOU") |> 
+  ...()
+```
+
+```{r sql-12-test, include = FALSE}
+flights |> 
+  filter(dest == "IAH" | dest == "HOU") |> 
+  show_query()
+```
+
+### 
+
+Note:
+
+* `|` becomes `OR` and `&` becomes `AND`.
+
+* SQL uses `=` for comparison, not `==`. SQL doesn’t have assignment, so there’s no potential for confusion there.
+
+* SQL uses only `''` for strings, not `""`. In SQL, `""` is used to identify variables, like R’s ``` `` ```.
+
+### Exercise 13
+
+Another useful SQL operator is `IN`, which is very close to R’s `%in%`. Use the code from the previous Exercise, but replace `dest == "IAH" | dest == "HOU"` with `dest %in% c("IAH", "HOU")`. 
+
+```{r sql-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r sql-13-hint-1, eval = FALSE}
+flights |> 
+  filter(... %in% c("IAH", "...")) |> 
+  show_query()
+```
+
+```{r sql-13-test, include = FALSE}
+flights |> 
+  filter(dest %in% c("IAH", "HOU")) |> 
+  show_query()
+```
+
+### 
+
+Study the correspondence between the **dplyr** code and the SQL code produced by `show_query()` if you want to start learning about SQL.
+
+### Exercise 14
+
+SQL uses NULL instead of NA. NULLs behave similarly to NAs. The main difference is that while they’re “infectious” in comparisons and arithmetic, they are silently dropped when summarizing. dbplyr will remind you about this behavior the first time you hit it. Run this code:
+
+```{r sql-14, exercise = TRUE}
+flights |> 
+  group_by(dest) |> 
+  summarize(delay = mean(arr_delay))
+```
+
+```{r sql-14-test, include = FALSE}
+flights |> 
+  group_by(dest) |> 
+  summarize(delay = mean(arr_delay))
+```
+
+### 
+
+If you want to learn more about how NULLs work, you might enjoy “[The Three-Valued Logic of SQL](https://modern-sql.com/concept/three-valued-logic)” by Markus Winand.
+
+### Exercise 15
+
+In general, you can work with NULLs using the functions you’d use for NAs in R. Pipe `flights` to `filter(!is.na(dep_delay))` and finish the pipe with `show_query()`.
+
+```{r sql-15, exercise = TRUE}
+
+```
+
+```{r sql-15-hint-1, eval = FALSE}
+flights |> 
+  ...(!is.na(...)) |> 
+  show_query()
+```
+
+```{r sql-15-test, include = FALSE}
+flights |> 
+  filter(!is.na(dep_delay)) |> 
+  show_query()
+```
+
+### 
+
+This SQL query illustrates one of the drawbacks of **dbplyr**: while the SQL is correct, it isn’t as simple as you might write by hand. In this case, you could drop the parentheses and use a special operator that’s easier to read:
+
+```
+WHERE "dep_delay" IS NOT NULL
+```
+
+### Exercise 16
+
+Note that if you `filter()` a variable that you created using a summarize, **dbplyr** will generate a `HAVING` clause, rather than a `WHERE` clause. Run this code. 
+
+```{r sql-16, exercise = TRUE}
+diamonds_db |> 
+  group_by(cut) |> 
+  summarize(n = n()) |> 
+  filter(n > 100) |> 
+  show_query()
+```
+
+```{r sql-16-test, include = FALSE}
+diamonds_db |> 
+  group_by(cut) |> 
+  summarize(n = n()) |> 
+  filter(n > 100) |> 
+  show_query()
+```
+
+### 
+
+This is a one of the idiosyncrasies of SQL: `WHERE` is evaluated before `SELECT` and `GROUP BY`, so SQL needs another clause that’s evaluated afterwards.
+
+### Exercise 17
+
+Ordering rows involves a straightforward translation from `arrange()` to the `ORDER BY` clause. Pipe `flights` to `arrange(year, month, day, desc(dep_delay))` and then complete the pipe with `show_query()`.
+
+
+```{r sql-17, exercise = TRUE}
+
+```
+
+```{r sql-17-hint-1, eval = FALSE}
+... |> 
+  arrange(year, ..., day, ...(dep_delay)) |> 
+  show_query()
+```
+
+```{r sql-17-test, include = FALSE}
+flights |> 
+  arrange(year, month, day, desc(dep_delay)) |> 
+  show_query()
+```
+
+### 
+
+Notice how desc() is translated to DESC: this is one of the many dplyr functions whose name was directly inspired by SQL.
+
+### Exercise 18
+
+Sometimes it’s not possible to translate a **dplyr** pipeline into a single `SELECT` statement and you need to use a subquery. A **subquery** is just a query used as a data source in the `FROM` clause, instead of the usual table.
+
+Using the previous code, replace `arrange(year, month, day, desc(dep_delay))` with 
+
+```
+mutate(
+    year1 = year + 1,
+    year2 = year1 + 1
+  )   
+```
+
+
+```{r sql-18, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r sql-18-hint-1, eval = FALSE}
+flights |> 
+  mutate(
+    year1 = ... + 1,
+    ... = year1 + 1
+  ) |> 
+  show_query()
+```
+
+```{r sql-18-test, include = FALSE}
+flights |> 
+  mutate(
+    year1 = year + 1,
+    year2 = year1 + 1
+  ) |> 
+  show_query()
+```
+
+### 
+
+**dbplyr** typically uses subqueries to work around limitations of SQL. For example, expressions in the `SELECT` clause can’t refer to columns that were just created. That is why the simple **dplyr** code needs two steps SQL: the first (inner) query computes `year1` and then the second (outer) query can compute `year2`.
+
+### Exercise 19
+
+You’ll also see this if you attempted to `filter()` a variable that you just created. Remember, even though `WHERE` is written after `SELECT`, it’s evaluated before it, so we need a subquery in this (silly) example. Run this code.
+
+```{r sql-19, exercise = TRUE}
+flights |> 
+  mutate(year1 = year + 1) |> 
+  filter(year1 == 2014) |> 
+  show_query()
+```
+
+```{r sql-19-test, include = FALSE}
+flights |> 
+  mutate(year1 = year + 1) |> 
+  filter(year1 == 2014) |> 
+  show_query()
+```
+
+### 
+
+Sometimes **dbplyr** will create a subquery where it’s not needed because it doesn’t yet know how to optimize that translation. As **dbplyr** improves over time, these cases will get rarer but will probably never go away.
+
+### Exercise 20
+
+If you’re familiar with **dplyr**’s joins, SQL joins are very similar.  Pipe `flights` to `left_join(planes |> rename(year_built = year), by = "tailnum") ` and then complete the pipe with `show_query()`.
+
+```{r sql-20, exercise = TRUE}
+
+```
+
+```{r sql-20-hint-1, eval = FALSE}
+flights |> 
+  ...(planes |> rename(... = year), by = "...") |> 
+  show_query()
+```
+
+```{r sql-20-test, include = FALSE}
+flights |> 
+  left_join(planes |> rename(year_built = year), by = "tailnum") |> 
+  show_query()
+```
+
+### 
+
+The main thing to notice here is the syntax: SQL joins use sub-clauses of the `FROM` clause to bring in additional tables, using `ON` to define how the tables are related.
+
+**dplyr**’s names for these functions are so closely connected to SQL that you can easily guess the equivalent SQL for `inner_join()`, `right_join()`, and `full_join()`.
+
+### 
+
+<!-- DK: Spread this text out into simple questions or else no one will read it. -->
+
+You’re likely to need many joins when working with data from a database. That’s because database tables are often stored in a highly normalized form, where each “fact” is stored in a single place and to keep a complete dataset for analysis you need to navigate a complex network of tables connected by primary and foreign keys. If you hit this scenario, the [**dm**](https://dm.cynkra.com/) package, by Tobias Schieferdecker, Kirill Müller, and Darko Bergant, is a life saver. It can automatically determine the connections between tables using the constraints that DBAs often supply, visualize the connections so you can see what’s going on, and generate the joins you need to connect one table to another.
+
+### 
+
+**dbplyr** also translates other verbs like `distinct()`, `slice_*()`, and `intersect()`, and a growing selection of **tidyr** functions like `pivot_longer()` and `pivot_wider()`. The easiest way to see the full set of what’s currently available is to visit the **dbplyr** [website](https://dbplyr.tidyverse.org/reference/).
+
 
 ## Function Translations
-###
+### 
 
-This section of the chapter is too difficult to capture within the structure of a tutorial.
-
-
-
-## Cleaning Up
-###
-
-This section cleans up the databases, with which you were working above, from your system.
-
-### Exercise 1
-
-Our first step is to disconnect the database that we have created. Run the following code chunk below.
-
-```{r cleaning-up-1, exercise = TRUE}
-dbDisconnect(con, shutdown = TRUE)
-```
-
-### Exercise 2
-
-Finally let's remove the `myDB.sqlite` from your computer. Find the location on your computer where the r4ds.tutorial is stored. Add that location to the beginning of the following code below and run the code chunk. 
-
-```{r cleaning-up-2, exercise = TRUE}
-file.remove("myDB.sqlite")
-```
+This section of the chapter is too difficult to capture within the structure of a tutorial. Please just [read it](https://r4ds.hadley.nz/databases#sec-sql-expressions).
 
 ## Summary
 ### 
 
-This tutorial covered [Chapter 21: Databases](https://r4ds.hadley.nz/databases.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You learned how to use [**DBI**](https://dbi.r-dbi.org/) and used the [**dbplyr**](https://dbplyr.tidyverse.org/) packages to connect to databases and execute SQL. To check out further reading take a look at [**Writing SQL with dbplyr**](https://dbplyr.tidyverse.org/articles/sql.html), [**Practical SQL: A Beginner's Guide to Storytelling with Data**](https://www.practicalsql.com/), and [**SQL For Data Scientists**](https://sqlfordatascientists.com/).
+This tutorial covered [Chapter 21: Databases](https://r4ds.hadley.nz/databases.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You learned how to use [**DBI**](https://dbi.r-dbi.org/) and used the [**dbplyr**](https://dbplyr.tidyverse.org/) packages to connect to databases and execute SQL. 
+
+<!-- DK: Replace these books with free and/or open-source options. -->
+
+For further reading consider [**Writing SQL with dbplyr**](https://dbplyr.tidyverse.org/articles/sql.html), [**Practical SQL: A Beginner's Guide to Storytelling with Data**](https://www.practicalsql.com/), and [**SQL For Data Scientists**](https://sqlfordatascientists.com/).
 
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}

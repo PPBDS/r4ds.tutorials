@@ -93,9 +93,12 @@ package.
 
 Because tutorials within the Tutorial pane are sorted in alphabetical
 order by the name of the package, the **r4ds.tutorials** will be toward
-the bottom. If you don’t see any tutorials, try clicking the “Home”
-button – the little house symbol with the thin red roof in the upper
-right.
+the bottom. **Warning**: There will usually be a bunch of **learnr**
+tutorials at the top of the Tutorial pane. Ignore those. They have
+nothing to do with this package. All tutorials from this package are
+labelled as **r4ds.tutorials**. If you don’t see any tutorials, try
+clicking the “Home” button – the little house symbol with the thin red
+roof in the upper right.
 
 In order to expand the window, you can drag and enlarge the tutorial
 pane inside RStudio. In order to open a pop-up window, click the “Show
