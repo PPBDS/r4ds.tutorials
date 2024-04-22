@@ -63,7 +63,7 @@ pq_path <- paste0(tempdir(), "/seattle-library-checkouts")
 #   slice_sample(n = 100) |>
 #   write_csv(file = "inst/tutorials/22-arrow/data/test.csv")
 
-# We can now use seattle_csv in all our test code chunks.
+# We can now create seattle_csv to use in our test code chunks.
 
 seattle_csv <- open_dataset(
   sources = "data/test.csv", 
@@ -838,7 +838,7 @@ query
 
 ### Exercise 9
 
-Copy previous code and pipe it into `collect()`.
+Pipe `query` to `collect()` in the Console. CP/CR.
 
 ```{r using-dplyr-with-arrow-9}
 question_text(NULL,
@@ -893,6 +893,11 @@ seattle_csv |>
   system.time()
 ```
 
+### 
+
+This is slower than we would like. But switching to paquet files will help because partitioning improves performance because this query uses `CheckoutYear == 2021` to filter the data, and arrow is smart enough to recognize that it only needs to read 1 of the 18 parquet files.
+
+
 ### Exercise 11
 
 Now let’s use our new version of the dataset in which the Seattle library checkout data has been partitioned into 18 smaller parquet files. Run this code in your Console.
@@ -930,11 +935,7 @@ seattle_pq |>
 
 ### 
 
-The ~100x speedup in performance is attributable to two factors: the multi-file partitioning, and the format of individual files:
-
-* Partitioning improves performance because this query uses CheckoutYear == 2021 to filter the data, and arrow is smart enough to recognize that it only needs to read 1 of the 18 parquet files.
-
-* The parquet format improves performance by storing data in a binary format that can be read more directly into memory. The column-wise format and rich metadata means that arrow only needs to read the four columns actually used in the query (CheckoutYear, MaterialType, CheckoutMonth, and Checkouts).
+The parquet format improves performance by storing data in a binary format that can be read more directly into memory. The column-wise format and rich metadata means that arrow only needs to read the four columns actually used in the query (`CheckoutYear`, `MaterialType`, `CheckoutMonth`, and `Checkouts`).
 
 This massive difference in performance is why it pays off to convert large CSVs to parquet!
 
