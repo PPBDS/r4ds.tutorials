@@ -43,8 +43,6 @@ options(tutorial.exercise.timelimit = 2400,
 # for the next version of the tutorial. For now, we assign everything in the
 # Console. But all our test code chunks use our test data.
 
-
-
 csv_path <- paste0(tempdir(), "/seattle-library-checkouts.csv")
 pq_path <- paste0(tempdir(), "/seattle-library-checkouts")
 
@@ -54,14 +52,16 @@ pq_path <- paste0(tempdir(), "/seattle-library-checkouts")
 # located in the r4ds.tutorial project directory.
 
 # For some reason, you need to collect() before you can sample. Of course, this
-# code is only run by hand, when we need to fix the test data.
+# code is only run by hand, when we need to fix the test data. It is annoying
+# that we only keep 100 rows, but R CMD check forces us to keep this package as
+# small as possible.
 
-# open_dataset(sources = csv_path, 
+# open_dataset(sources = csv_path,
 #              col_types = schema(ISBN = string()),
 #              format = "csv") |>
-#   collect() |>  
-#   slice_sample(n = 1000) |> 
-#   write_csv(file = "inst/tutorials/22-arrow/data/test.csv") 
+#   collect() |>
+#   slice_sample(n = 100) |>
+#   write_csv(file = "inst/tutorials/22-arrow/data/test.csv")
 
 # We can now use seattle_csv in all our test code chunks.
 
@@ -70,6 +70,21 @@ seattle_csv <- open_dataset(
   col_types = schema(ISBN = string()),
   format = "csv"
 )
+
+# We can also write out, and then work with, parquet files.
+
+seattle_csv |>
+  group_by(CheckoutYear) |>
+  write_dataset(path = pq_path,
+                format = "parquet")
+
+seattle_pq <- open_dataset(pq_path)
+
+query <- seattle_pq |> 
+  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
+  group_by(CheckoutYear, CheckoutMonth) |>
+  summarize(TotalCheckouts = sum(Checkouts)) |>
+  arrange(CheckoutYear, CheckoutMonth)
 
 ```
 
@@ -381,6 +396,10 @@ What happens when this code is run? `open_dataset()` will scan a few thousand ro
 
 ### Exercise 2
 
+For this and later Exercises which will be completed in the Console, you may find it useful to open a temporary R script. You write your answer there and then submit it to the Console with `Command/Ctrl + Enter`. This makes it easy to edit your code, often by adding more lines to the pipe, and then submit the answer to the next question.
+
+<!-- DK: Explain this better? Show video? -->
+
 Run `seattle_csv` in the Console. CP/CR.
 
 ```{r opening-a-dataset-2}
@@ -523,6 +542,8 @@ Like CSV, parquet is used for rectangular data, but instead of being a text form
 
 In the Console, start a pipe with `seattle_csv`. CP/CR.
 
+Again, instead of just typing everything directly into the Console, you might open a temporary R script and work from there, submitting to the Console with `Command/Ctrl + Enter`.
+
 ```{r the-parquet-format-2}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
@@ -544,8 +565,6 @@ Parquet files are usually smaller the equivalent CSV file. Parquet relies on [ef
 
 In the Console, continue the pipe with `group_by()`. Within `group_by()`, add the argument `CheckoutYear`. 
 
-Recall that you can use the up-arrow key to bring up the last executed command from your Console. 
-
 ```{r the-parquet-format-3}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
@@ -566,7 +585,7 @@ Parquet files have a rich type system. A CSV file does not provide any informati
 
 ### Exercise 4
 
-In the Console, continue the pipe with `write_dataset()`. Within `write_dataset()` add the argument `path = pq_path`.
+In the Console, continue the pipe with `write_dataset()`. Within `write_dataset()` add two arguments:  `path = pq_path` and `format = "parquet"`. This will take a minute but it pays off as it makes future operations much faster.
 
 ```{r the-parquet-format-4}
 question_text(NULL,
@@ -580,66 +599,63 @@ question_text(NULL,
 ```{r the-parquet-format-4-test, include = FALSE}
 seattle_csv |>
   group_by(CheckoutYear) |>
-  write_dataset(path = pq_path)
+  write_dataset(path = pq_path,
+                format = "parquet")
 ```
 
 ### 
 
 Parquet files are “column-oriented”. This means that they’re organized column-by-column, much like R’s data frame. This typically leads to better performance for data analysis tasks compared to CSV files, which are organized row-by-row.
 
-### Exercise 5
-
-In the Console, use previous code and add the argument `format = "parquet"` in `write_dataset()`. Make sure to separate the arguments with commas. This will take a minute but it pays off as it makes future operations much faster.
-
-```{r the-parquet-format-5, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r the-parquet-format-5-test, include = FALSE}
-seattle_csv |>
-  group_by(CheckoutYear) |>
-  write_dataset(path = pq_path, format = "parquet")
-```
-
-### 
-
 Parquet files are “chunked”, which makes it possible to work on different parts of the file at the same time, and, if you’re lucky, to skip some chunks all together.
 
 
-### Exercise 6
+### Exercise 5
 
-Let’s take a look at what we just produced. Press "Run Code"
+Let’s take a look at what we just produced. Run this code in the Console. CP/CR.
 
-```{r the-parquet-format-6, exercise = TRUE}
+````
 tibble(
   files = list.files(pq_path, recursive = TRUE),
   size_MB = file.size(file.path(pq_path, files)) / 1024^2
 )
+````
+
+```{r the-parquet-format-5}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 10)
 ```
 
 ### 
 
-Our single 9 GB CSV file has been rewritten into 18 parquet files. The file names use a “self-describing” convention used by the Apache Hive project. Hive-style partitions name folders with a “key=value” convention, so as you might guess, the `CheckoutYear=2005` directory contains all the data where `CheckoutYear` is `2005`. Each file is between 100 and 300 MB and the total size is now around 4 GB, a little over half the size of the original CSV file. This is as we expect since parquet is a much more efficient format.
+Our single 9 GB CSV file has been rewritten into 18 parquet files. The file names use a “self-describing” convention used by the Apache Hive project. Hive-style partitions name folders with a “key = value” convention, so as you might guess, the `CheckoutYear = 2005` directory contains all the data where `CheckoutYear` is `2005`. Each file is between 100 and 300 MB and the total size is now around 4 GB, a little over half the size of the original CSV file. This is as we expect since parquet is a much more efficient format.
 
 ## Using dplyr with arrow
 ### 
 
+Now we’ve created these parquet files, we’ll need to read them in again. 
+
 ### Exercise 1
 
-Set `seattle_pq` to `open_dataset()` with the argument `pq_path` inside.
+Now we’ve created these parquet files, we’ll need to read them in again. We use `open_dataset()` again, but this time we give it a directory
 
-```{r using-dplyr-with-arrow-1, exercise = TRUE}
+In the Console, assign `seattle_pq` to `open_dataset()` with the argument `pq_path` inside. CP/CR.
 
+```{r using-dplyr-with-arrow-1}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 10)
 ```
 
-```{r using-dplyr-with-arrow-1-hint-1, eval = FALSE}
-... <- open_dataset(...)
-```
-
-```{r include = FALSE}
-# seattle_pq <- open_dataset(pq_path)
+```{r using-dplyr-with-arrow-1-test, include = FALSE}
+seattle_pq <- open_dataset(pq_path)
 ```
 
 ### 
@@ -648,13 +664,18 @@ As datasets get larger and larger, storing all the data in a single file gets in
 
 ### Exercise 2
 
-Start a pipe with `seattle_pq`
+Run `seattle_pq` at the Console. Again, since we are building a pipe, you probably want to write `seattle_pq` in a temporary R script and then send it to the Console with `Command/Ctrl + Enter`. However you do it, CP/CR.
 
-```{r using-dplyr-with-arrow-2, exercise = TRUE}
-
+```{r using-dplyr-with-arrow-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 5)
 ```
 
-```{r using-dplyr-with-arrow-2-hint-1, eval = FALSE}
+```{r using-dplyr-with-arrow-2-test, include = FALSE}
 seattle_pq
 ```
 
@@ -664,159 +685,127 @@ There are no hard and fast rules about how to partition your dataset: the result
 
 ### Exercise 3
 
-Continue the pipe with `filter()`. Within `filter()`, add the argument `CheckoutYear >= 2018`.
+Continue the pipe with `filter()`. Within `filter()`, add two arguments: `CheckoutYear >= 2018` and `MaterialType == "BOOK"`. Make sure to separate them with a comma. Send to the Console. CP/CR.
 
-```{r using-dplyr-with-arrow-3, exercise = TRUE}
-
+```{r using-dplyr-with-arrow-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 5)
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-3-hint-1, eval = FALSE}
+```{r using-dplyr-with-arrow-3-test, include = FALSE}
 seattle_pq |> 
-  filter(CheckoutYear >= ...) 
+  filter(CheckoutYear >= 2018, MaterialType == "BOOK") 
 ```
 
 ### 
 
 As a rough guide, arrow suggests that you avoid files smaller than 20MB and larger than 2GB and avoid partitions that produce more than 10,000 files. You should also try to partition by variables that you filter by; as you’ll see shortly, that allows arrow to skip a lot of work by reading only the relevant files.
 
+
 ### Exercise 4
 
-Copy previous code and add the argument `MaterialType == "BOOK"` within `filter()`. Make sure to separate the arguments with commas.
+Continue the pipe with `group_by()`. Within `group_by()`, add the arguments `CheckoutYear, CheckoutMonth`.
 
+<!-- Using CheckoutYear and CheckoutMonth is a little concerning for our test cases since we have no ensured/checked that the test data includes rows for every year/month combination. But (presumably!) all the code works regardless . . . -->
 
-```{r using-dplyr-with-arrow-4, exercise = TRUE}
-
+```{r using-dplyr-with-arrow-4}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 5)
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-4-hint-1, eval = FALSE}
+```{r using-dplyr-with-arrow-4-test, include = FALSE}
 seattle_pq |> 
-  filter(CheckoutYear >= 2018, MaterialType == "...")
+  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
+  group_by(CheckoutYear, CheckoutMonth)
 ```
 
 ### 
 
-Make sure to separate arguments within a function with a `,` or `&`. Otherwise, it will not work.
+Writing dplyr code for arrow data is conceptually similar to **dbplyr**: you write **dplyr** code, which is automatically transformed into a query that the Apache Arrow C++ library understands, which is then executed when you call `collect()`.
+
 
 ### Exercise 5
 
-Continue the pipe with `group_by()`. Within `group_by()`, add the argument `CheckoutYear`.
+Continue the pipe with `summarize()`. Within `summarize()`, add `TotalCheckouts = sum(Checkouts)`. Send to the Console. CP/CR.
 
-```{r using-dplyr-with-arrow-5, exercise = TRUE}
-
+```{r using-dplyr-with-arrow-5}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 5)
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-5-hint-1, eval = FALSE}
+```{r using-dplyr-with-arrow-5-test, include = FALSE}
 seattle_pq |> 
   filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
-  group_by(...)
+  group_by(CheckoutYear, CheckoutMonth) |>
+  summarize(TotalCheckouts = sum(Checkouts))
 ```
 
 ### 
 
-This will group the data by checkout year so there is one row for every year.
+This will create a new column that is called `TotalCheckouts` that is the sum of checkouts for that year/month. 
 
 ### Exercise 6
 
-Copy previous code and add the argument `CheckoutMonth` to `group_by()`.
+Continue the pipe with `arrange()`. Within `arrange()`, add the argument `CheckoutYear, CheckoutMonth`. Send to the Console. CP/CR.
 
-```{r using-dplyr-with-arrow-6, exercise = TRUE}
-
+```{r using-dplyr-with-arrow-6}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 5)
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-6-hint-1, eval = FALSE}
+```{r using-dplyr-with-arrow-6-test, include = FALSE}
 seattle_pq |> 
   filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
-  group_by(CheckoutYear, ...)
+  group_by(CheckoutYear, CheckoutMonth) |>
+  summarize(TotalCheckouts = sum(Checkouts)) |>
+  arrange(CheckoutYear, CheckoutMonth)
 ```
 
 ### 
 
-This will group the data so their is one row for every month in every year.
+This will arrange the data so that the latest checkout year/month is at the top of the tibble.
+
 
 ### Exercise 7
 
-Continue the pipe with `summarize()`. Within `summarize()`, add `TotalCheckouts = sum(Checkouts)`
+Assign the whole pipe to `query`. That is, in your temporary R script, you should have:
 
-```{r using-dplyr-with-arrow-7, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-7-hint-1, eval = FALSE}
-seattle_pq |> 
-  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
-  group_by(CheckoutYear, CheckoutMonth) |>
-  summarize(... = sum(...))
-```
-
-### 
-
-This will create a new column that is called `TotalCheckouts` that is the sum of checkouts for that month.
-
-### Exercise 8
-
-Continue the pipe with `arrange()`. Within `arrange()`, add the argument `CheckoutYear`.
-
-```{r using-dplyr-with-arrow-8, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-8-hint-1, eval = FALSE}
-seattle_pq |> 
+````
+query <- seattle_pq |> 
   filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
   group_by(CheckoutYear, CheckoutMonth) |>
   summarize(TotalCheckouts = sum(Checkouts)) |>
-  arrange(...)
+  arrange(CheckoutYear, CheckoutMonth)
+````
+
+Send this to the Console. CP/CR.
+
+```{r using-dplyr-with-arrow-7}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 5)
 ```
 
-### 
-
-This will arrange the data so that the highest checkout year is at the top of the tibble.
-
-### Exercise 9
-
-Copy previous code and add the argument `CheckoutMonth` to `arrange()`. Make sure to separate the arguments with commas.
-
-```{r using-dplyr-with-arrow-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-9-hint-1, eval = FALSE}
-seattle_pq |> 
-  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
-  group_by(CheckoutYear, CheckoutMonth) |>
-  summarize(TotalCheckouts = sum(Checkouts)) |>
-  arrange(CheckoutYear, ...)
-```
-
-### 
-
-This will arrange the data so that the highest month in every year goes first in order throughout the tibble. This will make the tibble more organized and easier to read.
-
-### Exercise 10
-
-Set this whole code chunk to `query`
-
-```{r using-dplyr-with-arrow-10, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-10-hint-1, eval = FALSE}
+```{r using-dplyr-with-arrow-7-test, include = FALSE}
 query <- seattle_pq |> 
   filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
   group_by(CheckoutYear, CheckoutMonth) |>
@@ -826,17 +815,17 @@ query <- seattle_pq |>
 
 ### 
 
- for arrow data is conceptually similar to **dbplyr**, Chapter 22: you write **dbplyr** code, which is automatically transformed into a query that the Apache Arrow C++ library understands, which is then executed when you call `collect()`. If we print out the query object we can see a little information about what we expect Arrow to return when the execution takes place.
+Writing **dplyr** code for arrow data is conceptually similar to doing the same for **dbplyr**: you write **dplyr** code, which is automatically transformed into a query that the Apache Arrow C++ library understands, which is then executed when you call `collect()`. If we print out the query object we can see a little information about what we expect Arrow to return when the execution takes place.
 
-### Exercise 11
+### Exercise 8
 
 Type `query` and hit "Run Code".
 
-```{r using-dplyr-with-arrow-11, exercise = TRUE}
+```{r using-dplyr-with-arrow-8, exercise = TRUE}
 
 ```
 
-```{r using-dplyr-with-arrow-11-hint-1, eval = FALSE}
+```{r using-dplyr-with-arrow-8-hint-1, eval = FALSE}
 query
 ```
 
@@ -844,17 +833,17 @@ query
 
 Typing the name of the dataset name and running the code will simply output the dataset.
 
-### Exercise 12
+### Exercise 9
 
 Copy previous code and pipe it into `collect()`.
 
-```{r using-dplyr-with-arrow-12, exercise = TRUE}
+```{r using-dplyr-with-arrow-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r using-dplyr-with-arrow-12-hint-1, eval = FALSE}
+```{r using-dplyr-with-arrow-9-hint-1, eval = FALSE}
 query|>
   ...()
 ```
@@ -863,357 +852,7 @@ query|>
 
 Like **dbplyr**, arrow only understands some R expressions, so you may not be able to write exactly the same code you usually would. However, the list of operations and functions supported is fairly extensive and continues to grow; find a complete list of currently supported functions in `?acero`.
 
-### Exercise 13
 
-Start a pipe with `seattle_csv`
-
-```{r using-dplyr-with-arrow-13, exercise = TRUE}
-
-```
-
-```{r using-dplyr-with-arrow-13-hint-1, eval = FALSE}
-seattle_csv
-```
-
-### 
-
-We are going to do the same thing as above but we will change a couple things about the tibble.
-
-### Exercise 14
-
-Continue the pipe with `filter()`. Within `filter()`, add the argument `CheckoutYear == 2021`
-
-```{r using-dplyr-with-arrow-14, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-14-hint-1, eval = FALSE}
-seattle_csv |> 
-  filter(CheckoutYear == ...)
-```
-
-### 
-
-The last code had the `CheckoutYear` greater than or equal to `2018`. This one has it exactly at `2021` so all data will be within this year.
-
-### Exercise 15
-
-Copy previous code and add the argument `MaterialType = "BOOK"` to `filter()`
-
-```{r using-dplyr-with-arrow-15, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-15-hint-1, eval = FALSE}
-seattle_csv |> 
-  filter(CheckoutYear == 2021, MaterialType == "...")
-```
-
-### 
-
-Setting the `MaterialType` to `BOOK` will give us rows where the material type is only book.
-
-### Exercise 16
-
-Continue the pipe with `group_by()`. Within `group_by()`, add the argument `CheckoutMonth`
-
-```{r using-dplyr-with-arrow-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-16-hint-1, eval = FALSE}
-seattle_csv |> 
-  filter(CheckoutYear == 2021, MaterialType == "BOOK") |>
-  group_by(...)
-```
-
-### 
-
-We can only `group_by()` the `CheckoutMonth` because we filtered this dataset to only have data from one year.
-
-### Exercise 17
-
-Continue the pipe with `summarize()`. Within `summarize()`, add `TotalCheckouts = sum(Checkouts)`
-
-```{r using-dplyr-with-arrow-17, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-17-hint-1, eval = FALSE}
-seattle_csv |> 
-  filter(CheckoutYear == 2021, MaterialType == "BOOK") |>
-  group_by(CheckoutMonth) |>
-  summarize(... = sum(...))
-```
-
-### 
-
-The `sum()` function finds the sum of the argument within it.
-
-### Exercise 18
-
-Continue the pipe with `arrange()`. Within `arrange()`, add the argument `CheckoutMonth`.
-
-```{r using-dplyr-with-arrow-18, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-18-hint-1, eval = FALSE}
-seattle_csv |> 
-  filter(CheckoutYear == 2021, MaterialType == "BOOK") |>
-  group_by(CheckoutMonth) |>
-  summarize(TotalCheckouts = sum(Checkouts)) |>
-  arrange(...)
-```
-
-### 
-
-Again, we can only `arrange()` the `CheckoutMonth` because we filtered this dataset to only have data from one year.
-
-
-### Exercise 19
-
-Copy previous code and put `CheckoutMonth` within `desc()` within `arrange()`
-
-```{r using-dplyr-with-arrow-19, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-19-hint-1, eval = FALSE}
-seattle_csv |> 
-  filter(CheckoutYear == 2021, MaterialType == "BOOK") |>
-  group_by(CheckoutMonth) |>
-  summarize(TotalCheckouts = sum(Checkouts)) |>
-  arrange(...(CheckoutMonth))
-```
-
-### 
-
-When adding `desc()` within the `arrange()` function, the data is given to us in a descending order.
-
-### Exercise 20
-
-Continue the pipe with `collect()`
-
-```{r using-dplyr-with-arrow-20, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-20-hint-1, eval = FALSE}
-seattle_csv |> 
-  filter(CheckoutYear == 2021, MaterialType == "BOOK") |>
-  group_by(CheckoutMonth) |>
-  summarize(TotalCheckouts = sum(Checkouts)) |>
-  arrange(desc(CheckoutMonth)) |>
-  ...()
-```
-
-### 
-
-The `collect()` function is used to convert the dataset into a standard data frame or tibble.
-
-### Exercise 21
-
-Finish off the pipe with `system.time()`
-
-```{r using-dplyr-with-arrow-21, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-21-hint-1, eval = FALSE}
-seattle_csv |> 
-  filter(CheckoutYear == 2021, MaterialType == "BOOK") |>
-  group_by(CheckoutMonth) |>
-  summarize(TotalCheckouts = sum(Checkouts)) |>
-  arrange(desc(CheckoutMonth)) |>
-  collect() |> 
-  ...()
-```
-
-### 
-
-This code calculates the number of books checked out in each month of 2021.
-
-Now let’s use our new version of the dataset in which the Seattle library checkout data has been partitioned into 18 smaller parquet files.
-
-### Exercise 22
-
-Copy previous code and switch `seattle_csv` for `seattle_pq`
-
-```{r using-dplyr-with-arrow-22, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-22-hint-1, eval = FALSE}
-
-```
-
-### 
-
-Partitioning improves performance because this query uses `CheckoutYear == 2021` to filter the data, and arrow is smart enough to recognize that it only needs to read 1 of the 18 parquet files.
-
-### Exercise 23
-
-Start a new pipe with `seattle_pq`
-
-```{r using-dplyr-with-arrow-23, exercise = TRUE}
-
-```
-
-```{r using-dplyr-with-arrow-23-hint-1, eval = FALSE}
-seattle_pq
-```
-
-### 
-
-The parquet format improves performance by storing data in a binary format that can be read more directly into memory. The column-wise format and rich metadata means that arrow only needs to read the four columns actually used in the query (`CheckoutYear`, `MaterialType`, `CheckoutMonth`, and `Checkouts`).
-
-### Exercise 24
-
-Continue the pipe with `to_duckdb()`
-
-```{r using-dplyr-with-arrow-24, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-24-hint-1, eval = FALSE}
-seattle_pq |> 
-  ...()
-```
-
-### 
-
-The ~100x speedup in performance is attributable to two factors: the multi-file partitioning, and the format of individual files. This massive difference in performance is why it pays off to convert large CSVs to parquet!
-
-### Exercise 25
-
-Continue the pipe with `filter()`. Within `filter()`, add the arguments `CheckoutYear >= 2018` and `MaterialType == "BOOK"`. Make sure to separate the arguments with commas.
-
-```{r using-dplyr-with-arrow-25, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-25-hint-1, eval = FALSE}
-seattle_pq |> 
-  to_duckdb() |>
-  filter(... >= 2018, MaterialType == "...")
-```
-
-### 
-
-Another advantage of parquet and arrow is it’s very easy to turn an arrow dataset into a DuckDB database by calling `arrow::to_duckdb()`.
-
-### Exercise 26
-
-Continue the pipe with `group_by()`. Within `group_by()`, add the argument `CheckoutYear`.
-
-```{r using-dplyr-with-arrow-26, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-26-hint-1, eval = FALSE}
-seattle_pq |> 
-  to_duckdb() |>
-  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
-  group_by(...)
-```
-
-### 
-
-You’ve been given a taste of the arrow package, which provides a **dplyr** backend for working with large on-disk datasets. It can work with CSV files, its much much faster if you convert your data to parquet.
-
-### Exercise 27
-
-Continue the pipe with `summarize()`. Within `summarize()`, add `TotalCheckouts = sum(Checkouts)`
-
-```{r using-dplyr-with-arrow-27, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-27-hint-1, eval = FALSE}
-seattle_pq |> 
-  to_duckdb() |>
-  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
-  group_by(CheckoutYear) |>
-  summarize(... = sum(...))
-```
-
-### 
-
-Parquet is a binary data format that’s designed specifically for data analysis on modern computers. Far fewer tools can work with parquet files compared to CSV, but it’s partitioned, compressed, and columnar structure makes it much more efficient to analyze.
-
-### Exercise 28
-
-Continue the pipe with `arrange()`. Within `arrange()`, add the argument `desc(CheckoutYear)`.
-
-```{r using-dplyr-with-arrow-28, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-28-hint-1, eval = FALSE}
-seattle_pq |> 
-  to_duckdb() |>
-  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
-  group_by(CheckoutYear) |>
-  summarize(TotalCheckouts = sum(Checkouts)) |>
-  ...(desc(...))
-```
-
-### 
-
-Using `desc()` within `arrange()` will give you the argument in the tibble in descending order instead of ascending. This way, you ccan see the values from greatest to least.
-
-### Exercise 29
-
-Continue the pipe with `collect()`.
-
-```{r using-dplyr-with-arrow-29, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r using-dplyr-with-arrow-29-hint-1, eval = FALSE}
-seattle_pq |> 
-  to_duckdb() |>
-  filter(CheckoutYear >= 2018, MaterialType == "BOOK") |>
-  group_by(CheckoutYear) |>
-  summarize(TotalCheckouts = sum(Checkouts)) |>
-  arrange(desc(CheckoutYear)) |>
-  collect()
-```
-
-### 
-
-The neat thing about `to_duckdb()` is that the transfer doesn’t involve any memory copying, and speaks to the goals of the arrow ecosystem: enabling seamless transitions from one computing environment to another.
 
 ## Cleaning up
 ### 
@@ -1222,10 +861,13 @@ The neat thing about `to_duckdb()` is that the transfer doesn’t involve any me
 
 Now, we need to remove that 9 GB dataset which we downloaded and all the other files which we created. Press "Run Code".
 
-
 ```{r cleaning-up-1, exercise = TRUE}
 unlink(list.files(tempdir(), full.names = TRUE))
 ```
+
+### 
+
+This step is probably unnecessary since R removes the temporary directory it created for the current session every time it exits. But cleaning things up ourselves can't hurt.
 
 ## Summary
 ### 
@@ -1233,7 +875,7 @@ unlink(list.files(tempdir(), full.names = TRUE))
 This tutorial covered [Chapter 22: Arrow](https://r4ds.hadley.nz/arrow.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
 
 
-Read this **arrow** package [vignette](https://arrow.apache.org/docs/r/articles/dataset.html) for an example of how to work with a large dataset.
+Read this **arrow** package [vignette](https://arrow.apache.org/docs/r/articles/dataset.html) for an another example of how to work with a large dataset.
  
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
