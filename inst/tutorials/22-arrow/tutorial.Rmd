@@ -63,15 +63,20 @@ pq_path <- paste0(tempdir(), "/seattle-library-checkouts")
 #   slice_sample(n = 100) |>
 #   write_csv(file = "inst/tutorials/22-arrow/data/test.csv")
 
-# We can now create seattle_csv to use in our test code chunks.
+# We can now create seattle_csv to use in our test code chunks. We can also
+# write out, and then work with, parquet files.
+
+# DK: Arrg! This is currently working locally, but failing on CRAN. Why? Some
+# weirdness in open_dataset()? Something about not being able to do stuff in the
+# data directory? Try this?
+
+file.copy("data/test.csv", csv_path)
 
 seattle_csv <- open_dataset(
-  sources = "data/test.csv", 
+  sources = csv_path, 
   col_types = schema(ISBN = string()),
   format = "csv"
 )
-
-# We can also write out, and then work with, parquet files.
 
 seattle_csv |>
   group_by(CheckoutYear) |>
@@ -95,8 +100,6 @@ query <- seattle_pq |>
 ```
 
 <!-- Maybe do some more exploration of the data at the start. Just diving into dplyr code makes things hard to follow. -->
-
-<!-- How should we handle tests? We might take a small portion of the csv file and then have all the test code work with it. -->
 
 
 ## Introduction
@@ -709,8 +712,6 @@ As a rough guide, arrow suggests that you avoid files smaller than 20MB and larg
 ### Exercise 4
 
 Continue the pipe with `group_by()`. Within `group_by()`, add the arguments `CheckoutYear, CheckoutMonth`.
-
-<!-- Using CheckoutYear and CheckoutMonth is a little concerning for our test cases since we have no ensured/checked that the test data includes rows for every year/month combination. But (presumably!) all the code works regardless . . . -->
 
 ```{r using-dplyr-with-arrow-4}
 question_text(NULL,
