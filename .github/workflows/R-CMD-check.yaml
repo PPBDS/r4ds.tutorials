@@ -52,12 +52,17 @@ jobs:
       - uses: r-lib/actions/setup-renv@v2
         with:
           cache-version: 1
+          
+      # The arrow package generates lots of problems. Perhaps these will go away
+      # once a new version is available on CRAN. In the meantime, the only solution
+      # seems to involve forcing an installation from source.
+          
+      - run: Rscript -e 'renv::install("arrow", type = "source", INSTALL_opts = "--no-lock")'
 
       # Sure seems like check-r-package should take care of this installation, but
       # it does not seem to do so. Note that you can't just include rcmdcheck in the
       # DESCRIPTION file without causing failure to local calls to R CMD check.
 
-      - run: Rscript -e 'renv::install("arrow", type = "source")'
       - run: Rscript -e 'install.packages("rcmdcheck")'
 
       - uses: r-lib/actions/check-r-package@v2
