@@ -22,7 +22,12 @@ Maybe much of the material in Quarto R4DS chapter belongs in RStudio and Github 
 
 Do RStudio and Code and RStudio and Github tutorials link up well together? Note that the former does do an RPubs publishing at the end. 
 
-The arrow library gives real trouble because, I think, that the CRAN version is not built correctly, so we need to build it ourselves from source. But just running install.packages("arrow", type = "source") doesn't do the trick since, by default, R just loads any cached download. Nor does remove.packages("arrow") solves all problems. Instead, you need to delete arrow by hand from any directory in .libPaths(), restart RStudio and then install from source. I hope that this is only a problem for people like me using renv, and not for students.
+The arrow library gives real trouble because, I think, that the CRAN version is not built correctly, so we need to build it ourselves from source. But just running install.packages("arrow", type = "source") doesn't do the trick since, by default, R just loads any cached download. Nor does remove.packages("arrow") solves all problems. Instead, you need:
+  + Check out this directory: /Users/dkane/Library/Caches/org.R-project.R/R/renv/. This will generally lead you to a directory like this: /Users/dkane/Library/Caches/org.R-project.R/R/renv/binary/macos/R-4.4/aarch64-apple-darwin20/repository/. You need to rm -rf the arrow directory from here.
+  + remove.packages("arrow")
+  + Delete arrow by hand from any directory in .libPaths(). There will generally be two, the first specific to the current renv directory and the second more "normal" looking.
+  + Go to a non-env project and run install.packages("arrow", type = "source"). This may take awhile. It should install arrow in the "normal"" directory, which is usually something like /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library. 
+  + restart RStudio and then install from source. And, in fact, it seems like you need to, first, do all this in a non-renv directory! I hope that this is only a problem for people like me using renv, and not for students.
 
 
 ### format_tutorial hackery
