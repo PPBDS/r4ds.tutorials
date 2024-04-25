@@ -58,8 +58,13 @@ jobs:
       # seems to involve forcing an installation from source. This only really 
       # seems necessary for the macOS. Not sure why? 
       
-      - if: runner.os == 'macOS'    
-        run: Rscript -e 'install.packages("arrow", type = "source", INSTALL_opts = "--no-lock")'
+      - name: Install arrow package from source (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          export ARROW_OPENSSL_CXXFLAGS="-I/usr/local/opt/openssl@3/include"
+          export ARROW_OPENSSL_LDFLAGS="-L/usr/local/opt/openssl@3/lib -lssl -lcrypto"
+          export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@3"
+          Rscript -e 'install.packages("arrow", type = "source", INSTALL_opts = "--no-lock")'
 
       # Sure seems like check-r-package should take care of this installation, but
       # it does not seem to do so. Note that you can't just include rcmdcheck in the
