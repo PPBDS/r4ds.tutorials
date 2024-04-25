@@ -55,9 +55,11 @@ jobs:
           
       # The arrow package generates lots of problems. Perhaps these will go away
       # once a new version is available on CRAN. In the meantime, the only solution
-      # seems to involve forcing an installation from source.
-          
-      - run: Rscript -e 'install.packages("arrow", repos = NULL, type = "source", INSTALL_opts = "--no-lock")'
+      # seems to involve forcing an installation from source. This only really 
+      # seems necessary for the macOS. Not sure why? 
+      
+      - if: runner.os == 'macOS'    
+        run: Rscript -e 'install.packages("arrow", type = "source", INSTALL_opts = "--no-lock")'
 
       # Sure seems like check-r-package should take care of this installation, but
       # it does not seem to do so. Note that you can't just include rcmdcheck in the
