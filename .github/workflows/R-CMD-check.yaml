@@ -10,24 +10,36 @@ name: R-CMD-check
 
 jobs:
   R-CMD-check:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: macos-latest,   r: 'release'}
+          - {os: windows-latest, r: 'release'}
+          - {os: ubuntu-latest,  r: 'release'}
+          
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # Using setup-renv below makes pandoc necessary.
 
       - uses: r-lib/actions/setup-pandoc@v2
       
       # Need because of ggalt package, perhaps because it is dependence on 
-      # the proj4 package. libgdal is needed for terra
+      # the proj4 package. libgdal is needed for terra. openssl for arrow.
       
-      - name: Install system dependencies
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libproj-dev 
+          sudo apt-get install -y libproj-dev
           sudo apt-get install -y libgdal-dev
 
       - uses: r-lib/actions/setup-r@v2
@@ -40,6 +52,19 @@ jobs:
       - uses: r-lib/actions/setup-renv@v2
         with:
           cache-version: 1
+          
+      # The arrow package generates lots of problems. Perhaps these will go away
+      # once a new version is available on CRAN. In the meantime, the only solution
+      # seems to involve forcing an installation from source. This only really 
+      # seems necessary for the macOS. Not sure why? 
+      
+      - name: Install arrow package from source (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          export ARROW_OPENSSL_CXXFLAGS="-I/usr/local/opt/openssl@3/include"
+          export ARROW_OPENSSL_LDFLAGS="-L/usr/local/opt/openssl@3/lib -lssl -lcrypto"
+          export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@3"
+          Rscript -e 'install.packages("arrow", type = "source", INSTALL_opts = "--no-lock")'
 
       # Sure seems like check-r-package should take care of this installation, but
       # it does not seem to do so. Note that you can't just include rcmdcheck in the
@@ -48,6 +73,3 @@ jobs:
       - run: Rscript -e 'install.packages("rcmdcheck")'
 
       - uses: r-lib/actions/check-r-package@v2
-
-
-
