@@ -2,14 +2,15 @@
 % Please edit documentation in R/show_file.R
 \name{show_file}
 \alias{show_file}
-\title{Display the contents of a text file or code chunks within the file}
+\title{Display the contents of a text file that match a pattern}
 \usage{
 show_file(path, start = 1, end = NULL, pattern = NULL, chunk = FALSE)
 }
 \arguments{
 \item{path}{A character vector representing the path to the text file.}
 
-\item{start}{An integer specifying the starting row number (inclusive) to consider. Default is 1. If start is negative, then the last start lines and the end of the file are printed, with empty lines at the end removed.}
+\item{start}{An integer specifying the starting row number (inclusive) to consider. Default is 1.
+If negative, it represents the number of lines to print from the end of the file.}
 
 \item{end}{An integer specifying the ending row number (inclusive) to consider. Default is the last row.}
 
@@ -18,15 +19,18 @@ show_file(path, start = 1, end = NULL, pattern = NULL, chunk = FALSE)
 \item{chunk}{A logical value indicating whether to return code lines within R code chunks. Default is FALSE.}
 }
 \value{
-If chunk is FALSE (default), the function prints the contents of the specified
+If chunk is FALSE (default) and start is non-negative, the function prints the contents of the specified
 range of rows that match the pattern (if provided) to the console. If chunk is TRUE,
 the function returns a character vector containing the code lines within R code chunks.
+If start is negative, the function prints the last abs(start) lines and removes blank lines at the end.
 }
 \description{
 This function reads the contents of a text file and either prints the specified range of rows
 that match a given regular expression pattern or returns the code lines within R code chunks.
+If start is a negative number, it prints the last abs(start) lines and removes blank lines at the end.
 }
 \examples{
+\dontrun{
 # Display all rows of a text file
 show_file("path/to/your/file.txt")
 
@@ -38,5 +42,9 @@ show_file("path/to/your/file.txt", pattern = "example")
 
 # Return code lines within R code chunks
 show_file("path/to/your/file.txt", chunk = TRUE)
+
+# Display the last 5 lines of a text file and remove blank lines at the end
+show_file("path/to/your/file.txt", start = -5)
+}
 
 }
