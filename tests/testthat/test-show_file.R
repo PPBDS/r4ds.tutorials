@@ -36,4 +36,11 @@ test_that("show_file function works correctly", {
   
   # Test case 8: End is out of range
   expect_error(show_file(test_file, end = 30), "start and end must be within the valid range of rows.")
+  
+  # Test case 9: Print the last 3 lines of the file and remove blank lines at the end
+  expect_equal(capture.output(show_file(test_file, start = -3)), c(
+    "This is line 8.",
+    "This is line 9.",
+    "This is line 10."
+  ))
 })

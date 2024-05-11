@@ -4,7 +4,7 @@
 #' that match a given regular expression pattern or returns the code lines within R code chunks.
 #'
 #' @param path A character vector representing the path to the text file.
-#' @param start An integer specifying the starting row number (inclusive) to consider. Default is 1.
+#' @param start An integer specifying the starting row number (inclusive) to consider. Default is 1. If start is negative, then the last start lines and the end of the file are printed, with empty lines at the end removed.
 #' @param end An integer specifying the ending row number (inclusive) to consider. Default is the last row.
 #' @param pattern A regular expression pattern to match against each row. Default is NULL (no pattern matching).
 #' @param chunk A logical value indicating whether to return code lines within R code chunks. Default is FALSE.
@@ -35,6 +35,14 @@ show_file <- function(path, start = 1, end = NULL, pattern = NULL, chunk = FALSE
   
   # Read the contents of the file
   contents <- readLines(path)
+  
+  # If start is negative, print the last abs(start) lines and remove blank lines at the end
+  if (start < 0) {
+    selected_contents <- tail(contents, abs(start))
+    selected_contents <- selected_contents[selected_contents != ""]
+    cat(selected_contents, sep = "\n")
+    return(invisible(NULL))
+  }
   
   # If chunk is TRUE, return code lines within R code chunks
   if (chunk) {
