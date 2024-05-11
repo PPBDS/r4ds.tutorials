@@ -2,6 +2,8 @@
 
 * Clean up tutorials which were previously drafts.
 
+* Add show_file().
+
 # r4ds.tutorials 0.2.0
 
 * Re-number chapters to follow changes made in R4DS.
