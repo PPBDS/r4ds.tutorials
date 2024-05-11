@@ -2,7 +2,9 @@
 
 * Clean up tutorials which were previously drafts.
 
-* Add show_file().
+* Start using tutorial.helpers::show_file().
+
+* Require at least tutorial.helpers 0.2.7.9001.
 
 # r4ds.tutorials 0.2.0
 
