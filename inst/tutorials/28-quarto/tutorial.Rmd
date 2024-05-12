@@ -166,9 +166,16 @@ Davids-MBP:first-website dkane$
 
 The default README has an "md" suffix to indicate that it is a **M**ark**d**own document.
 
+
 ### Exercise 5
 
-From the Console, run `library(quarto)`. Then, run `search()`. CP/CR.
+In the Terminal, run `quarto create project website .`.  Don't forget the `.` at the end of the command. This indicates that the new files should be placed in the current working directory. 
+
+This command will usually result in a restart of your RStudio instance. Or it might create a second R instance, also located in the `first-website` directory. If so, close one of the instances. It does not matter which.
+
+<!-- DK: The above is hacky! Is there a better approach? -->
+
+CP/CR.
 
 ```{r creating-files-5}
 question_text(NULL,
@@ -181,19 +188,22 @@ question_text(NULL,
 
 ### 
 
-There are actually three ways to do most things associated with project/website creation.
+Your answer should look like this:
 
-First, we can use RStudio. This is our preferred approach, since it is the easiest for beginning students. Unfortunately, the RStudio interface is somewhat behind in using Quarto effectively.
+````
+Davids-MacBook-Pro:first-website dkane$ quarto create project website .
+Creating project at /Users/dkane/Desktop/projects/first-website:
+  - Created _quarto.yml
+  - Created .gitignore
+  - Created index.qmd
+  - Created about.qmd
+  - Created styles.css
+Davids-MacBook-Pro:first-website dkane$ 
+````
 
-Second, we can use an R package like **quarto** directly. RStudio buttons are, generally, connected to R package commands. 
-
-Third, we can work with Quarto directly at the Terminal. This is often referred to as *working from the command line*. R packages often call Terminal commands behind the scenes. [Current limitations](https://github.com/quarto-dev/quarto-r/issues/101#issuecomment-2093088356) of the **quarto** package force us to use this option.
+Quarto is telling you what it did: creating 5 new files and placing them in the *current* directory. Recall that, on the command line, a `.` refers to the current directory. 
 
 ### Exercise 6
-
-In the Terminal, run `quarto create project website .`.  Don't forget the `.` at the end of the command. This indicates that the new files should be placed in the current working directory. 
-
-This command will usually result in a restart of your RStudio instance. Or it might create a second R instance, also located in the `first-website` directory. If so, close one of the instances. It does not matter which.
 
 In the Console, run `list.files()`. CP/CR.
 
@@ -216,14 +226,12 @@ Your answer should look like:
 [5] "README.md"           "styles.css"         
 ````
 
-The basic set of files necessary for making a Quarto website has been added to the current directory. Note how we can work with the current directory either from the Terminal, with commands like `ls`, or from the Console, with commands like `list.files()`.
-
+The basic set of files necessary for making a Quarto website has been added to the current directory. Note how we can work with the current directory either from the Terminal, with commands like `ls`, or from the Console, with commands like `list.files()`. It is important for you to be comfortable with both approaches, so we intermix them in this tutorial.
 
 
 ### Exercise 7
 
-In the Console, run `list.files( all.files = TRUE)`. CP/CR. 
-
+In the Console, run `list.files(all.files = TRUE)`. CP/CR. 
 
 ```{r creating-files-7}
 question_text(NULL,
@@ -239,12 +247,16 @@ question_text(NULL,
 Your answer should look something like:
 
 ```
-??
+> list.files(all.files = TRUE)
+ [1] "_quarto.yml"         "."                   ".."                  ".git"               
+ [5] ".gitignore"          ".Rhistory"           ".Rproj.user"         "about.qmd"          
+ [9] "first-website.Rproj" "index.qmd"           "README.md"           "styles.css"         
+> 
 ```
 
 ### 
 
-You would get the same set of files if, in the Terminal, you ran `ls -a`. The `-a` ensures that **a**ll the files are listed, included the "hidden" ones which begin with a dot. Recall that `.` means the current directory while `..` means the directory one level above the current one.
+You would get the same set of files if, in the Terminal, you ran `ls -a`. The `-a` ensures that **a**ll the files are listed, included the "hidden" ones which begin with a dot. Recall that `..` means the directory one level above the current one.
 
 ### 
 
@@ -258,7 +270,15 @@ Now that we have created the necessary files, it is useful to examine them one-b
 
 ### Exercise 1
 
-In the Console, run `cat(readLines("_quarto.yml"), sep = "\n")`. CP/CR.
+In the Console, run:
+
+````
+show_file("_quarto.yml")
+````
+
+CP/CR.
+
+Did you get an error when you ran this? Something about 'could not find function "show_file"'? This is because you need to `library(tutorial.helpers)` to have direct acccess to `show_file()`, which is a function in the **tutorial.helpers** package. Of course, you could use the double colon notation --- `tutorial.helpers::show_file("_quarto.yml")` --- as we did in previous tutorials. But, at this stage in your R education, we want/hope you to be getting more comfortable with packages, and knowing yourself when they need to be loaded.
 
 
 ```{r examining-files-1}
@@ -283,7 +303,13 @@ But other values for `type` are possible.
 
 ### Exercise 2
 
-In the Console, run `readr::read_lines("_quarto.yml")[4:10] |> cat(sep = "\n")`. CP/CR.
+In the Console, run:
+
+````
+show_file("_quarto.yml", start = 4, end = 10)
+````
+
+CP/CR.
 
 ```{r examining-files-2}
 question_text(NULL,
@@ -312,9 +338,15 @@ Indents and other whitespace matter in the interpretation of a YAML file.
 
 ### Exercise 3
 
-In the Source pane, open the `_quarto.yml` file. Replace `title: "."` with `title: "A New Website"`. Save the file. 
+In the Source pane, open the `_quarto.yml` file. Replace `title: "."` with `title: "A New Website"`. Save the file. Make sure that the indentation is the same as before `title` should be indented to the same extent as `navbar` below it.
 
-In the Console, run `readr::read_lines("_quarto.yml")[4:10] |> cat(sep = "\n")`. CP/CR.
+In the Console, run:
+
+````
+show_file("_quarto.yml", start = 4, end = 10)
+````
+
+CP/CR.
 
 
 ```{r examining-files-3}
@@ -332,7 +364,13 @@ With luck, future versions of `quarto create project` will use a `dir` argument 
 
 ### Exercise 4
 
-In the Console, run `readr::read_lines("_quarto.yml")[12:16] |> cat(sep = "\n")`. CP/CR.
+In the Console, run:
+
+````
+show_file("_quarto.yml", start = 12, end = 16)
+````
+
+CP/CR.
 
 ```{r examining-files-4}
 question_text(NULL,
@@ -359,7 +397,13 @@ The `css` lines tells Quarto to use the `styles.css` file, located in the same d
 
 ### Exercise 5
 
-In the Console, run `cat(readLines("index.qmd"), sep = "\n")`. CP/CR.
+In the Console, run:
+
+````
+show_file("index.qmd")
+````
+
+CP/CR.
 
 
 ```{r examining-files-5}
@@ -376,6 +420,7 @@ question_text(NULL,
 The answer should look like:
 
 ````
+> show_file("index.qmd")
 ---                               
 title: "."
 ---
@@ -386,13 +431,19 @@ To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
 > 
 ````
 
-Whenver a web browser goes to a directory on the internet, it looks for an `index.html` file. If found, that file is displayed. So, the `index.qmd` file, which we will soon render as `index.html`, is important.
+Whenever a web browser goes to a directory on the internet, it looks for an `index.html` file. If found, that file is displayed. So, the `index.qmd` file, which we will soon render as `index.html`, is important.
 
 ### Exercise 6
 
 Open the `index.qmd` file in the Source pane. Replace `title: "."` with `title: "My First Website"`. Save the file.
 
-In the Console, run `cat(readLines("index.qmd"), sep = "\n")`. CP/CR.
+In the Console, run:
+
+````
+show_file("index.qmd")
+````
+
+CP/CR.
 
 
 ```{r examining-files-6}
@@ -414,7 +465,14 @@ Note that the `title` (`"A New Website"`) in `_quarto.yml` has no necessary conn
 
 ### Exercise 7
 
-In the Console, run `cat(readLines(".gitignore"), sep = "\n")`. CP/CR.
+In the Console, run:
+
+````
+show_file(".gitignore")
+````
+
+CP/CR.
+
 
 ```{r examining-files-7}
 question_text(NULL,
@@ -430,7 +488,14 @@ question_text(NULL,
 Your answer should look like this:
 
 ```
-???
+> show_file(".gitignore")
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+/.quarto/
+> 
 ```
 
 Note that `.gitignore` contains a new line: `/.quarto/`. This was added when we ran `quarto create project`.  The leading `/` escapes the `.`. In other words, we need the leading `/` if we want to ignore the files in a dotted directory.
@@ -438,12 +503,17 @@ Note that `.gitignore` contains a new line: `/.quarto/`. This was added when we 
 In fact, the `.quarto` directory does not yet exist. But the `quarto create project` command wanted to ensure that, once it does, Git would ignore it and its contents.
 
 
-
 ### Exercise 8
 
 We don't want to put all the files on Github. So, add `*Rproj` to the `.gitignore` file. Save the file. 
 
-In the Terminal, run `cat .gitignore`. CP/CR.
+In the Console, run:
+
+````
+show_file(".gitignore")
+````
+
+CP/CR.
 
 ```{r examining-files-8}
 question_text(NULL,
@@ -451,7 +521,7 @@ question_text(NULL,
     allow_retry = TRUE,
     try_again_button = "Edit Answer",
     incorrect = NULL,
-    rows = 3)
+    rows = 6)
 ```
 
 ### 
@@ -493,7 +563,7 @@ question_text(NULL,
 	allow_retry = TRUE,
 	try_again_button = "Edit Answer",
 	incorrect = NULL,
-	rows = 3)
+	rows = 6)
 ```
 
 ### 
@@ -516,7 +586,7 @@ Quarto reports to us what it has done, working on our two `qmd` files and creati
 
 ### 
 
-If you look at the `_site` directory, you will see lots of new files, including `about.hmtl`. Quarto just tells you about the home page for the site, which is `index.html` by default, since that is the file that browsers like Google Chrome always look for.
+If you look at the `_site` directory in the Files tab, you will see lots of new files, including `about.hmtl`. Quarto just tells you about the home page for the site, which is `index.html` by default, since that is the file that browsers like Google Chrome always look for.
 
 
 ### Exercise 2
@@ -555,8 +625,13 @@ We won't discuss the `search.json` and `styles.css` files. The `site_libs` direc
 
 Add `/_site` to the `.gitignore`. Don't forget that the last line of a `.gitignore` should always be blank. Save the file. 
 
-From the Console, run `cat(readLines(".gitignore"), sep = "\n")`. CP/CR.
+In the Console, run:
 
+````
+show_file(".gitignore")
+````
+
+CP/CR.
 
 ```{r rendering-and-previewing-3}
 question_text(NULL,
@@ -603,13 +678,13 @@ Browse at http://localhost:7412/
 GET: /
 ````
 
-The preview command does two things. First, it renders the `qmd` files, just like `render` does. Second, it sets up a viewer --- probably the "Viewer" tab in the Output pane, but possibly your default web browser --- so that you can see what the website looks like.. Click around and check it out!
+The `quarto preview` command does two things. First, it renders the `qmd` files, just like `quarto render` does. Second, it sets up a viewer --- probably your default web browser but possibly the "Viewer" tab in the Output pane  --- so that you can see what the website looks like. Click around and check it out!
 
 The message at the end indicates that Quarto is now "watching" your files to see if you make any changes. If you do, it will automatically update the website.
 
 ### Exercise 5
 
-Look at your website in the browser. (You might need to enter the URL, `http://localhost:7412/` in my case, but yours will be different, by hand.) Click on the "About" link. 
+Look at your website in the browser. (You might need to enter the URL by hand. It is `http://localhost:7412/` in my case, but yours will be different.) Click on the "About" link. 
 
 Now, go to the Terminal. Copy-and-paste everything from the previous invocation of `quarto preview`.
 
@@ -636,7 +711,7 @@ GET: /
 GET: /about.html
 ````
 
-`quarto` is hanging out, still running in the background, monitoring your website. So, when you clicked the "About" link, it "got" the `about.html` page to show to you.
+Quarto is hanging out, still running in the background, monitoring your website. So, when you clicked the "About" link, it went to "GET" the `about.html` page to show to you.
 
 
 ### Exercise 6
@@ -753,7 +828,7 @@ question_text(NULL,
 	allow_retry = TRUE,
 	try_again_button = "Edit Answer",
 	incorrect = NULL,
-	rows = 3)
+	rows = 5)
 ```
 
 ### 
@@ -772,7 +847,7 @@ If you want to stop `quarto preview` you can cancel the command by hitting the r
 ## Publishing
 ### 
 
-To make your website publicly visible, you need to "publish" it to the web. The Quarto documentation provide a [thorough discussion](https://quarto.org/docs/publishing/).
+To make your website publicly visible, you need to "publish" it to the web. The Quarto documentation provides a [thorough discussion](https://quarto.org/docs/publishing/).
 
 ### Exercise 1
 
@@ -807,7 +882,7 @@ Beyond [Quarto Pub](https://quarto.org/docs/publishing/quarto-pub.html), there a
 
 ### Exercise 2
 
-Ensure that all the files in the project have been committed and pushed. (Recall that you have, at least, edited `about.qmd` and that doing so has caused changes in other downsteam files.)
+Ensure that all the files in the project have been committed and pushed. (Recall that you have, at least, edited `about.qmd` and that doing so has caused changes in other downstream files.)
 
 At the Terminal, type: 
 
@@ -906,7 +981,13 @@ There *might* also be some new files, like `_site/robots.txt` and `_site/sitemap
 
 ### Exercise 5
 
-In the Console, run `readr::read_lines("_publish.yml") |> cat(sep = "\n")`. CP/CR.
+In the Console, run:
+
+````
+show_file("_publish.yml")
+````
+
+CP/CR.
 
 ```{r publishing-5}
 question_text(NULL,
@@ -922,8 +1003,8 @@ question_text(NULL,
 Your answer should look something like:
 
 ````
-> readr::read_lines("_publish.yml") |> cat(sep = "\n")
-- source: project                                                                                                                      
+> show_file("_publish.yml")
+- source: project                                                
   quarto-pub:
     - id: cfb2577e-312e-4717-892a-42b92619ebe3
       url: 'https://davidkane.quarto.pub/a-new-website'
@@ -949,14 +1030,21 @@ question_text(NULL,
 
 ### 
 
-The `.quarto` directory is like the `.git` and `.Rproj.user` directories. We will never look or change the files inside of them. Only the relevant programs --- Quarto, R and RStudio --- should work with the contents of these directories. 
+The `.quarto` directory is like the `.git` and `.Rproj.user` directories. We will never look at or change the files inside of them. Only the relevant programs --- Quarto, Git and RStudio --- should work with the contents of these directories. 
 
 
 ### Exercise 7
 
 Open the `_quarto.yml` file in the Source pane. Change `title: "A New Website"` to `title: "A New Website, second edition"`. Save the file.
 
-In the Console, run `readr::read_lines("_quarto.yml")[4:5] |> cat(sep = "\n")`. CP/CR.
+In the Console, run:
+
+````
+show_file("_quarto.yml", start = 4, end = 5)
+````
+
+CP/CR.
+
 
 ```{r publishing-7}
 question_text(NULL,
@@ -972,7 +1060,7 @@ question_text(NULL,
 Your answer should look like:
 
 ````
-> readr::read_lines("_quarto.yml")[4:5] |> cat(sep = "\n")
+> show_file("_quarto.yml", start = 4, end = 5)
 website:                                 
   title: "A New Website, second edition"
 >
@@ -1024,7 +1112,7 @@ question_text(NULL,
 	allow_retry = TRUE,
 	try_again_button = "Edit Answer",
 	incorrect = NULL,
-	rows = 3)
+	rows = 6)
 ```
 
 ### 
@@ -1053,7 +1141,15 @@ Note that, even though we have changed the `title` in the `_quarto.yml` file, th
 
 ### Exercise 10
 
-Add `_publish.yml` to the `.gitignore` file. From the Console, run `readLines(".gitignore")`. CP/CR.
+Add `_publish.yml` to the `.gitignore` file. 
+
+In the Console, run:
+
+````
+show_file(".gitignore")
+````
+
+CP/CR.
 
 ```{r publishing-10}
 question_text(NULL,
@@ -1113,13 +1209,23 @@ diamonds |>
 
 ### 
 
-<!-- DK: Not sure if this step is really necessary, but it does guarantee (?) a simple set of stuff to paste from the Background Jobs tab in a few questions . . . -->
+<!-- DK: Not sure if this step is really necessary, but it is not bad to get students used to closing RStudio and then opening on old project. Indeed, we ought to make them practice such skills! -->
 
-First, however, you should restart RStudio, not just the current R instance. The reason for this is that we want to ensure a clean environment after our prior usage of various Quarto commands. After your restart RStudio, make sure you are within the `first-website` R project.
+First, however, you should restart RStudio, not just the current R instance. The reason for this is that we want to ensure a clean environment after our prior usage of various Quarto commands. After your restart RStudio, make sure you are within the `first-website` R project. (If, on restart, you are not automagically placed in `first-website`, you can [switch to this project via the project dropdown menu](https://docs.posit.co/ide/user/ide/guide/code/projects.html#opening-projects) in the far upper right-hand corner of RStudio.)
 
 ### Exercise 1
 
-Delete everything in `index.qmd` except for the `title: "My First Website"` surrounded by the three dashes, above and below. Run `head index.qmd` in the Terminal. CP/CR.
+Delete everything in `index.qmd` except for the `title: "My First Website"` surrounded by the three dashes, above and below. 
+
+In the Console, run:
+
+````
+show_file("index.qmd")
+````
+
+CP/CR.
+
+(Did you remember to `library(tutorial.helpers)` first? Without this, R can't find he `show_file()` command.)
 
 ```{r adding-a-plot-1}
 question_text(NULL,
@@ -1132,15 +1238,20 @@ question_text(NULL,
 
 ### 
 
-The material bracketed by the three dashes at the very top is called a **YAML Header**. These are very sensitive about all sorts of subtle formatting issues. `head` is a terminal command which shows the top (or "head") of a file.
+The material bracketed by the three dashes at the very top is called a **YAML Header**. These are very sensitive about all sorts of subtle formatting issues. 
 
-As you build the website, we will ask you to share the updated files, using Terminal commands like `head`, `tail` and `cat`. `tail` shows the end (or "tail") of the file. Both `head` and `tail` take an argument `-n` which allows you to specify the number of lines from the file to show.
 
 ### Exercise 2
 
 Create a new code chunk in `index.qmd` and load the **tidyverse** package. Save the file.
 
-From the Terminal, run `cat index.qmd`. CP/CR.
+In the Console, run:
+
+````
+show_file("index.qmd", chunk = TRUE)
+````
+
+CP/CR.
 
 ```{r adding-a-plot-2}
 question_text(NULL,
@@ -1153,20 +1264,15 @@ question_text(NULL,
 
 ### 
 
-Your answer should look like:
+There are actually three ways to do most things associated with project/website creation.
 
-````
-Davids-MacBook-Pro:first-website dkane$ cat index.qmd 
----
-title: "My First Website"
----
+First, we can use RStudio. This is our preferred approach, since it is the easiest for beginning students. Unfortunately, the RStudio interface is somewhat behind in using Quarto effectively.
 
-```{r}
-library(tidyverse)
-```
+Second, we can use an R package like **quarto** directly. RStudio buttons are, generally, connected to R package commands. 
 
-Davids-MacBook-Pro:first-website dkane$
-````
+Third, we can work with Quarto directly at the Terminal. This is often referred to as *working from the command line*. R packages often call Terminal commands behind the scenes. [Current limitations](https://github.com/quarto-dev/quarto-r/issues/101#issuecomment-2093088356) of the **quarto** package force us to use this option.
+
+
 
 ### Exercise 3
 
@@ -1229,6 +1335,8 @@ GET: /index.html
 
 In other words, RStudio figures that, if you are rendering an `index.qmd` which is part of a Quarto website project, you probably want to preview your new homepage. So, it calls `quarto preview` behind the scenes. The "Background Jobs" tab is where RStudio reports to you what is happening in the background.
 
+<!-- This page probably appeared in your Viewer tab in the Output pane even though `quarto render` generally  -->
+
 
 ### Exercise 4
 
@@ -1283,7 +1391,15 @@ diamonds |>
          y = "Price")
 ````
 
-Save the file. From the Terminal, run `tail index.qmd`. CP/CR.
+Save the file. 
+
+In the Console, run:
+
+````
+show_file("index.qmd", chunk = TRUE)
+````
+
+CP/CR.
 
 ```{r adding-a-plot-5}
 question_text(NULL,
@@ -1296,7 +1412,7 @@ question_text(NULL,
 
 ### 
 
-Render the page. You will see a nice plot, along with a lot of junk code and messages. Note that RStudio might only redirect you to the plot the first time you render `index.qmd`. Going forward, you may need to affirmatively click on the correct tab on your browser.
+`Command/Ctrl + Shift + K`. You will see a nice plot, along with a lot of junk code and messages. Note that RStudio might only redirect you to the plot the first time you render `index.qmd`. Going forward, you may need to affirmatively click on the correct tab on your browser or on the Viewer tab in the Output pane to see the newly rendered page.
 
 
 ### Exercise 6
@@ -1311,8 +1427,13 @@ Add these code chunk options to the top of the first code chunk, the one which l
 
 `#| label: setup`
 
+In the Console, run:
 
-In the Terminal, run `head index.qmd `. CP/CR.
+````
+show_file("index.qmd", pattern = "#")
+````
+
+CP/CR.
 
 ```{r adding-a-plot-6}
 question_text(NULL,
@@ -1340,7 +1461,13 @@ In the second code chunk, add the following options:
 
 `#| label: diamonds-plot`
 
-Save the changes to `index.qmd`. In the Terminal, run `grep "#" index.qmd`. CP/CR.
+In the Console, run:
+
+````
+show_file("index.qmd", pattern = "#")
+````
+
+CP/CR.
 
 ```{r adding-a-plot-7}
 question_text(NULL,
@@ -1353,30 +1480,21 @@ question_text(NULL,
 
 ### 
 
-Grepping `#` should just pull out all the code chunk options.
-
-
-<!-- DK: This gets messed up when printing (for the same reason as the above stuff?). -->
-
-<!-- ```` -->
-<!-- Davids-MBP:first-website dkane$ grep "#" index.qmd  -->
-<!-- #| message: false -->
-<!-- #| echo: false -->
-<!-- #| label: setup -->
-<!-- #| echo: false -->
-<!-- #| label: diamonds-plot -->
-<!-- Davids-MBP:first-website dkane$  -->
-<!-- ```` -->
-
 Assigning labels to code chunks helps keeps you organized and helps others understand your code. You cannot assign the same label to multiple code chunks. 
 
 Your chunk labels should be short but evocative and should not contain spaces. We recommend using dashes (`-`) to separate words (instead of underscores, `_`) and avoiding other special characters in chunk labels.
 
 ### Exercise 8
 
-Render the `index.qmd` with the "Render" button. It should show the plot. You could also render with `Command/Ctrl + Shift + K`.
+Render the `index.qmd` with the "Render" button. It should show the plot. As always, you should render with `Command/Ctrl + Shift + K`. Shortcut keys are lit!
 
-In the Terminal, run `cat index.qmd`. CP/CR.
+In the Console, run:
+
+````
+show_file("index.qmd")
+````
+
+CP/CR.
 
 ```{r adding-a-plot-8}
 question_text(NULL,
@@ -1400,7 +1518,13 @@ execute:
   echo: false
 ````
 
-In the Terminal, run `head -n 5 index.qmd`. CP/CR.
+In the Console, run:
+
+````
+show_file("index.qmd", end = 5)
+````
+
+CP/CR.
 
 ```{r adding-a-plot-9}
 question_text(NULL,
@@ -1416,13 +1540,12 @@ question_text(NULL,
 Your answer should look like:
 
 ````
-Davids-MBP:first-website dkane$ head -n 5 index.qmd
+> show_file("index.qmd", end = 5)
 ---
 title: "My First Website"
 execute: 
   echo: false
 ---
-Davids-MBP:first-website dkane$ 
 ````
 
 If you added `echo: false` as an `execute` argument in `_quarto.yml`, this would affect all the QMD files in the entire project. In other words, you can set an option like `echo` in three places: individual code chunk, entire QMD file, or entire project. Options set at higher levels can be overruled by changing the setting at a lower level.
@@ -1465,13 +1588,20 @@ Third, we have the website itself, the files which other people can see. These r
 ## Adding text
 ### 
 
-<!-- DK: Could drop this section withoit losing much. -->
-
 Quarto allows for a combination of plain text and R code. This same feature allows you to add plain text to your website.
 
 ### Exercise 1
 
-Open `about.qmd `. Delete all the current text, except for the YAML header. Ensure that the `title` is `"About"`. Add `## About Me` as the first (and only) line of text. Render the QMD. In the Terminal, run `cat about.qmd`. CP/CR.
+Open `about.qmd `. Delete all the current text, except for the YAML header. Ensure that the `title` is `"About"`. Add `## About Me` as the first (and only) line of text. Render the QMD. 
+
+In the Console, run:
+
+````
+show_file("about.qmd")
+````
+
+CP/CR.
+
 
 ```{r adding-text-1}
 question_text(NULL,
@@ -1492,13 +1622,19 @@ Keep in mind that your browser now has two tabs which show your website. First, 
 
 ### Exercise 2
 
-Write a one sentence description yourself. Write it below the header. Include your name and school, either the one you attend or one from which you have graduated. Write until the end of the line, i.e. do not use the "Enter" key to wrap text. When you are finished, render the QMD. Example:
+Write a one sentence description yourself. Write it below the header. Include your name and school, either the one you attend or one from which you have graduated. Write until the end of the line, i.e. do not use the `Enter` key to wrap text. When you are finished, render the QMD. Example:
 
 ````
 My name is David Kane, and I graduated from Williams College.
 ````
 
-In the Terminal, run `cat about.qmd`. CP/CR.
+In the Console, run:
+
+````
+show_file("about.qmd")
+````
+
+CP/CR.
 
 ```{r adding-text-2}
 question_text(NULL,
@@ -1516,13 +1652,21 @@ You can have a Quarto document without a YAML header, if you like. You can also 
 
 ### Exercise 3
 
-Let's bold your name and italicize your school's name. In the description you have already written, surround your name with two asterisks, `**`, on both sides. Let's also put a single asterick, `*`, around both sides of your school. Example:
+Let's bold your name and italicize your school's name. In the description you have already written, surround your name with two asterisks, `**`, on both sides. Let's also put a single asterisk, `*`, around both sides of your school. Example:
 
 ````
 My name is **David Kane**, and I graduated from *Williams College*.
 ````
 
-Save the file. Render the QMD. In the Terminal, run `cat about.qmd`. CP/CR.
+`Command/Ctrl + Shift + K`
+
+In the Console, run:
+
+````
+show_file("about.qmd")
+````
+
+CP/CR.
 
 ```{r adding-text-3}
 question_text(NULL,
@@ -1530,7 +1674,7 @@ question_text(NULL,
     allow_retry = TRUE,
     try_again_button = "Edit Answer",
     incorrect = NULL,
-    rows = 3)
+    rows = 6)
 ```
 
 ### 
@@ -1547,7 +1691,7 @@ superscript^2^ subscript~2~
 [underline]{.underline} [small caps]{.smallcaps}
 ````
 
-<!-- DK: Can we make the format of the above look like the below? Like put them both in boxes? Right now, only the raw text is in a box, because of the four backticks. -->
+<!-- Can we make the format of the above look like the below? Like put them both in boxes? Right now, only the raw text is in a box, because of the four backticks. -->
 
 These look like:
 
@@ -1560,7 +1704,7 @@ superscript^2^ subscript~2~
 
 ### Exercise 4
 
-Let's create text which is also a hyperlink to the a website at the bottom `about.qmd`. Enclose the text "Kane's Free Data Science Bootcamp" in brackets `[]`. Then, without a space intervening, add parentheses `()` which enclose a link to the relevant website: `https://bootcamp.davidkane.info`.
+Let's create text which is also a hyperlink to the a website at the bottom of `about.qmd`. Enclose the text "Kane's Free Data Science Bootcamp" in brackets `[]`. Then, without a space intervening, add parentheses `()` which enclose a link to the relevant website: `https://bootcamp.davidkane.info`.
 
 It should look like:
 
@@ -1568,9 +1712,15 @@ It should look like:
 [Kane's Free Data Science Bootcamp](https://bootcamp.davidkane.info)
 ````
 
-### 
+`Command/Ctrl + Shift + K`. (Recall that rendering automatically saves the file first.)
 
-Render the QMD. In the Terminal, run `tail about.qmd`. CP/CR.
+In the Console, run:
+
+````
+show_file("about.qmd", pattern = "Kane")
+````
+
+CP/CR.
 
 
 ```{r adding-text-4}
@@ -1602,7 +1752,7 @@ question_text(NULL,
 
 Troubleshooting Quarto documents can be challenging because you are no longer in an interactive R environment, and you will need to learn some new tricks. Additionally, the error could be due to issues with the Quarto document itself or due to the R code in the Quarto document.
 
-If the errors are due to the R code in the document, the first thing you should always try is to recreate the problem in an interactive session. Restart R, then “Run all chunks”, either from the Code menu, under Run region or with the keyboard shortcut `Ctrl + Alt + R`. If you’re lucky, that will recreate the problem, and you can figure out what’s going on interactively.
+If the errors are due to the R code in the document, the first thing you should always try is to recreate the problem in an interactive session. Render the QMD. If you’re lucky, that will recreate the problem, and you can figure out what’s going on interactively.
 
 ## Adding new pages
 ### 
@@ -1634,7 +1784,14 @@ You should see `index.qmd`, `about.qmd`, and `sources.qmd` in the output. If not
 
 In the `sources.qmd` file, below the YAML header, add the text `An overview of sources used in my project.` Save the file.
 
-In the Terminal, run the command `grep overview sources.qmd`. CP/CR.
+In the Console, run:
+
+````
+show_file("sources.qmd", pattern = "overview")
+````
+
+CP/CR.
+
 
 ```{r adding-new-pages-2}
 question_text(NULL,
@@ -1660,7 +1817,13 @@ Add the following sentence:
 These are my sources. Here are some challenges. Quarto websites are awesome.
 ````
 
-Render `sources.qmd`. Run `cat sources.qmd` in the Terminal. CP/CR.
+In the Console, run:
+
+````
+show_file("sources.qmd")
+````
+
+CP/CR.
 
 ```{r adding-new-pages-3}
 question_text(NULL,
@@ -1698,7 +1861,7 @@ To add `sources.qmd` as a new page which will appear on the menu, we need to edi
 
 ```
 website:
-  title: "first-website"
+  title: "A New Website, second edition"
   navbar:
     left:
       - href: index.qmd
@@ -1716,11 +1879,17 @@ The `text` line tells Quarto to format the link in the **nav**igation tool**bar*
 
 Since `- about.qmd` appears without either the `href` or `text` argument, Quarto assumes that you want to the link to be the same as the title of the QMD. 
 
-<!-- DK: Is this true? Explain this better. -->
+<!-- Is this true? Explain this better. -->
 
 ### 
 
-In the Terminal, run `cat _quarto.yml`. CP/CR
+In the Console, run:
+
+````
+show_file("_quarto.yml")
+````
+
+CP/CR.
 
 ```{r adding-new-pages-4}
 question_text(NULL,
@@ -1728,7 +1897,7 @@ question_text(NULL,
     allow_retry = TRUE,
     try_again_button = "Edit Answer",
     incorrect = NULL,
-    rows = 3)
+    rows = 8)
 ```
 
 ### 
@@ -1822,7 +1991,13 @@ Change `_quarto.yml` so that the `navbar` section looks like this
       - about.qmd
 ````        
 
-In the Terminal, run `cat _quarto.yml`. CP/CR.
+In the Console, run:
+
+````
+show_file("_quarto.yml")
+````
+
+CP/CR.
 
 ```{r adding-new-pages-8}
 question_text(NULL,
@@ -1844,7 +2019,7 @@ Go the Git tab, then commit and push your new changes to Github. Include a descr
 
 From the Terminal, run `git log -n 1`. CP/CR. 
 
-(You will probably need to stop the preview. But, if you want to be tricky, you can start a new Terminal by clicking on the samll triangle next to the Terminal triangle --- below the Terminal tab in the Console pane --- and selecting "New Terminal".)
+(You will probably need to stop the preview. But, if you want to be tricky, you can start a new Terminal by clicking on the small triangle next to the Terminal triangle --- below the Terminal tab in the Console pane --- and selecting "New Terminal".)
 
 ```{r adding-new-pages-9}
 question_text(NULL,
@@ -1892,7 +2067,13 @@ Though an R script will use the libraries you already have loaded if executed in
 
 In `process_data.R`, load the **tidyverse** package using the `library()` command. 
 
-In the Terminal, run `cat process_data.R`. CP/CR.
+In the Console, run:
+
+````
+show_file("process_data.R")
+````
+
+CP/CR.
 
 ```{r using-an-rds-file-2}
 question_text(NULL,
@@ -1915,7 +2096,13 @@ diamonds |>
   filter(color == "D") 
 ````
 
-In the Terminal, run `cat process_data.R`. CP/CR.
+In the Console, run:
+
+````
+show_file("process_data.R")
+````
+
+CP/CR.
 
 ```{r using-an-rds-file-3}
 question_text(NULL,
@@ -1938,9 +2125,9 @@ diamonds |>
   filter(color == "D") 
 ````
 
-You should try to learn how to work in two ways. First is interactively, trying things at the Console. Seeing what happens. Going line-by-line. Second is writtenly, adding code to your script/QMD and then executing all the code at once. 
+You should try to learn how to work in two ways. First is interactively, trying things at the Console. Seeing what happens. Going line-by-line. Second is writtenly --- yes, I just made up this word --- adding code to your script/QMD and then executing all the code at once. 
 
-<!-- DK: Could explain this better, maybe illustrate some step-by-step examples. Maybe in another tutorial, like Chaoter 29? -->
+<!-- Could explain this better, maybe illustrate some step-by-step examples. Maybe in another tutorial, like Chapter 29? -->
 
 Of course, the best approach is to use these two methods during your analysis, depending on which is best for the next step you need to take. 
 
@@ -1999,7 +2186,7 @@ Your answer should look like this:
 > diamonds |> 
 +   filter(z != 0) |> 
 +   filter(color == "D") 
-# A tibble: 6,774 × 10
+ A tibble: 6,774 × 10
    carat cut       color clarity depth table price     x     y     z
    <dbl> <ord>     <ord> <ord>   <dbl> <dbl> <int> <dbl> <dbl> <dbl>
  1  0.23 Very Good D     VS2      60.5    61   357  3.96  3.97  2.4 
@@ -2012,8 +2199,8 @@ Your answer should look like this:
  8  0.3  Ideal     D     SI1      62.5    57   552  4.29  4.32  2.69
  9  0.3  Ideal     D     SI1      62.1    56   552  4.3   4.33  2.68
 10  0.24 Very Good D     VVS1     61.5    60   553  3.97  4     2.45
-# ℹ 6,764 more rows
-# ℹ Use `print(n = ...)` to see more rows
+  ℹ 6,764 more rows
+  ℹ Use `print(n = ...)` to see more rows
 > 
 ````
 
@@ -2034,7 +2221,7 @@ D_diamonds <- diamonds |>
 
 Source the new script. CP/CR.
 
-```{r using-an-rds-file-ex-6}
+```{r using-an-rds-file-6}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -2069,7 +2256,7 @@ Second, the rows of the tibble are not shown because the pipe no longer just vom
 
 From the Console, run `ls()`. CP/CR.
 
-```{r using-an-rds-file-ex-7}
+```{r using-an-rds-file-7}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -2099,7 +2286,7 @@ Restart your R session again. You can never restart your R session too often! Th
 
 From the Console, run `ls()`. CP/CR.
 
-```{r using-an-rds-file-ex-8}
+```{r using-an-rds-file-8}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -2124,7 +2311,7 @@ character(0)
 
 Source `process_data.R`. From the Console, run `ls()`. CP/CR.
 
-```{r using-an-rds-file-ex-9}
+```{r using-an-rds-file-9}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -2145,7 +2332,7 @@ From the Console, run `write_rds(D_diamonds, file = "clean_data.rds")`. This fun
 
 From the Console, run `list.files(pattern = "clean")`. CP/CR.
 
-```{r using-an-rds-file-ex-10}
+```{r using-an-rds-file-10}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -2166,7 +2353,13 @@ Your answer should look like:
 
 The `pattern` argument to `list.files()` allows us to only look for files which match a regular expression.
 
-There are now three objects associated with our tibble. The first is the script, `process_data.R`, which we used to create it. The second is the R object, `D_diamonds`, which only exists in the R session in which it was created. The third is the RDS object, `clean_data.rds`, which contains the data and which continues to exist even after the R session ends. Indeed, the RDS object can be committed and pushed to Github. (But be careful of pushing large objects (greater than 100 megabytes) to Github.)
+There are now three objects associated with our tibble: 
+
+* The script, `process_data.R`, which we used to create it. 
+
+* The R object, `D_diamonds`, which only exists in the R session in which it was created. 
+
+* The RDS object, `clean_data.rds`, which contains the data and which continues to exist even after the R session ends. Indeed, the RDS object can be committed and pushed to Github. (But be careful of pushing large objects (greater than 100 megabytes) to Github.)
 
 
 ### Exercise 11
@@ -2176,7 +2369,7 @@ Restart your R session with `Command/Ctrl + Shift + 0`. When R restarts, you sho
 At the Console, run `read_rds("clean_data.rds")`. CP/CR.
 
 
-```{r using-an-rds-file-ex-11}
+```{r using-an-rds-file-11}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -2191,7 +2384,7 @@ Your answer should look like:
 
 ````
 > read_rds("clean_data.rds")
-# A tibble: 6,774 × 10
+  A tibble: 6,774 × 10
    carat cut       color clarity depth table price     x     y     z
    <dbl> <ord>     <ord> <ord>   <dbl> <dbl> <int> <dbl> <dbl> <dbl>
  1  0.23 Very Good D     VS2      60.5    61   357  3.96  3.97  2.4 
@@ -2204,8 +2397,8 @@ Your answer should look like:
  8  0.3  Ideal     D     SI1      62.5    57   552  4.29  4.32  2.69
  9  0.3  Ideal     D     SI1      62.1    56   552  4.3   4.33  2.68
 10  0.24 Very Good D     VVS1     61.5    60   553  3.97  4     2.45
-# ℹ 6,764 more rows
-# ℹ Use `print(n = ...)` to see more rows
+  ℹ 6,764 more rows
+  ℹ Use `print(n = ...)` to see more rows
 > 
 ````
 
@@ -2222,9 +2415,15 @@ write_rds(D_diamonds, file = "clean_data.rds")
 
 It is separate from, and unconnected to, the pipe which creates the `D_diamonds` tibble. 
 
-From the Terminal, run `cat process_data.R`. CP/CR.
+In the Console, run:
 
-```{r using-an-rds-file-ex-12}
+````
+show_file("process_data.R")
+````
+
+CP/CR.
+
+```{r using-an-rds-file-12}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -2235,20 +2434,6 @@ question_text(NULL,
 
 ### 
 
-Your answer should look like this:
-
-````
-Davids-MBP:first-website dkane$ cat process_data.R
-library(tidyverse)
-
-D_diamonds <- diamonds |> 
-  filter(z != 0) |> 
-  filter(color == "D") 
-
-write_rds(D_diamonds, file = "clean_data.rds")
-Davids-MBP:first-website dkane$ 
-````
-
 This is a common approach to scripts which are parts of larger projects. They finish by creating an object which is then used by other code in the project.
 
 ### Exercise 13
@@ -2257,7 +2442,7 @@ Source `process_data.R`. The easiest way of doing so, as before, is to open the 
 
 In the Terminal, run `ls clean*`. CP/CR.
 
-```{r using-an-rds-file-ex-13}
+```{r using-an-rds-file-13}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -2278,7 +2463,13 @@ Davids-MBP:first-website dkane$
 
 `clean*` is a regular expression which matches any file which begins with the letters `clean`. 
 
-<!-- DK: Awkward ending. -->
+Think about the overall workflow.
+
+* First, we worked interactively, just playing around with plots in `index.qmd`, trying to figure out what works.
+
+* Second, once we had a good idea of what we were doing, we moved to a script, `process_data.R`. We don't want that code to be re-run every time we update `index.qmd`. So, we move some of the work to a script, to be run interactively whenever we need to change something.
+
+* Third, we changed the script so that its final output was a permanent object. Later parts of the process can just begin with `clean_data.rds`.
 
 
 ## Using a PNG file
@@ -2309,7 +2500,13 @@ Though an R script will use the libraries you already have loaded if executed in
 
 In the R script, load the **tidyverse** package using the `library()` command. 
 
-In the Terminal, run `cat make_plot.R`. CP/CR.
+In the Console, run:
+
+````
+show_file("make_plot.R")
+````
+
+CP/CR.
 
 ```{r using-a-png-file-2}
 question_text(NULL,
@@ -2341,7 +2538,13 @@ x |>
          y = "Price")
 ````
 
-In the Terminal, run `cat make_plot.R`. CP/CR.
+In the Console, run:
+
+````
+show_file("make_plot.R")
+````
+
+CP/CR.
 
 ```{r using-a-png-file-3}
 question_text(NULL,
@@ -2354,30 +2557,13 @@ question_text(NULL,
 
 ### 
 
-The answer should look like this:
-
-````
-Davids-MBP:first-website dkane$ cat make_plot.R 
-library(tidyverse)
-
-x <- read_rds("clean_data.rds")
-
-x |> 
-  ggplot(aes(x = carat, y = price, color = cut)) + 
-    geom_point() +
-    scale_y_continuous(labels = scales::dollar) +
-    labs(title = "Prices and Sizes for Diamonds of Color D",
-         subtitle = "'Round' carat values like 1, 1.5 and 2 are more common.",
-         x = "Carat",
-         y = "Price")
-Davids-MBP:first-website dkane$ 
-````
-
 The code does two things. 
 
 First, it reads the tibble from `clean_data.rds` and assigns that tibble to `x`. (The fact that, in our `process_data.R` script, this data was named `D_diamonds` is irrelevant. `write_rds()` just saves the tibble, not the *name* of the tibble.)
 
 Second, it starts a new pipe with `x` and then creates our plot. Because the plot is not assigned to an object, it is just spat back out, and then shows up in the Plots tab.
+
+<!-- DK: Does it show up in the Plot tab or the Viewer tab? Why? -->
 
 ### Exercise 4
 
@@ -2417,7 +2603,13 @@ At this point, we face the same problem as we faced when working on `process_dat
 
 Edit `make_plot.R` in two ways. First, assign the plot to an object named `D_plot`. Second, insert, after the graphic pipe, `ggsave("size_v_weight.png", D_plot)`. 
 
-From the Terminal, run `cat make_plot.R`. CP/CR. 
+In the Console, run:
+
+````
+show_file("make_plot.R")
+````
+
+CP/CR.
 
 ```{r using-a-png-file-5}
 question_text(NULL,
@@ -2429,27 +2621,6 @@ question_text(NULL,
 ```
 
 ### 
-
-Your answer should look like:
-
-````
-Davids-MBP:first-website dkane$ cat make_plot.R 
-library(tidyverse)
-
-x <- read_rds("clean_data.rds")
-
-D_plot <- x |> 
-  ggplot(aes(x = carat, y = price, color = cut)) + 
-    geom_point() +
-    scale_y_continuous(labels = scales::dollar) +
-    labs(title = "Prices and Sizes for Diamonds of Color D",
-         subtitle = "'Round' carat values like 1, 1.5 and 2 are more common.",
-         x = "Carat",
-         y = "Price")
-
-ggsave("size_v_weight.png", D_plot)
-Davids-MBP:first-website dkane$ 
-````
 
 As with `clean_data.R`, we have created a script which encapsulates, from start-to-finish, a discrete part of our analysis. In this case, we start from the tibble saved in `clean_data.rds` and finish by saving a graphic in `size_v_weight.png`.
 
@@ -2486,7 +2657,13 @@ That is a lot of files! Note the new script `make_plot.R`, the object with which
 
 Open the `index.qmd` file. In the `setup` code chunk, add `library(knitr)`. In the second code chunk, delete all the plotting code. Replace it all with `knitr::include_graphics("size_v_weight.png")`. Save the file.
 
-In the Terminal, run `cat index.qmd`. CP/CR.
+In the Console, run:
+
+````
+show_file("index.qmd")
+````
+
+CP/CR.
 
 ```{r using-a-png-file-7}
 question_text(NULL,
@@ -2502,6 +2679,8 @@ question_text(NULL,
 Your answer should look like this:
 
 <!-- DK: Very annoying that we need this hack, but if you just include this text with four backticks, R still runs the R code, generating two failures: duplicate "setup" code chunk names and non-existent PNG file.  -->
+
+<!-- DK: Or maybe it is overkill to show what the answer looks like. Students mostly got it right anyway! -->
 
 ```{r file = "images/index-example.txt", echo = TRUE, eval = FALSE}
 ```
