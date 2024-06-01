@@ -36,8 +36,6 @@ plot_geom <- penguins |>
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- DK: Add drop_na() and formula = y ~ x to make messages and warnings go away in first two plots. -->
-
 <!-- DK: Add test chunks. -->
 <!-- PC: Test chunks are not needed for many of them due to much of this tutorial being focused on creating pre-made graphs -->
 
@@ -446,7 +444,13 @@ penguins |>
 
 ### 
 
+The `"lm"` value for `method` stands for **l**inear **m**odel, meaning that R will fit a straight line through the points. 
+
+Note that warning about "`geom_smooth()` using formula = 'y ~ x'". Since we failed to specify an argument for `formula`, `geom_smooth()` provides a sensible default, using the `x` and `y` variables specified in `aes()` above. But `geom_smooth()` thinks we are sloppy for not confirming this decision, so it provides a warning. As always, we want to address any warnings or messages which our code issues.
+
 ### Exercise 16
+
+Address the warning by adding `formula = y ~ x` to the call to `geom_smooth()`. As always, different arguments to a function must be separated by a comma.
 
 ```{r creating-first-ggplot-16, exercise = TRUE}
 
@@ -455,7 +459,8 @@ penguins |>
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r creating-first-ggplot-16-hint-1, eval = FALSE}
-
+... +
+  geom_smooth(method = "lm", ... = y ~ x) 
 ```
 
 ```{r creating-first-ggplot-16-test, include = FALSE}
@@ -470,7 +475,7 @@ penguins |>
 
 ### 
 
-`geom_smooth()` creates a fitted line or curve which can help identify trends and patterns in data. It offers different smoothing methods like linear or polynomial regression and loess smoothing.
+`geom_smooth()` creates a fitted line or curve which can help identify trends and patterns in data. It offers different smoothing methods like linear or polynomial regression and loess smoothing. The shaded error around the fitted line represents uncertainty about the estimate.
 
 
 ### Exercise 17
