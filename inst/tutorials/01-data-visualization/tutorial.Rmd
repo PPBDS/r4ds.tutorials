@@ -36,6 +36,8 @@ plot_geom <- penguins |>
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- DK: Add drop_na() and formula = y ~ x to make messages and warnings go away in first two plots. -->
+
 <!-- DK: Add test chunks. -->
 <!-- PC: Test chunks are not needed for many of them due to much of this tutorial being focused on creating pre-made graphs -->
 
@@ -55,21 +57,30 @@ This tutorial covers [Chapter 1: Data visualization](https://r4ds.hadley.nz/data
 ## Creating first ggplot
 ### 
 
+<!-- DK: Make the warnings go away! -->
+
+<!-- DK: The formatting of the hints is bad/inconsistent. The tests are not consistent with the desired answers. Sloppy! -->
+
 Our ultimate goal in this section is to create a plot displaying the relationship between flipper lengths and body masses of these penguins, taking into consideration the species of the penguin.
 
 Below is what the end product will look like:
 
 ```{r}
-intro_p <-penguins |>
-  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g)) +
-  geom_point(mapping = aes(color = species, shape = species)) +
-  geom_smooth(method = "lm")+
-  labs( title = "Body mass and flipper length",
-        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
-        x = "Flipper length (mm)", 
-        y = "Body mass (g)",
-        color = "Species", 
-        shape = "Species")
+#| message: false
+#| warning: false
+
+intro_p <- penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g)) +
+    geom_point(mapping = aes(color = species, 
+                             shape = species)) +
+    geom_smooth(method = "lm") +
+    labs(title = "Body mass and flipper length",
+         subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+         x = "Flipper length (mm)", 
+         y = "Body mass (g)",
+         color = "Species", 
+         shape = "Species")
 
 intro_p
 ```
@@ -84,6 +95,10 @@ Load the **palmerpenguins** package using `library()`.
 
 ```{r creating-first-ggplot-1-hint-1, eval = FALSE}
 library(...)
+```
+
+```{r creating-first-ggplot-1-test, include = FALSE}
+library(palmerpenguins)
 ```
 
 ### 
@@ -122,6 +137,10 @@ Run the `library()` command with `ggthemes` as the argument.
 library(...)
 ```
 
+```{r creating-first-ggplot-3-test, include = FALSE}
+library(ggthemes)
+```
+
 ### 
 
 We can infer from the name of the package itself that `ggthemes` is used to make plots created with the **ggplot2** package look nicer.
@@ -136,6 +155,10 @@ Type `penguins` and hit Run Code.
 ```
 
 ```{r creating-first-ggplot-4-hint-1, eval = FALSE}
+penguins
+```
+
+```{r creating-first-ggplot-4-test, include = FALSE}
 penguins
 ```
 
@@ -155,9 +178,13 @@ Run `glimpse()` with `penguins` as its argument.
 glimpse(...)
 ```
 
+```{r creating-first-ggplot-5-test, include = FALSE}
+glimpse(penguins)
+```
+
 ### 
 
-When we run `glimpse(penguins)`, we see so many records or I shall say observations`: a set of measurements made under similar conditions.
+When we run `glimpse(penguins)`, we see so many records (or observations): a set of measurements made under similar conditions.
 
 ### Exercise 6
 
@@ -168,6 +195,10 @@ The key command for making plots is `ggplot()` from the **ggplot2** package. Run
 ```
 
 ```{r creating-first-ggplot-6-hint-1, eval = FALSE}
+ggplot(data = penguins)
+```
+
+```{r creating-first-ggplot-6-test, include = FALSE}
 ggplot(data = penguins)
 ```
 
@@ -191,6 +222,10 @@ Run `sqrt(16)`
 sqrt(16)
 ```
 
+```{r creating-first-ggplot-7-test, include = FALSE}
+sqrt(16)
+```
+
 ### Exercise 8
 
 Run `16 |> sqrt()`
@@ -203,13 +238,18 @@ Run `16 |> sqrt()`
 16 |> sqrt()
 ```
 
+```{r creating-first-ggplot-8-test, include = FALSE}
+16 |> sqrt()
+```
+
 ### 
 
 The difference between the previous code was it that we are using the pipe operator `|>` which takes anything from the left side and plugs it into the function in the right side. It is preferred to use pipes in your code as it makes the progression of the variable you're using much more clear.
 
 ### Exercise 9
 
-Type `penguins` with the pipe operator `|>` and plug it into `ggplot()` like this
+Type `penguins` with the pipe operator `|>` and plug it into `ggplot()` like this:
+
 `penguins |> ggplot()`
 
 ```{r creating-first-ggplot-9, exercise = TRUE}
@@ -223,9 +263,14 @@ penguins |>
   ...
 ```
 
+```{r creating-first-ggplot-9-test, include = FALSE}
+penguins |>
+  ggplot()
+```
+
 ### 
 
-penguins which is the input is being plugged into the function `ggplot()` which gives the same output as `ggplot(data = penguins)`. While Indentation may not affect code, it is a good habit to do because it helps go through the code much faster.
+`penguins`, because it is the start of the pipe, becomes the input which is being plugged into the function `ggplot()`. This generates the same output as `ggplot(data = penguins)`. While indentation may not affect code, it is a good habit to do because it helps go through the code much faster.
 
 ### Exercise 10
 
@@ -240,6 +285,11 @@ Copy the previous code and within `ggplot()`, run `mapping = aes(x = flipper_len
 ```{r creating-first-ggplot-10-hint-1, eval = FALSE}
 penguins |>
   ggplot(... = aes(x = ...))
+```
+
+```{r creating-first-ggplot-10-test, include = FALSE}
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm))
 ```
 
 ### 
@@ -261,9 +311,15 @@ penguins |>
   ggplot(mapping = aes(x = flipper_length_mm, y = ...))
 ```
 
+```{r creating-first-ggplot-11-test, include = FALSE}
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g))
+```
+
 ### 
 
-To display the data points we need to add a geometric object(geom). We can define a `geom`: the geometrical object that a plot uses to represent data. These geometric objects are made available in ggplot2 with functions that start with `geom_`. 
+To display the data points we need to add a geometric object, called a `geom`. We can define a `geom` as the geometrical object that a plot uses to represent data. These geometric objects are made available in **ggplot2** with functions that start with `geom_`. 
 
 ### Exercise 12
 
@@ -281,9 +337,16 @@ penguins |>
   ...
 ```
 
+```{r creating-first-ggplot-12-test, include = FALSE}
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g)) +
+    geom_point() 
+```
+
 ### 
 
-`geom_point()` is not the only geometric objects, there are more than this single one and we will learn about them in other sections in this tutorial.
+`geom_point()` is not the only geometric object, there are more than this single one and we will learn about them in other sections in this tutorial.
 
 ### Exercise 13
 
@@ -297,16 +360,25 @@ Edit your code so that, within the call to `ggplot()`, you add `color = species`
 
 ```{r creating-first-ggplot-13-hint-1, eval = FALSE}
 penguins |>
-  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g, 
                        color = ...)) +
-  geom_point()
+    geom_point()
+```
+
+```{r creating-first-ggplot-13-test, include = FALSE}
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g,
+                       color = species)) +
+    geom_point() 
 ```
 
 ### 
 
-Scatter plot are useful for displaying relationship between x and y but it is also helpful to ask yourself if there are other variable which might contribute to the relationship. For example, does the relationship between x and y differ for different species of penguins.
+Scatter plots are useful for displaying relationships between `x` and `y` but it is also helpful to ask yourself if there are other variable which might contribute to the relationship. For example, does the relationship between `x` and `y` differ for different species of penguins?
 
-When you ran it, you see that the data points differ by the color of the species which just makes the scatter plot more insightful. Color isnt just the only aesthetics. There are more, to find out more go check out [aesthetic mappings](https://ggplot2.tidyverse.org/reference/aes.html)
+When you ran it, you saw that the data points differ by the color of the species, thereby creating a more interesting plot. Color isn't just the only aesthetic. See [aesthetic mappings](https://ggplot2.tidyverse.org/reference/aes.html) for more examples.
 
 
 ### Exercise 14
@@ -321,10 +393,20 @@ Add `geom_smooth()` layer using `+`, and set `method` to `lm` within the functio
 
 ```{r creating-first-ggplot-14-hint-1, eval = FALSE}
 penguins |>
-  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
-                       color = ...)) +
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g, 
+                       color = species)) +
   geom_point() +
   geom_smooth(... = "lm")
+```
+
+```{r creating-first-ggplot-14-test, include = FALSE}
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g,
+                       color = species)) +
+    geom_point() +
+    geom_smooth(method = "lm") 
 ```
 
 ### 
@@ -333,7 +415,7 @@ penguins |>
 
 ### Exercise 15
 
-We have added new lines to the plot, but it does not match the plot in beginning, which displayed only one line for the entire data set instead of separate lines for each penguin species. To do so, delete the `color` aesthetic within `ggplot()` and add it to `geom_point` by running `geom_point(mapping = aes(color = species))`. This allows each point to represent certain penguin species on the island. 
+We have added new lines to the plot, but it does not match the original plot, which displayed only one line for the entire data set instead of separate lines for each penguin species. To accomplish thie effect, delete the `color` aesthetic within `ggplot()` and add it to `geom_point()` by running `geom_point(mapping = aes(color = species))`. 
 
 ```{r creating-first-ggplot-15, exercise = TRUE}
 
@@ -343,20 +425,29 @@ We have added new lines to the plot, but it does not match the plot in beginning
 
 ```{r creating-first-ggplot-15-hint-1, eval = FALSE}
 penguins |>
-  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
-                       color = ...)) +
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g)) +
   geom_point(mapping = ...(color = ...)) +
   geom_smooth(method = "lm")
 ```
 
+```{r creating-first-ggplot-15-test, include = FALSE}
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g)) +
+    geom_point(mapping = aes(color = species, 
+                             shape = species)) +
+    geom_smooth(method = "lm") 
+```
+
 ### 
 
-In **ggplot2**, when aesthetic mappings are defined at the global level, they are passed down to all subsequent geom layers in the plot. However, each geom function in ggplot2 can also accept a mapping argument, allowing for local-level aesthetic mappings that are added to those inherited from the global level. 
+In **ggplot2**, when aesthetic mappings are defined at the global level, they are passed down to all subsequent geom layers in the plot. However, each geom function in **ggplot2** can also accept a mapping argument, allowing for local-level aesthetic mappings that are added to those inherited from the global level. 
 
 ### Exercise 16
 
-Not all individuals perceive colors differently due to color blindness or other color vision differences. Therefore,  map the `species` to the `shape` aesthetic in addition to `color` within `geom_point()`.
-`
+Not all individuals perceive colors the same due to color blindness or other color vision differences. To help, we can map `species` to the `shape` aesthetic, in addition to the `color` aesthetic, within `geom_point()`.
+
 ```{r creating-first-ggplot-16, exercise = TRUE}
 
 ```
@@ -365,21 +456,29 @@ Not all individuals perceive colors differently due to color blindness or other 
 
 ```{r creating-first-ggplot-16-hint-1, eval = FALSE}
 penguins |>
-  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
-                       color = ...)) +
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g)) +
   geom_point(mapping = aes(color = species, ... = species)) +
   geom_smooth(method = "lm")
-  
+```
+
+```{r creating-first-ggplot-16-test, include = FALSE}
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g)) +
+    geom_point(mapping = aes(color = species, 
+                             shape = species)) +
+    geom_smooth(method = "lm") 
 ```
 
 ### 
 
-In addition to the built-in shapes, ggplot also allows for custom shapes to be created and used in plots. This can be useful for creating unique visualizations or for incorporating custom symbols or logos into a plot.
+In addition to the built-in shapes, `ggplot()` also allows for custom shapes to be created and used in plots. This can be useful for creating unique visualizations or for incorporating custom symbols or logos into a plot.
 
 
 ### Exercise 17
 
-Now that we have the data points, lets add the title, substitle, labels and etc. Copy the previous code, add a new layer using `+` and run `labs()`. Within labs, set `title` equal to "Body mass and flipper length" in quotes.
+Now that we have the data points, lets add the title, subtitle, labels, *et cetera*. Copy the previous code, add a new layer using `+` and run `labs()`. Within labs, set `title` equal to `"Body mass and flipper length"`.
 
 ```{r creating-first-ggplot-17, exercise = TRUE}
 
@@ -389,11 +488,21 @@ Now that we have the data points, lets add the title, substitle, labels and etc.
 
 ```{r creating-first-ggplot-17-hint-1, eval = FALSE}
 penguins |>
-  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
-                       color = ...)) +
-  geom_point(mapping = aes(color = species, ... = species)) +
-  geom_smooth(method = "lm") + 
-  labs( ... = "Body mass and flipper length")
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g)) +
+    geom_point(mapping = aes(color = species, ... = species)) +
+    geom_smooth(method = "lm") + 
+    labs( ... = "Body mass and flipper length")
+```
+
+```{r creating-first-ggplot-17-test, include = FALSE}
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g)) +
+    geom_point(mapping = aes(color = species, 
+                             shape = species)) +
+    geom_smooth(method = "lm") +
+    labs(title = "Body mass and flipper length")
 ```
 
 ### 
@@ -413,12 +522,23 @@ Copy the previous code, lets add the subtitle by running `subtitle = "Dimensions
 
 ```{r creating-first-ggplot-18-hint-1, eval = FALSE}
 penguins |>
-  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
-                       color = ...)) +
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g)) +
   geom_point(mapping = aes(color = species, ... = species)) +
   geom_smooth(method = "lm") +
   labs(title = "Body mass and flipper length", 
        subtitle = "...")
+```
+
+```{r creating-first-ggplot-18-test, include = FALSE}
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g)) +
+    geom_point(mapping = aes(color = species, 
+                             shape = species)) +
+    geom_smooth(method = "lm") +
+    labs(title = "Body mass and flipper length",
+         subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins")
 ```
 
 ### 
@@ -437,13 +557,26 @@ Lets modify the x and y axises, type a comma and then run `x` and set it to `"Fl
 
 ```{r creating-first-ggplot-19-hint-1, eval = FALSE}
 penguins |>
-  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
-                       color = ...)) +
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g)) +
   geom_point(mapping = aes(color = species, ... = species)) +
   geom_smooth(method = "lm") +
   labs(title = "Body mass and flipper length" +
        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
         x = ..., y = ...)
+```
+
+```{r creating-first-ggplot-19-test, include = FALSE}
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g)) +
+    geom_point(mapping = aes(color = species, 
+                             shape = species)) +
+    geom_smooth(method = "lm") +
+    labs( title = "Body mass and flipper length",
+          subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+          x = "Flipper length (mm)", 
+          y = "Body mass (g)")
 ```
 
 ### 
@@ -467,8 +600,8 @@ You might see that it looks the same as the one in the beginning but we forgot o
 
 ```{r creating-first-ggplot-20-hint-1, eval = FALSE}
 penguins |>
-  ggplot(mapping = aes(x = flipper_length_mm, y = body_mass_g, 
-                       color = ...)) +
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g)) +
   geom_point(mapping = aes(color = species, ... = species)) +
   geom_smooth(method = "lm") +
   labs(title = "Body mass and flipper length" +
@@ -476,6 +609,21 @@ penguins |>
        x = "Flipper Length (mm)", y = "Body Mass (g)", 
        color = ..., 
        shape = ...)
+```
+
+```{r creating-first-ggplot-20-test, include = FALSE}
+penguins |>
+  ggplot(mapping = aes(x = flipper_length_mm, 
+                       y = body_mass_g)) +
+    geom_point(mapping = aes(color = species, 
+                             shape = species)) +
+    geom_smooth(method = "lm") +
+    labs(title = "Body mass and flipper length",
+         subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+         x = "Flipper length (mm)", 
+         y = "Body mass (g)",
+         color = "Species", 
+         shape = "Species")
 ```
 
 Reminder: This is what our graph should look like
@@ -543,7 +691,7 @@ Run `penguins` with the pipe operator `|>` and plug it into `ggplot()`.
 
 ### 
 
-With ggplot2, you begin a plot with the function ggplot(), defining a plot object that you then add layers to it. 
+With **ggplot2**, you begin a plot with the function `ggplot()`, defining a plot object that you can then add layers to. 
 
 ### Exercise 3
 
@@ -562,7 +710,7 @@ Within `ggplot()`, run `mapping = aes()` and in `aes()`set `x` to `bill_length_m
 
 ### 
 
-The x and y arguments of `aes()` specify which variables to map to the x and y axes.
+The `x` and `y` arguments of `aes()` specify which variables to map to the x and y axes.
 
 ### Exercise 4
 
@@ -602,7 +750,7 @@ penguins |>
 
 ### 
 
-The warning message "Removed X rows containing missing values (geom_point())" is a common message in R.  Like R, ggplot2 subscribes to the philosophy that missing values should never silently go missing. This type of warning is probably one of the most common types of warnings you will see when working with real data – missing values are a very common issue and you’ll learn more about them throughout the book
+The warning message "Removed X rows containing missing values (geom_point())" is a common message in R.  Like R, **ggplot2** subscribes to the philosophy that missing values should never silently go missing. This type of warning is probably one of the most common types of warnings you will see when working with real data – missing values are a very common issue and you’ll learn more about them throughout the book.
 
 
 ### Exercise 6
@@ -625,11 +773,11 @@ penguins |>
 
 ### 
 
-When aesthetic mappings are defined in ggplot(), at the global level, they’re passed down to each of the subsequent geom layers of the plot. However, each geom function in ggplot2 can also take a mapping argument, which allows for aesthetic mappings at the local level that are added to those inherited from the global level.
+When aesthetic mappings are defined in ggplot(), at the global level, they’re passed down to each of the subsequent geom layers of the plot. However, each geom function in **ggplot2** can also take a mapping argument, which allows for aesthetic mappings at the local level that are added to those inherited from the global level.
 
 ### Exercise 7
 
-Add the `geom_smooth()` layer and within it, set `method` to `lm`. 
+Add the `geom_smooth()` layer and within it, set `method` to `"lm"`. 
 
 ```{r geom-point-7, exercise = TRUE}
 
@@ -645,11 +793,11 @@ Add the `geom_smooth()` layer and within it, set `method` to `lm`.
 
 ### 
 
-In the ggplot2 package in R, the "geom_smooth()" function can be used to add a smoothed curve to a scatter plot to help visualize trends in the data. If no arguments are specified when using geom_smooth(), the function will use the default settings to determine the smoothing method and other parameters of the curve.
+In the **ggplot2** package, the `geom_smooth()` function can be used to add a smoothed curve to a scatter plot to help visualize trends in the data. If no arguments are specified when using `geom_smooth()`, the function will use the default settings to determine the smoothing method and other parameters of the curve.
 
 ### Exercise 8
 
-Add the `color` aesthetic within `ggplot()` to `geom_point()` by running `geom_point(mapping = aes(color = species))` to get three different lines for each species.
+Add the `color` aesthetic within `ggplot()` to `geom_point()` by running `geom_point(mapping = aes(color = species))` to get one line for each species.
 
 ```{r geom-point-8, exercise = TRUE}
 
@@ -665,12 +813,12 @@ Add the `color` aesthetic within `ggplot()` to `geom_point()` by running `geom_p
 
 ### 
 
-When aesthetic mappings are defined in ggplot(), at the global level, they’re passed down to each of the subsequent geom layers of the plot. However, each geom function in "ggplot2" can also take a mapping argument, which allows for aesthetic mappings at the local level that are added to those inherited from the global level.So that's why we species `color = species` for `geom_point()`.
+When aesthetic mappings are defined in ggplot(), at the global level, they’re passed down to each of the subsequent geom layers of the plot. However, each geom function in "ggplot2" can also take a mapping argument, which allows for aesthetic mappings at the local level that are added to those inherited from the global level. So that's why we use `color = species` for `geom_point()`.
 
 ### Exercise 9
 
 In addition to color, we can also map species to the shape aesthetic. Map the `species` variable to the `shape` aesthetic in addition to `color` within `geom_point()` by running `shape = species`.
-`
+
 ```{r geom-point-9, exercise = TRUE}
 
 ```
@@ -686,6 +834,7 @@ In addition to color, we can also map species to the shape aesthetic. Map the `s
 ### 
 
 Note that the legend is automatically updated to reflect the different shapes of the points as well.
+
 There are also other wasy to edit the legend. Some are the following: `scale_*_discrete()` functions: These functions allow you to modify the appearance of the legend for discrete variables (i.e., factors). For example, `scale_color_discrete()` can be used to change the colors of the legend, while `scale_shape_discrete()` can be used to change the shapes of the legend symbols.
 
 ### Exercise 10
@@ -1118,7 +1267,7 @@ library(...)
 
 ### 
 
-`geom_density()` is a function in the ggplot2 package in R used for creating density plots.
+`geom_density()` is a function in the **ggplot2** package in R used for creating density plots.
 
 ### Exercise 2
 
@@ -1395,7 +1544,7 @@ Reminder: This is what your graph should look like.
 ```{r}
 box_plot_p <- penguins |>
   ggplot( aes(x = species, y = body_mass_g)) +
-  geom_boxplot()+
+  geom_boxplot() +
   labs(title = "Body Mass Distribution of Palmer Penguins by Species: A Boxplot Analysis",
        subtitle = "Comparing the Median and Variability of Body Mass for Adelie, Chinstrap, and Gentoo Penguins",
        x = "Species",
@@ -1417,7 +1566,7 @@ facet_p <- penguins|>
   ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point(aes(color = species, shape = species)) +
   labs(x = "Flipper Length(mm)",
-       y = "Body Mass(g)")+
+       y = "Body Mass(g)") +
   facet_wrap(~island)
 
 facet_p
@@ -1473,7 +1622,7 @@ Let's specify the `x`, so within `ggplot()`, run `aes(x = flipper_length_mm)`.
 
 ### 
 
-`facet_wrap()` can be combined with other ggplot2 functions like geom_point(), geom_line(), geom_bar(), and geom_histogram() to create a wide range of visualizations that explore different aspects of the data.
+`facet_wrap()` can be combined with other **ggplot2** functions like `geom_point()`, `geom_line()`, `geom_bar()`, and `geom_histogram()` to create a wide range of visualizations that explore different aspects of the data.
 
 ### Exercise 4
 
