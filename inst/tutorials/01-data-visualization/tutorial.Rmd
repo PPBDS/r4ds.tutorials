@@ -844,7 +844,6 @@ To add the data points, add the `geom_point()` layer using `+`.
 
 ```{r geom-point-4-hint-1, eval = FALSE}
 penguins |>   
-  drop_na() |>
   ggplot(mapping = aes(x = bill_length_mm, y = bill_depth_mm)) + 
   geom_point()
 ```
@@ -857,10 +856,9 @@ penguins |>
 
 The warning message "Removed X rows containing missing values (geom_point())" is a common message in R.  Like R, **ggplot2** subscribes to the philosophy that missing values should never silently go missing. This type of warning is probably one of the most common types of warnings you will see when working with real data – missing values are a very common issue and you’ll learn more about them throughout the book.
 
-
 ### Exercise 5
 
-In `ggplot()`, within `aes()`, run `color = species`.
+Let's fix the warning message we faced in last exercise by adding the function `drop_na()` which you learned previously between `penguins |>` and `ggplot()`.
 
 ```{r geom-point-5, exercise = TRUE}
 
@@ -870,11 +868,9 @@ In `ggplot()`, within `aes()`, run `color = species`.
 
 ```{r geom-point-5-hint-1, eval = FALSE}
 penguins |>   
-  drop_na() |>
-  ggplot(mapping = aes(x = bill_length_mm, 
-                       y = bill_depth_mm, 
-                       ... = species)) +
-  geom_point()
+  drop_...()|>
+  ggplot(... = aes(x = bill_length_mm, y = ...)) + 
+  geom_...()
 ```
 
 ```{r geom-point-5-test, include = FALSE}
@@ -883,11 +879,9 @@ penguins |>
 
 ### 
 
-When aesthetic mappings are defined in ggplot(), at the global level, they’re passed down to each of the subsequent geom layers of the plot. However, each geom function in **ggplot2** can also take a mapping argument, which allows for aesthetic mappings at the local level that are added to those inherited from the global level.
-
 ### Exercise 6
 
-Add the `geom_smooth()` layer and within it, set `method` to `"lm"`. 
+In `ggplot()`, within `aes()`, run `color = species`.
 
 ```{r geom-point-6, exercise = TRUE}
 
@@ -896,9 +890,12 @@ Add the `geom_smooth()` layer and within it, set `method` to `"lm"`.
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-point-6-hint-1, eval = FALSE}
-
-... |>
-  geom_smooth(... = "lm")
+penguins |>   
+  drop_na() |>
+  ggplot(mapping = aes(x = bill_length_mm, 
+                       y = bill_depth_mm, 
+                       ... = species)) +
+  geom_point()
 ```
 
 ```{r geom-point-6-test, include = FALSE}
@@ -907,12 +904,11 @@ Add the `geom_smooth()` layer and within it, set `method` to `"lm"`.
 
 ### 
 
-In the **ggplot2** package, the `geom_smooth()` function can be used to add a smoothed curve to a scatter plot to help visualize trends in the data. If no arguments are specified when using `geom_smooth()`, the function will use the default settings to determine the smoothing method and other parameters of the curve.
-
+When aesthetic mappings are defined in ggplot(), at the global level, they’re passed down to each of the subsequent geom layers of the plot. However, each geom function in **ggplot2** can also take a mapping argument, which allows for aesthetic mappings at the local level that are added to those inherited from the global level.
 
 ### Exercise 7
 
-In addition to color, we can also map species to the shape aesthetic. Map the `species` variable to the `shape` aesthetic in addition to `color` within `geom_point()` by running `shape = species`.
+Add the `geom_smooth()` layer and within it, set `method` to `"lm"`. 
 
 ```{r geom-point-7, exercise = TRUE}
 
@@ -921,12 +917,37 @@ In addition to color, we can also map species to the shape aesthetic. Map the `s
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r geom-point-7-hint-1, eval = FALSE}
+
+... |>
+  geom_smooth(... = "lm")
+```
+
+```{r geom-point-7-test, include = FALSE}
+
+```
+
+### 
+
+In the **ggplot2** package, the `geom_smooth()` function can be used to add a smoothed curve to a scatter plot to help visualize trends in the data. If no arguments are specified when using `geom_smooth()`, the function will use the default settings to determine the smoothing method and other parameters of the curve.
+
+
+### Exercise 8
+
+In addition to color, we can also map species to the shape aesthetic. Map the `species` variable to the `shape` aesthetic in addition to `color` within `geom_point()` by running `shape = species`.
+
+```{r geom-point-8, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r geom-point-8-hint-1, eval = FALSE}
 ... +
   geom_point(mapping = aes(color = ..., shape = ...)) +
   geom_smooth(method = "lm")
 ```
 
-```{r geom-point-7-test, include = FALSE}
+```{r geom-point-8-test, include = FALSE}
 
 ```
 
@@ -936,17 +957,17 @@ Note that the legend is automatically updated to reflect the different shapes of
 
 There are also other ways to edit the legend. Some are the following: `scale_*_discrete()` functions: These functions allow you to modify the appearance of the legend for discrete variables (i.e., factors). For example, `scale_color_discrete()` can be used to change the colors of the legend, while `scale_shape_discrete()` can be used to change the shapes of the legend symbols.
 
-### Exercise 8
+### Exercise 9
 
 Now that we have the data points, lets add the title, subtitle, labels and etc. Copy the previous code, add a new layer using `+` and run `labs()`. Within labs, set `title` equal to "Penguins Beak's Length and Depth" , `subtitle` to "Dimensions for Adelie, Chinstrap, and Gentoo Penguins" , `x` to  "Beak Length (mm)", `y = "Beak Depth (mm)"`, `color` to "Species" and `shape` to "Species".
 
-```{r geom-point-8, exercise = TRUE}
+```{r geom-point-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r geom-point-8-hint-1, eval = FALSE}
+```{r geom-point-9-hint-1, eval = FALSE}
 ... +
   labs(title = "Penguins Beak's Length and Depth", 
        subtitle = ...,
@@ -957,7 +978,7 @@ Now that we have the data points, lets add the title, subtitle, labels and etc. 
 
 ```
 
-```{r geom-point-8-test, include = FALSE}
+```{r geom-point-9-test, include = FALSE}
 
 ```
 
@@ -1016,7 +1037,7 @@ The **palmerpenguins** package was created by Allison Horst, a marine biologist 
 
 ### Exercise 2
 
-Within `ggplot()`, set `x` to `island` inside of `aes()`. Note that, because `mapping` is the first argument in `ggplot()`, we do not to mention it explicitly.
+Within `ggplot()`, set `x` to `island` inside of `aes()`. Note that, because `mapping` is the first argument in `ggplot()`, we do not have to mention it explicitly.
 
 ```{r geom-bar-2, exercise = TRUE}
 
