@@ -28,6 +28,9 @@ options(tutorial.exercise.timelimit = 60,
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- Help with Windows. -->
+
+<!-- First, explain that directory separator is \ in windows and / elsewhere. Windows users must adjust the instructions accordingly. -->
 
 <!-- Add an exercise which downloads a file from the web. This is good practice for the class session doing the same. -->
 
@@ -44,7 +47,28 @@ This tutorial introduces the structure and uses of the Terminal from within RStu
 
 ### 
 
-Note that a default Windows installation is different from Mac or Linux. If you are using Windows, you must first install RTools. Download the latest version from [here](https://cran.r-project.org/bin/windows/Rtools/). Currently, the Rtools43 installer is what you want. The link is in the sixth paragraph of [this page](https://cran.r-project.org/bin/windows/Rtools/rtools43/rtools.html).
+Note that a default Windows installation is different from Mac or Linux. If you are using Windows, you must first install RTools. Download the latest version from [here](https://cran.r-project.org/bin/windows/Rtools/). Currently, the Rtools44 installer is what you want. The link is in the seventh paragraph of [this page](https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html).
+
+###
+
+For the most part, Windows works like Mac/Unix. There are two main exceptions which are important for this tutorial:
+
+* Environment variables look like `$R_HOME` on Mac/Unix and `%R_HOME%` on Windows. That is, in both cases, we are using the `R_HOME` environment variable. We just access this variable differently depending on the operating system.
+
+* Directory separators are forward slashes -- `/` -- on Max/Unix and backward slashes -- `\` -- on Windows.
+
+The tutorial defaults use Mac/Unix nomenclature. If you are using Windows, you need to translate, for example:
+
+```
+ls $R_HOME/etc
+```
+
+into
+
+```
+ls %R_HOME%\etc
+```
+
 
 ## Terminal
 ### 
@@ -626,7 +650,9 @@ Hidden files live all over your computer. You can turn on your ability to see hi
 
 ### Exercise 4
 
-We have already gone over a few shorthands that stand for paths. The **environmental variable** `$R_HOME` represents the path to a folder of set-up files that R has installed on your computer. Type and enter `echo $R_HOME` alone to make sure we are telling you the truth. Then change your working directory to `$R_HOME` with `cd $R_HOME`.
+We have already gone over a few shorthands that stand for paths. The **environmental variable** `R_HOME` represents the path to a folder of set-up files that R has installed on your computer. Type and enter `echo $R_HOME` alone to make sure we are telling you the truth. Then change your working directory to `$R_HOME` with `cd $R_HOME`.
+
+Recall that, on Windows, this would be `echo %R_HOME%` and `cd %R_HOME%`.
 
 ### 
 
@@ -664,7 +690,7 @@ There are many different environmental variables for places throughout your comp
 
 ### Exercise 6
 
-Use `pwd` to confirm that you are still in `$R_HOME`. Use `ls` to see check what is inside `$R_HOME`. You should see several unfamiliar items. Because this directory is unfamiliar, we may want more information. Let's run `ls -l`, so that we can see more information in a **l**ong list.
+Use `pwd` to confirm that you are still in `R_HOME`. Use `ls` to see what is inside `R_HOME`. You should see several unfamiliar items. Because this directory is unfamiliar, we may want more information. Let's run `ls -l`, so that we can see more information in a **l**ong list.
 
 ### 
 
@@ -718,6 +744,8 @@ question_text(NULL,
 ### Exercise 9
 
 Let's make a copy of `$R_HOME/doc/AUTHORS` in `options`. Use the command `cp`, whose syntax is identical to `mv`, and the `.` shorthand.
+
+On Windows, we would refer to this file as `%R_HOME%\doc\AUTHORS`. Recall that, in Windows, environment variables are surrounded by percentage signs -- `%` -- and directories are separated by backward slashes: `\`.
 
 ### 
 
@@ -865,7 +893,7 @@ question_text(NULL,
 
 ### 
 
-Echo can also take a string that is not in quotes as its argument.
+`echo` can also take a string that is not in quotes as its argument.
 
 ### Exercise 17
 
@@ -1099,7 +1127,11 @@ You can use your `up` and `down` arrow keys to navigate command history. The `>`
 
 ### Exercise 9
 
-Wildcards can be used with more than `ls`. Let's move `hat.txt` and `cat.txt` together into one directory. Make a new directory called `suess` within the `wildcards` directory in which you are currently located. Run`ls\`. CP/CR
+Wildcards can be used with more than `ls`. Let's move `hat.txt` and `cat.txt` together into one directory. 
+
+First, make a new directory called `suess` within the `wildcards` directory in which you are currently located. 
+
+Run `ls`. CP/CR
 
 ```{r wildcards-9}
 question_text(NULL,
@@ -1241,11 +1273,10 @@ We call this folder `grepping` rather than `grep` you should not use the word fo
 `cd` into the `grepping` directory. Run this command:
 
 ```
-echo "hat.txt
-cat.txt
-ate.txt 
-" > files.txt
+printf "hat.txt\ncat.txt\nate.txt\n\n" > files.txt
 ```
+
+The `\n` symbol will insert a new line between `hat.txt`, `cat.txt`, and `ate.txt`. 
 
 Run `cat files.txt`. CP/CR.
 
@@ -1260,7 +1291,9 @@ question_text(NULL,
 
 ### 
 
-The `echo` command simply "echoes" back what argument you pass it. In this case, we want to fill `files.txt` with the same list of filenames which we used before. Note that we have included an extra blank line at the end. It is always a good idea for text files to end with a blank line.
+The extra `\n` at the end ensures that there is a blank line at the end of the file, which is always a good idea when dealing with text files. 
+
+Don't worry about the `printf` command. It is not used very often. We didn't use `echo` because it is annoying to use in the case of multiple lines of input where you are writing code which needs to work on both Mac/Unix and Windows.
 
 ### Exercise 3
 
@@ -1306,7 +1339,7 @@ We will not attempt the previous search we made of these files with the wildcard
 
 ### Exercise 5
 
-Run `ls $R_HOME` to make a list of the contents of the R home directory. CP/CR.
+Run `ls $R_HOME` --- `ls %R_HOME%` on Windows --- to make a list of the contents of the R home directory. CP/CR.
 
 ```{r grep-5}
 question_text(NULL,
@@ -1319,13 +1352,21 @@ question_text(NULL,
 
 ### 
 
-`$R_HOME` is an environment variable which should behave similarly regardless of your computer. There should be several directories and files in this listing, including `COPYING` and `tests`.
+`R_HOME` is an environment variable which should behave similarly regardless of your computer. There should be several directories and files in this listing, including `COPYING` and `tests`.
 
 ### Exercise 6
 
 Add `>` to `ls $R_HOME` to save this output to a new file named `RHOME.txt` located withing the `grepping` directory. That is, run
 
+```
 `ls $R_HOME > RHOME.txt`
+```
+
+or, on Windows, 
+
+```
+`ls %R_HOME% > RHOME.txt`
+```
 
 Run `ls`. CP/CR.
 
