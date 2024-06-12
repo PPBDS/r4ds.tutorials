@@ -123,6 +123,34 @@ months <-
                  label = c("Jan.", "Feb.", "March", "April", "May", "June", 
                            "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."))
 
+portland_graph <- ggplot(data = portland_data, 
+         mapping = aes(x = yday, 
+                       y = tmax)) +
+  geom_point(alpha = .05, size = .9) +
+  geom_point(data = filter(portland_data, 
+                    recent_high != FALSE), 
+             mapping = aes(color = "#C1392B"),
+             alpha = 1,
+             size = 2.3) +
+  guides(color = "none") +
+  scale_x_continuous(breaks = months$yday,
+                     labels = months$label,
+                     expand = c(.01, .01)) +
+  scale_y_continuous(labels = function(x) paste0(x, "°F"), 
+                     breaks = seq(from = 20, 
+                                  to = 120, 
+                                  by = 20)) +
+  theme_minimal() +
+  labs(x = NULL, 
+       y = NULL, 
+       title = "Daily maximum temperatures in Portland, 1979–2021",
+       caption = "Data: National Oceanic and Atmospheric Administration via Oregon Live. \nGraphic: Cédric Scherer.") +
+  theme(plot.title = element_text(face ="bold"),
+        panel.grid.minor = element_blank(),
+        panel.grid.major.x = element_blank(),
+        axis.line.x = element_line(size = 0.2),
+        axis.ticks.x = element_line())
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -760,7 +788,7 @@ The function `if_else()` is a vectorized *if-else*. Compared to the base R equiv
 
 ### Exercise 3
 
-Copy your previous code and pipe `diamonds` to `mutate()`. Within `mutate()`, create a new variable, `y`, and set it equal to `if_else(y < 3 | y > 20, NA, y)`.
+Copy your previous code and pipe `diamonds` to `mutate()`. Within `mutate()`, create a new variable, `y_new`, and set it equal to `if_else(y < 3 | y > 20, NA, y)`.
 
 ```{r unusual-values-3, exercise = TRUE}
 
@@ -2532,7 +2560,7 @@ Right now, we have simply added another layer which was the exact same as the la
 
 ### Exercise 9
 
-Within the second `geom_point`, we must filter the data. First, use the argument `data = ...`. Next, within that argument, use `filter()`. The first argument should be `portland_data` (since we are filtering that data set), and then the second argument should be `recent_high != FALSE``.
+Within the second `geom_point`, we must filter the data. First, use the argument `data = ...`. Next, within that argument, use `filter()`. The first argument should be `portland_data` (since we are filtering that data set), and then the second argument should be `recent_high != FALSE`.
 
 ```{r portland-heatwave-in-2021-9, exercise = TRUE}
 
