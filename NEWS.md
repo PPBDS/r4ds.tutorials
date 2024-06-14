@@ -2,6 +2,8 @@
 
 * Clean up tutorials which were previously drafts.
 
+* Remove several plotting exercises, including Portland weather and OECD life expectancy, which are not actually included in R4DS.
+
 * Start using tutorial.helpers::show_file().
 
 * Require at least tutorial.helpers 0.2.7.9001.
