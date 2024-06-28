@@ -6,7 +6,7 @@
 
 * Start using tutorial.helpers::show_file().
 
-* Require at least tutorial.helpers 0.2.7.9001.
+* Require at least tutorial.helpers 0.3.0.
 
 # r4ds.tutorials 0.2.0
 
