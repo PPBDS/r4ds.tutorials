@@ -78,6 +78,8 @@ parties3 <- tibble(
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- DK: This tutorial is one of the worst in the package. -->
+
 ## Introduction
 ### 
 
@@ -111,7 +113,7 @@ airlines
 
 ### 
 
-`airlines` records two pieces of data about each airline: its `carrier` code and its full `name`. You can identify an airline with its two letter carrier code, making carrier the primary key.
+`airlines` records two pieces of data about each airline: its `carrier` code and its full `name`. You can identify an airline with its two letter carrier code, making `carrier` the primary key.
 
 ### Exercise 2
 
@@ -235,7 +237,7 @@ knitr::include_graphics("images/relational.png")
 
 Now that that we’ve identified the primary keys in each table, it’s good practice to verify that they do indeed uniquely identify each observation. One way to do that is to `count()` the primary keys and look for entries where `n` is greater than one.
 
-Start a pipe with `planes` to the `count()` function and within count set the argument as `tailnum`. Start a pipe  from `count()` to filter and Apply the `filter()` function to `n > 1`. This will filter out any elements where the count (n) is not greater than 1.
+Start a pipe with `planes` to the `count()` function and within count set the argument as `tailnum`. Continue the pipe to the `filter()` function, setting `n > 1`. This will filter out any elements where the number of flights for a given `tailnum` is not greater than 1.
 
 ```{r keys-8, exercise = TRUE}
 
@@ -255,7 +257,7 @@ planes |>
 
 ### 
 
-We see no observations or records which reveals that `tailnum` is good primary key and the planes tibble  look good to go.
+The pipe returns no observations, thereby demonstrating that `tailnum` is good primary key.
 
 ### Exercise 9
 
@@ -281,7 +283,7 @@ weather |>
 
 ### 
 
-There are also no records when we run the previous code which verifies that time_hour and origin are good primary keys. But what if there were some missing values with the primary keys?
+There are also no records when we run the previous code which verifies that `time_hour` and `origin` are good primary keys. But what if there were some missing values with the primary keys?
 
 ### Exercise 10
 
@@ -383,9 +385,9 @@ Using altitude and latitude to identify an airport is unreliable, and it's gener
 
 ### Exercise 14
 
-That said, we might be better off introducing a simple numeric surrogate key using the row number instead of confusing the airlines and customers by using three columns are primary keys. 
+That said, we might be better off introducing a simple numeric surrogate key using the row number instead of confusing the airlines and customers tables by using three columns as primary keys. 
 
-Let's make a new primary key `id` and to add a new column `id` with row numbers to the flights dataset, start a pipe with `flights` and use `mutate()` function. Within `mutate()` assign `row_number()` function to the `id` column and set `.before` to 1.
+Let's make a new primary key `id` for `flights` by using row numbers. Start a pipe with `flights` and use `mutate()` function. Within `mutate()` assign `row_number()` function to the `id` column and set `.before` to 1.
 
 ```{r keys-14, exercise = TRUE}
 
@@ -405,7 +407,7 @@ flights |>
 
 ### 
 
-This code adds a new column id with row numbers to the `flights` dataset, positioning it as the first column. In conclusion, Surrogate keys can be particular useful when communicating to other humans: it’s much easier to tell someone to take a look at flight 2001 than to say look at UA430 which departed 9am 2013-01-03.
+This code adds a new column `id` with row numbers to the `flights` dataset, positioning it as the first column. Surrogate keys can be particular useful when communicating to other humans. It’s much easier to tell someone to take a look at flight 2001 than to say look at UA430 which departed at 9:00 am on 2013-01-03.
 
 ## Basic Joins
 ### 
@@ -439,9 +441,9 @@ A mutating join allows you to combine variables from two data frames: it first m
 
 ### Exercise 2
 
-There are four types of mutating join, but there’s one that you’ll use almost all of the time: `left_join()`. It’s special because the output will always have the same rows as x. The primary use of `left_join()` is to add in additional metadata. 
+There are four types of mutating join, but there’s one that you’ll use almost all of the time: `left_join()`. It’s special because the output will always have the same rows as `x`. The primary use of `left_join()` is to add in additional columns. 
 
-To add full airline name to the flights2 data, let's start a pipe with `flights2` to `left_join()` and pass in `airlines` as argument.
+To add full airline name to the `flights2` data, start a pipe with `flights2` to `left_join()` and pass in `airlines` as the argument.
 
 ```{r basic-joins-2, exercise = TRUE}
 
@@ -467,7 +469,7 @@ Like `mutate()`, the join functions add variables to the right, so if your datas
 
 Instead of filling in the names of the airlines, let's add metadata about the wind speed, temperature and the time the plane departed.
 
-Copy the previous code, modify the argument for `left_join()` to `weather |> select(origin,time_hour, temp, wind_speed)` which just select the origin, time, temperature and wind speed from `weather` data set.
+Copy the previous code, modifying the argument for `left_join()` to `weather |> select(origin, time_hour, temp, wind_speed)`. 
 
 ```{r basic-joins-3, exercise = TRUE}
 
@@ -516,7 +518,7 @@ What happens when `left_join()` fails to find a match for a row in x?
 
 ### Exercise 5
 
-To demonstrate this, start a pipe with `flights2` to `filter()` where you only select the records where the `tailnum` is equal to `N3ALAA` which doesn't exist and then create another pipe from `filter()` to `left_join()` and pass in `planes |> select(tailnum, type, engines, seats)` as the argument 
+To demonstrate this, start a pipe with `flights2` to `filter()` where you only select the records where the `tailnum` is equal to `N3ALAA` (which doesn't exist) and then continue the pipe to `left_join()` and pass in `planes |> select(tailnum, type, engines, seats)` as the argument.
 
 ```{r basic-joins-5, exercise = TRUE}
 
@@ -538,7 +540,7 @@ flights2 |>
 
 ### 
 
-When `left_join()` fails to find a match for a row in x, it fills in the new variables with missing values. For example, there’s no information about the plane with tail number `N3ALAA` so the type, engines, and seats will be missings
+When `left_join()` fails to find a match for a row in `x`, it fills in the new variables with missing values. For example, there’s no information about the plane with tail number `N3ALAA` so the `type`, `engines`, and `seats` will be missing.
 
 
 ### Exercise 6
@@ -596,9 +598,9 @@ flights2 |>
 
 ### Exercise 8
 
-As we saw `join_by()` gives us the flexibility to join  based on the variables we want. For example we know that we can join `flights2` and `airports` by `dest` or `origin`.
+`join_by()` gives us the flexibility to join based on the variables we want. For example we know that we can join `flights2` and `airports` by `dest` or `origin`.
 
-Copy the previous code change `planes` to `airports` and in `join_by()` set `dest == faa`.
+Copy the previous code, changing `planes` to `airports` and, in, `join_by()` setting `dest == faa`.
 
 ```{r basic-joins-8, exercise = TRUE}
 
@@ -617,6 +619,8 @@ flights2 |>
 ```
 
 ### 
+
+<!-- DK: Lousy knowledge drop. This whole tutorial should be made much smoother.  -->
 
 Now let's change `join_by()` to change the tables to join by `origin`.
 
@@ -643,7 +647,7 @@ flights2 |>
 
 ### 
 
-If we compare both the tibbbles we can see the difference in the `name` variable.
+If we compare both the tibbles we can see the difference in the `name` variable.
 
 ### Exercise 10
 
@@ -669,7 +673,7 @@ airports |>
 
 ### 
 
-Compared to `semi_join()` , Anti joins are the opposite: they return all rows in x that don’t have a match in y. In next few excises we will talk about anti joins which are opposite of semi joins.
+Compared to `semi_join()`, anti-joins are the opposite: they return all rows in `x` that don’t have a match in `y`. 
 
 ### Exercise 11
 
@@ -698,7 +702,7 @@ We found four rows that are missing from `airports` but not in `flights`.
 
 ### Exercise 12
 
-Let's now find which `tailnums` are missing from planes. Copy the previous code, change the the table we will join from `airports` to `planes` and then modify `join_by()` argument to `tailnum`. Continue the pipe to `distinct()` and add `tailnum` as an argument/
+Let's now find which `tailnums` are missing from planes. Copy the previous code, change the the table we will join from `airports` to `planes` and then modify `join_by()` argument to `tailnum`. Continue the pipe to `distinct()` and add `tailnum` as an argument.
 
 ```{r basic-joins-12, exercise = TRUE}
 
@@ -718,16 +722,19 @@ flights2 |>
   distinct(tailnum)
 ```
 
-### 
+<!-- ###  -->
 
-Good Work! You now have the knowledge of basic joins that you will maybe need in the future for your final project.
+<!-- DK: Knowledge drop. -->
 
 ## How do joins work?
-Now that you’ve used joins a few times it’s time to learn more about how they work, focusing on how each row in x matches rows in y. We’ll begin by introducing a visual representation of joins, using the simple tibbles defined below  In these examples we’ll use a single key called key and a single value column (val_x and val_y), but the ideas all generalize to multiple keys and multiple values.
+
+<!-- DK: Rewrite this topic to ask questions! -->
+
+Now that you’ve used joins a few times it’s time to learn more about how they work, focusing on how each row in `x` matches rows in `y`. We’ll begin by introducing a visual representation of joins, using the simple tibbles defined below  In these examples we’ll use a single key called `key` and a single value column (`val_x` and `val_y`), but the ideas all generalize to multiple keys and multiple values.
 
 ### Exercise 1
 
-These are the tibbles we will use to demonstrate or visualize the images that will be shown the exercises going on.
+Our example tibbles:
 
 ```{r how-do-joins-work-1}
 x <- tribble(
@@ -766,7 +773,7 @@ The image above depicts the foundation of our visual representation, showing pot
 
 ### Exercise 3
 
-To describe a join type, we use dots to indicate matches. The matches determine the output rows, which include the key, x values, and y values. Image below displays an inner join, retaining rows only when the keys are equal.
+To describe a join type, we use dots to indicate matches. The matches determine the output rows, which include the key, x values, and y values. The image below displays an inner join, retaining rows only when the keys are equal.
 
 ```{r}
 knitr::include_graphics("images/inner.png")
@@ -774,7 +781,7 @@ knitr::include_graphics("images/inner.png")
 
 ### 
 
-An inner join matches each row in x to the row in y that has the same value of key. Each match becomes a row in the output.We can apply the same principles to explain the outer joins, which keep observations that appear in at least one of the data frames. 
+An inner join matches each row in `x` to the row in `y` that has the same value of `key`. Each match becomes a row in the output. We can apply the same principles to explain the outer joins, which keep observations that appear in at least one of the data frames. 
 
 ### Exercise 4
 
@@ -846,6 +853,8 @@ If it matches more than 1 row in y, it’s duplicated once for each match.
 
 ### Exercise 9
 
+<!-- DK: It might be missing images of the tables? Or is it just supposed to be like that? -->
+
 In practice when there are two records connecting to same record, there are no issue but there is, however, one particularly dangerous case which can cause a combination explosion of rows. Imagine joining the following two tables:
 
 Create two variables `df1` and `df2` on different lines. Assign `tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))` to `df1` and assign `tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))` to `df2`.
@@ -897,6 +906,8 @@ While the first row in df1 only matches one row in df2, the second and third row
 ## Non-equi joins
 ### 
 
+<!-- DK: A lot of this is very sloppy. Need to create permanent objects in the setup chunk and inform students about them. -->
+
 ### Exercise 1
 
 Let's relax the restriction of equi joins and explore different criteria for matching rows. Before that, let's revisit a simplification we made earlier. In equi joins, the x keys and y keys are always equal, so we only display one key in the output. By requesting dplyr to keep both keys with `keep = TRUE`, we can modify the inner_join() code.
@@ -942,7 +953,7 @@ Non-equi join isn’t a particularly useful term because it only tells you what 
 
 ### Exercise 3
 
-A cross join matches everything, as the image below, generating the Cartesian product of rows. This means the output will have nrow(x) * nrow(y) rows.
+A cross join matches everything, as in the image below, generating the Cartesian product of rows. This means the output will have `nrow(x) * nrow(y)` rows.
 
 ```{r}
 knitr::include_graphics("images/cross.png")
@@ -950,7 +961,7 @@ knitr::include_graphics("images/cross.png")
 
 ### 
 
-The image above demonstrates a cross join matching each row in x with every row in y. Looking at the image we cans ee that cross joins are useful when generating permutations.
+The image above demonstrates a cross join matching each row in `x` with every row in `y`. Looking at the image we can see that cross joins are useful when generating permutations.
 
 ### Exercise 4
 
@@ -1044,7 +1055,7 @@ The next type of non equi joins are rolling joins which we will explore in the n
 
 ### Exercise 8
 
-Rolling joins return the closest match instead of all satisfying the inequality. to have  rolling join add `closest() to the inequality condition. For example, join_by(closest(x <= y)) finds the smallest y ≥ x, and join_by(closest(x > y)) finds the largest y < x. Example:
+Rolling joins return the closest match instead of all matches satisfying the inequality. To create a rolling join add `closest()` to the inequality condition. For example, `join_by(closest(x <= y))` finds the smallest `y ≥ x`, and `join_by(closest(x > y))` finds the largest `y < x`. Example:
 
 ```{r}
 knitr::include_graphics("images/closest.png")
@@ -1056,7 +1067,7 @@ Rolling joins are particularly useful when you have two tables of dates that don
 
 ### Exercise 9
 
-To demonstrate a use case of rolling joins, let imagine that as the party planning commission for your office, you're responsible for organizing quarterly parties due to budget constraints. The rules for determining the party dates are as follows: parties are held on Mondays, the first week of January is skipped, and the first Monday of Q3 2022 falls on July 4, which needs to be postponed by a week. Here are the resulting party days: `2022-01-10`, `2022-04-04`, `2022-07-11`, `2022-10-03`.
+To demonstrate a use case of rolling joins, let's imagine that as the party planning commission for your office, you're responsible for organizing quarterly parties due to budget constraints. The rules for determining the party dates are as follows: parties are held on Mondays, the first week of January is skipped, and the first Monday of Q3 2022 falls on July 4, which needs to be postponed by a week. Here are the resulting party days: `2022-01-10`, `2022-04-04`, `2022-07-11`, `2022-10-03`.
 
 Create a tibble `parties` and add columns `q` and pass in `1:4` for it then add another column `party` and pass in `ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03"))`.
 
@@ -1080,9 +1091,9 @@ Now that we have the party dates, we now have to have employee birthdays.
 
 ### Exercise 10
 
-Let's now create a new tibble `employees` using `tibble()`. The tibble contains two columns `name` and `birthday`. Pass in `name = sample(babynames::babynames$name, 100)`, which takes sample of 100 baby names, to `name`. Then pass `ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)`, which generates birthdays, to `birthday`. 
+Let's now create a new tibble `employees` using `tibble()`. The tibble contains two columns: `name` and `birthday`. Pass in `name = sample(babynames::babynames$name, 100)`, which assigns a sample of 100 baby names to `name`. Then pass `ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)`, which generates birthdays, to `birthday`. 
 
-On a new line call employees to have a look at the tibble.
+On a new line, call employees to have a look at the tibble.
 
 ```{r nonequi-joins-10, exercise = TRUE}
 
@@ -1108,11 +1119,11 @@ employees
 
 ### 
 
-We generated the `employees` tibble using babynames dataset and also generated their birthdays. Let's now use roller joins to find first party date that comes after their birthday.
+We generated the `employees` tibble using the `babynames` dataset and also generated their birthdays. Let's now use rolling joins to find the first date that comes after their birthday.
 
 ### Exercise 11
 
-To join the employees and parties tables, start a pipe with employees and use `left_join()`. Use `join_by()` to find the closest party dates after the birthday by applying `closest(birthday >= party)`.
+To join the `employees` and `parties` tables, pipe `employees` to `left_join()`. Use `join_by()` to find the closest party dates after the birthday by applying `closest(birthday >= party)`.
 
 ```{r nonequi-joins-11, exercise = TRUE}
 
@@ -1145,7 +1156,7 @@ There is, however, one problem with this approach: the folks with birthdays befo
 
 ### Exercise 12
 
-Like mentioned previously this approach only looks for birthdays after January 10th and leave out birthdays before January 10th. To demonstrate this, Copy the previous code and change the join from `left_join()` to `right_join()`.
+This approach only looks for birthdays after January 10th and leaves out birthdays before that date. To demonstrate this, copy the previous code and change the join from `left_join()` to `right_join()`.
 
 ```{r nonequi-joins-12, exercise = TRUE}
 
@@ -1165,13 +1176,15 @@ employees |>
 
 ### 
 
-To resolve that issue we’ll need to tackle the problem a different way, with overlap joins: the fourth type of non equi joins.
+To resolve that issue we’ll need to tackle the problem a different way, with overlap joins: the fourth type of non equi join.
 
 ### Exercise 13
 
-Let’s continue the birthday example to see how you might use them. There’s one problem with the strategy we used above: there’s no party preceding the birthdays Jan 1-9. So it might be better to be explicit about the date ranges that each party spans, and make a special case for those early birthdays.
+<!-- DK: These and other instructions are way too complex. Instead, build this tibble over the course of several exercises. This is good because it makes things possible for students to do easily and because it allows for lots of useful knowledge drops. -->
 
-Make a new tibble `parties2` using `tibble()` and define three columns: party, start, and end. Set the key as `q` and assign `1:4` to it. For the party column, pass in `ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03"))`. For the start column, pass in `ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03"))`. For the end column, pass in `ymd(c("2022-04-03", "2022-07-11", "2022-10-02", "2022-12-31"))`. On a new line call `parties2` to check the new tibble.
+Let’s continue the birthday example to see how you might use them. There’s one problem with the strategy we used above: there’s no party preceding the birthdays on January 1 through 9. So it might be better to be explicit about the date ranges that each party spans, and make a special case for those early birthdays.
+
+Make a new tibble `parties2` using `tibble()` and define three columns: `party`, `start`, and `end`. Set the key as `q` and assign `1:4` to it. For the party column, pass in `ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03"))`. For the start column, pass in `ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03"))`. For the end column, pass in `ymd(c("2022-04-03", "2022-07-11", "2022-10-02", "2022-12-31"))`. On a new line call `parties2` to check the new tibble.
 
 ```{r nonequi-joins-13, exercise = TRUE}
 
@@ -1263,7 +1276,7 @@ Ooops, there is an overlap, so let’s fix that problem and continue:
 
 ### Exercise 16
 
-Go back to exercise 13 and copy your answer from there and paste it here, change the name of the tibble to`parties3` and change the 2nd data in `end` to `"2022-07-10"`.
+Go back to exercise 13 and copy your answer from there and paste it here, change the name of the tibble to `parties3` and change the 2nd data in `end` to `"2022-07-10"`.
 
 ```{r nonequi-joins-16, exercise = TRUE}
 
