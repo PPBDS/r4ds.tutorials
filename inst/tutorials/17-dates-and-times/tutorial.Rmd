@@ -86,7 +86,7 @@ library(...)
 
 ### Exercise 2
 
-Run `today()` in the code chunk below. With this we can get the current date.
+Run `today()` in the code chunk below.
 
 ```{r creating-date-times-through-im-2, exercise = TRUE}
 
@@ -96,9 +96,13 @@ Run `today()` in the code chunk below. With this we can get the current date.
 ...()
 ```
 
+```{r creating-date-times-through-im-2-test, include = FALSE}
+today()
+```
+
 ### 
 
-The above code printed a date. 
+To get the current date you can use `today()`. If you want the current date-time, you can use `now()`
 
 ### Exercise 3
 
@@ -112,9 +116,14 @@ Run `now()` in the code chunk below. With this we can get the current date-time.
 ...()
 ```
 
+```{r creating-date-times-through-im-3-test, include = FALSE}
+now()
+```
+
 ### 
 
 A date-time is a date plus a time: it uniquely identifies an instant in time (typically to the nearest second). Tibbles print this as `<dttm>`. Base R calls these POSIXct, but doesn’t exactly trip off the tongue.
+
 
 
 ### Exercise 4
@@ -151,9 +160,17 @@ read_csv(date2015)
 
 With `read_csv()` we are able to analyze the aspects of date and date-time with `col_types` such as `col_date()`, and `col_datetime()`. We can view the year features, month features, day features, time features, and other features.
 
+### 
+
+If your CSV contains an ISO8601 date or date-time, you don’t need to do anything; readr will automatically recognize it.  
+
+If you haven’t heard of ISO8601 before, it’s an international standard for writing dates where the components of a date are organized from biggest to smallest separated by `-`. To learn more about ISO8601, visit [here](https://www.iso.org/iso-8601-date-and-time-format.html)
+
+Since `date2015` does not contain this, we must manually format the date.
+
 ### Exercise 6
 
-Now we will use `col_types` to format the date in the `date2015`. Set `col_types` to `cols(date = col_date("%m/%d/%y"))` in `read_csv()`.
+We will use `col_types` to format the date in the `date2015`. Set `col_types` to `cols(date = col_date("%m/%d/%y"))` in `read_csv()`.
 
 ```{r creating-date-times-through-im-6, exercise = TRUE}
 
@@ -234,28 +251,34 @@ When using these three formats we need to identify the order in which year, mont
 
 ### Exercise 3
 
-Besides this we can also force set this by supplying a timezone. In `ymd()` set `tz` to "EST".
+We can also use the "hms" function to create an datetime. Set `ymd_hms()` to "2017-01-31 20:11:59".
 
 ```{r creating-date-times-with-strin-3, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r creating-date-times-with-strin-3-hint-1, eval = FALSE}
-ymd("2017-01-31", tz = ...)
+ymd_hms(...)
 ```
+
+```{r creating-date-times-with-strin-3-test, include = FALSE}
+ymd_hms("2017-01-31 20:11:59")
+```
+
+### 
+
+`ymd()` and friends create dates. To create a date-time, add an underscore and one or more of “h”, “m”, and “s” to the name of the parsing function
 
 ### Exercise 4
 
-We can also use the "hms" function to create an datetime. Set `ymd_hms()` to "2017-01-31 20:11:59".
+You can also force the creation of a date-time from a date by supplying a timezone. Copy and paste your code from Exercise 1 and set `tz` to "UTC".
 
 ```{r creating-date-times-with-strin-4, exercise = TRUE}
 
 ```
 
 ```{r creating-date-times-with-strin-4-hint-1, eval = FALSE}
-ymd_hms(...)
+ymd("2017-01-31", tz = ...)
 ```
 
 ### 
@@ -269,204 +292,360 @@ We can use the datetime features on pieces of data. We will use the datetime com
 
 ### 
 
-Let's make this line graph using `geom_point()`:
+Instead of a single string, sometimes you’ll have the individual components of the date-time spread across multiple columns. For example, look at what we have in the `flights` data
 
-```{r creating-datetimes-w}
-flight_grph <- 
-  flights |>
-    mutate(dep_time = make_datetime(year, month, day, dep_time),
-            sched_dep_time = make_datetime(year, month, day, sched_dep_time)) |>
-    select(dep_delay, dep_time, sched_dep_time) |> 
-    drop_na() |> 
-    ggplot(aes(x = sched_dep_time, 
-               y = dep_time,
-               color = dep_delay)) +
-      geom_point() +
-      labs(title = "Flights",
-           subtitle = "Flight departed time based on scheduled departed time.",
-           color = "Flight",
-           x = "Scheduled Departure Time",
-           y = "Departure Time")
-
-flight_grph
+```{r}
+flights |> 
+  select(year, month, day, hour, minute)
 ```
+
+We have all the components needed to make a datetime, but, we still need to make it manually.
+
+<!-- Let's make this line graph using `geom_point()`: -->
+
+<!-- ```{r creating-datetimes-w} -->
+<!-- flight_grph <-  -->
+<!--   flights |> -->
+<!--     mutate(dep_time = make_datetime(year, month, day, dep_time), -->
+<!--             sched_dep_time = make_datetime(year, month, day, sched_dep_time)) |> -->
+<!--     select(dep_delay, dep_time, sched_dep_time) |>  -->
+<!--     drop_na() |>  -->
+<!--     ggplot(aes(x = sched_dep_time,  -->
+<!--                y = dep_time, -->
+<!--                color = dep_delay)) + -->
+<!--       geom_point() + -->
+<!--       labs(title = "Flights", -->
+<!--            subtitle = "Flight departed time based on scheduled departed time.", -->
+<!--            color = "Flight", -->
+<!--            x = "Scheduled Departure Time", -->
+<!--            y = "Departure Time") -->
+
+<!-- flight_grph -->
+<!-- ``` -->
 
 ### Exercise 1
 
-Run `glimpse()` on `flights`.
+Continue this pipe with `mutate()`. Create a new variable, `departure`, set it equal to `make_data()` and set the argument inside to `year, month, day, hour, minute`.
 
 ```{r creating-dates-and-times-with-1, exercise = TRUE}
-
+flights |> 
+  select(year, month, day, hour, minute)
 ```
 
 ```{r creating-dates-and-times-with-1-hint-1, eval = FALSE}
-glimpse(...)
+... |>
+  mutate(departure = ...)
+```
+
+```{r creating-dates-and-times-with-1-hint-2, eval = FALSE}
+... |>
+  mutate(departure = make_datetime(..., ..., ..., ..., ...))
+```
+
+```{r creating-dates-and-times-with-1-test, include = FALSE}
+flights |> 
+  select(year, month, day, hour, minute) |> 
+  mutate(departure = make_datetime(year, month, day, hour, minute))
 ```
 
 ### 
 
-Here we can see all of the flights from NYC to destinations in the United States territories in 2013: 336,776 flights in total. Pay close attention to the `dep_time`, `sched_dep_time`, and `dep_delay`.
+To create a date/time from this sort of input, we use `make_date()` for dates, or  `make_datetime()` for date-times
 
 ### Exercise 2
 
-Let's start a pipe with the `flights` data. Mutate the `flights` data to set `dep_time` to `make_datetime(year, month, day, dep_time)`.
+Now we will create datetimes for arrival time, departure time, scheduled arrival time and scheduled departure time. 
+
+Good news, we did this for you! Run the code.
 
 ```{r creating-dates-and-times-with-2, exercise = TRUE}
+make_datetime_100 <- function(year, month, day, time) {
+  make_datetime(year, month, day, time %/% 100, time %% 100)
+}
 
-```
+flights_dt <- flights |> 
+  filter(!is.na(dep_time), !is.na(arr_time)) |> 
+  mutate(
+    dep_time = make_datetime_100(year, month, day, dep_time),
+    arr_time = make_datetime_100(year, month, day, arr_time),
+    sched_dep_time = make_datetime_100(year, month, day, sched_dep_time),
+    sched_arr_time = make_datetime_100(year, month, day, sched_arr_time)
+  ) |> 
+  select(origin, dest, ends_with("delay"), ends_with("time"))
 
-```{r creating-dates-and-times-with-2-hint-1, eval = FALSE}
-flights |>
-  mutate(dep_time = make_datetime(..., ..., ..., dep_time))
 ```
 
 ### 
 
-Here we are able to make a datetime for the departure time based on the `year`, `month`, `day` and the departure of each plane. When creating a a date/time from this sort of input, we use `make_date()` for dates, or `make_datetime()` for date-times.
+`make_datetime_100` is a function that takes in the `year`, `month`, `day` and `time` variables to create a datetime. It is not always necessary to make a function like this, but, it does make life easier.
 
 ### Exercise 3
 
-Let's add to the `mutate()` and set `sched_dep_time` to `make_datetime(year, month, day, sched_dep_time)`.
+Pipe `flights_dt` to `ggplot`. Inside the `aes` argument, set `x` to `dep_time`. 
 
 ```{r creating-dates-and-times-with-3, exercise = TRUE}
 
 ```
 
+```{r creating-dates-and-times-with-3-hint-1, eval = FALSE}
+flights_dt |>
+  ggplot(aes(... = ...)) + ...
+```
+
+```{r creating-dates-and-times-with-3-hint-2, eval = FALSE}
+flights_dt |>
+  ggplot(aes(... = ...)) 
+```
+
+```{r creating-dates-and-times-with-3-test, include = FALSE}
+flights_dt |> 
+  ggplot(aes(x = dep_time))
+```
+
+### Exercise 4
+
+Add `geom_freqpoly` and set the `binwidth` to `86400`.
+
+```{r creating-dates-and-times-with-4-ex, exercise = TRUE}
+
+```
+
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r creating-dates-and-times-with-3-hint-1, eval = FALSE}
-... |>
-    mutate(...,
-           sched_dep_time = ...))
+```{r creating-dates-and-times-with-4-hint, eval = FALSE}
+... +
+  geom_freqpoly(binwidth = ...)
+```
+
+```{r creating-dates-and-times-with-4-test, include = FALSE}
+flights_dt |> 
+  ggplot(aes(x = dep_time)) + 
+  geom_freqpoly(binwidth = 86400)
 ```
 
 ### 
 
-Similar to above, we created a datetime based on the scheduled departure time for each plane.
+With this data, we can visualize the distribution of departure times across the year
+
 
 ### Exercise 4
 
-Continue the pipe by adding `select()` for the `dep_delay`, `dep_time`, `sched_dep_time` variables
+Pipe `flights_dt` to `filter`. Set `dep_time` to be less than `ymd(20130102)`. Continue the pipe to `ggplot`, map `dep_time` to the x-axis. Add `geom_freqpoly`, set the `binwidth` argument to `600`
 
 ```{r creating-dates-and-times-with-4, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r creating-dates-and-times-with-4-hint-1, eval = FALSE}
-... |>
-    mutate(...,
-           sched_dep_time = ...)) |>
-    select(dep_delay, dep_time, sched_dep_time)
+flights_dt |>
+  filter(dep_time < ymd(...)) |>
+  ... + 
+  ...
+```
+
+```{r creating-dates-and-times-with-4-hint-2, eval = FALSE}
+flights_dt |>
+  filter(dep_time < ymd(...)) |>
+  ggplot(aes(x = ...)) + 
+  ...
+```
+
+```{r creating-dates-and-times-with-4-hint-3, eval = FALSE}
+flights_dt |>
+  filter(dep_time < ymd(...)) |>
+  ggplot(aes(x = ...)) + 
+  geom_freqpoly(binwidth = ...)
+```
+
+```{r creating-dates-and-times-with-4-test, include = FALSE}
+flights_dt |> 
+  filter(dep_time < ymd(20130102)) |> 
+  ggplot(aes(x = dep_time)) + 
+  geom_freqpoly(binwidth = 600)
 ```
 
 ### 
 
-We only want to select these three variables because we will be using these for our graph.
+We filter the `dep_time` in this way so that we only get data for the first of January.
 
-### Exercise 5
+Note that when you use date-times in a numeric context (like in a histogram), 1 means 1 second, so a binwidth of 86400 means one day. For dates, 1 means 1 day.
 
-Continue the pipe by adding `ggplot()` and in `aes()` set `x` to `sched_dep_time` and `y` to `dep_time`
+<!-- ### Exercise 1 -->
 
-```{r creating-dates-and-times-with-5, exercise = TRUE}
+<!-- Run `glimpse()` on `flights`. -->
 
-```
+<!-- ```{r creating-dates-and-times-with-1, exercise = TRUE} -->
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+<!-- ``` -->
 
-```{r creating-dates-and-times-with-5-hint-1, eval = FALSE}
-... |>
-    ggplot(aes(x = ..., 
-               y = ...))
-```
+<!-- ```{r creating-dates-and-times-with-1-hint-1, eval = FALSE} -->
+<!-- glimpse(...) -->
+<!-- ``` -->
 
-Note nothing will be plotted because we have not used `geom_point()`.
+<!-- ###  -->
 
-### Exercise 6
+<!-- Here we can see all of the flights from NYC to destinations in the United States territories in 2013: 336,776 flights in total. Pay close attention to the `dep_time`, `sched_dep_time`, and `dep_delay`. -->
 
-Let's plot this by adding `geom_point()`.
+<!-- ### Exercise 2 -->
 
-```{r creating-dates-and-times-with-6, exercise = TRUE}
+<!-- Let's start a pipe with the `flights` data. Mutate the `flights` data to set `dep_time` to `make_datetime(year, month, day, dep_time)`. -->
 
-```
+<!-- ```{r creating-dates-and-times-with-2, exercise = TRUE} -->
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+<!-- ``` -->
 
-```{r creating-dates-and-times-with-6-hint-1, eval = FALSE}
-... |>
-  ... +
-  geom_point()
-```
+<!-- ```{r creating-dates-and-times-with-2-hint-1, eval = FALSE} -->
+<!-- flights |> -->
+<!--   mutate(dep_time = make_datetime(..., ..., ..., dep_time)) -->
+<!-- ``` -->
 
-### 
+<!-- ###  -->
 
-You should have recieved a warning message that says: Warning message:
-Removed 8255 rows containing missing values (`geom_point()`). We will solve this issue by using `drop_na()`.
+<!-- Here we are able to make a datetime for the departure time based on the `year`, `month`, `day` and the departure of each plane. When creating a a date/time from this sort of input, we use `make_date()` for dates, or `make_datetime()` for date-times. -->
 
-### Exercise 7
+<!-- ### Exercise 3 -->
 
-We want to add drop any null values from the three columns that we use. Continue the pipe after `select()` to add `drop_na()`.
+<!-- Let's add to the `mutate()` and set `sched_dep_time` to `make_datetime(year, month, day, sched_dep_time)`. -->
 
-```{r creating-dates-and-times-with-7, exercise = TRUE}
+<!-- ```{r creating-dates-and-times-with-3, exercise = TRUE} -->
 
-```
+<!-- ``` -->
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+<!-- <button onclick = "transfer_code(this)">Copy previous code</button> -->
 
-```{r creating-dates-and-times-with-7-hint-1, eval = FALSE}
-... |>
-  select(...) |>
-    ...()
-```
+<!-- ```{r creating-dates-and-times-with-3-hint-1, eval = FALSE} -->
+<!-- ... |> -->
+<!--     mutate(..., -->
+<!--            sched_dep_time = ...)) -->
+<!-- ``` -->
 
-### Exercise 8
+<!-- ###  -->
 
-In `aes()` set `color` to `dep_delay`.
+<!-- Similar to above, we created a datetime based on the scheduled departure time for each plane. -->
 
-```{r creating-dates-and-times-with-8, exercise = TRUE}
+<!-- ### Exercise 4 -->
 
-```
+<!-- Continue the pipe by adding `select()` for the `dep_delay`, `dep_time`, `sched_dep_time` variables -->
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+<!-- ```{r creating-dates-and-times-with-4, exercise = TRUE} -->
 
-```{r creating-dates-and-times-with-8-hint-1, eval = FALSE}
-ggplot(aes(x = ..., 
-           y = ...,
-           color = ...))
-```
+<!-- ``` -->
 
-### 
+<!-- <button onclick = "transfer_code(this)">Copy previous code</button> -->
 
-When we set `color` to `dep_delay` we are able to see how late flights were regarding departure times.
+<!-- ```{r creating-dates-and-times-with-4-hint-1, eval = FALSE} -->
+<!-- ... |> -->
+<!--     mutate(..., -->
+<!--            sched_dep_time = ...)) |> -->
+<!--     select(dep_delay, dep_time, sched_dep_time) -->
+<!-- ``` -->
 
-### Exercise 9
+<!-- ###  -->
 
-Finally add the labels to the graph to complete the graph with `labs()`
+<!-- We only want to select these three variables because we will be using these for our graph. -->
 
-```{r creating-dates-and-times-with-9, exercise = TRUE}
+<!-- ### Exercise 5 -->
 
-```
+<!-- Continue the pipe by adding `ggplot()` and in `aes()` set `x` to `sched_dep_time` and `y` to `dep_time` -->
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
+<!-- ```{r creating-dates-and-times-with-5, exercise = TRUE} -->
 
-```{r creating-dates-and-times-with-9-hint-1, eval = FALSE}
-+ labs(title = ...,
-                subtitle = ...,
-                color = "Flight",
-                x = ...,
-                y = ...)
-```
+<!-- ``` -->
 
-Remember your graph should look like this:
+<!-- <button onclick = "transfer_code(this)">Copy previous code</button> -->
 
-```{r flight_grph}
-flight_grph
-```
+<!-- ```{r creating-dates-and-times-with-5-hint-1, eval = FALSE} -->
+<!-- ... |> -->
+<!--     ggplot(aes(x = ...,  -->
+<!--                y = ...)) -->
+<!-- ``` -->
 
-### 
+<!-- Note nothing will be plotted because we have not used `geom_point()`. -->
 
-When we want to switch between date and datetime we use `as_datetime()` and `as_date()`. Visit [**as_datetime()**](https://lubridate.tidyverse.org/reference/as_date.html) for more information.
+<!-- ### Exercise 6 -->
+
+<!-- Let's plot this by adding `geom_point()`. -->
+
+<!-- ```{r creating-dates-and-times-with-6, exercise = TRUE} -->
+
+<!-- ``` -->
+
+<!-- <button onclick = "transfer_code(this)">Copy previous code</button> -->
+
+<!-- ```{r creating-dates-and-times-with-6-hint-1, eval = FALSE} -->
+<!-- ... |> -->
+<!--   ... + -->
+<!--   geom_point() -->
+<!-- ``` -->
+
+<!-- ###  -->
+
+<!-- You should have recieved a warning message that says: Warning message: -->
+<!-- Removed 8255 rows containing missing values (`geom_point()`). We will solve this issue by using `drop_na()`. -->
+
+<!-- ### Exercise 7 -->
+
+<!-- We want to add drop any null values from the three columns that we use. Continue the pipe after `select()` to add `drop_na()`. -->
+
+<!-- ```{r creating-dates-and-times-with-7, exercise = TRUE} -->
+
+<!-- ``` -->
+
+<!-- <button onclick = "transfer_code(this)">Copy previous code</button> -->
+
+<!-- ```{r creating-dates-and-times-with-7-hint-1, eval = FALSE} -->
+<!-- ... |> -->
+<!--   select(...) |> -->
+<!--     ...() -->
+<!-- ``` -->
+
+<!-- ### Exercise 8 -->
+
+<!-- In `aes()` set `color` to `dep_delay`. -->
+
+<!-- ```{r creating-dates-and-times-with-8, exercise = TRUE} -->
+
+<!-- ``` -->
+
+<!-- <button onclick = "transfer_code(this)">Copy previous code</button> -->
+
+<!-- ```{r creating-dates-and-times-with-8-hint-1, eval = FALSE} -->
+<!-- ggplot(aes(x = ...,  -->
+<!--            y = ..., -->
+<!--            color = ...)) -->
+<!-- ``` -->
+
+<!-- ###  -->
+
+<!-- When we set `color` to `dep_delay` we are able to see how late flights were regarding departure times. -->
+
+<!-- ### Exercise 9 -->
+
+<!-- Finally add the labels to the graph to complete the graph with `labs()` -->
+
+<!-- ```{r creating-dates-and-times-with-9, exercise = TRUE} -->
+
+<!-- ``` -->
+
+<!-- <button onclick = "transfer_code(this)">Copy previous code</button> -->
+
+<!-- ```{r creating-dates-and-times-with-9-hint-1, eval = FALSE} -->
+<!-- + labs(title = ..., -->
+<!--                 subtitle = ..., -->
+<!--                 color = "Flight", -->
+<!--                 x = ..., -->
+<!--                 y = ...) -->
+<!-- ``` -->
+
+<!-- Remember your graph should look like this: -->
+
+<!-- ```{r flight_grph} -->
+<!-- flight_grph -->
+<!-- ``` -->
+
+<!-- ###  -->
+
+<!-- When we want to switch between date and datetime we use `as_datetime()` and `as_date()`. Visit [**as_datetime()**](https://lubridate.tidyverse.org/reference/as_date.html) for more information. -->
 
 ## Date-time components with getting components
 ### 
