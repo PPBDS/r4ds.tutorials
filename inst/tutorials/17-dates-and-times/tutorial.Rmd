@@ -406,13 +406,13 @@ flights_dt |>
 
 Add `geom_freqpoly` and set the `binwidth` to `86400`.
 
-```{r creating-dates-and-times-with-4-ex, exercise = TRUE}
+```{r creating-dates-and-times-with-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r creating-dates-and-times-with-4-hint, eval = FALSE}
+```{r creating-dates-and-times-with-4-hint-1, eval = FALSE}
 ... +
   geom_freqpoly(binwidth = ...)
 ```
@@ -427,37 +427,65 @@ flights_dt |>
 
 With this data, we can visualize the distribution of departure times across the year
 
+### Exercise 5
 
-### Exercise 4
+Pipe `flights_dt` to `filter`. Set `dep_time` to be less than `ymd(20130102)`. 
 
-Pipe `flights_dt` to `filter`. Set `dep_time` to be less than `ymd(20130102)`. Continue the pipe to `ggplot`, map `dep_time` to the x-axis. Add `geom_freqpoly`, set the `binwidth` argument to `600`
-
-```{r creating-dates-and-times-with-4, exercise = TRUE}
+```{r creating-dates-and-times-with-5, exercise = TRUE}
 
 ```
 
-```{r creating-dates-and-times-with-4-hint-1, eval = FALSE}
+```{r creating-dates-and-times-with-5-hint-1, eval = FALSE}
 flights_dt |>
-  filter(dep_time < ymd(...)) |>
-  ... + 
-  ...
+  filter(dep_time < ymd(...))
 ```
 
-```{r creating-dates-and-times-with-4-hint-2, eval = FALSE}
-flights_dt |>
-  filter(dep_time < ymd(...)) |>
-  ggplot(aes(x = ...)) + 
-  ...
+```{r creating-dates-and-times-with-5-test, include = FALSE}
+flights_dt |> 
+  filter(dep_time < ymd(20130102))
 ```
 
-```{r creating-dates-and-times-with-4-hint-3, eval = FALSE}
-flights_dt |>
-  filter(dep_time < ymd(...)) |>
-  ggplot(aes(x = ...)) + 
+### 
+
+We filter the `dep_time` in this way so that we only get data for the first of January.
+
+### Exercise 6
+
+Continue the pipe to `ggplot`, map `dep_time` to the x-axis. 
+
+```{r creating-dates-and-times-with-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-dates-and-times-with-6-hint-1, eval = FALSE}
+... |> 
+  ggplot(aes(x = ...))
+```
+
+```{r creating-dates-and-times-with-6-test, include = FALSE}
+flights_dt |> 
+  filter(dep_time < ymd(20130102)) |> 
+  ggplot(aes(x = dep_time))
+```
+
+### Exercise 7
+
+Add `geom_freqpoly`, set the `binwidth` argument to `600`
+
+```{r creating-dates-and-times-with-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r creating-dates-and-times-with-7-hint-1, eval = FALSE}
+... +
   geom_freqpoly(binwidth = ...)
 ```
 
-```{r creating-dates-and-times-with-4-test, include = FALSE}
+```{r creating-dates-and-times-with-7-test, include = FALSE}
 flights_dt |> 
   filter(dep_time < ymd(20130102)) |> 
   ggplot(aes(x = dep_time)) + 
@@ -465,8 +493,6 @@ flights_dt |>
 ```
 
 ### 
-
-We filter the `dep_time` in this way so that we only get data for the first of January.
 
 Note that when you use date-times in a numeric context (like in a histogram), 1 means 1 second, so a binwidth of 86400 means one day. For dates, 1 means 1 day.
 
@@ -650,81 +676,223 @@ Note that when you use date-times in a numeric context (like in a histogram), 1 
 ## Date-time components with getting components
 ### 
 
-You can pull out individual parts of the date with the accessor functions `year()`, `month()`, `mday()` (day of the month), `yday()` (day of the year), `wday()` (day of the week), `hour()`, `minute()`, and `second()`. These are effectively the opposites of `make_datetime()`.
+Now that you know how to get date-time data into R’s date-time data structures, let’s explore what you can do with them. These next sections will focus on the accessor functions that let you get and set individual components. The next section will look at how arithmetic works with date-times.
 
 ### 
 
-We are going to use the `flights_dt` dataset which includes the `dep_time`, `sched_dep_time`, `arr_time`, `sched_arr_time` which are datetimes.
+<!-- We are going to use the `flights_dt` dataset which includes the `dep_time`, `sched_dep_time`, `arr_time`, `sched_arr_time` which are datetimes. -->
 
 ### Exercise 1
 
-Run `glimpse()` on `flights_dt` to look at the data.
+Run `year()`, `month()`, `mday()`, `yday()`, `wday()`, `hour()`, `minute()` and `second()` on `datetime`
 
-```{r datetime-components-with-getti-1, exercise = TRUE}
-
+```{r datetime-components-with-getti-1-ex, exercise = TRUE}
+datetime <- ymd_hms("2026-07-08 12:34:56")
 ```
 
-```{r datetime-components-with-getti-1-hint-1, eval = FALSE}
-glimpse(...)
+```{r datetime-components-with-getti-1-hint, eval = FALSE}
+year(...)
+month(...)
+mday(...)
+yday(...)
+wday(...)
+hour(...)
+minute(...)
+second(...)
 ```
 
-### 
+```{r datetime-components-with-getti-1-test, include = FALSE}
+datetime <- ymd_hms("2026-07-08 12:34:56")
+year(datetime)
+month(datetime)
+mday(datetime)
+yday(datetime)
+wday(datetime)
+hour(datetime)
+minute(datetime)
+second(datetime)
+```
 
-We are going to focus on four columns `dep_time`, `sched_dep_time`, `arr_time`, `sched_arr_time` because they are all <dttm> (datetime).
+###
+
+You can pull out individual parts of the date with the accessor functions `year()`, `month()`, `mday()` (day of the month), `yday()` (day of the year), `wday()` (day of the week), `hour()`, `minute()`, and `second()`. These are effectively the opposites of `make_datetime()`.
 
 ### Exercise 2
 
-Let's start a pipe with the `flights_dt` to `mutate()` our data. Set `weekday` to `wday(dep_time, label = TRUE)`.
+Now, run `month()` with the argument `datetime`, set `label = TRUE`
 
-```{r datetime-components-with-getti-2, exercise = TRUE}
-
+```{r datetime-components-with-getti-2-ex, exercise = TRUE}
+datetime <- ymd_hms("2026-07-08 12:34:56")
 ```
 
-```{r datetime-components-with-getti-2-hint-1, eval = FALSE}
-... |> 
-  mutate(weekday = ...)
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r datetime-components-with-getti-2-hint, eval = FALSE}
+month(..., label = ...)
 ```
 
-### 
+```{r datetime-components-with-getti-2-test, include = FALSE}
+datetime <- ymd_hms("2026-07-08 12:34:56")
+month(datetime, label = TRUE)
+```
 
-By setting the `label = TRUE` we can return the abbreviated name of the day of the week.
 
 ### Exercise 3
 
-Now let's plot our data using `ggplot()` and within `aes()` set `x` to `weekday`.
+Run `wday()` with the argument `datetime`, set `label = TRUE` and `abbr` to `FALSE`
 
-```{r datetime-components-with-getti-3, exercise = TRUE}
-
+```{r datetime-components-with-getti-3-ex, exercise = TRUE}
+datetime <- ymd_hms("2026-07-08 12:34:56")
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r datetime-components-with-getti-3-hint-1, eval = FALSE}
-... |> 
- ... |> 
-  ggplot(aes(x = ...))
+```{r datetime-components-with-getti-3-hint, eval = FALSE}
+wday(..., label = ..., abbr = ...)
 ```
+
+```{r datetime-components-with-getti-3-test, include = FALSE}
+datetime <- ymd_hms("2026-07-08 12:34:56")
+wday(datetime, label = TRUE, abbr = FALSE)
+```
+
+###
+
+For `month()` and `wday()` you can set `label = TRUE` to return the abbreviated name of the month or day of the week. You can set `abbr = FALSE` to return the full name.
 
 ### Exercise 4
 
-Add `geom_bar()` to the pipe.
+Start a pipe with `flights_dt` to `mutate()`. Make a new variable `weekday`, set it equal to `wday()` with the arguments `dep_time` and `label = TRUE`.
 
-```{r datetime-components-with-getti-4, exercise = TRUE}
+```{r datetime-components-with-getti-4-ex, exercise = TRUE}
+
+```
+
+```{r datetime-components-with-getti-4-hint, eval = FALSE}
+flights_dt |>
+  mutate(weekday = wday(..., ....))
+```
+
+```{r datetime-components-with-getti-4-test, include = FALSE}
+flights_dt |> 
+  mutate(wday = wday(dep_time, label = TRUE))
+```
+
+
+### Exercise 5
+
+Continue the pipe to `ggplot()`. Map `wday` to the x-axis. 
+
+```{r datetime-components-with-getti-5-ex, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r datetime-components-with-getti-4-hint-1, eval = FALSE}
-... |> 
-  ... |> 
-  ... +
+```{r datetime-components-with-getti-5-hint, eval = FALSE}
+... |>
+  ggplot(aes(x = ...))
+```
+
+```{r datetime-components-with-getti-5-test, include = FALSE}
+flights_dt |> 
+  mutate(wday = wday(dep_time, label = TRUE)) |> 
+  ggplot(aes(x = wday))
+```
+
+### Exercise 6
+
+Finish off your pipe with `geom_bar()`
+
+```{r datetime-components-with-getti-6-ex, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r datetime-components-with-getti-6-hint, eval = FALSE}
+...+
   geom_bar()
 ```
 
-### 
+```{r datetime-components-with-getti-6-test, include = FALSE}
+flights_dt |> 
+  mutate(wday = wday(dep_time, label = TRUE)) |> 
+  ggplot(aes(x = wday)) +
+  geom_bar()
+```
+
+###
 
 We can use `wday()` to see that more flights depart during the week than on the weekend.
+
+<!-- ### Exercise 1 -->
+
+<!-- Run `glimpse()` on `flights_dt` to look at the data. -->
+
+<!-- ```{r datetime-components-with-getti-1, exercise = TRUE} -->
+
+<!-- ``` -->
+
+<!-- ```{r datetime-components-with-getti-1-hint-1, eval = FALSE} -->
+<!-- glimpse(...) -->
+<!-- ``` -->
+
+<!-- ###  -->
+
+<!-- We are going to focus on four columns `dep_time`, `sched_dep_time`, `arr_time`, `sched_arr_time` because they are all <dttm> (datetime). -->
+
+<!-- ### Exercise 2 -->
+
+<!-- Let's start a pipe with the `flights_dt` to `mutate()` our data. Set `weekday` to `wday(dep_time, label = TRUE)`. -->
+
+<!-- ```{r datetime-components-with-getti-2, exercise = TRUE} -->
+
+<!-- ``` -->
+
+<!-- ```{r datetime-components-with-getti-2-hint-1, eval = FALSE} -->
+<!-- ... |>  -->
+<!--   mutate(weekday = ...) -->
+<!-- ``` -->
+
+<!-- ###  -->
+
+<!-- By setting the `label = TRUE` we can return the abbreviated name of the day of the week. -->
+
+<!-- ### Exercise 3 -->
+
+<!-- Now let's plot our data using `ggplot()` and within `aes()` set `x` to `weekday`. -->
+
+<!-- ```{r datetime-components-with-getti-3, exercise = TRUE} -->
+
+<!-- ``` -->
+
+<!-- <button onclick = "transfer_code(this)">Copy previous code</button> -->
+
+<!-- ```{r datetime-components-with-getti-3-hint-1, eval = FALSE} -->
+<!-- ... |>  -->
+<!--  ... |>  -->
+<!--   ggplot(aes(x = ...)) -->
+<!-- ``` -->
+
+<!-- ### Exercise 4 -->
+
+<!-- Add `geom_bar()` to the pipe. -->
+
+<!-- ```{r datetime-components-with-getti-4, exercise = TRUE} -->
+
+<!-- ``` -->
+
+<!-- <button onclick = "transfer_code(this)">Copy previous code</button> -->
+
+<!-- ```{r datetime-components-with-getti-4-hint-1, eval = FALSE} -->
+<!-- ... |>  -->
+<!--   ... |>  -->
+<!--   ... + -->
+<!--   geom_bar() -->
+<!-- ``` -->
+
+<!-- ###  -->
+
+<!-- We can use `wday()` to see that more flights depart during the week than on the weekend. -->
 
 ## Date and time components with rounding
 ### 
