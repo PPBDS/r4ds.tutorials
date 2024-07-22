@@ -167,6 +167,8 @@ library(duckdb)
 
 ### 
 
+<!-- AC: For the first sentence, should it be mentioning the book? (I know it's taken from it, but it seems out of place.) -->
+
 Setting up a client-server or cloud DBMS would be a pain for this book, so we’ll instead use an in-process DBMS that lives entirely in an R package: [**duckdb**](https://r.duckdb.org/). Thanks to the magic of DBI, the only difference between using **duckdb** and any other DBMS is how you’ll connect to the database. This makes it great to teach with because you can easily run this code as well as easily take what you learn and apply it elsewhere.
 
 ### Exercise 5
@@ -222,7 +224,7 @@ dbDisconnect(con, shutdown=TRUE)
 
 ### 
 
-If you can’t find a specific package for your DBMS, you can usually use the **odbc** package instead. This uses the ODBC protocol supported by many DBMS. **odbc** requires a little more setup because you’ll also need to install an ODBC driver and tell the **odbc** package where to find it.
+If you can’t find a specific package for your DBMS, you can usually use the **odbc** package instead. This uses the ODBC protocol supported by many DBMS's. **odbc** requires a little more setup because you’ll also need to install an ODBC driver and tell the **odbc** package where to find it.
 
 
 ### Exercise 2
@@ -273,7 +275,7 @@ dbDisconnect(con, shutdown=TRUE)
 
 Connecting to duckdb is particularly simple because the defaults create a temporary database that is deleted when you quit R. That’s great for learning because it guarantees that you’ll start from a clean slate every time you restart R. 
 
-But that it also a problem for a tutorial like this one because each Exercise is evaluated in isolation from everything else in the tutorial. That means we need to establish the connection in each Exercise. No worries though! We will provide the code for doing so, as needed.
+But it's also a problem for a tutorial like this one because each Exercise is evaluated in isolation from everything else in the tutorial. That means we need to establish the connection in each Exercise. No worries though! We will provide the code for doing so, as needed.
 
 ### Exercise 4
 
@@ -494,6 +496,8 @@ This SQL code selects 5 specific variables, from the `diamonds` dataset, and the
 
 ### Exercise 11
 
+<!-- AC: There's a mismatch between Exercises 11 and 12: In Exercise 11, we do as_tibble(dbGetQuery(...)), (the hint does not reflect this,) however in Exercise 12 it says that  the last exercise (11) returned a df instead of a tibble.  -->
+
 `dbGetQuery()` is a function which takes a connection and an SQL query as a text string as inputs. It returns the result of that query as a data frame. 
 
 Type `dbGetQuery()` with the arguments `con` and `my_sql`
@@ -589,9 +593,11 @@ dbDisconnect(con, shutdown=TRUE)
 
 ### 
 
+
 <!-- DK: Some reports from students that no message is generated. -->
 
 `tbl()` is a function **dtplyr** which creates a table. Note that a table is not the same thing as a tibble. Note that there may be message at the top:
+
 
 ````
 Source:   table<diamonds> [?? x 10]
@@ -964,9 +970,9 @@ planes |>
 
 ### 
 
-In the examples above note that "year" and "type" are wrapped in double quotes. That’s because these are reserved words in duckdb, so dbplyr quotes them to avoid any potential confusion between column/table names and SQL operators.
+In the examples above, note that "year" and "type" are wrapped in double quotes. That’s because these are reserved words in duckdb, so dbplyr quotes them to avoid any potential confusion between column/table names and SQL operators.
 
-When working with other databases you’re likely to see every variable name quotes because only a handful of client packages, like duckdb, know what all the reserved words are, so they quote everything to be safe.
+When working with other databases you’re likely to see every variable name in quotes because only a handful of client packages, like duckdb, know what all the reserved words are, so they quote everything to be safe.
 
 
 ### Exercise 9
@@ -1019,7 +1025,7 @@ flights |>
 
 ### 
 
-This example also shows you how SQL does renaming. In SQL terminology renaming is called aliasing and is done with `AS`. Note that unlike `mutate()`, the old name is on the left and the new name is on the right
+This example also shows you how SQL does renaming. In SQL terminology, renaming is called aliasing and is done with `AS`. Note that unlike `mutate()`, the old name is on the left and the new name is on the right. 
 
 ### Exercise 11
 
@@ -1109,6 +1115,8 @@ flights |>
 Study the correspondence between the **dplyr** code and the SQL code produced by `show_query()` if you want to start learning about SQL.
 
 ### Exercise 14
+
+<!-- AC: This paragraph might do with some extra formatting (with the `` and bolding perhaps). -->
 
 SQL uses NULL instead of NA. NULLs behave similarly to NAs. The main difference is that while they’re “infectious” in comparisons and arithmetic, they are silently dropped when summarizing. dbplyr will remind you about this behavior the first time you hit it. Run this code:
 
@@ -1207,7 +1215,7 @@ Notice how desc() is translated to DESC: this is one of the many dplyr functions
 
 ### Exercise 18
 
-Sometimes it’s not possible to translate a **dplyr** pipeline into a single `SELECT` statement and you need to use a subquery. A **subquery** is just a query used as a data source in the `FROM` clause, instead of the usual table.
+Sometimes it’s not possible to translate a **dplyr** pipeline into a single `SELECT` statement and you need to use a **subquery**. A **subquery** is just a query used as a data source in the `FROM` clause, instead of the usual table.
 
 Using the previous code, replace `arrange(year, month, day, desc(dep_delay))` with 
 
