@@ -688,11 +688,19 @@ Now that you know how to get date-time data into R’s date-time data structures
 
 Run `year()`, `month()`, `mday()`, `yday()`, `wday()`, `hour()`, `minute()` and `second()` on `datetime`
 
-```{r datetime-components-with-getti-1-ex, exercise = TRUE}
+```{r datetime-components-with-getti-1, exercise = TRUE}
 datetime <- ymd_hms("2026-07-08 12:34:56")
+
+
+
+
+
+
+
+
 ```
 
-```{r datetime-components-with-getti-1-hint, eval = FALSE}
+```{r datetime-components-with-getti-1-hint-1, eval = FALSE}
 year(...)
 month(...)
 mday(...)
@@ -715,7 +723,7 @@ minute(datetime)
 second(datetime)
 ```
 
-###
+### 
 
 You can pull out individual parts of the date with the accessor functions `year()`, `month()`, `mday()` (day of the month), `yday()` (day of the year), `wday()` (day of the week), `hour()`, `minute()`, and `second()`. These are effectively the opposites of `make_datetime()`.
 
@@ -723,13 +731,13 @@ You can pull out individual parts of the date with the accessor functions `year(
 
 Now, run `month()` with the argument `datetime`, set `label = TRUE`
 
-```{r datetime-components-with-getti-2-ex, exercise = TRUE}
+```{r datetime-components-with-getti-2, exercise = TRUE}
 datetime <- ymd_hms("2026-07-08 12:34:56")
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r datetime-components-with-getti-2-hint, eval = FALSE}
+```{r datetime-components-with-getti-2-hint-1, eval = FALSE}
 month(..., label = ...)
 ```
 
@@ -738,16 +746,15 @@ datetime <- ymd_hms("2026-07-08 12:34:56")
 month(datetime, label = TRUE)
 ```
 
-
 ### Exercise 3
 
 Run `wday()` with the argument `datetime`, set `label = TRUE` and `abbr` to `FALSE`
 
-```{r datetime-components-with-getti-3-ex, exercise = TRUE}
+```{r datetime-components-with-getti-3, exercise = TRUE}
 datetime <- ymd_hms("2026-07-08 12:34:56")
 ```
 
-```{r datetime-components-with-getti-3-hint, eval = FALSE}
+```{r datetime-components-with-getti-3-hint-1, eval = FALSE}
 wday(..., label = ..., abbr = ...)
 ```
 
@@ -756,7 +763,7 @@ datetime <- ymd_hms("2026-07-08 12:34:56")
 wday(datetime, label = TRUE, abbr = FALSE)
 ```
 
-###
+### 
 
 For `month()` and `wday()` you can set `label = TRUE` to return the abbreviated name of the month or day of the week. You can set `abbr = FALSE` to return the full name.
 
@@ -764,11 +771,11 @@ For `month()` and `wday()` you can set `label = TRUE` to return the abbreviated 
 
 Start a pipe with `flights_dt` to `mutate()`. Make a new variable `weekday`, set it equal to `wday()` with the arguments `dep_time` and `label = TRUE`.
 
-```{r datetime-components-with-getti-4-ex, exercise = TRUE}
+```{r datetime-components-with-getti-4, exercise = TRUE}
 
 ```
 
-```{r datetime-components-with-getti-4-hint, eval = FALSE}
+```{r datetime-components-with-getti-4-hint-1, eval = FALSE}
 flights_dt |>
   mutate(weekday = wday(..., ....))
 ```
@@ -778,18 +785,17 @@ flights_dt |>
   mutate(wday = wday(dep_time, label = TRUE))
 ```
 
-
 ### Exercise 5
 
 Continue the pipe to `ggplot()`. Map `wday` to the x-axis. 
 
-```{r datetime-components-with-getti-5-ex, exercise = TRUE}
+```{r datetime-components-with-getti-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r datetime-components-with-getti-5-hint, eval = FALSE}
+```{r datetime-components-with-getti-5-hint-1, eval = FALSE}
 ... |>
   ggplot(aes(x = ...))
 ```
@@ -804,13 +810,13 @@ flights_dt |>
 
 Finish off your pipe with `geom_bar()`
 
-```{r datetime-components-with-getti-6-ex, exercise = TRUE}
+```{r datetime-components-with-getti-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r datetime-components-with-getti-6-hint, eval = FALSE}
+```{r datetime-components-with-getti-6-hint-1, eval = FALSE}
 ...+
   geom_bar()
 ```
@@ -822,7 +828,7 @@ flights_dt |>
   geom_bar()
 ```
 
-###
+### 
 
 We can use `wday()` to see that more flights depart during the week than on the weekend.
 
@@ -903,31 +909,31 @@ An alternative approach to plotting individual components is to round the date t
 
 ### Exercise 1
 
-Pipe `flights_dt` to `mutate()`. Set `dep_hour` to `dep_time - floor_date(dep_time, "day")`.
+Pipe `flights_dt` to `count()`. Set `week` to `floor_date(dep_time, "week")`.
 
 ```{r date-and-time-components-with-1, exercise = TRUE}
 
 ```
 
 ```{r date-and-time-components-with-1-hint-1, eval = FALSE}
-flights_dt |>
-  mutate(dep_hour = ... - ...())
+... |> 
+  count(... = floor_date(..., "..."))
 ```
 
 ```{r date-and-time-components-with-1-test, include = FALSE}
-flights_dt |>
-  mutate(dep_hour = dep_time - floor_date(dep_time, "day"))
+flights_dt |> 
+  count(week = floor_date(dep_time, "week"))
 ```
 
 ### 
 
-Computing the difference between a pair of date-times yields a difftime. A difftime class object records a time span of seconds, minutes, hours, days, or weeks. This ambiguity can make difftimes a little painful to work with, so **lubridate** provides an alternative which always uses seconds: the duration.
+`count()` lets you quickly count the unique values of one or more variables
+
+The first argument of `floor_date()` is the source we are pulling the data from. The second argument is which variable we want to be rounded.
 
 ### Exercise 2
 
-<!-- DK: Do something better than just ignore the message. -->
-
-Continue the pipe with `ggplot()`. Set `x` to `dep_hour` in `aes()`. Ignore the message about "Don't know how to automatically pick ..."
+Continue the pipe with `ggplot()`. Map `week` to the x-axis and `n` to the y-axis. Add `geom_line()` and `geom_point()`
 
 ```{r date-and-time-components-with-2, exercise = TRUE}
 
@@ -936,20 +942,27 @@ Continue the pipe with `ggplot()`. Set `x` to `dep_hour` in `aes()`. Ignore the 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r date-and-time-components-with-2-hint-1, eval = FALSE}
-... |>
-  ... |>
-  ggplot(aes(x = ...))
+... |> 
+  ggplot(aes(x = ..., y = ...) +
+    ...() +
+    ...()
 ```
 
 ```{r date-and-time-components-with-2-test, include = FALSE}
-flights_dt |>
-  mutate(dep_hour = dep_time - floor_date(dep_time, "day")) |> 
-  ggplot(aes(x = dep_hour))
+flights_dt |> 
+  count(week = floor_date(dep_time, "week")) |> 
+  ggplot(aes(x = week, y = n)) +
+  geom_line() + 
+  geom_point()
 ```
+
+### 
+
+Every flight that happens in a certain week is added up and plotted as one point using `floor_date()`. Now, we can see the distribution of flights each week in the year.
 
 ### Exercise 3
 
-Add `geom_freqpoly()` to the pipe to view the difference by setting `binwidth` to `60*30` in `geom_freqpoly()`.
+Start a new pipe with `flights_dt` to `mutate()`. Set `dep_hour` to `hms::as_hms(dep_time - floor_date(dep_time, "day")))`
 
 ```{r date-and-time-components-with-3, exercise = TRUE}
 
@@ -958,22 +971,101 @@ Add `geom_freqpoly()` to the pipe to view the difference by setting `binwidth` t
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r date-and-time-components-with-3-hint-1, eval = FALSE}
-... |>
-  ... |>
-  ... +
-    geom_freqpoly(binwidth = ...)
+flights_dt |> 
+  mutate(...)
 ```
 
 ```{r date-and-time-components-with-3-test, include = FALSE}
-flights_dt |>
-  mutate(dep_hour = dep_time - floor_date(dep_time, "day")) |> 
-  ggplot(aes(x = dep_hour)) +
-    geom_freqpoly(binwidth = 60*30)
+flights_dt |> 
+  mutate(dep_hour = hms::as_hms(dep_time - floor_date(dep_time, "day")))
 ```
 
 ### 
 
-You can use rounding to show the distribution of flights across the course of a day by computing the difference between `dep_time` and the earliest instant of that day
+Computing the difference between a pair of date-times yields a difftime. A difftime class object records a time span of seconds, minutes, hours, days, or weeks. This ambiguity can make difftimes a little painful to work with, so we add `hms::as_hms`, to have it return a timestamp instead.
+
+### Exercise 4
+
+Continue the pipe to `ggplot()`. Map `dep_hour` to the x-axis. Add the `geom_freqpoly()` layer and set the `binwidth` to `1800`
+
+```{r date-and-time-components-with-4, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r date-and-time-components-with-4-hint-1, eval = FALSE}
+... |> 
+  ggplot(aes(x = dep_hour)) +
+  geom_freqpoly(binwidth = 60 * 30)
+```
+
+```{r date-and-time-components-with-4-test, include = FALSE}
+flights_dt |> 
+  mutate(dep_hour = hms::as_hms(dep_time - floor_date(dep_time, "day"))) |> 
+  ggplot(aes(x = dep_hour)) +
+  geom_freqpoly(binwidth = 60 * 30)
+```
+
+### 
+
+Here we use rounding to show the distribution of flights across the course of a day by computing the difference between `dep_time` and the earliest instant of that day, which we find by using `floor_date()`.
+
+<!-- TJ: Need to add some questions with round_date() and ceiling_date() -->
+
+<!-- Computing the difference between a pair of date-times yields a difftime. A difftime class object records a time span of seconds, minutes, hours, days, or weeks. This ambiguity can make difftimes a little painful to work with, so **lubridate** provides an alternative which always uses seconds: the duration. -->
+
+<!-- ### Exercise 2 -->
+
+<!-- <!-- DK: Do something better than just ignore the message. --> -->
+
+<!-- Continue the pipe with `ggplot()`. Set `x` to `dep_hour` in `aes()`. Ignore the message about "Don't know how to automatically pick ..." -->
+
+<!-- ```{r date-and-time-components-with-2, exercise = TRUE} -->
+
+<!-- ``` -->
+
+<!-- <button onclick = "transfer_code(this)">Copy previous code</button> -->
+
+<!-- ```{r date-and-time-components-with-2-hint-1, eval = FALSE} -->
+<!-- ... |> -->
+<!--   ... |> -->
+<!--   ggplot(aes(x = ...)) -->
+<!-- ``` -->
+
+<!-- ```{r date-and-time-components-with-2-test, include = FALSE} -->
+<!-- flights_dt |> -->
+<!--   mutate(dep_hour = dep_time - floor_date(dep_time, "day")) |>  -->
+<!--   ggplot(aes(x = dep_hour)) -->
+<!-- ``` -->
+
+<!-- ### Exercise 3 -->
+
+<!-- Add `geom_freqpoly()` to the pipe to view the difference by setting `binwidth` to `60*30` in `geom_freqpoly()`. -->
+
+<!-- ```{r date-and-time-components-with-3, exercise = TRUE} -->
+
+<!-- ``` -->
+
+<!-- <button onclick = "transfer_code(this)">Copy previous code</button> -->
+
+<!-- ```{r date-and-time-components-with-3-hint-1, eval = FALSE} -->
+<!-- ... |> -->
+<!--   ... |> -->
+<!--   ... + -->
+<!--     geom_freqpoly(binwidth = ...) -->
+<!-- ``` -->
+
+<!-- ```{r date-and-time-components-with-3-test, include = FALSE} -->
+<!-- flights_dt |> -->
+<!--   mutate(dep_hour = dep_time - floor_date(dep_time, "day")) |>  -->
+<!--   ggplot(aes(x = dep_hour)) + -->
+<!--     geom_freqpoly(binwidth = 60*30) -->
+<!-- ``` -->
+
+<!-- ###  -->
+
+<!-- You can use rounding to show the distribution of flights across the course of a day by computing the difference between `dep_time` and the earliest instant of that day -->
 
 ## Modifying date/time components
 ### 
