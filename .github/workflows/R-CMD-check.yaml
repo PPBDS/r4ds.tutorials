@@ -33,7 +33,7 @@ jobs:
       - uses: r-lib/actions/setup-pandoc@v2
       
       # Need because of ggalt package, perhaps because it is dependence on 
-      # the proj4 package. libgdal is needed for terra. openssl for arrow.
+      # the proj4 package. libgdal is needed for terra.
       
       - name: Install system dependencies (Linux)
         if: runner.os == 'Linux'
@@ -51,21 +51,8 @@ jobs:
 
       - uses: r-lib/actions/setup-renv@v2
         with:
-          cache-version: 2
+          cache-version: 1
           
-      # The arrow package generates lots of problems. Perhaps these will go away
-      # once a new version is available on CRAN. In the meantime, the only solution
-      # seems to involve forcing an installation from source. This only really 
-      # seems necessary for the macOS. Not sure why? 
-      
-      # - name: Install arrow package from source (macOS)
-      #   if: runner.os == 'macOS'
-      #   run: |
-      #     export ARROW_OPENSSL_CXXFLAGS="-I/usr/local/opt/openssl@3/include"
-      #     export ARROW_OPENSSL_LDFLAGS="-L/usr/local/opt/openssl@3/lib -lssl -lcrypto"
-      #     export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@3"
-      #     Rscript -e 'install.packages("arrow", type = "source", INSTALL_opts = "--no-lock")'
-
       # Sure seems like check-r-package should take care of this installation, but
       # it does not seem to do so. Note that you can't just include rcmdcheck in the
       # DESCRIPTION file without causing failure to local calls to R CMD check.
