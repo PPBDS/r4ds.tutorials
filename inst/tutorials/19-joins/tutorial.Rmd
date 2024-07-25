@@ -84,30 +84,32 @@ parties3 <- tibble(
 ### 
 
 This tutorial covers [Chapter 19: Joins](https://r4ds.hadley.nz/joins.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
-This chapter will introduce you to two important types of joins:
-Mutating joins, which add new variables to one data frame from matching observations in another.
 
-Filtering joins, which filter observations from one data frame based on whether or not they match an observation in another.
+It’s rare that a data analysis involves only a single data frame. Typically you have many data frames, and you must **join** them together to answer the questions that you’re interested in. This chapter will introduce you to two important types of joins:
+
+-Mutating joins, which add new variables to one data frame from matching observations in another.
+
+-Filtering joins, which filter observations from one data frame based on whether or not they match an observation in another.
 
 You will also learn about basic joins, keys, foreign keys and more which is basically like creating a relational database in SQL.
 
 
-## Keys
+## Primary and foreign keys
 ### 
 
 To understand joins, you need to first understand how two tables can be connected through a pair of keys, within each table. In this section, you’ll learn about the two types of key and see examples of both in the datasets of the ["nycflights13"](https://www.rdocumentation.org/packages/nycflights13/versions/1.0.1) package. You’ll also learn how to check that your keys are valid, and what to do if your table lacks a key.
 
 ### Exercise 1
 
-Every join involves a pair of keys: a primary key and a foreign key. A primary key is a variable or set of variables that uniquely identifies each observation.
+Every join involves a pair of keys: a **primary key** and a foreign key. A primary key is a variable or set of variables that uniquely identifies each observation.
 
 As a example run `airlines`.
 
-```{r keys-1, exercise = TRUE}
+```{r primary-and-foreign-keys-1, exercise = TRUE}
 
 ```
 
-```{r keys-1-hint-1, eval = FALSE}
+```{r primary-and-foreign-keys-1-hint-1, eval = FALSE}
 airlines
 ```
 
@@ -119,11 +121,15 @@ airlines
 
 Run `airports`.
 
-```{r keys-2, exercise = TRUE}
+```{r primary-and-foreign-keys-2, exercise = TRUE}
 
 ```
 
-```{r keys-2-hint-1, eval = FALSE}
+```{r primary-and-foreign-keys-2-hint-1, eval = FALSE}
+airports
+```
+
+```{r primary-and-foreign-keys-2-test, include = FALSE}
 airports
 ```
 
@@ -135,11 +141,15 @@ airports
 
 Run `planes`.
 
-```{r keys-3, exercise = TRUE}
+```{r primary-and-foreign-keys-3, exercise = TRUE}
 
 ```
 
-```{r keys-3-hint-1, eval = FALSE}
+```{r primary-and-foreign-keys-3-hint-1, eval = FALSE}
+planes
+```
+
+```{r primary-and-foreign-keys-3-test, include = FALSE}
 planes
 ```
 
@@ -149,13 +159,19 @@ planes
 
 ### Exercise 4
 
+When more than one variable is needed, the key is called a `compound key`.
+
 Run `weather`.
 
-```{r keys-4, exercise = TRUE}
+```{r primary-and-foreign-keys-4, exercise = TRUE}
 
 ```
 
-```{r keys-4-hint-1, eval = FALSE}
+```{r primary-and-foreign-keys-4-hint-1, eval = FALSE}
+weather
+```
+
+```{r primary-and-foreign-keys-4-test, include = FALSE}
 weather
 ```
 
@@ -163,69 +179,69 @@ weather
 
 `weather` records data about the weather at the origin airports. You can identify each observation by the combination of location and time, making `origin` and `time_hour` the compound primary key.
 
-When more than one variable is needed, the key is called a `compound key`.
-
 ### Exercise 5
 
 Now that we have seen couple of examples of what `primary keys` are, let's explore what a `foreign key` is. A `foreign key` is a variable (or set of variables) that corresponds to a `primary key` in another table.
 
 Run `flights$tailnum`.
 
-```{r keys-5, exercise = TRUE}
+```{r primary-and-foreign-keys-5, exercise = TRUE}
 
 ```
 
-```{r keys-5-hint-1, eval = FALSE}
+```{r primary-and-foreign-keys-5-hint-1, eval = FALSE}
 flights$tailnum
 ```
 
-```{r include = FALSE}
+```{r primary-and-foreign-keys-5-test, include = FALSE}
 flights$tailnum
 ```
 
 ### 
 
-`flights$tailnum` is a foreign key that corresponds to the primary key `tailnum` in the `planes` tibble.
+`flights$tailnum` is a foreign key that corresponds to the primary key, `planes$tailnum`, which is `tailnum` in the `planes` tibble. The keys are from different tibbles, but, the values returned are of the same type, they both return a tail number. But, `tailnum` is not the primary key in `flights` because multiple flights can have the same `tailnum`.
 
 ### Exercise 6
 
 Run `flights$carrier`.
 
-```{r keys-6, exercise = TRUE}
+```{r primary-and-foreign-keys-6, exercise = TRUE}
 
 ```
 
-```{r keys-6-hint-1, eval = FALSE}
+```{r primary-and-foreign-keys-6-hint-1, eval = FALSE}
 flights$carrier
 ```
 
-```{r include = FALSE}
+```{r primary-and-foreign-keys-6-test, include = FALSE}
 flights$carrier
 ```
 
 ### 
 
-`flights$carrier` is a foreign key that corresponds to the primary key `carrier` in the airlines tibble.
+`flights$carrier` is a foreign key that corresponds to the primary key, `airlines$carrier`, which is `carrier` in the `airlines` tibble. Once again, both of these keys return a `carrier`, but, `carrier` cannot be the primary key in `flights` because multiple flights can have the same `carrier`.
 
 ### Exercise 7
 
-Run `flights$origin`.
+Run `flights$origin-flights$time_hour`. You will get an error but just ignore it.
 
-```{r keys-7, exercise = TRUE}
+```{r primary-and-foreign-keys-7, exercise = TRUE}
 
 ```
 
-```{r keys-7-hint-1, eval = FALSE}
-flights$origin
+```{r primary-and-foreign-keys-7-hint-1, eval = FALSE}
+flights$origin-flights$time_hour
 ```
 
-```{r include = FALSE}
-flights$origin
+```{r primary-and-foreign-keys-7-test, include = FALSE}
+# flights$origin-flights$time_hour
 ```
 
 ### 
 
-`flights$origin` is a foreign key that corresponds to the primary key `faa` in the `airpors` tibble.
+`flights$origin-flights$time_hour` is a compound foreign key that corresponds to the compound primary key `weather$origin-weather$time_hour`. This is a compound key because multiple variables are required to identify each observation.
+
+### 
 
 The relationships which we saw can be visualized like:
 
@@ -233,23 +249,28 @@ The relationships which we saw can be visualized like:
 knitr::include_graphics("images/relational.png")
 ```
 
-### Exercise 8
+You’ll notice a nice feature in the design of these keys: the primary and foreign keys almost always have the same names, which, as you’ll see shortly, will make your joining life much easier. It’s also worth noting the opposite relationship: almost every variable name used in multiple tables has the same meaning in each place. There’s only one exception: `year` means year of departure in `flights` and year of manufacturer in `planes.` This will become important when we start actually joining tables together.
+
+## Checking Primary Keys
+### 
 
 Now that that we’ve identified the primary keys in each table, it’s good practice to verify that they do indeed uniquely identify each observation. One way to do that is to `count()` the primary keys and look for entries where `n` is greater than one.
 
+### Exercise 1
+
 Start a pipe with `planes` to the `count()` function and within count set the argument as `tailnum`. Continue the pipe to the `filter()` function, setting `n > 1`. This will filter out any elements where the number of flights for a given `tailnum` is not greater than 1.
 
-```{r keys-8, exercise = TRUE}
+```{r checking-primary-keys-1, exercise = TRUE}
 
 ```
 
-```{r keys-8-hint-1, eval = FALSE}
+```{r checking-primary-keys-1-hint-1, eval = FALSE}
 ... |> 
   count(tailnum) |> 
   filter(...)
 ```
 
-```{r include = FALSE}
+```{r checking-primary-keys-1-test, include = FALSE}
 planes |> 
   count(tailnum) |> 
   filter(n > 1)
@@ -259,23 +280,23 @@ planes |>
 
 The pipe returns no observations, thereby demonstrating that `tailnum` is good primary key.
 
-### Exercise 9
+### Exercise 2
 
 Let's perform a similar check using `weather` data. Please replicate the previous code and modify the dataset to `weather`, while adjusting the `count()` argument to include `time_hour` and `origin` only.
 
-```{r keys-9, exercise = TRUE}
+```{r checking-primary-keys-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r keys-9-hint-1, eval = FALSE}
+```{r checking-primary-keys-2-hint-1, eval = FALSE}
 ... |> 
   count(time_hour, ...) |> 
   filter(n > 1)
 ```
 
-```{r include = FALSE}
+```{r checking-primary-keys-2-test, include = FALSE}
 weather |> 
   count(time_hour, origin) |> 
   filter(n > 1)
@@ -285,69 +306,77 @@ weather |>
 
 There are also no records when we run the previous code which verifies that `time_hour` and `origin` are good primary keys. But what if there were some missing values with the primary keys?
 
-### Exercise 10
+### Exercise 3
 
 Start a pipe with `planes` to `filter()` and set `is.na(tailnum)` as the argument.
 
-```{r keys-10, exercise = TRUE}
+```{r checking-primary-keys-3, exercise = TRUE}
 
 ```
 
-```{r keys-10-hint-1, eval = FALSE}
+```{r checking-primary-keys-3-hint-1, eval = FALSE}
 planes |> 
   filter(is.na(...))
 ```
 
-```{r include = FALSE}
+```{r checking-primary-keys-3-test, include = FALSE}
 planes |> 
   filter(is.na(tailnum))
 ```
 
 ### 
 
-We should be getting no records when we run the code since the table has no NULL values, if there were any then `is.na()` would display them.
+You should also check for missing values in your primary keys — if a value is missing then it can’t identify an observation!
 
-### Exercise 11
+### Exercise 4
 
-Let's perform a similar check using `weather` data. Please replicate the previous code and modify the data set to `weather`, while adjusting the `is.na()` argument to include `time_hour`and a `|` or operator then pass `origin` for another `is.na()` argument.
+Let's perform a similar check using `weather` data. Replicate the previous code and modify the data set to `weather`, while adjusting the `is.na()` argument to include `time_hour`and a `|` or operator then pass `origin` for another `is.na()` argument.
 
-```{r keys-11, exercise = TRUE}
+```{r checking-primary-keys-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r keys-11-hint-1, eval = FALSE}
+```{r checking-primary-keys-4-hint-1, eval = FALSE}
 ... |> 
   filter(is.na(time_hour) | is.na(...))
 ```
 
-```{r include = FALSE}
-planes |> 
-  filter(is.na(tailnum) | is.na(origin))
+```{r checking-primary-keys-4-test, include = FALSE}
+weather |> 
+  filter(is.na(time_hour) | is.na(origin))
 ```
 
 ### 
 
+For `weather`, we use `|` to symbolize either. If either one of these values is `NA`, we must either drop it or modify it. 
+
+
+<!-- TJ: Is this a good knowledge drop? -->
+
+## Surrogate Keys
+### 
+
 So far we haven’t talked about the primary key for `flights`. It’s not super important here, because there are no data frames that use it as a foreign key, but it’s still useful to consider because it’s easier to work with observations if we have some way to describe them to others.
 
-### Exercise 12
+### Exercise 1
 
 After a little thinking and experimentation, we determined that there are three variables that together uniquely identify each flight: `time_hour`, `carrier` and `flight`.
 
 Let's verify if the following variables can be used a primary keys, start a pipe with `flights` to `count()` with the three variables we talked about earlier and then pipe that to `filter()` and set n to be greater than 1 .
 
-```{r keys-12, exercise = TRUE}
+```{r surrogate-keys-1, exercise = TRUE}
 
 ```
 
-```{r keys-12-hint-1, eval = FALSE}
+```{r surrogate-keys-1-hint-1, eval = FALSE}
 ... |> 
   count(time_hour, ..., flight) |> 
   ...
 ```
 
-```{r include = FALSE}
+```{r surrogate-keys-1-test, include = FALSE}
 flights |> 
   count(time_hour, carrier, flight) |> 
   filter(n>1)
@@ -357,23 +386,23 @@ flights |>
 
 Does the absence of duplicates automatically make `time_hour`-`carrier`-`flight` a primary key? It’s certainly a good start, but it doesn’t guarantee it. For example, are altitude and latitude a good primary key for airports?
 
-### Exercise 13
+### Exercise 2
 
 Let's check if altitude and latitude are good primary keys for airports. Copy the previous code and change the dataset to `airports` and change the argument within `count()` to `alt, lat`.
 
-```{r keys-13, exercise = TRUE}
+```{r surrogate-keys-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r keys-13-hint-1, eval = FALSE}
+```{r surrogate-keys-2-hint-1, eval = FALSE}
 ... |> 
   count(..., ...) |> 
   filter(...)
 ```
 
-```{r include = FALSE}
+```{r surrogate-keys-2-test, include = FALSE}
 airports |> 
   count(alt, lat) |> 
   filter(n > 1)
@@ -381,26 +410,26 @@ airports |>
 
 ### 
 
-Using altitude and latitude to identify an airport is unreliable, and it's generally not possible to determine from data alone whether a combination of variables can serve as a good primary key. However, for flights, the combination of time_hour, carrier, and flight appears reasonable. Having multiple flights with the same flight number in the air simultaneously would be confusing for both the airline and its customers.
+Identifying an airport by its altitude and latitude is clearly a bad idea, and in general it’s not possible to know from the data alone whether or not a combination of variables makes a good a primary key. But for flights, the combination of `time_hour`, `carrier`, and `flight` seems reasonable because it would be really confusing for an airline and its customers if there were multiple flights with the same flight number in the air at the same time.
 
-### Exercise 14
+### Exercise 3
 
 That said, we might be better off introducing a simple numeric surrogate key using the row number instead of confusing the airlines and customers tables by using three columns as primary keys. 
 
 Let's make a new primary key `id` for `flights` by using row numbers. Start a pipe with `flights` and use `mutate()` function. Within `mutate()` assign `row_number()` function to the `id` column and set `.before` to 1.
 
-```{r keys-14, exercise = TRUE}
+```{r surrogate-keys-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r keys-14-hint-1, eval = FALSE}
+```{r surrogate-keys-3-hint-1, eval = FALSE}
 flights |> 
   mutate(id = ..., .before = ...)
 ```
 
-```{r include = FALSE}
+```{r surrogate-keys-3-test, include = FALSE}
 flights |> 
   mutate(id = row_number(), .before = 1)
 ```
@@ -409,10 +438,14 @@ flights |>
 
 This code adds a new column `id` with row numbers to the `flights` dataset, positioning it as the first column. Surrogate keys can be particular useful when communicating to other humans. It’s much easier to tell someone to take a look at flight 2001 than to say look at UA430 which departed at 9:00 am on 2013-01-03.
 
-## Basic Joins
+## Mutating Joins
 ### 
 
-Now that you understand how data frames are connected via keys, we can start using joins to better understand the flights dataset. In this section, you’ll learn how to use one mutating join, `left_join()`, and two filtering joins, `semi_join()` and `anti_join()`.
+Now that you understand how data frames are connected via keys, we can start using joins to better understand the flights dataset. dplyr provides six join functions: `left_join()`, `inner_join()`, `right_join()`, `full_join()`, `semi_join()`, and `anti_join()`. They all have the same interface: they take a pair of data frames (`x` and `y`) and return a data frame. The order of the rows and columns in the output is primarily determined by `x`.
+
+###
+
+In this section, you’ll learn how to use one mutating join, `left_join()`, and two filtering joins, `semi_join()` and `anti_join()`. In the next section, you’ll learn exactly how these functions work, and about the remaining `inner_join()`, `right_join()` and `full_join()`.
 
 ### Exercise 1
 
@@ -430,18 +463,16 @@ flights2 <- ... |>
 flights2
 ```
 
-```{r include = FALSE}
+```{r basic-joins-1-test, include = FALSE}
 flights2 <- flights |> 
 select(year, time_hour, origin, dest, tailnum,carrier)
 ```
 
 ### 
 
-A mutating join allows you to combine variables from two data frames: it first matches observations by their keys, then copies across variables from one data frame to the other. 
+A mutating join allows you to combine variables from two data frames: it first matches observations by their keys, then copies across variables from one data frame to the other. Like mutate(), the join functions add variables to the right, so if your dataset has many variables, you won’t see the new ones. For these examples, we’ll make it easier to see what’s going on by creating a narrower dataset with just six variables.
 
 ### Exercise 2
-
-There are four types of mutating join, but there’s one that you’ll use almost all of the time: `left_join()`. It’s special because the output will always have the same rows as `x`. The primary use of `left_join()` is to add in additional columns. 
 
 To add full airline name to the `flights2` data, start a pipe with `flights2` to `left_join()` and pass in `airlines` as the argument.
 
@@ -456,18 +487,21 @@ To add full airline name to the `flights2` data, start a pipe with `flights2` to
   left_join(...)
 ```
 
-```{r include = FALSE}
+```{r basic-joins-2-test, include = FALSE}
 flights2 |>
   left_join(airlines)
 ```
 
 ### 
 
-Like `mutate()`, the join functions add variables to the right, so if your dataset has many variables, you won’t see the new ones as we saw inb the previous code.
+Like `mutate()`, the join functions add variables to the right, so if your dataset has many variables, you won’t see the new ones as we saw in the previous code.
+
+There are four types of mutating join, but there’s one that you’ll use almost all of the time: `left_join()`. It’s special because the output will always have the same rows as `x`, the data frame you’re joining to. The primary use of `left_join()` is to add in additional metadata. For example, we use `left_join()` to add the full airline name to the `flights2` data
+
 
 ### Exercise 3
 
-Instead of filling in the names of the airlines, let's add metadata about the wind speed, temperature and the time the plane departed.
+Or we could find out the temperature and wind speed when each plane departed
 
 Copy the previous code, modifying the argument for `left_join()` to `weather |> select(origin, time_hour, temp, wind_speed)`. 
 
@@ -482,7 +516,7 @@ Copy the previous code, modifying the argument for `left_join()` to `weather |> 
   ...(weather |> select(origin, time_hour, temp, wind_speed))
 ```
 
-```{r include = FALSE}
+```{r basic-joins-3-test, include = FALSE}
 flights2 |> 
   left_join(weather |> select(origin, time_hour, temp, wind_speed))
 ```
@@ -493,7 +527,8 @@ If you want to explore `left_join()` more in depth, check out this [website](htt
 
 ### Exercise 4
 
-What if we want ot know the size of the plane? 
+What if we want to know the size of the plane? 
+
 Copy the previous code and modify the argument in `left_join()` to `planes |> select(tailnum, type, engines, seats)` which selects the variable which are associated with a size of a plane.
 
 ```{r basic-joins-4, exercise = TRUE}
@@ -507,7 +542,7 @@ Copy the previous code and modify the argument in `left_join()` to `planes |> se
   ...(...)
 ```
 
-```{r include = FALSE}
+```{r basic-joins-4-test, include = FALSE}
 flights2 |> 
   left_join(planes |> select(tailnum, type, engines, seats))
 ```
@@ -518,13 +553,11 @@ What happens when `left_join()` fails to find a match for a row in x?
 
 ### Exercise 5
 
-To demonstrate this, start a pipe with `flights2` to `filter()` where you only select the records where the `tailnum` is equal to `N3ALAA` (which doesn't exist) and then continue the pipe to `left_join()` and pass in `planes |> select(tailnum, type, engines, seats)` as the argument.
+Start a pipe with `flights2` to `filter()` where you only select the records where the `tailnum` is equal to `"N3ALAA"` (which doesn't exist) and then continue the pipe to `left_join()` and pass in `planes |> select(tailnum, type, engines, seats)` as the argument.
 
 ```{r basic-joins-5, exercise = TRUE}
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r basic-joins-5-hint-1, eval = FALSE}
 flights2 |> 
@@ -532,7 +565,7 @@ flights2 |>
   left_join(...)
 ```
 
-```{r include = FALSE}
+```{r basic-joins-5-test, include = FALSE}
 flights2 |> 
   filter(tailnum == "N3ALAA") |> 
   left_join(planes |> select(tailnum, type, engines, seats))
@@ -540,12 +573,15 @@ flights2 |>
 
 ### 
 
-When `left_join()` fails to find a match for a row in `x`, it fills in the new variables with missing values. For example, there’s no information about the plane with tail number `N3ALAA` so the `type`, `engines`, and `seats` will be missing.
+When `left_join()` fails to find a match for a row in `x`, it fills in the new variables with missing values. For example, there’s no information about the plane with tail number `N3ALAA` so the `type`, `engines`, and `seats` will be missing, as indicated by `NA`.
 
+
+## Specifying join keys
+
+
+By default, `left_join()` will use all variables that appear in both data frames as the join key, the so called **natural** join. This is a useful heuristic, but it doesn’t always work. For example, what happens if we try to join `flights2` with the complete `planes` dataset?
 
 ### Exercise 6
-
-By default, `left_join()` will use all variables that appear in both data frames as the join key, the so called natural join.  This is a useful heuristic, but it doesn’t always work. 
 
 To demonstrate the flaw, join the `flights2` with the `planes` dataset using `left_join()`.
 To do so, start of by creating pipe with `flights2` to `left_join()` and pass in `planes` as the argument.
@@ -554,14 +590,12 @@ To do so, start of by creating pipe with `flights2` to `left_join()` and pass in
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r basic-joins-6-hint-1, eval = FALSE}
 ... |>
   left_join(...)
 ```
 
-```{r include = FALSE}
+```{r basic-joins-6-test, include = FALSE}
 flights2 |>
   left_join(planes)
 ```
@@ -587,7 +621,7 @@ Copy the previous code and within `left_join()`, add `join_by()` and pass in `ta
   ...(planes, join_by(...))
 ```
 
-```{r include = FALSE}
+```{r basic-joins-7-test, include = FALSE}
 flights2 |>
   left_join(planes, join_by(tailnum))
 ```
@@ -613,7 +647,7 @@ Copy the previous code, changing `planes` to `airports` and, in, `join_by()` set
   ...(airports, join_by(...))
 ```
 
-```{r include = FALSE}
+```{r basic-joins-8-test, include = FALSE}
 flights2 |>
   left_join(airports, join_by(dest == faa))
 ```
@@ -640,7 +674,7 @@ Copy the previous code and change `join_by()` argument to `origin == faa`.
   ...(airports, join_by(...== ...))
 ```
 
-```{r include = FALSE}
+```{r basic-joins-9-test, include = FALSE}
 flights2 |>
   left_join(airports, join_by(origin == faa))
 ```
@@ -666,7 +700,7 @@ Start a pipe with `airports` to `semi_join()` and for the table which we will jo
   ...(flights2, join_by(faa == ...))
 ```
 
-```{r include = FALSE}
+```{r basic-joins-10-test, include = FALSE}
 airports |> 
   semi_join(flights2, join_by(faa == dest))
 ```
@@ -690,7 +724,7 @@ Let's find rows that are missing from airports by looking for flights that don�
   ...(airports, join_by(... == faa)
 ```
 
-```{r, include = FALSE}
+```{r basic-joins-11-test, include = FALSE}
 flights2 |> 
   anti_join(airports, join_by(dest == faa)) |> 
   distinct(dest)
@@ -716,7 +750,7 @@ Let's now find which `tailnums` are missing from planes. Copy the previous code,
   ...(tailnum)
 ```
 
-```{r, include = FALSE}
+```{r basic-joins-12-test, include = FALSE}
 flights2 |> 
   anti_join(planes, join_by(tailnum)) |> 
   distinct(tailnum)
@@ -727,7 +761,6 @@ flights2 |>
 <!-- DK: Knowledge drop. -->
 
 ## How do joins work?
-
 <!-- DK: Rewrite this topic to ask questions! -->
 
 Now that you’ve used joins a few times it’s time to learn more about how they work, focusing on how each row in `x` matches rows in `y`. We’ll begin by introducing a visual representation of joins, using the simple tibbles defined below  In these examples we’ll use a single key called `key` and a single value column (`val_x` and `val_y`), but the ideas all generalize to multiple keys and multiple values.
@@ -870,7 +903,7 @@ df1 <-
 df2 <- 
 ```
 
-```{r, include = FALSE}
+```{r how-do-joins-work-9-test, include = FALSE}
 df1 <- tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))
 df2 <- tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))
 ```
@@ -894,7 +927,7 @@ Copy the previous code and on a new line create a pipe with `df1` to `inner_join
   inner_join(df2, ...(key))
 ```
 
-```{r, include = FALSE}
+```{r how-do-joins-work-10-test, include = FALSE}
 df1 |> 
   inner_join(df2, join_by(key))
 ```
@@ -925,7 +958,7 @@ x |>
   left_join(..., ... = "key", keep = ...)
 ```
 
-```{r, include = FALSE}
+```{r nonequi-joins-1-test, include = FALSE}
 x |> 
   left_join(y, by = "key", keep = TRUE)
 ```
@@ -977,10 +1010,9 @@ To make use of the permutations skills that this function has, let's first creat
 df <- tibble(name = ...(...))
 ```
 
-```{r, include=FALSE}
+```{r nonequi-joins-4-test, include = FALSE}
 df <- tibble(name = c("John", "Simon", "Tracy", "Max"))
 ```
-
 
 ### 
 
@@ -1002,7 +1034,7 @@ df |>
   cross_join(...)
 ```
 
-```{r, include = FALSE}
+```{r nonequi-joins-5-test, include = FALSE}
 df <- tibble(name = c("John", "Simon", "Tracy", "Max"))
 df |> 
   cross_join(df)
@@ -1042,10 +1074,9 @@ Create a variable `df` and assign  `tibble(id = 1:4, name = c("John", "Simon", "
 df <- tibble(..., name = ...(...))
 ```
 
-```{r, include = FALSE}
+```{r nonequi-joins-7-test, include = FALSE}
 tibble(id = 1:4, name = c("John", "Simon", "Tracy", "Max"))
 ```
-
 
 ### 
 
@@ -1081,7 +1112,7 @@ Create a tibble `parties` and add columns `q` and pass in `1:4` for it then add 
 parties <- tibble(q = ..., party = ymd(c(...)))
 ```
 
-```{r, include = FALSE}
+```{r nonequi-joins-9-test, include = FALSE}
 parties <- tibble(q = 1:4, party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")))
 ```
 
@@ -1109,7 +1140,7 @@ On a new line, call employees to have a look at the tibble.
 employees
 ```
 
-```{r, include = FALSE}
+```{r nonequi-joins-10-test, include = FALSE}
 employees <- tibble(
   name = sample(babynames::babynames$name, 100),
  birthdays = ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)
@@ -1136,7 +1167,7 @@ To join the `employees` and `parties` tables, pipe `employees` to `left_join()`.
   left_join(..., join_by(...(birthday >= party)))
 ```
 
-```{r, include = FALSE}
+```{r nonequi-joins-11-test, include = FALSE}
 employees <- tibble(
      name = sample(babynames::babynames$name, 100),
      birthday = ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)
@@ -1169,7 +1200,7 @@ employees |>
   ...(parties, join_by(closest(birthday >= party)))
 ```
 
-```{r, include = FALSE}
+```{r nonequi-joins-12-test, include = FALSE}
 employees |> 
   right_join(parties, join_by(closest(birthday >= party)))
 ```
@@ -1202,7 +1233,7 @@ parties2 <- tibble(
 parties2
 ```
 
-```{r, include = FALSE}
+```{r nonequi-joins-13-test, include = FALSE}
 parties2 <- tibble(
   q = 1:4,
   party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
@@ -1211,7 +1242,6 @@ parties2 <- tibble(
 )
 parties2
 ```
-
 
 ### 
 
@@ -1239,7 +1269,7 @@ Start a pipe with `parties2` to `inner_join()`, we will join `parties2` to itsel
   inner_join(..., join_by(...(start, end, start, end), ...))
 ```
 
-```{r, include = FALSE}
+```{r nonequi-joins-14-test, include = FALSE}
 parties2 |> 
   inner_join(parties2, join_by(overlaps(start, end, start, end), q < q))
 ```
@@ -1264,7 +1294,7 @@ parties2 |>
   select(..., ..., ..., ...)
 ```
 
-```{r, include = FALSE}
+```{r nonequi-joins-15-test, include = FALSE}
 parties2 |> 
   inner_join(parties2, join_by(overlaps(start, end, start, end), q < q)) |>
   select(start.x, end.x, start.y, end.y)
@@ -1293,7 +1323,7 @@ Go back to exercise 13 and copy your answer from there and paste it here, change
 )
 ```
 
-```{r, include = FALSE}
+```{r nonequi-joins-16-test, include = FALSE}
 parties4 <- tibble(
   q = 1:4,
   party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
@@ -1322,7 +1352,7 @@ Let's join `employees` and `parties3` by first creating a pipe with `employees` 
       inner_join(parties3, ...(between(birthday, start, end)), unmatched = "...")
 ```
 
-```{r, include = FALSE}
+```{r nonequi-joins-17-test, include = FALSE}
 employees |> 
       inner_join(parties3, 
                  join_by(between(birthday, start, end)), unmatched = "error")
