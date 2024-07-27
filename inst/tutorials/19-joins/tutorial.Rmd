@@ -43,8 +43,13 @@ y <- tribble(
      4, "y3"
 )
 
-df1 <- tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))
-df2 <- tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))
+df <- tibble(name = c("John", "Simon", "Tracy", "Max"))
+
+df1 <- tibble(key = c(1, 2, 3), val_x = c("x1", "x2", "x3"))
+df2 <- tibble(key = c(1, 2, 2), val_y = c("y1", "y2", "y3"))
+
+df3 <- tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))
+df4 <- tibble(key = c(1, 2, 2), val_y = c("y1", "y2", "y3"))
 
 parties <- tibble(
   q = 1:4,
@@ -422,8 +427,6 @@ Let's make a new primary key `id` for `flights` by using row numbers. Start a pi
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r surrogate-keys-3-hint-1, eval = FALSE}
 flights |> 
   mutate(id = ..., .before = ...)
@@ -443,7 +446,7 @@ This code adds a new column `id` with row numbers to the `flights` dataset, posi
 
 Now that you understand how data frames are connected via keys, we can start using joins to better understand the flights dataset. dplyr provides six join functions: `left_join()`, `inner_join()`, `right_join()`, `full_join()`, `semi_join()`, and `anti_join()`. They all have the same interface: they take a pair of data frames (`x` and `y`) and return a data frame. The order of the rows and columns in the output is primarily determined by `x`.
 
-###
+### 
 
 In this section, you’ll learn how to use one mutating join, `left_join()`, and two filtering joins, `semi_join()` and `anti_join()`. In the next section, you’ll learn exactly how these functions work, and about the remaining `inner_join()`, `right_join()` and `full_join()`.
 
@@ -451,43 +454,40 @@ In this section, you’ll learn how to use one mutating join, `left_join()`, and
 
 Start a pipe with `flights` to `select()` where you will select the following variables: `year, time_hour, origin, dest, tailnum, carrier` and then assign the whole code to `flights2` and run `flights2` on a new line.
 
-```{r basic-joins-1, exercise = TRUE}
+```{r mutating-joins-1, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r basic-joins-1-hint-1, eval = FALSE}
+```{r mutating-joins-1-hint-1, eval = FALSE}
 flights2 <- ... |> 
  ...(year, ..., origin, dest, ....,...)
 flights2
 ```
 
-```{r basic-joins-1-test, include = FALSE}
+```{r mutating-joins-1-test, include = FALSE}
 flights2 <- flights |> 
 select(year, time_hour, origin, dest, tailnum,carrier)
+flights2
 ```
 
 ### 
 
-A mutating join allows you to combine variables from two data frames: it first matches observations by their keys, then copies across variables from one data frame to the other. Like mutate(), the join functions add variables to the right, so if your dataset has many variables, you won’t see the new ones. For these examples, we’ll make it easier to see what’s going on by creating a narrower dataset with just six variables.
+A **mutating join** allows you to combine variables from two data frames: it first matches observations by their keys, then copies across variables from one data frame to the other. Like `mutate()`, the join functions add variables to the right, so if your dataset has many variables, you won’t see the new ones. For these examples, we’ll make it easier to see what’s going on by creating a narrower dataset with just six variables.
 
 ### Exercise 2
 
 To add full airline name to the `flights2` data, start a pipe with `flights2` to `left_join()` and pass in `airlines` as the argument.
 
-```{r basic-joins-2, exercise = TRUE}
+```{r mutating-joins-2, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r basic-joins-2-hint-1, eval = FALSE}
+```{r mutating-joins-2-hint-1, eval = FALSE}
 ... |>
   left_join(...)
 ```
 
-```{r basic-joins-2-test, include = FALSE}
+```{r mutating-joins-2-test, include = FALSE}
 flights2 |>
   left_join(airlines)
 ```
@@ -505,25 +505,28 @@ Or we could find out the temperature and wind speed when each plane departed
 
 Copy the previous code, modifying the argument for `left_join()` to `weather |> select(origin, time_hour, temp, wind_speed)`. 
 
-```{r basic-joins-3, exercise = TRUE}
+```{r mutating-joins-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-3-hint-1, eval = FALSE}
+```{r mutating-joins-3-hint-1, eval = FALSE}
 ... |> 
   ...(weather |> select(origin, time_hour, temp, wind_speed))
 ```
 
-```{r basic-joins-3-test, include = FALSE}
+```{r mutating-joins-3-test, include = FALSE}
 flights2 |> 
   left_join(weather |> select(origin, time_hour, temp, wind_speed))
 ```
 
 ### 
 
+Here, we select the variables necessary from `weather` and add specifically those to the `flights2` tibble.
+
 If you want to explore `left_join()` more in depth, check out this [website](https://dplyr.tidyverse.org/reference/mutate-joins.html).
+
 
 ### Exercise 4
 
@@ -531,18 +534,18 @@ What if we want to know the size of the plane?
 
 Copy the previous code and modify the argument in `left_join()` to `planes |> select(tailnum, type, engines, seats)` which selects the variable which are associated with a size of a plane.
 
-```{r basic-joins-4, exercise = TRUE}
+```{r mutating-joins-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-4-hint-1, eval = FALSE}
+```{r mutating-joins-4-hint-1, eval = FALSE}
 ... |> 
   ...(...)
 ```
 
-```{r basic-joins-4-test, include = FALSE}
+```{r mutating-joins-4-test, include = FALSE}
 flights2 |> 
   left_join(planes |> select(tailnum, type, engines, seats))
 ```
@@ -555,17 +558,17 @@ What happens when `left_join()` fails to find a match for a row in x?
 
 Start a pipe with `flights2` to `filter()` where you only select the records where the `tailnum` is equal to `"N3ALAA"` (which doesn't exist) and then continue the pipe to `left_join()` and pass in `planes |> select(tailnum, type, engines, seats)` as the argument.
 
-```{r basic-joins-5, exercise = TRUE}
+```{r mutating-joins-5, exercise = TRUE}
 
 ```
 
-```{r basic-joins-5-hint-1, eval = FALSE}
+```{r mutating-joins-5-hint-1, eval = FALSE}
 flights2 |> 
   filter(...) |>
   left_join(...)
 ```
 
-```{r basic-joins-5-test, include = FALSE}
+```{r mutating-joins-5-test, include = FALSE}
 flights2 |> 
   filter(tailnum == "N3ALAA") |> 
   left_join(planes |> select(tailnum, type, engines, seats))
@@ -575,79 +578,82 @@ flights2 |>
 
 When `left_join()` fails to find a match for a row in `x`, it fills in the new variables with missing values. For example, there’s no information about the plane with tail number `N3ALAA` so the `type`, `engines`, and `seats` will be missing, as indicated by `NA`.
 
+### 
+
+We’ll come back to this problem a few times in the rest of the chapter.
+
 
 ## Specifying join keys
-
+### 
 
 By default, `left_join()` will use all variables that appear in both data frames as the join key, the so called **natural** join. This is a useful heuristic, but it doesn’t always work. For example, what happens if we try to join `flights2` with the complete `planes` dataset?
 
-### Exercise 6
+### Exercise 1
 
-To demonstrate the flaw, join the `flights2` with the `planes` dataset using `left_join()`.
-To do so, start of by creating pipe with `flights2` to `left_join()` and pass in `planes` as the argument.
+To demonstrate the flaw, join the `flights2` with the `planes` dataset using `left_join()`. Start off by creating pipe with `flights2` to `left_join()` and pass in `planes` as the argument.
 
-```{r basic-joins-6, exercise = TRUE}
+```{r specifying-join-keys-1, exercise = TRUE}
 
 ```
 
-```{r basic-joins-6-hint-1, eval = FALSE}
+```{r specifying-join-keys-1-hint-1, eval = FALSE}
 ... |>
   left_join(...)
 ```
 
-```{r basic-joins-6-test, include = FALSE}
+```{r specifying-join-keys-1-test, include = FALSE}
 flights2 |>
   left_join(planes)
 ```
 
 ### 
 
-We get a lot of missing matches because our join is trying to use tailnum and year as a compound key. Both flights and planes have a year column but they mean different things: `flights$year` is the year the flight occurred and `planes$year` is the year the plane was built.
+We get a lot of missing matches because our join is trying to use `tailnum` and `year` as a compound key. Both `flights` and `planes` have a year column but they mean different things: `flights$year` is the year the flight occurred and `planes$year` is the year the plane was built. We only want to join on `tailnum` so we need to provide an explicit specification with `join_by()`.
 
-### Exercise 7
-
-We only want to join on `tailnum` so we need to provide an explicit specification with `join_by()`.
+### Exercise 2
 
 Copy the previous code and within `left_join()`, add `join_by()` and pass in `tailnum` as the argument.
 
-```{r basic-joins-7, exercise = TRUE}
+```{r specifying-join-keys-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-7-hint-1, eval = FALSE}
+```{r specifying-join-keys-2-hint-1, eval = FALSE}
 ... |> 
   ...(planes, join_by(...))
 ```
 
-```{r basic-joins-7-test, include = FALSE}
+```{r specifying-join-keys-2-test, include = FALSE}
 flights2 |>
   left_join(planes, join_by(tailnum))
 ```
 
 ### 
 
-`join_by(tailnum)` is short for `join_by(tailnum == tailnum)`. It’s important to know about this fuller form for two reasons. Firstly, it describes the relationship between the two tables: the keys must be equal. That’s why this type of join is often called an equi join.
+Note that the year variables are disambiguated in the output with a suffix (`year.x` and `year.y`), which tells you whether the variable came from the `x` or `y` argument. You can override the default suffixes with the suffix argument.
 
-### Exercise 8
+`join_by(tailnum)` is short for `join_by(tailnum == tailnum)`. It’s important to know about this fuller form for two reasons. Firstly, it describes the relationship between the two tables: the keys must be equal. That’s why this type of join is often called an **equi join**. We'll learn more about these later.
+
+### Exercise 3
 
 `join_by()` gives us the flexibility to join based on the variables we want. For example we know that we can join `flights2` and `airports` by `dest` or `origin`.
 
 Copy the previous code, changing `planes` to `airports` and, in, `join_by()` setting `dest == faa`.
 
-```{r basic-joins-8, exercise = TRUE}
+```{r specifying-join-keys-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-8-hint-1, eval = FALSE}
+```{r specifying-join-keys-3-hint-1, eval = FALSE}
 ... |> 
   ...(airports, join_by(...))
 ```
 
-```{r basic-joins-8-test, include = FALSE}
+```{r specifying-join-keys-3-test, include = FALSE}
 flights2 |>
   left_join(airports, join_by(dest == faa))
 ```
@@ -656,75 +662,104 @@ flights2 |>
 
 <!-- DK: Lousy knowledge drop. This whole tutorial should be made much smoother.  -->
 
-Now let's change `join_by()` to change the tables to join by `origin`.
+<!-- Now let's change `join_by()` to change the tables to join by `origin`. -->
+
+We see that in the fourth row, the joined data is all `NA`. This is because the Aeropuerto Internacional Rafael Hernández, indicated by the `BQN` code in the `dest` column, is not found in the `airports` tibble. 
+
+It’s how you specify different join keys in each table. For example, there are two ways to join the `flight2` and `airports` table: either by `dest` or `origin`, which we will do in the next exercise.
+
+<!-- TJ: Are these knowledge drops better? -->
 
 
-### Exercise 9
+### Exercise 4
 
 Copy the previous code and change `join_by()` argument to `origin == faa`.
 
-```{r basic-joins-9, exercise = TRUE}
+```{r specifying-join-keys-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-9-hint-1, eval = FALSE}
+```{r specifying-join-keys-4-hint-1, eval = FALSE}
 ... |> 
   ...(airports, join_by(...== ...))
 ```
 
-```{r basic-joins-9-test, include = FALSE}
+```{r specifying-join-keys-4-test, include = FALSE}
 flights2 |>
   left_join(airports, join_by(origin == faa))
 ```
 
 ### 
 
-If we compare both the tibbles we can see the difference in the `name` variable.
+If we compare both the tibbles we can see the difference in the `name` variable. When we joined them by `dest`, we get the name of the destination, but when we joined them by `origin`, we get the name of the origin.
 
-### Exercise 10
+## Basic Filtering joins
+### 
 
-As you might guess the primary action of a filtering join is to filter the rows. There are two types: semi-joins and anti-joins. Semi-joins keep all rows in x that have a match in y. For example, we could use a semi-join to filter the airports dataset to show just the origin airports.
+As you might guess the primary action of a **filtering join** is to filter the rows. There are two types: semi-joins and anti-joins. **Semi-joins** keep all rows in x that have a match in y. For example, we could use a semi-join to filter the airports dataset to show just the origin airports.
 
-Start a pipe with `airports` to `semi_join()` and for the table which we will join, pass in `flights2` and also pass in `join_by(faa == dest)` which will collect all the rows that match in both tibbles.
+### Exercise 1
 
-```{r basic-joins-10, exercise = TRUE}
+Start a pipe with `airports` to `semi_join()` and for the table which we will join, pass in `flights2` and also pass in `join_by(faa == origin)` which will collect all the rows that match in both tibbles.
+
+```{r basic-filtering-joins-1, exercise = TRUE}
+
+```
+
+```{r basic-filtering-joins-1-hint-1, eval = FALSE}
+... |> 
+  ...(flights2, join_by(faa == ...))
+```
+
+```{r basic-filtering-joins-1-test, include = FALSE}
+airports |> 
+  semi_join(flights2, join_by(faa == origin))
+```
+
+### 
+
+We only have three airports, `EWR`, `JFK` and `LGA`. With `semi_join`, we are now able to view the airport data for these three all in one tibble.
+
+### Exercise 2
+
+Copy your previous code but change `origin` to `dest`
+
+```{r basic-filtering-joins-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-10-hint-1, eval = FALSE}
-... |> 
-  ...(flights2, join_by(faa == ...))
+```{r basic-filtering-joins-2-hint-1, eval = FALSE}
+airports |> 
+  semi_join(flights2, join_by(faa == ...))
 ```
 
-```{r basic-joins-10-test, include = FALSE}
+```{r basic-filtering-joins-2-test, include = FALSE}
 airports |> 
   semi_join(flights2, join_by(faa == dest))
 ```
 
 ### 
 
-Compared to `semi_join()`, anti-joins are the opposite: they return all rows in `x` that don’t have a match in `y`. 
+Now, this shows just the destination airports.
 
-### Exercise 11
+### Exercise 3
 
-Let's find rows that are missing from airports by looking for flights that don’t have a matching destination airport using `anti_join()`. First start a pipe with `flights2` to `anti_join()` which takes in `airports` as the joining tibble and we will tell it to join by `dest == faa`.
+Let's find rows that are missing from `airports` by looking for flights that don’t have a matching destination airport using `anti_join()`. First start a pipe with `flights2` to `anti_join()` which takes in `airports` as the joining tibble and we will tell it to join by `dest == faa`.
  
-```{r basic-joins-11, exercise = TRUE}
+```{r basic-filtering-joins-3, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r basic-joins-11-hint-1, eval = FALSE}
+```{r basic-filtering-joins-3-hint-1, eval = FALSE}
 ... |> 
   ...(airports, join_by(... == faa)
 ```
 
-```{r basic-joins-11-test, include = FALSE}
+```{r basic-filtering-joins-3-test, include = FALSE}
 flights2 |> 
   anti_join(airports, join_by(dest == faa)) |> 
   distinct(dest)
@@ -732,35 +767,41 @@ flights2 |>
 
 ### 
 
-We found four rows that are missing from `airports` but not in `flights`.
+**Anti-joins** are the opposite: they return all rows in x that don’t have a match in y. They’re useful for finding missing values that are **implicit** in the data. Implicitly missing values don’t show up as `NA`s but instead only exist as an absence.
 
-### Exercise 12
+We found four rows that are missing from `airports` but not in `flights`, you may notice one of them, `BQN`, which we talked about earlier.
+
+### Exercise 4
 
 Let's now find which `tailnums` are missing from planes. Copy the previous code, change the the table we will join from `airports` to `planes` and then modify `join_by()` argument to `tailnum`. Continue the pipe to `distinct()` and add `tailnum` as an argument.
 
-```{r basic-joins-12, exercise = TRUE}
+```{r basic-filtering-joins-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r basic-joins-12-hint-1, eval = FALSE}
+```{r basic-filtering-joins-4-hint-1, eval = FALSE}
 ... |>
   anti_join(..., join_by(tailnum)) |> 
   ...(tailnum)
 ```
 
-```{r basic-joins-12-test, include = FALSE}
+```{r basic-filtering-joins-4-test, include = FALSE}
 flights2 |> 
   anti_join(planes, join_by(tailnum)) |> 
   distinct(tailnum)
 ```
 
-<!-- ###  -->
+### 
+
+These `tailnum`s are all in `flights2`, but, they are not present in `planes`. `anti_join()` helps us find these.
 
 <!-- DK: Knowledge drop. -->
 
 ## How do joins work?
+### 
+
 <!-- DK: Rewrite this topic to ask questions! -->
 
 Now that you’ve used joins a few times it’s time to learn more about how they work, focusing on how each row in `x` matches rows in `y`. We’ll begin by introducing a visual representation of joins, using the simple tibbles defined below  In these examples we’ll use a single key called `key` and a single value column (`val_x` and `val_y`), but the ideas all generalize to multiple keys and multiple values.
@@ -784,43 +825,98 @@ y <- tribble(
 )
 ```
 
+### Exercise 2
+
+Print out `x` and `y` on separate lines
+
+```{r how-do-joins-work-2, exercise = TRUE}
+
+```
+
+```{r how-do-joins-work-2-hint-1, eval = FALSE}
+x
+y
+```
+
+```{r how-do-joins-work-2-test, include = FALSE}
+x
+y
+```
+
 ### 
 
-The graphical representation of the `x` and `y` tibble:
+Here is another graphical representation of the `x` and `y` tibbles:
 
 ```{r}
 knitr::include_graphics("images/photo1.png")
 ```
 
-### Exercise 2
+The colored key columns map background color to `key` value. The grey columns represent the “value” columns that are carried along for the ride.
 
-To understand how joins work, it’s useful to think of every possible match. Here we show that with a grid of connecting lines.
+
+### 
 
 ```{r}
 knitr::include_graphics("images/setup2.png")
 ```
 
-### 
-
-The image above depicts the foundation of our visual representation, showing potential matches between x and y as intersecting lines. The output's rows and columns align with the horizontal x table.
+Now we are going to try to join these tibbles together. The image above depicts the foundation of our visual representation, showing potential matches between `x` and `y` as intersecting lines. The output's rows and columns align with the horizontal `x` table.
 
 ### Exercise 3
 
-To describe a join type, we use dots to indicate matches. The matches determine the output rows, which include the key, x values, and y values. The image below displays an inner join, retaining rows only when the keys are equal.
+Pipe `x` to `inner_join()` with `y` as the argument.
+
+
+```{r how-do-joins-work-3, exercise = TRUE}
+
+```
+
+```{r how-do-joins-work-3-hint-1, eval = FALSE}
+x |>
+  inner_join(...)
+```
+
+```{r how-do-joins-work-3-test, include = FALSE}
+x |>
+  inner_join(y)
+```
+
+### 
+
+To describe a specific type of join, we indicate matches with dots. The matches determine the rows in the output, a new data frame that contains the key, the x values, and the y values. For example, the output above and the figure below show an inner join, where rows are retained if and only if the keys are equal. That is why we do not see `x3` or `y3`.
 
 ```{r}
 knitr::include_graphics("images/inner.png")
 ```
 
-### 
-
 An inner join matches each row in `x` to the row in `y` that has the same value of `key`. Each match becomes a row in the output. We can apply the same principles to explain the outer joins, which keep observations that appear in at least one of the data frames. 
 
 ### Exercise 4
 
-Outer joins retain observations that appear in at least one of the data frames, following the same principles. They add a "virtual" observation to each frame with a key that matches when no other key matches, and NA values. There are three types of outer joins.
+We can apply the same principles to explain the **outer joins**, which keep observations that appear in at least one of the data frames. These joins work by adding an additional “virtual” observation to each data frame. This observation has a key that matches if no other key matches, and values filled with `NA.` There are three types of outer joins:
 
-The image below is a visual representation of the left join where every row in x appears in the output.
+### 
+
+Pipe `x` to `left_join()` with the argument `y`
+
+
+```{r how-do-joins-work-4, exercise = TRUE}
+
+```
+
+```{r how-do-joins-work-4-hint-1, eval = FALSE}
+x |>
+  left_join(...)
+```
+
+```{r how-do-joins-work-4-test, include = FALSE}
+x |>
+  left_join(y)
+```
+
+### 
+
+The image below is a visual representation of the left join where every row in `x` appears in the output.
 
 ```{r}
 knitr::include_graphics("images/left.png")
@@ -828,11 +924,31 @@ knitr::include_graphics("images/left.png")
 
 ### 
 
-A left join keeps all observations in x, like in the image below. Every row of x is preserved in the output because it can fall back to matching a row of `NAs` in y.
+A **left join** keeps all observations in `x`, like in the image below. Every row of `x` is preserved in the output because it can fall back to matching a row of `NAs` in `y`.
 
 ### Exercise 5
 
-The image below is a visual representation of the right join where every row of y appears in the output.
+Copy the previous code but change `left_join()` to `right_join()``
+
+```{r how-do-joins-work-5, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r how-do-joins-work-5-hint-1, eval = FALSE}
+x |>
+  ...(y)
+```
+
+```{r how-do-joins-work-5-test, include = FALSE}
+x |>
+  right_join(y)
+```
+
+### 
+
+The image below is a visual representation of the right join where every row of `y` appears in the output.
 
 ```{r}
 knitr::include_graphics("images/right.png")
@@ -840,11 +956,31 @@ knitr::include_graphics("images/right.png")
 
 ### 
 
-A right join keeps all observations in y, like the image above. Every row of y is preserved in the output because it can fall back to matching a row of `NAs` in x. The output still matches x as much as possible; any extra rows from y are added to the end.
+A **right join** keeps all observations in `y`, like the image above. Every row of y is preserved in the output because it can fall back to matching a row of `NAs` in `x`. The output still matches `x` as much as possible; any extra rows from `y` are added to the end.
 
 ### Exercise 6
 
-The image below is  a visual representation of the full join where every row in x and y appears in the output.
+Copy the code again but run `full_join()` this time
+
+```{r how-do-joins-work-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r how-do-joins-work-6-hint-1, eval = FALSE}
+x |>
+  ...(y)
+```
+
+```{r how-do-joins-work-6-test, include = FALSE}
+x |>
+  full_join(y)
+```
+
+### 
+
+The image below is  a visual representation of the full join where every row in `x` and `y` appears in the output.
 
 ```{r}
 knitr::include_graphics("images/full.png")
@@ -852,11 +988,27 @@ knitr::include_graphics("images/full.png")
 
 ### 
 
-A full join keeps all observations that appear in x or y, like the image above. Every row of x and y is included in the output because both x and y have a fall back row of `NAs`. Again, the output starts with all rows from x, followed by the remaining unmatched y rows.
+A **full join** keeps all observations that appear in `x` or `y`, like the image above. Every row of x and y is included in the output because both `x` and `y` have a fall back row of `NAs`. Again, the output starts with all rows from `x`, followed by the remaining unmatched `y` rows.
 
 ### Exercise 7
 
-The image below is  a visual representation Venn diagrams showing the difference between inner, left, right, and full joins.
+Imagine we are using a Venn diagram to visualize the four types of joins that we have just gone over, describe how each join would be represented. 
+
+<!-- TJ: Is this a good activity? -->
+
+
+```{r how-do-joins-work-7}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+The image below is a visual representation Venn diagrams showing the difference between inner, left, right, and full joins. However, this is not a great representation because while it might jog your memory about which rows are preserved, it fails to illustrate what’s happening with the columns.
 
 ```{r}
 knitr::include_graphics("images/venn.png")
@@ -866,11 +1018,55 @@ knitr::include_graphics("images/venn.png")
 
 The joins shown here are the so-called equi joins, where rows match if the keys are equal. Equi joins are the most common type of join, so we’ll typically omit the equi prefix, and just say “inner join” rather than “equi inner join”.
 
-### Exercise 8
+## Row Matching
+### 
 
-So far we’ve explored what happens if a row in x matches zero or one rows in y. What happens if it matches more than one row?
+So far we’ve explored what happens if a row in `x` matches zero or one rows in `y`. What happens if it matches more than one row?
 
-The image below is shows how two records in Y tibble connect to the same record in X tibble.
+### Exercise 1
+
+Run `df1` and `df2` on separate lines.
+
+```{r row-matching-1, exercise = TRUE}
+
+
+```
+
+```{r row-matching-1-hint-1, eval = FALSE}
+df1
+df2
+```
+
+```{r row-matching-1-test, include = FALSE}
+df1
+df2
+```
+
+### 
+
+You can see that the key `2` is repeated twice in `df2`.
+
+### Exercise 2
+
+Pipe `df1` to `inner_join()` with the argument `df2`.
+
+```{r row-matching-2, exercise = TRUE}
+
+```
+
+```{r row-matching-2-hint-1, eval = FALSE}
+df1 |>
+  inner_join(...)
+```
+
+```{r row-matching-2-test, include = FALSE}
+df1 |>
+  inner_join(df2)
+```
+
+### 
+
+The three ways a row in `x` can match. `x1` matches one row in `y`, `x2` matches two rows in `y`, `x3` matches zero rows in y. Note that while there are three rows in `x` and three rows in the output, there isn’t a direct correspondence between the rows.
 
 ```{r}
 knitr::include_graphics("images/match-types.png")
@@ -884,74 +1080,174 @@ If it doesn’t match anything, it’s dropped.
 If it matches 1 row in y, it’s preserved.
 If it matches more than 1 row in y, it’s duplicated once for each match.
 
-### Exercise 9
+### Exercise 3
+
+Print out `df3` and `df4` on separate lines
+
+```{r row-matching-3, exercise = TRUE}
+
+```
+
+```{r row-matching-3-hint-1, eval = FALSE}
+df3
+df4
+```
+
+```{r row-matching-3-test, include = FALSE}
+df3
+df4
+```
+
+### 
+
+In principle, this means that there’s no guaranteed correspondence between the rows in the output and the rows in `x`, but in practice, this rarely causes problems. There is, however, one particularly dangerous case which can cause a combinatorial explosion of rows. Imagine joining these two tables
+
+### Exercise 4
 
 <!-- DK: It might be missing images of the tables? Or is it just supposed to be like that? -->
 
-In practice when there are two records connecting to same record, there are no issue but there is, however, one particularly dangerous case which can cause a combination explosion of rows. Imagine joining the following two tables:
+<!-- TJ: There is no image in the textbook -->
 
-Create two variables `df1` and `df2` on different lines. Assign `tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))` to `df1` and assign `tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))` to `df2`.
+Pipe `df3` to `inner_join()` with `df4` as the argument. Add the `join_by(key)` argument.
 
-```{r how-do-joins-work-9, exercise = TRUE}
+```{r row-matching-4, exercise = TRUE}
+
+```
+
+```{r row-matching-4-hint-1, eval = FALSE}
+df3 |>
+  inner_join(..., join_by(...))
+```
+
+```{r row-matching-4-test, include = FALSE}
+df3 |>
+  inner_join(df4, join_by(key))
+```
+
+### 
+
+While the first row in `df3` only matches one row in `df3`, the second and third rows both match two rows. This is sometimes called a `many-to-many` join, and will cause dplyr to emit a warning.
+
+### Exercise 5
+
+Add the `relationship` argument and set it equal to `"many-to-many"`
+
+```{r row-matching-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r how-do-joins-work-9-hint-1, eval = FALSE}
-df1 <- 
-df2 <- 
+```{r row-matching-5-hint-1, eval = FALSE}
+
 ```
 
-```{r how-do-joins-work-9-test, include = FALSE}
-df1 <- tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))
-df2 <- tibble(key = c(1, 2, 2), val_x = c("x1", "x2", "x3"))
+```{r row-matching-5-test, include = FALSE}
+df3 |>
+  inner_join(df4, join_by(key), relationship = "many-to-many")
 ```
 
 ### 
 
-As you can see we have two duplicate keys in both tibbles.
+If you are doing this deliberately, you can set `relationship = "many-to-many"`, as the warning suggests. This will silence the warning and allow you to see the tibble.
 
-### Exercise 10
 
-Copy the previous code and on a new line create a pipe with `df1` to `inner_join()` and pass in `df2` and then join the tibble by `key` using `join_by()`.
+## Filtering Joins
+### 
 
-```{r how-do-joins-work-10, exercise = TRUE}
+The number of matches also determines the behavior of the filtering joins.
+
+### Exercise 1
+
+Pipe `x` to `semi_join()` with the argument `y`.
+
+```{r filtering-joins-1, exercise = TRUE}
+
+```
+
+```{r filtering-joins-1-hint-1, eval = FALSE}
+x |>
+  semi_join(...)
+```
+
+```{r filtering-joins-1-test, include = FALSE}
+x |>
+  semi_join(y)
+```
+
+### 
+
+The semi-join keeps rows in `x` that have one or more matches in `y`, as shown in the image below.
+
+```{r}
+knitr::include_graphics("images/semi.png")
+```
+
+### 
+
+In a semi-join it only matters that there is a match; otherwise values in `y` don’t affect the output.
+
+### Exercise 2
+
+Copy the previous code but change `semi_join()` to `anti_join()`
+
+```{r filtering-joins-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r how-do-joins-work-10-hint-1, eval = FALSE}
-... |> 
-  inner_join(df2, ...(key))
+```{r filtering-joins-2-hint-1, eval = FALSE}
+x |>
+  ...(y)
 ```
 
-```{r how-do-joins-work-10-test, include = FALSE}
-df1 |> 
-  inner_join(df2, join_by(key))
+```{r filtering-joins-2-test, include = FALSE}
+x |>
+  anti_join(y)
 ```
 
 ### 
 
-While the first row in df1 only matches one row in df2, the second and third rows both match two rows. This is sometimes called a many-to-many join, and will cause dplyr to emit a warning. If you are doing this deliberately, you can set relationship = "many-to-many", as the warning suggests.
+The anti-join keeps rows in x that match zero rows in y, as shown in the image below. 
+
+```{r}
+knitr::include_graphics("images/anti.png")
+```
+
+### 
+
+An anti-join is the inverse of a semi-join, dropping rows from `x` that have a match in `y`.
+
+### 
+
+In both cases, only the existence of a match is important; it doesn’t matter how many times it matches. This means that filtering joins never duplicate rows like mutating joins do.
+
 
 ## Non-equi joins
 ### 
+
+So far you’ve only seen equi joins, joins where the rows match if the `x` key equals the `y` key. Now we’re going to relax that restriction and discuss other ways of determining if a pair of rows match.
+
+### 
+
+Recall the `x` and `y` tibbles we used earlier
+
+```{r}
+#| echo: FALSE
+x
+y
+```
 
 <!-- DK: A lot of this is very sloppy. Need to create permanent objects in the setup chunk and inform students about them. -->
 
 ### Exercise 1
 
-Let's relax the restriction of equi joins and explore different criteria for matching rows. Before that, let's revisit a simplification we made earlier. In equi joins, the x keys and y keys are always equal, so we only display one key in the output. By requesting dplyr to keep both keys with `keep = TRUE`, we can modify the inner_join() code.
-
-To join `x` with `y` using left_join(), start a pipe and specify y as the tibble to join. Use `key` as the joining criterion using `by` and include `keep = TRUE` to retain both keys.
+Pipe `x` to `inner_join()`. Add the arguments `y`, `join_by(key == key)` and `keep = TRUE`.
 
 ```{r nonequi-joins-1, exercise = TRUE}
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r nonequi-joins-1-hint-1, eval = FALSE}
 x |> 
@@ -965,7 +1261,7 @@ x |>
 
 ### 
 
-Below is the representation of when you do equi joins:
+But before we can do that, we need to revisit a simplification we made above. In equi joins the `x` keys and `y` are always equal, so we only need to show one in the output. We can request that `dplyr` keep both keys with `keep = TRUE`, leading to the code above and the re-drawn `inner_join()` in the image below.
 
 ```{r}
 knitr::include_graphics("images/inner-both.png")
@@ -973,7 +1269,26 @@ knitr::include_graphics("images/inner-both.png")
 
 ### Exercise 2
 
-When using non-equi joins, we always display both keys because their values can differ. For instance, instead of requiring equality between `x$key` and `y$key`, we can match when `x$key` is greater than or equal to `y$key`, as shown in image below. dplyr's join functions recognize this distinction and automatically show both keys in non-equi joins.
+Copy/Paste the previous code but change `key == key` to `key >= key` inside of `join_by()`.
+
+```{r nonequi-joins-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r nonequi-joins-2-hint-1, eval = FALSE}
+x |> inner_join(y, join_by(...), keep = TRUE)
+```
+
+```{r nonequi-joins-2-test, include = FALSE}
+x |> inner_join(y, join_by(key >= key), keep = TRUE)
+```
+
+### 
+
+When we move away from equi joins we’ll always show the keys, because the key values will often be different. For example, instead of matching only when the `x$key` and `y$key` are equal, we could match whenever the `x$key` is greater than or equal to the `y$key`, leading to the image below. dplyr’s join functions understand this distinction equi and non-equi joins so will always show both keys when you perform a non-equi join.
+
 
 ```{r}
 knitr::include_graphics("images/gte.png")
@@ -981,10 +1296,18 @@ knitr::include_graphics("images/gte.png")
 
 ### 
 
-Non-equi join isn’t a particularly useful term because it only tells you what the join is not, not what it is. dplyr helps by identifying four particularly useful types of non-equi join: Cross joins match every pair of rows which we will explore in next few exercises.
+Non-equi join isn’t a particularly useful term because it only tells you what the join is not, not what it is. dplyr helps by identifying four particularly useful types of non-equi join: 
 
 
-### Exercise 3
+**- Cross joins** match every pair of rows.
+**- Inequality joins** use `<`, `<=`, `>`, and `>=` instead of `==`.
+**- Rolling joins** are similar to inequality joins but only find the closest match.
+**- Overlap joins** are a special type of inequality join designed to work with ranges.
+
+Each of these is described in more detail in the following sections.
+
+## Cross Joins
+### 
 
 A cross join matches everything, as in the image below, generating the Cartesian product of rows. This means the output will have `nrow(x) * nrow(y)` rows.
 
@@ -996,57 +1319,50 @@ knitr::include_graphics("images/cross.png")
 
 The image above demonstrates a cross join matching each row in `x` with every row in `y`. Looking at the image we can see that cross joins are useful when generating permutations.
 
-### Exercise 4
+### Exercise 1
 
 To make use of the permutations skills that this function has, let's first create a tibble `df` and assign `tibble(name = c("John", "Simon", "Tracy", "Max"))` to it.
 
-```{r nonequi-joins-4, exercise = TRUE}
+```{r cross-joins-1, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r nonequi-joins-4-hint-1, eval = FALSE}
+```{r cross-joins-1-hint-1, eval = FALSE}
 df <- tibble(name = ...(...))
 ```
 
-```{r nonequi-joins-4-test, include = FALSE}
+```{r cross-joins-1-test, include = FALSE}
 df <- tibble(name = c("John", "Simon", "Tracy", "Max"))
 ```
 
 ### 
 
-Looking at the tibble you can understand that we will be generating all the possible name combinations.
+Using this tibble, we will be generating all the possible name combinations.
 
-### Exercise 5
+### Exercise 2
 
-Copy the previous code and on a new line start a pipe with `df` to `cross_join()` and pass in `df` as the argument.
+Pipe `df` to `cross_join()` and pass in `df` as the argument.
 
-```{r nonequi-joins-5, exercise = TRUE}
+```{r cross-joins-2, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r nonequi-joins-5-hint-1, eval = FALSE}
-df <- tibble(name = c("John", "Simon", "Tracy", "Max")) 
+```{r cross-joins-2-hint-1, eval = FALSE}
 df |> 
   cross_join(...)
 ```
 
-```{r nonequi-joins-5-test, include = FALSE}
-df <- tibble(name = c("John", "Simon", "Tracy", "Max"))
+```{r cross-joins-2-test, include = FALSE}
 df |> 
   cross_join(df)
 ```
 
 ### 
 
-Since we’re joining df to itself, this is sometimes called a self-join. Cross joins use a different join function because there’s no distinction between inner/left/right/full when you’re matching every row. 
+Cross joins are useful when generating permutations. For example, the code above generates every possible pair of names. Since we’re joining df to itself, this is sometimes called a **self-join**. Cross joins use a different join function because there’s no distinction between inner/left/right/full when you’re matching every row. 
 
-Next up we will talk about the second type of non-equi join that dplyr has which is inequality joins.
-
-### Exercise 6
+## Inequality Joins
+### 
 
 Inequality joins use `<, <=, >=, or >` to restrict the set of possible matches. Below is what it looks like visually.
 
@@ -1056,37 +1372,36 @@ knitr::include_graphics("images/lt.png")
 
 ### 
 
-The image above is an inequality join where x is joined to y on rows where the key of x is less than the key of y. This makes a triangular shape in the top-left corner.
+An inequality join where `x` is joined to `y` on rows where the key of `x` is less than the key of `y`. This makes a triangular shape in the top-left corner.
 
-### Exercise 7
+### Exercise 1
 
-Inequality joins are extremely general, so general that it’s hard to come up with meaningful specific use cases. One small useful technique is to use them to restrict the cross join so that instead of generating all permutations, we generate all combinations:
+Pipe `df` to `inner_join()` with the arguments `df` and `join_by(id < id)`
 
-Create a variable `df` and assign  `tibble(id = 1:4, name = c("John", "Simon", "Tracy", "Max"))` to it.
-
-```{r nonequi-joins-7, exercise = TRUE}
+```{r inequality-joins-1, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r nonequi-joins-7-hint-1, eval = FALSE}
-df <- tibble(..., name = ...(...))
+```{r inequality-joins-1-hint-1, eval = FALSE}
+df |>
+  join_by(...)
 ```
 
-```{r nonequi-joins-7-test, include = FALSE}
-tibble(id = 1:4, name = c("John", "Simon", "Tracy", "Max"))
+```{r inequality-joins-1-test, include = FALSE}
+df |>
+  join_by(id<id)
 ```
 
 ### 
 
+Inequality joins are extremely general, so general that it’s hard to come up with meaningful specific use cases. One small useful technique is to use them to restrict the cross join so that instead of generating all permutations, we generate all combinations.
+
 Compared to cross joins, we can see that with the inequality join, we were able to stop the names from being duplicated and instead got combinations.
 
-The next type of non equi joins are rolling joins which we will explore in the next few exercises.
+## Rolling Joins
+### 
 
-### Exercise 8
-
-Rolling joins return the closest match instead of all matches satisfying the inequality. To create a rolling join add `closest()` to the inequality condition. For example, `join_by(closest(x <= y))` finds the smallest `y ≥ x`, and `join_by(closest(x > y))` finds the largest `y < x`. Example:
+Rolling joins are a special type of inequality join where instead of getting every row that satisfies the inequality, you get just the closest row, as in The figure below. You can turn any inequality join into a rolling join by adding `closest()`. For example `join_by(closest(x <= y))` matches the smallest y that’s greater than or equal to `x`, and `join_by(closest(x > y))` matches the biggest `y` that’s less than `x`.
 
 ```{r}
 knitr::include_graphics("images/closest.png")
@@ -1096,205 +1411,341 @@ knitr::include_graphics("images/closest.png")
 
 Rolling joins are particularly useful when you have two tables of dates that don’t perfectly line up and you want to find (e.g.) the closest date in table 1 that comes before (or after) some date in table 2.
 
-### Exercise 9
+### Exercise 1
 
 To demonstrate a use case of rolling joins, let's imagine that as the party planning commission for your office, you're responsible for organizing quarterly parties due to budget constraints. The rules for determining the party dates are as follows: parties are held on Mondays, the first week of January is skipped, and the first Monday of Q3 2022 falls on July 4, which needs to be postponed by a week. Here are the resulting party days: `2022-01-10`, `2022-04-04`, `2022-07-11`, `2022-10-03`.
 
-Create a tibble `parties` and add columns `q` and pass in `1:4` for it then add another column `party` and pass in `ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03"))`.
+### 
 
-```{r nonequi-joins-9, exercise = TRUE}
+Create a tibble `parties` and add column `q`, pass in `1:4` for it. Then add another column `party` and pass in `ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03"))`.
+
+```{r rolling-joins-1, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r nonequi-joins-9-hint-1, eval = FALSE}
+```{r rolling-joins-1-hint-1, eval = FALSE}
 parties <- tibble(q = ..., party = ymd(c(...)))
 ```
 
-```{r nonequi-joins-9-test, include = FALSE}
-parties <- tibble(q = 1:4, party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")))
+```{r rolling-joins-1-test, include = FALSE}
+parties <- tibble(q = 1:4, 
+                  party = ymd(c("2022-01-10", 
+                                "2022-04-04", 
+                                "2022-07-11", 
+                                "2022-10-03")))
 ```
 
 ### 
 
-Now that we have the party dates, we now have to have employee birthdays.
+Now that we have the party dates, we need to have employee birthdays.
 
-### Exercise 10
+### Exercise 2
 
-Let's now create a new tibble `employees` using `tibble()`. The tibble contains two columns: `name` and `birthday`. Pass in `name = sample(babynames::babynames$name, 100)`, which assigns a sample of 100 baby names to `name`. Then pass `ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)`, which generates birthdays, to `birthday`. 
+Let's now create a new tibble `employees` using `tibble()`. Make the first column, `name`, equal to `sample(babynames::babynames$name, 100)`
 
-On a new line, call employees to have a look at the tibble.
+```{r rolling-joins-2, exercise = TRUE}
 
-```{r nonequi-joins-10, exercise = TRUE}
+```
+
+```{r rolling-joins-2-hint-1, eval = FALSE}
+... <- tibble(
+  name = sample(babynames::...$name, 100)
+)
+```
+
+```{r rolling-joins-2-test, include = FALSE}
+employees <- tibble(
+  name = sample(babynames::babynames$name, 100)
+)
+```
+
+### 
+
+We are taking a sample of 100 random names from the `babynames` dataset.
+
+### Exercise 3
+
+Add a new column `birthday` and set it equal to `ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)`
+
+```{r rolling-joins-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r nonequi-joins-10-hint-1, eval = FALSE}
-... <- tibble(
-  name = sample(babynames::...$name, 100),
- ... = ymd(....) + (sample(365, 100, replace = ...) - 1)
+```{r rolling-joins-3-hint-1, eval = FALSE}
+... <- tibble( 
+  ...,
+  birthday = ...
 )
+```
+
+```{r rolling-joins-3-test, include = FALSE}
+employees <- tibble(
+  name = sample(babynames::babynames$name, 100),
+ birthday = ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)
+)
+```
+
+### 
+
+Now, we make 100 sample birthdays. Recall from the Dates and Times tutorial how we make a new date using `ymd`. We add any number from 1 to 365 and that becomes our new, random birth date. If you forgot, check out ["Chapter 17: Dates and Times from R for Data Science"](https://r4ds.hadley.nz/datetimes).
+
+### Exercise 4
+
+Print out `employees` to view the data
+
+```{r rolling-joins-4, exercise = TRUE}
+
+```
+
+```{r rolling-joins-4-hint-1, eval = FALSE}
 employees
 ```
 
-```{r nonequi-joins-10-test, include = FALSE}
-employees <- tibble(
-  name = sample(babynames::babynames$name, 100),
- birthdays = ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)
-)
+```{r rolling-joins-4-test, include = FALSE}
 employees
 ```
 
 ### 
 
-We generated the `employees` tibble using the `babynames` dataset and also generated their birthdays. Let's now use rolling joins to find the first date that comes after their birthday.
+We see that each employee has a name and birthday and there are 100 total employees.
 
-### Exercise 11
+### Exercise 5
 
 To join the `employees` and `parties` tables, pipe `employees` to `left_join()`. Use `join_by()` to find the closest party dates after the birthday by applying `closest(birthday >= party)`.
 
-```{r nonequi-joins-11, exercise = TRUE}
+```{r rolling-joins-5, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r nonequi-joins-11-hint-1, eval = FALSE}
+```{r rolling-joins-5-hint-1, eval = FALSE}
 ... |> 
   left_join(..., join_by(...(birthday >= party)))
 ```
 
-```{r nonequi-joins-11-test, include = FALSE}
-employees <- tibble(
-     name = sample(babynames::babynames$name, 100),
-     birthday = ymd("2022-01-01") + (sample(365, 100, replace = TRUE) - 1)
-)
-
-parties <- tibble(
-     q = 1:4,
-     party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")))
-
+```{r rolling-joins-5-test, include = FALSE}
 employees |> 
   left_join(parties, join_by(closest(birthday >= party)))
 ```
 
 ### 
 
-There is, however, one problem with this approach: the folks with birthdays before January 10 don’t get a party.
+There is, however, one problem with this approach.
 
-### Exercise 12
+### Exercise 6
 
-This approach only looks for birthdays after January 10th and leaves out birthdays before that date. To demonstrate this, copy the previous code and change the join from `left_join()` to `right_join()`.
+Pipe `employees` to `anti_join()` with the arguments `parties` and `join_by(closest(birthday >= party))`
 
-```{r nonequi-joins-12, exercise = TRUE}
+```{r rolling-joins-6, exercise = TRUE}
+
+```
+
+```{r rolling-joins-6-hint-1, eval = FALSE}
+
+```
+
+```{r rolling-joins-6-test, include = FALSE}
+
+```
+
+### 
+
+This approach only looks for birthdays after January 10th and leaves out birthdays before that date, as shown above.
+
+### Exercise 7
+
+Copy the previous code and change the join from `left_join()` to `right_join()`.
+
+```{r rolling-joins-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r nonequi-joins-12-hint-1, eval = FALSE}
+```{r rolling-joins-7-hint-1, eval = FALSE}
 employees |> 
   ...(parties, join_by(closest(birthday >= party)))
 ```
 
-```{r nonequi-joins-12-test, include = FALSE}
+```{r rolling-joins-7-test, include = FALSE}
 employees |> 
   right_join(parties, join_by(closest(birthday >= party)))
 ```
 
 ### 
 
-To resolve that issue we’ll need to tackle the problem a different way, with overlap joins: the fourth type of non equi join.
+To resolve that issue we’ll need to tackle the problem a different way, with overlap joins.
 
-### Exercise 13
-
-<!-- DK: These and other instructions are way too complex. Instead, build this tibble over the course of several exercises. This is good because it makes things possible for students to do easily and because it allows for lots of useful knowledge drops. -->
+## Overlap Joins
+### 
 
 Let’s continue the birthday example to see how you might use them. There’s one problem with the strategy we used above: there’s no party preceding the birthdays on January 1 through 9. So it might be better to be explicit about the date ranges that each party spans, and make a special case for those early birthdays.
 
-Make a new tibble `parties2` using `tibble()` and define three columns: `party`, `start`, and `end`. Set the key as `q` and assign `1:4` to it. For the party column, pass in `ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03"))`. For the start column, pass in `ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03"))`. For the end column, pass in `ymd(c("2022-04-03", "2022-07-11", "2022-10-02", "2022-12-31"))`. On a new line call `parties2` to check the new tibble.
+### Exercise 1
 
-```{r nonequi-joins-13, exercise = TRUE}
+<!-- DK: These and other instructions are way too complex. Instead, build this tibble over the course of several exercises. This is good because it makes things possible for students to do easily and because it allows for lots of useful knowledge drops. -->
+
+Make a new tibble, `parties2` using `tibble()`. Make the first column `q` equal to all consecutive integers from 1-4 using `:`. Next, make a new column called `party` and set it equal to `ymd()` with the argument `c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")`
+
+```{r overlap-joins-1, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r nonequi-joins-13-hint-1, eval = FALSE}
+```{r overlap-joins-1-hint-1, eval = FALSE}
 parties2 <- tibble(
   q = ...,
-  ... = ymd(c(..., "2022-04-04", "2022-07-11", "2022-10-03")),
-  ... = ymd(c("2022-01-01", "2022-04-04",..., "2022-10-03")),
-  end = ymd(c("2022-04-03", "2022-07-11", "2022-10-02", ...))
+  party = ymd(...)
 )
-parties2
 ```
 
-```{r nonequi-joins-13-test, include = FALSE}
+```{r overlap-joins-1-test, include = FALSE}
 parties2 <- tibble(
   q = 1:4,
-  party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
-  start = ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03")),
-  end = ymd(c("2022-04-03", "2022-07-11", "2022-10-02", "2022-12-31"))
+  party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03"))
 )
-parties2
 ```
 
 ### 
 
 Overlap joins provide three helpers that use inequality joins to make it easier to work with intervals:
 
-`between(x, y_lower, y_upper)` is short for x >= y_lower, x <= y_upper.
-`within(x_lower, x_upper, y_lower, y_upper)` is short for x_lower >= y_lower, x_upper <= y_upper.
-`overlaps(x_lower, x_upper, y_lower, y_upper)` is short for x_lower <= y_upper, x_upper >= y_lower.
+**-** `between(x, y_lower, y_upper)` is short for `x >= y_lower, x <= y_upper`.
+`within(x_lower, x_upper, y_lower, y_upper)` is short for `x_lower >= y_lower, x_upper **-** <= y_upper`.
+**-** `overlaps(x_lower, x_upper, y_lower, y_upper)` is short for `x_lower <= y_upper, x_upper >= y_lower`.
 
+### Exercise 2
 
-### Exercise 14
+Make a new column `start` and set it equal to `ymd()` with the argument `c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03")`.
 
-Hadley is hopelessly bad at data entry so he also wanted to check that the party periods don’t overlap. One way to do this is by using a self-join to check if any start-end interval overlap with another.
-
-Start a pipe with `parties2` to `inner_join()`, we will join `parties2` to itself and we will join them by `overlaps(start, end, start, end), q < q`.
-
-```{r nonequi-joins-14, exercise = TRUE}
+```{r overlap-joins-2, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r nonequi-joins-14-hint-1, eval = FALSE}
-... |> 
-  inner_join(..., join_by(...(start, end, start, end), ...))
+```{r overlap-joins-2-hint-1, eval = FALSE}
+... <- tibble(
+  ...,
+  ...,
+  start = ymd(...)
+)
 ```
 
-```{r nonequi-joins-14-test, include = FALSE}
+```{r overlap-joins-2-test, include = FALSE}
+parties2 <- tibble(
+  q = 1:4,
+  party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
+  start = ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03"))
+)
+```
+
+### 
+
+We are going to use ranges to figure out who gets what party. Now that we just made the `start` of the range, next we will make the `end` of the range.
+
+### Exercise 3
+
+Make a new column `end` and set it equal to `ymd()` with the argument `c("2022-04-03", "2022-07-11", "2022-10-02", "2022-12-31")`. Print `parties2` on a new line.
+
+```{r overlap-joins-3, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r overlap-joins-3-hint-1, eval = FALSE}
+... <- tibble(
+  ...,
+  ...,
+  ...,
+  end = ymd(...)
+)
+
+...
+```
+
+```{r overlap-joins-3-test, include = FALSE}
+parties2 <- tibble(
+  q = 1:4,
+  party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
+  start = ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03")),
+  end = ymd(c("2022-04-03", "2022-07-11", "2022-10-02", "2022-12-31"))
+)
+
+parties2
+```
+
+### 
+
+For each `party`, there is a `start` and `end` of the range. Anyone who's birthday falls into this range gets that party.
+
+### Exercise 4
+
+Hadley is hopelessly bad at data entry so he also wanted to check that the party periods don’t overlap. One way to do this is by using a self-join to check if any start-end interval overlap with another.
+
+Start a pipe with `parties2` to `inner_join()` with the argument `parties2`.
+
+```{r overlap-joins-4, exercise = TRUE}
+
+```
+
+```{r overlap-joins-4-hint-1, eval = FALSE}
+... |> 
+  inner_join(...)
+```
+
+```{r overlap-joins-4-test, include = FALSE}
 parties2 |> 
-  inner_join(parties2, join_by(overlaps(start, end, start, end), q < q))
+  inner_join(parties2)
 ```
 
 ### 
 
 If you want to explore move about overlap joins, check out [dplyr](https://dplyr.tidyverse.org/reference/join_by.html#overlap-joins).
 
-### Exercise 15
+### Exercise 5
 
-When we ran the previous code, we see other info which we dont need, so let's remove those using `select()`. So copy the previous code and continue the pipe from `inner_join()` to `select()` and only select the `start.x, end.x, start.y, end.y`.
+Add the arguments `inner_join(parties, join_by(overlaps(start, end, start, end)` and `q < q`.
 
-```{r nonequi-joins-15, exercise = TRUE}
+```{r overlap-joins-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r nonequi-joins-15-hint-1, eval = FALSE}
+```{r overlap-joins-5-hint-1, eval = FALSE}
+parties2 |>
+  inner_join(parties2,
+             ...)
+```
+
+```{r overlap-joins-5-test, include = FALSE}
+# parties |> 
+#   inner_join(parties, join_by(overlaps(start, end, start, end), q < q))
+```
+
+### 
+
+You should get an error, but, do not worry since we will fix it.
+
+### Exercise 6
+
+Continue the pipe from `inner_join()` to `select()` and only select the `start.x, end.x, start.y, end.y`.
+
+```{r overlap-joins-6, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r overlap-joins-6-hint-1, eval = FALSE}
 parties2 |> 
   inner_join(parties2, join_by(overlaps(start, end, start, end), q < q)) |> 
   select(..., ..., ..., ...)
 ```
 
-```{r nonequi-joins-15-test, include = FALSE}
+```{r overlap-joins-6-test, include = FALSE}
 parties2 |> 
   inner_join(parties2, join_by(overlaps(start, end, start, end), q < q)) |>
   select(start.x, end.x, start.y, end.y)
@@ -1302,19 +1753,17 @@ parties2 |>
 
 ### 
 
-Ooops, there is an overlap, so let’s fix that problem and continue:
+Oops, there is an overlap, so let’s fix that problem and continue:
 
-### Exercise 16
+### Exercise 7
 
-Go back to exercise 13 and copy your answer from there and paste it here, change the name of the tibble to `parties3` and change the 2nd data in `end` to `"2022-07-10"`.
+Go back to exercise 3 and copy your answer from there and paste it here, change the name of the tibble to `parties3` and change the 2nd data in `end` to `"2022-07-10"`.
 
-```{r nonequi-joins-16, exercise = TRUE}
+```{r overlap-joins-7, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r nonequi-joins-16-hint-1, eval = FALSE}
+```{r overlap-joins-7-hint-1, eval = FALSE}
 ... <- tibble(
   ...,
   party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
@@ -1323,39 +1772,86 @@ Go back to exercise 13 and copy your answer from there and paste it here, change
 )
 ```
 
-```{r nonequi-joins-16-test, include = FALSE}
-parties4 <- tibble(
+```{r overlap-joins-7-test, include = FALSE}
+parties3 <- tibble(
   q = 1:4,
   party = ymd(c("2022-01-10", "2022-04-04", "2022-07-11", "2022-10-03")),
   start = ymd(c("2022-01-01", "2022-04-04", "2022-07-11", "2022-10-03")),
   end = ymd(c("2022-04-03", "2022-07-10", "2022-10-02", "2022-12-31"))
 )
-parties2
+parties3
 ```
 
 ### 
 
-Now that we have the dates ready, let's match each employee to their party.
+Lets double check again to make sure.
 
-### Exercise 17
+### Exercise 8
 
-Let's join `employees` and `parties3` by first creating a pipe with `employees` to `inner_join()`. We will be joining them with `between(birthday, start, end)` using `join_by()` and in addition also add `unmatched = "error"`.
+Copy/Paste your code from exercise 6 but change the dataset to `parties3` from `parties2`
 
-```{r nonequi-joins-17, exercise = TRUE}
+```{r overlap-joins-8, exercise = TRUE}
+
+```
+
+```{r overlap-joins-8-hint-1, eval = FALSE}
+
+```
+
+```{r overlap-joins-8-test, include = FALSE}
+
+```
+
+### 
+
+There should be no rows in this tibble, which means that we have all of our dates correct. Now we can match each employee to their party.
+
+### Exercise 9
+
+Pipe `employees` to `inner_join()` with the first argument as `parties` and the second as `join_by(between(birthday, start, end))`. 
+
+```{r overlap-joins-9, exercise = TRUE}
+
+```
+
+```{r overlap-joins-9-hint-1, eval = FALSE}
+... |> 
+      inner_join(parties3, ...(between(birthday, start, end)))
+```
+
+```{r overlap-joins-9-test, include = FALSE}
+employees |> 
+      inner_join(parties3, 
+                 join_by(between(birthday, start, end)))
+```
+
+### 
+
+Cool! It seems as if everyone has been given a party, but, we can't be so sure yet.
+
+### Exercise 10
+
+Add the argument `unmatched = "error"` at the end of `join_by()`
+
+```{r overlap-joins-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r nonequi-joins-17-hint-1, eval = FALSE}
-... |> 
-      inner_join(parties3, ...(between(birthday, start, end)), unmatched = "...")
-```
-
-```{r nonequi-joins-17-test, include = FALSE}
+```{r overlap-joins-10-hint-1, eval = FALSE}
 employees |> 
       inner_join(parties3, 
-                 join_by(between(birthday, start, end)), unmatched = "error")
+                 join_by(between(birthday, start, end)),
+                 ...)
+```
+
+```{r overlap-joins-10-test, include = FALSE}
+employees |> 
+  inner_join(parties3, 
+             join_by(between(birthday, start, end)), 
+             unmatched = "error")
+
 ```
 
 ### 
