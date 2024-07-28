@@ -49,6 +49,8 @@ repetition <- tibble(
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+
+<!-- SD: I'm assuming that the following is old and obsolete, but I could be wrong: -->
 <!-- Luit: -->
 
 <!-- Edit Knowledge drops as needed. -->
@@ -64,18 +66,6 @@ This tutorial covers [Chapter 13: Numbers](https://r4ds.hadley.nz/numbers.html) 
 
 The goal of this chapter is to learn how to parse numbers from strings, utilize numeric transformations on variables within datasets, and learn new ways to numerically summarize data. 
 
-Note that many of the exercises in this tutorial produce this warning:
-
-````
-Warning message:
-Returning more (or less) than 1 row per `summarise()` group was deprecated in dplyr 1.1.0.
-ℹ Please use `reframe()` instead.
-ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()` always returns an
-  ungrouped data frame and adjust accordingly.
-Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
-````
-
-Ignore that for now. We are fixing it.
 
 ## Making Numbers
 ### 
@@ -299,7 +289,7 @@ And remember that if you want to see all the values, you can use `|> View()` or 
 
 ### Exercise 5
 
-Create a new pipeline. Pipe flights to the `summarize()` function. Within the `summarize()` function, create a new variable `carriers` and set it to `n_distinct(carrier)`.
+Create a new pipeline. Pipe flights to the `reframe()` function. Within the `reframe()` function, create a new variable `carriers` and set it to `n_distinct(carrier)`.
 
 ```{r counts-5, exercise = TRUE}
 
@@ -309,23 +299,25 @@ Create a new pipeline. Pipe flights to the `summarize()` function. Within the `s
 
 ```{r counts-5-hint-1, eval = FALSE}
 flights |> 
-  summarize(carriers = ...) 
+  reframe(carriers = ...) 
   
 ```
 
 ```{r counts-5-test, include = FALSE}
 flights |> 
-  summarize(carriers = n_distinct(carrier)) 
+  reframe(carriers = n_distinct(carrier)) 
   
 ```
 
 ### 
 
+The function `reframe()` works similarly to `summarize()`, with the exception that `summarize()` requires a `.by` argument, where as `reframe()` doesn't, making it suitable for these problems that don't have `.by` arguments.
+
 The function `n_distinct()` counts the number of distinct (unique) values of one or more variables. For example, we could figure out which destinations are served by the most carriers. 
 
 ### Exercise 6
 
-Using your previous code, within your call to `summarize()` add a the `.by` argument and set it to `dest`.
+Using your previous code, within your call to `reframe()` add a the `.by` argument and set it to `dest`.
 
 ```{r counts-6, exercise = TRUE}
 
@@ -335,17 +327,17 @@ Using your previous code, within your call to `summarize()` add a the `.by` argu
 
 ```{r counts-6-hint-1, eval = FALSE}
 flights |> 
-  summarize(carriers =  n_distinct(carrier), .by = ...)
+  reframe(carriers =  n_distinct(carrier), .by = ...)
 ```
 
 ```{r counts-6-test, include = FALSE}
 flights |> 
-  summarize(carriers = n_distinct(carrier), .by = dest)
+  reframe(carriers = n_distinct(carrier), .by = dest)
 ```
 
 ### 
 
-Setting `.by` to `dest` lets us group the `summarize()` function by the destination.
+Setting `.by` to `dest` lets us group the `reframe()` function by the destination.
 
 ### Exercise 7
 
@@ -364,7 +356,7 @@ Using the previous code, add the `arrange()` function to your pipeline. Within t
 
 ```{r counts-7-test, include = FALSE}
 flights |> 
-  summarize(carriers = n_distinct(carrier), .by = dest) |> 
+  reframe(carriers = n_distinct(carrier), .by = dest) |> 
   arrange(carriers)
 ```
 
@@ -389,7 +381,7 @@ Using your previous code, within your call to `arrange()`, add the argument `des
 
 ```{r counts-8-test, include = FALSE}
 flights |> 
-  summarize(carriers = n_distinct(carrier), .by = dest) |> 
+  reframe(carriers = n_distinct(carrier), .by = dest) |> 
   arrange(desc(carriers))
 ```
 
@@ -447,7 +439,7 @@ Weighted counts are a common problem so count() has the `wt` argument that does 
 
 ### Exercise 11
 
-Now, count the number of cancelled flights or missing values of each destination. With a new pipeline, pipe `flights` to the `summarize()` function. Within the call to `summarize()`, create a new variable called `n_cancelled` and set it equal to `sum(is.na(dep_time)`.
+Now, count the number of cancelled flights or missing values of each destination. With a new pipeline, pipe `flights` to the `reframe()` function. Within the call to `reframe()`, create a new variable called `n_cancelled` and set it equal to `sum(is.na(dep_time)`.
 
 ```{r counts-11, exercise = TRUE}
 
@@ -457,12 +449,12 @@ Now, count the number of cancelled flights or missing values of each destination
 
 ```{r counts-11-hint-1, eval = FALSE}
 flights |> 
-  summarize(n_cancelled = ...)
+  reframe(n_cancelled = ...)
 ```
 
 ```{r counts-11-test, include = FALSE}
 flights |> 
-  summarize(n_cancelled = sum(is.na(dep_time)))
+  reframe(n_cancelled = sum(is.na(dep_time)))
 ```
 
 ### 
@@ -471,7 +463,7 @@ You can count missing values by combining sum() and is.na(). In the flights data
 
 ### Exercise 12
 
-Within your call to the `summarize()` function, add the `.by` argument and set it to `dest`.
+Within your call to the `reframe()` function, add the `.by` argument and set it to `dest`.
 
 ```{r counts-12, exercise = TRUE}
 
@@ -481,17 +473,17 @@ Within your call to the `summarize()` function, add the `.by` argument and set i
 
 ```{r counts-12-hint-1, eval = FALSE}
 flights |> 
-  summarize(n_cancelled = sum(is.na(dep_time)), .by = ...)
+  reframe(n_cancelled = sum(is.na(dep_time)), .by = ...)
 ```
 
 ```{r counts-12-test, include = FALSE}
 flights |> 
-  summarize(n_cancelled = sum(is.na(dep_time)), .by = dest)
+  reframe(n_cancelled = sum(is.na(dep_time)), .by = dest)
 ```
 
 ### 
 
-The `summarize()` function here now counts the canceled flights in each destination.
+The `reframe()` function here now counts the canceled flights in each destination.
 
 ## Numeric transformations
 ### 
@@ -509,7 +501,7 @@ By the end of this section we will be making a plot that looks like this:
 ```{r}
 plots <- flights |> 
   mutate(hour = sched_dep_time %/% 100) |> 
-  summarize(prop_cancelled = mean(is.na(dep_time)), n = n(), .by = hour) |> 
+  reframe(prop_cancelled = mean(is.na(dep_time)), n = n(), .by = hour) |> 
   filter(hour > 1) |> 
   ggplot(aes(x = hour, y = prop_cancelled)) +
   geom_line(color = "grey50") + 
@@ -915,7 +907,7 @@ plots
 
 ### 
 
-Create a new pipeline. Pipe `flights` to the function `summarize()`. Within the call to `summarize()`, create a new variable called `hour` and set it to `sched_dep_time %/% 100`.
+Create a new pipeline. Pipe `flights` to the function `reframe()`. Within the call to `reframe()`, create a new variable called `hour` and set it to `sched_dep_time %/% 100`.
 
 ```{r numeric-transformations-16, exercise = TRUE}
 
@@ -925,15 +917,15 @@ Create a new pipeline. Pipe `flights` to the function `summarize()`. Within the 
 
 ```{r numeric-transformations-16-hint-1, eval = FALSE}
 flights |> 
-  summarize(hour = ...)
+  reframe(hour = ...)
 
 ```
 
-<!-- DK: Example of the problem! -->
+<!-- DK: Example of the problem! - DONE -->
 
 ```{r numeric-transformations-16-test, include = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100)
+  reframe(hour = sched_dep_time %/% 100)
 ```
 
 ### 
@@ -942,7 +934,7 @@ We can combine that with a trick using `mean(is.na(x))` to see how the proportio
 
 ### Exercise 17
 
-Using your previous code. Within the call to `summarize()`, create a new variable called `prop_cancelled` and set it to `mean(is.na(dep_time))`.
+Using your previous code. Within the call to `reframe()`, create a new variable called `prop_cancelled` and set it to `mean(is.na(dep_time))`.
 
 ```{r numeric-transformations-17, exercise = TRUE}
 
@@ -952,13 +944,13 @@ Using your previous code. Within the call to `summarize()`, create a new variabl
 
 ```{r numeric-transformations-17-hint-1, eval = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100, 
+  reframe(hour = sched_dep_time %/% 100, 
             prop_cancelled = ...)
 ```
 
 ```{r numeric-transformations-17-test, include = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100, 
+  reframe(hour = sched_dep_time %/% 100, 
             prop_cancelled = mean(is.na(dep_time)))
 ```
 
@@ -968,7 +960,7 @@ flights |>
 
 ### Exercise 18
 
-Using your previous code. Within the call to `summarize()`, create another variable called `n` and set it to `n()`.
+Using your previous code. Within the call to `reframe()`, create another variable called `n` and set it to `n()`.
 
 ```{r numeric-transformations-18, exercise = TRUE}
 
@@ -978,14 +970,14 @@ Using your previous code. Within the call to `summarize()`, create another varia
 
 ```{r numeric-transformations-18-hint-1, eval = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100, 
+  reframe(hour = sched_dep_time %/% 100, 
             prop_cancelled = mean(is.na(dep_time)), 
             n = ...)
 ```
 
 ```{r numeric-transformations-18-test, include = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100, 
+  reframe(hour = sched_dep_time %/% 100, 
             prop_cancelled = mean(is.na(dep_time)), 
             n = n())
 ```
@@ -996,7 +988,7 @@ flights |>
 
 ### Exercise 19
 
-Using your previous code. Within the call to `summarize()`, add an argument called `.by` and set it to hour, so that we can group by hour. 
+Using your previous code. Within the call to `reframe()`, add an argument called `.by` and set it to hour, so that we can group by hour. 
 
 ```{r numeric-transformations-19, exercise = TRUE}
 
@@ -1006,7 +998,7 @@ Using your previous code. Within the call to `summarize()`, add an argument call
 
 ```{r numeric-transformations-19-hint-1, eval = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100, 
+  reframe(hour = sched_dep_time %/% 100, 
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = ...)
@@ -1014,7 +1006,7 @@ flights |>
 
 ```{r numeric-transformations-19-test, include = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour)
@@ -1034,7 +1026,7 @@ Using your previous code. Add the function `filter()` to the pipeline. Within th
 
 ```{r numeric-transformations-20-hint-1, eval = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour) |> 
@@ -1043,7 +1035,7 @@ flights |>
 
 ```{r numeric-transformations-20-test, include = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour) |> 
@@ -1062,7 +1054,7 @@ Using your previous code. Add the function `ggplot()` to the pipeline. Within th
 
 ```{r numeric-transformations-21-hint-1, eval = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour) |> 
@@ -1072,7 +1064,7 @@ flights |>
 
 ```{r numeric-transformations-21-test, include = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour) |> 
@@ -1094,7 +1086,7 @@ Using your previous code. Add the function `geom_line()` to the pipeline.
 
 ```{r numeric-transformations-22-hint-1, eval = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour) |> 
@@ -1105,7 +1097,7 @@ flights |>
 
 ```{r numeric-transformations-22-test, include = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour) |> 
@@ -1126,7 +1118,7 @@ Using your previous code, within the call to `geom_line()` make a new argument c
 
 ```{r numeric-transformations-23-hint-1, eval = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour) |> 
@@ -1137,7 +1129,7 @@ flights |>
 
 ```{r numeric-transformations-23-test, include = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour) |> 
@@ -1158,7 +1150,7 @@ Using your previous code, add the function `geom_point()` to the pipeline.
 
 ```{r numeric-transformations-24-hint-1, eval = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour) |> 
@@ -1170,7 +1162,7 @@ flights |>
 
 ```{r numeric-transformations-24-test, include = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour) |> 
@@ -1192,7 +1184,7 @@ Copy your previous code. Within the function `geom_point()` map `size` to `n`.
 
 ```{r numeric-transformations-25-hint-1, eval = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour) |> 
@@ -1204,7 +1196,7 @@ flights |>
 
 ```{r numeric-transformations-25-test, include = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour) |> 
@@ -1226,7 +1218,7 @@ Using your previous code, add a title, subtitle, and axis titles using the `labs
 
 ```{r numeric-transformations-26-hint-1, eval = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour) |> 
@@ -1242,7 +1234,7 @@ flights |>
 
 ```{r numeric-transformations-26-test, include = FALSE}
 flights |> 
-  summarize(hour = sched_dep_time %/% 100,
+  reframe(hour = sched_dep_time %/% 100,
             prop_cancelled = mean(is.na(dep_time)), 
             n = n(), 
             .by = hour) |> 
@@ -2044,7 +2036,7 @@ x-lag(x)
 
 ### 
 
-<!-- This is sloppy. We are using two concepts at the same time. First, is the specific calculation using the `x` vector. The second, in the knowledge drop, is the generic calculation which works for any vector `x`. Students find this juxtaposition confusing! -->
+<!-- DK: This is sloppy. We are using two concepts at the same time. First, is the specific calculation using the `x` vector. The second, in the knowledge drop, is the generic calculation which works for any vector `x`. Students find this juxtaposition confusing! - DONE -->
 
 `x - lag(x)` will give you the difference between the current and previous value for all the elements of the vector `x`.
 
@@ -2068,7 +2060,9 @@ x==lag(x)
 
 ### 
 
-`x == lag(x)` tells you when the current value changes. You can lead or lag by more than one position by using the second argument, `n`.
+`z == lag(z)` tells you when the current value changes. You can lead or lag by more than one position by using the second argument, `n`.
+
+Note that `z` represents any variable, and must be changed in every situation to match the variable being used (i.e. `apples == lag(apples)`, or with any other variable).
 
 ### Exercise 18
 
@@ -2184,7 +2178,7 @@ repetition
 
 ### Exercise 23
 
-Create a new pipeline and pipe `repetition` to the `summarize()` function. Within the call to `summarize()`, create a variable `id` and set it to `consecutive_id(x)`.
+Create a new pipeline and pipe `repetition` to the `reframe()` function. Within the call to `reframe()`, create a variable `id` and set it to `consecutive_id(x)`.
 
 ```{r general-transformations-23, exercise = TRUE}
 
@@ -2194,12 +2188,12 @@ Create a new pipeline and pipe `repetition` to the `summarize()` function. Withi
 
 ```{r general-transformations-23-hint-1, eval = FALSE}
 repetition |> 
-  summarize(id = ...)
+  reframe(id = ...)
 ```
 
 ```{r general-transformations-23-test, include = FALSE}
 repetition |> 
-  summarize(id = consecutive_id(x))
+  reframe(id = consecutive_id(x))
 ```
 
 ### 
@@ -2208,7 +2202,7 @@ Another approach for creating grouping variables is `consecutive_id()`, which st
 
 ### Exercise 24
 
-Using your previous code, within your call to the `summarize()` function, add the parameters `x` and `y` so that we could include these columns in our plot.
+Using your previous code, within your call to the `reframe()` function, add the parameters `x` and `y` so that we could include these columns in our plot.
 
 ```{r general-transformations-24, exercise = TRUE}
 
@@ -2218,12 +2212,12 @@ Using your previous code, within your call to the `summarize()` function, add th
 
 ```{r general-transformations-24-hint-1, eval = FALSE}
 repetition |> 
-  summarize(id = consecutive_id(x), x, ...)
+  reframe(id = consecutive_id(x), x, ...)
 ```
 
 ```{r general-transformations-24-test, include = FALSE}
 repetition |> 
-  summarize(id = consecutive_id(x), x, y)
+  reframe(id = consecutive_id(x), x, y)
 ```
 
 ### Exercise 25
@@ -2238,13 +2232,13 @@ Using the same pipe as above, add the function `slice_head()` to the pipeline. W
 
 ```{r general-transformations-25-hint-1, eval = FALSE}
 repetition |> 
-  summarize(id = consecutive_id(x), x, y)
+  reframe(id = consecutive_id(x), x, y)
   slice_head(n = ...)
 ```
 
 ```{r general-transformations-25-test, include = FALSE}
 repetition |> 
-  summarize(id = consecutive_id(x), x, y) |>
+  reframe(id = consecutive_id(x), x, y) |>
   slice_head(n=1)
 ```
 
@@ -2264,13 +2258,13 @@ Using your previous code, within the `slice_head()` function, add the `by` argum
 
 ```{r general-transformations-26-hint-1, eval = FALSE}
 repetition |> 
-  summarize(id = consecutive_id(x), x, y) |>
+  reframe(id = consecutive_id(x), x, y) |>
   slice_head(n=1, by = .__C__.name)
 ```
 
 ```{r general-transformations-26-test, include = FALSE}
 repetition |> 
-  summarize(id = consecutive_id(x), x, y) |>
+  reframe(id = consecutive_id(x), x, y) |>
   slice_head(n=1, by = id)
 ```
 
@@ -2299,7 +2293,7 @@ flights
 
 ### Exercise 2
 
-Create a new pipeline. Pipe `flights` to the `summarize()` function. Within the `summarize()` function, create a new variable `mean` and set it to `mean(dep_delay, na.rm = TRUE)`.
+Create a new pipeline. Pipe `flights` to the `reframe()` function. Within the `reframe()` function, create a new variable `mean` and set it to `mean(dep_delay, na.rm = TRUE)`.
 
 ```{r numeric-summaries-2, exercise = TRUE}
 
@@ -2309,14 +2303,14 @@ Create a new pipeline. Pipe `flights` to the `summarize()` function. Within the 
 
 ```{r numeric-summaries-2-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = ...
   )
 ```
 
 ```{r numeric-summaries-2-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE)
   )
 ```
@@ -2327,7 +2321,7 @@ An alternative to `mean()` to use the `median()`, which finds a value that lies 
 
 ### Exercise 3
 
-Using the same pipe as above, create another variable, within the call to `summarize()`, called `median` and set it to `median(dep_delay, na.rm = TRUE)`. 
+Using the same pipe as above, create another variable, within the call to `reframe()`, called `median` and set it to `median(dep_delay, na.rm = TRUE)`. 
 
 ```{r numeric-summaries-3, exercise = TRUE}
 
@@ -2337,7 +2331,7 @@ Using the same pipe as above, create another variable, within the call to `summa
 
 ```{r numeric-summaries-3-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = ...
   )
@@ -2345,7 +2339,7 @@ flights |>
 
 ```{r numeric-summaries-3-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE)
   )
@@ -2353,7 +2347,7 @@ flights |>
 
 ### Exercise 4
 
-Using the same pipe as above, create another variable, within the call to `summarize()`, called `n` and set it to `n()`. 
+Using the same pipe as above, create another variable, within the call to `reframe()`, called `n` and set it to `n()`. 
 
 ```{r numeric-summaries-4, exercise = TRUE}
 
@@ -2363,7 +2357,7 @@ Using the same pipe as above, create another variable, within the call to `summa
 
 ```{r numeric-summaries-4-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = ...
@@ -2372,7 +2366,7 @@ flights |>
 
 ```{r numeric-summaries-4-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n()
@@ -2381,7 +2375,7 @@ flights |>
 
 ### Exercise 5
 
-Using your previous code, within your call to the `summarize()` function add an argument called `.by` and set it to `c(year, month, day)`. 
+Using your previous code, within your call to the `reframe()` function add an argument called `.by` and set it to `c(year, month, day)`. 
 
 ```{r numeric-summaries-5, exercise = TRUE}
 
@@ -2391,7 +2385,7 @@ Using your previous code, within your call to the `summarize()` function add an 
 
 ```{r numeric-summaries-5-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
@@ -2401,7 +2395,7 @@ flights |>
 
 ```{r numeric-summaries-5-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
@@ -2421,7 +2415,7 @@ Using the same pipe as above, add the `ggplot()` function to the pipeline. Withi
 
 ```{r numeric-summaries-6-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
@@ -2432,7 +2426,7 @@ flights |>
 
 ```{r numeric-summaries-6-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
@@ -2453,7 +2447,7 @@ Using the same pipe as above, add the `geom_abline()` function to the pipeline. 
 
 ```{r numeric-summaries-7-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
@@ -2465,7 +2459,7 @@ flights |>
 
 ```{r numeric-summaries-7-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
@@ -2487,7 +2481,7 @@ Using the same pipe as above, within the `geom_abline()` function, add another a
 
 ```{r numeric-summaries-8-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
@@ -2499,7 +2493,7 @@ flights |>
 
 ```{r numeric-summaries-8-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
@@ -2521,7 +2515,7 @@ Using the same pipe as above, within the `geom_abline()` function, add another a
 
 ```{r numeric-summaries-9-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
@@ -2533,7 +2527,7 @@ flights |>
 
 ```{r numeric-summaries-9-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
@@ -2555,7 +2549,7 @@ Using the same pipe as above, within the `geom_abline()` function, add another a
 
 ```{r numeric-summaries-10-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
@@ -2567,7 +2561,7 @@ flights |>
 
 ```{r numeric-summaries-10-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
@@ -2594,7 +2588,7 @@ Using the same pipe as above, add the `geom_point()` function to the pipeline.
 
 ```{r numeric-summaries-11-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
@@ -2607,7 +2601,7 @@ flights |>
 
 ```{r numeric-summaries-11-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     mean = mean(dep_delay, na.rm = TRUE),
     median = median(dep_delay, na.rm = TRUE),
     n = n(),
@@ -2623,7 +2617,7 @@ This plot compares the mean vs. the median departure delay (in minutes) for each
 
 ### Exercise 12
 
-Create a new pipeline. Pipe `flights` to the `summarize()` function. Within the `summarize()` function, create a new variable `max` and set it to `max(dep_delay, na.rm = TRUE)`.
+Create a new pipeline. Pipe `flights` to the `reframe()` function. Within the `reframe()` function, create a new variable `max` and set it to `max(dep_delay, na.rm = TRUE)`.
 ```{r numeric-summaries-12, exercise = TRUE}
 
 ```
@@ -2632,14 +2626,14 @@ Create a new pipeline. Pipe `flights` to the `summarize()` function. Within the 
 
 ```{r numeric-summaries-12-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     max = ...
   )
 ```
 
 ```{r numeric-summaries-12-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     max = max(dep_delay, na.rm = TRUE)
   )
 ```
@@ -2650,7 +2644,7 @@ min() and max() will give you the largest and smallest values.
 
 ### Exercise 13
 
-Using the same pipe as above, create another variable, within the call to `summarize()`, called `q95` and set it to `quantile(dep_delay, 0.95, na.rm = TRUE)`. 
+Using the same pipe as above, create another variable, within the call to `reframe()`, called `q95` and set it to `quantile(dep_delay, 0.95, na.rm = TRUE)`. 
 ```{r numeric-summaries-13, exercise = TRUE}
 
 ```
@@ -2659,7 +2653,7 @@ Using the same pipe as above, create another variable, within the call to `summa
 
 ```{r numeric-summaries-13-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     max = max(dep_delay, na.rm = TRUE), 
     q95 = ...
   )
@@ -2667,7 +2661,7 @@ flights |>
 
 ```{r numeric-summaries-13-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     max = max(dep_delay, na.rm = TRUE),
     q95 = quantile(dep_delay, 0.95, na.rm = TRUE)
   )
@@ -2679,7 +2673,7 @@ Another powerful tool is quantile() which is a generalization of the median: qua
 
 ### Exercise 14
 
-Using your previous code, within your call to the `summarize()` function, add the `.by` argument and set it to `c(year, month, day)`. 
+Using your previous code, within your call to the `reframe()` function, add the `.by` argument and set it to `c(year, month, day)`. 
 
 ```{r numeric-summaries-14, exercise = TRUE}
 
@@ -2689,7 +2683,7 @@ Using your previous code, within your call to the `summarize()` function, add th
 
 ```{r numeric-summaries-14-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     max = max(dep_delay, na.rm = TRUE),
     q95 = quantile(dep_delay, 0.95, na.rm = TRUE),
     .by = ...
@@ -2698,7 +2692,7 @@ flights |>
 
 ```{r numeric-summaries-14-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     max = max(dep_delay, na.rm = TRUE),
     q95 = quantile(dep_delay, 0.95, na.rm = TRUE),
     .by = c(year, month, day)
@@ -2711,7 +2705,7 @@ For the flights data, we are looking at the 95% quantile of delays rather than t
 
 ### Exercise 15
 
-Create a new pipeline. Pipe `flights` to the `summarize()` function. Within the `summarize()` function, create a new variable `distance_sd` and set it to `IQR(distance)`.
+Create a new pipeline. Pipe `flights` to the `reframe()` function. Within the `reframe()` function, create a new variable `distance_sd` and set it to `IQR(distance)`.
 
 ```{r numeric-summaries-15, exercise = TRUE}
 
@@ -2721,14 +2715,14 @@ Create a new pipeline. Pipe `flights` to the `summarize()` function. Within the 
 
 ```{r numeric-summaries-15-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     distance_sd = ...
   )
 ```
 
 ```{r numeric-summaries-15-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     distance_sd = IQR(distance)
   )
 ```
@@ -2739,7 +2733,7 @@ Two commonly used summaries are the standard deviation, sd(x), and the inter-qua
 
 ### Exercise 16
 
-Using the same pipe as above, create another variable, within the call to `summarize()`, called `n` and set it to `n()`. 
+Using the same pipe as above, create another variable, within the call to `reframe()`, called `n` and set it to `n()`. 
 
 ```{r numeric-summaries-16, exercise = TRUE}
 
@@ -2749,7 +2743,7 @@ Using the same pipe as above, create another variable, within the call to `summa
 
 ```{r numeric-summaries-16-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     distance_sd = IQR(distance),
     n = n()
   )
@@ -2757,7 +2751,7 @@ flights |>
 
 ```{r numeric-summaries-16-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     distance_sd = IQR(distance),
     n=n()
   )
@@ -2765,7 +2759,7 @@ flights |>
 
 ### Exercise 17
 
-Using your previous code, within your call to `summarize()` add the `.by` argument and set it to `c(origin, dest)`.
+Using your previous code, within your call to `reframe()` add the `.by` argument and set it to `c(origin, dest)`.
 
 ```{r numeric-summaries-17, exercise = TRUE}
 
@@ -2775,7 +2769,7 @@ Using your previous code, within your call to `summarize()` add the `.by` argume
 
 ```{r numeric-summaries-17-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     distance_sd = IQR(distance),
     n=n(),
     .by = ...
@@ -2784,7 +2778,7 @@ flights |>
 
 ```{r numeric-summaries-17-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     distance_sd = IQR(distance),
     n=n(),
     .by = c(origin, dest)
@@ -2803,7 +2797,7 @@ Using the same pipe as above, add the `filter()` function to the pipeline. Withi
 
 ```{r numeric-summaries-18-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     distance_sd = IQR(distance),
     n=n(),
     .by = c(origin, dest)) |> 
@@ -2812,7 +2806,7 @@ flights |>
 
 ```{r numeric-summaries-18-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     distance_sd = IQR(distance),
     n=n(),
     .by = c(origin, dest)) |>
@@ -2906,7 +2900,7 @@ In the following plot 365 frequency polygons of dep_delay, one for each day, are
 
 ### Exercise 23
 
-Create a new pipeline. Pipe `flights` to the `summarize()` function. Within the `summarize()` function, create a new variable `first_dep` and set it to `first(dep_time, na_rm = TRUE)`.
+Create a new pipeline. Pipe `flights` to the `reframe()` function. Within the `reframe()` function, create a new variable `first_dep` and set it to `first(dep_time, na_rm = TRUE)`.
 
 ```{r numeric-summaries-23, exercise = TRUE}
 
@@ -2916,20 +2910,20 @@ Create a new pipeline. Pipe `flights` to the `summarize()` function. Within the 
 
 ```{r numeric-summaries-23-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     first_dep = ...
   )
 ```
 
 ```{r numeric-summaries-23-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     first_dep = first(dep_time, na_rm = TRUE))
 ```
 
 ### Exercise 24
 
-Using the same pipe as above, create another variable, within the call to `summarize()`, called `fifth_dep` and set it to `nth(dep_time, 5, na_rm = TRUE)`. 
+Using the same pipe as above, create another variable, within the call to `reframe()`, called `fifth_dep` and set it to `nth(dep_time, 5, na_rm = TRUE)`. 
 
 ```{r numeric-summaries-24, exercise = TRUE}
 
@@ -2939,7 +2933,7 @@ Using the same pipe as above, create another variable, within the call to `summa
 
 ```{r numeric-summaries-24-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     first_dep = first(dep_time, na_rm = TRUE),
     fifth_dep = ...
   )
@@ -2948,14 +2942,14 @@ flights |>
 ```{r numeric-summaries-24-test, include = FALSE}
 
 flights |> 
-  summarize(
+  reframe(
     first_dep = first(dep_time, na_rm = TRUE),
     fifth_dep = nth(dep_time, 5, na_rm = TRUE))
 ```
 
 ### Exercise 25
 
-Using the same pipe as above, create another variable, within the call to `summarize()`, called `last_dep` and set it to `last(dep_time, na_rm = TRUE)`. 
+Using the same pipe as above, create another variable, within the call to `reframe()`, called `last_dep` and set it to `last(dep_time, na_rm = TRUE)`. 
 
 ```{r numeric-summaries-25, exercise = TRUE}
 
@@ -2965,7 +2959,7 @@ Using the same pipe as above, create another variable, within the call to `summa
 
 ```{r numeric-summaries-25-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     first_dep = first(dep_time, na_rm = TRUE),
     fifth_dep = nth(dep_time, 5, na_rm = TRUE),
     last_dep = ...
@@ -2975,7 +2969,7 @@ flights |>
 ```{r numeric-summaries-25-test, include = FALSE}
 
 flights |> 
-  summarize(
+  reframe(
     first_dep = first(dep_time, na_rm = TRUE),
     fifth_dep = nth(dep_time, 5, na_rm = TRUE),
     last_dep = last(dep_time, na_rm = TRUE))
@@ -2983,7 +2977,7 @@ flights |>
 
 ### Exercise 26
 
-Using your previous code, within your call to `summarize()` add the `.by` argument and set it to `c(year, month, day)`.
+Using your previous code, within your call to `reframe()` add the `.by` argument and set it to `c(year, month, day)`.
 
 ```{r numeric-summaries-26, exercise = TRUE}
 
@@ -2993,7 +2987,7 @@ Using your previous code, within your call to `summarize()` add the `.by` argume
 
 ```{r numeric-summaries-26-hint-1, eval = FALSE}
 flights |> 
-  summarize(
+  reframe(
     first_dep = first(dep_time, na_rm = TRUE),
     fifth_dep = nth(dep_time, 5, na_rm = TRUE),
     last_dep = last(dep_time, na_rm = TRUE),
@@ -3003,7 +2997,7 @@ flights |>
 
 ```{r numeric-summaries-26-test, include = FALSE}
 flights |> 
-  summarize(
+  reframe(
     first_dep = first(dep_time, na_rm = TRUE),
     fifth_dep = nth(dep_time, 5, na_rm = TRUE),
     last_dep = last(dep_time, na_rm = TRUE),
@@ -3057,7 +3051,11 @@ flights |>
 
 ### 
 
-As the names suggest, the summary functions are typically paired with `summarize()`. However, because of the recycling rules, they can also be usefully paired with `mutate()`
+As the names suggest, the summary functions are typically paired with `summarize()`. In this tutorial, we have consistently used `reframe()` throughout as it's very similar, but doesn't require a `.by` argument to function properly.
+
+Note that, for some of these later models, `summarize()` can be used as long as there is a `.by` argument. For consistency's sake, though, we used `reframe()` throughout this tutorial,
+
+However, because of the recycling rules, they can also be usefully paired with `mutate()`
 
 ### Exercise 29
 
