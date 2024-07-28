@@ -62,17 +62,10 @@ L2 <- list(4, 16, 25, 49, 64)
 
 df4 <- tibble(a = 1, b = 2, c = "a", d = "b", e = 4)
 
-tb4 <- tibble(
-  col1 = list(1, 2, 3, 4),
-  col2 = list(11, 12, 13, 14)
-)
 
 num_cols <- sapply(df4, is.numeric)
 
 # DK: Delete objects we don't use.
-
-save_data <- vector(mode = "list" , length = length(tb4))
-indexes <- seq_along(tb4)
 
 # DK: I had some real annoyance with code like map(paths, readxl::read_excel).
 # This works fine if you just Run Document locally. But it fails with R CMD
@@ -80,6 +73,8 @@ indexes <- seq_along(tb4)
 # length > 1". Could not solve! Adding purrr:: in this set up chunk worked. Not
 # sure what is going on. Perhaps a different map() function is called. But
 # tidyverse_conflicts() does not show any problems.
+
+# TJ: Was not able to fix this error
 
 paths <- dir("data/gapminder", pattern = "\\.xlsx$", full.names = TRUE)
 files <- purrr::map(paths, readxl::read_excel)
@@ -106,7 +101,7 @@ The `[` bracket can be used to extract sub-components from data frames and vecto
 
 ### Exercise 1
 
-Load the tidyverse library
+Load the **tidyverse** library
 
 ```{r subsetting-with-the-single-bra-1, exercise = TRUE}
 
@@ -133,6 +128,7 @@ There are five main types of things that you can subset a vector with, which wil
 ### Exercise 2
 
 Press "Run Code".
+ 
 
 ```{r subsetting-with-the-single-bra-2, exercise = TRUE}
 x <- c("one", "two", "three", "four", "five")
@@ -537,7 +533,7 @@ df0[, c("x", "z")]
 
 `filter()`, `arrange()`, and `select()` are very useful functions that help organize data. You will use these functions quite often when analyzing data.
 
-## Subsetting with double brackes and a dollar sign
+## Subsetting with double brackets and a dollar sign
 ### 
 
 The single bracket operator, `[`, which selects many elements, is paired with the double bracket operator, `[[`, and `$`, which extract a single element. In this section, we'll show you how to use `[[` and `$` to pull columns out of data frames, discuss a couple more differences between data.frames and tibbles, and emphasize some important differences between `[` and `[[` when used with lists.
@@ -546,17 +542,18 @@ The single bracket operator, `[`, which selects many elements, is paired with th
 
 In the code chunk below, create a tibble. The first value should be `x`, which is equal to a range of integers from 1 to 4. The second value should be `y`, which is a vector containing 10, 4, 1, and 21. Save this tibble to the name `tb` and print it on a new line.
 
-```{r subsetting-with-double-brackes-1, exercise = TRUE}
+```{r subsetting-with-double-bracket-1, exercise = TRUE}
 
 ```
 
-```{r subsetting-with-double-brackes-1-hint-1, eval = FALSE}
+```{r subsetting-with-double-bracket-1-hint-1, eval = FALSE}
 ... <- tibble(x = ..:.., y = c(..., ..., ..., ...))
 tb
 ```
 
-```{r subsetting-with-double-brackes-1-test, include = FALSE}
-tb <- tibble(x = 1:4, y = c(10, 4, 1, 21))
+```{r subsetting-with-double-bracket-1-test, include = FALSE}
+tb <- tibble(x = 1:4, 
+             y = c(10, 4, 1, 21))
 tb
 ```
 
@@ -568,15 +565,15 @@ The double bracket operator, `[[`, and dollar sign, `$`, can be used to extract 
 
 In the code chunk below, lets extract the elements of column `x`. In the code chunk below, type in `tb` followed by `[[]]`. Inside the inner bracket, type in `1`.
 
-```{r subsetting-with-double-brackes-2, exercise = TRUE}
+```{r subsetting-with-double-bracket-2, exercise = TRUE}
 
 ```
 
-```{r subsetting-with-double-brackes-2-hint-1, eval = FALSE}
+```{r subsetting-with-double-bracket-2-hint-1, eval = FALSE}
 tb[[...]]
 ```
 
-```{r subsetting-with-double-brackes-2-test, include = FALSE}
+```{r subsetting-with-double-bracket-2-test, include = FALSE}
 tb[[1]]
 ```
 
@@ -588,17 +585,17 @@ In this scenario, the `[[]]` are being used to return the values by position. By
 
 Now, lets extract the same elements by name. Copy the code above, replacing the code inside the inner bracket with `"x"`
 
-```{r subsetting-with-double-brackes-3, exercise = TRUE}
+```{r subsetting-with-double-bracket-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r subsetting-with-double-brackes-3-hint-1, eval = FALSE}
+```{r subsetting-with-double-bracket-3-hint-1, eval = FALSE}
 tb[["..."]]
 ```
 
-```{r subsetting-with-double-brackes-3-test, include = FALSE}
+```{r subsetting-with-double-bracket-3-test, include = FALSE}
 tb[["x"]]
 ```
 
@@ -610,15 +607,15 @@ By entering either the position or the name of the column, you can extract the v
 
 As mentioned previously, the `$` is specialized for accessing columns by name. In the code chunk below, lets extract the elements inside `y`. Type in the name of the tibble, `tb`, followed by `$` and the name of the column, `y`.
 
-```{r subsetting-with-double-brackes-4, exercise = TRUE}
+```{r subsetting-with-double-bracket-4, exercise = TRUE}
 
 ```
 
-```{r subsetting-with-double-brackes-4-hint-1, eval = FALSE}
+```{r subsetting-with-double-bracket-4-hint-1, eval = FALSE}
 tb...y
 ```
 
-```{r subsetting-with-double-brackes-4-test, include = FALSE}
+```{r subsetting-with-double-bracket-4-test, include = FALSE}
 tb$y
 ```
 
@@ -630,16 +627,16 @@ As you can see, the `$` extracted the values inside column `y`, which are 10, 4,
 
 The `$` can also be used to create new columns, which is the Base R equivalent of the `mutate()` method. In the code chunk below, type in `tb$z`, setting it equal to `tb$x + tb$y` (use `<-` to do this). On a new line, type in `tb`.
 
-```{r subsetting-with-double-brackes-5, exercise = TRUE}
+```{r subsetting-with-double-bracket-5, exercise = TRUE}
 
 ```
 
-```{r subsetting-with-double-brackes-5-hint-1, eval = FALSE}
+```{r subsetting-with-double-bracket-5-hint-1, eval = FALSE}
 tb$z <- ... + ...
 tb$z
 ```
 
-```{r subsetting-with-double-brackes-5-test, include = FALSE}
+```{r subsetting-with-double-bracket-5-test, include = FALSE}
 tb$z <- tb$x + tb$y
 tb$z
 ```
@@ -654,7 +651,11 @@ Let's take a  glance at the **diamonds** package.
 
 Type `diamonds` in the code chunk below.
 
-```{r subsetting-with-double-brackes-6, exercise = TRUE}
+```{r subsetting-with-double-bracket-6, exercise = TRUE}
+diamonds
+```
+
+```{r subsetting-with-double-bracket-6-test, include = FALSE}
 diamonds
 ```
 
@@ -666,15 +667,15 @@ Using `$` directly is convenient when performing quick summaries. Lets use this 
 
 Lets find out the maximum carat in the **diamonds** package, using the `max()` function. In the code chunk below, type in `max()`. Inside the parenthesis, type in `diamonds$carat`. 
 
-```{r subsetting-with-double-brackes-7, exercise = TRUE}
+```{r subsetting-with-double-bracket-7, exercise = TRUE}
 
 ```
 
-```{r subsetting-with-double-brackes-7-hint-1, eval = FALSE}
+```{r subsetting-with-double-bracket-7-hint-1, eval = FALSE}
 max(...$...)
 ```
 
-```{r subsetting-with-double-brackes-7-test, include = FALSE}
+```{r subsetting-with-double-bracket-7-test, include = FALSE}
 max(diamonds$carat)
 ```
 
@@ -688,17 +689,17 @@ The **dplyr** package also provides a base R equivalent for the double bracket o
 
 Let's replicate the code above, using `pull()`. Pipe the **diamonds** package to `pull()`, passing in `carat`. Then, create another pipe to the `max()` function.
 
-```{r subsetting-with-double-brackes-8, exercise = TRUE}
+```{r subsetting-with-double-bracket-8, exercise = TRUE}
 
 ```
 
-```{r subsetting-with-double-brackes-8-hint-1, eval = FALSE}
+```{r subsetting-with-double-bracket-8-hint-1, eval = FALSE}
 diamonds |> 
   ...(carat) |> 
     ...()
 ```
 
-```{r subsetting-with-double-brackes-8-test, include = FALSE}
+```{r subsetting-with-double-bracket-8-test, include = FALSE}
 diamonds |> 
   pull(carat) |> 
     max()
@@ -710,21 +711,65 @@ Just like the previous exercise, the code returns the maximum carat, which is `5
 
 ### Exercise 9
 
+Run `levels()` with the argument `diamonds$cut`.
+
+```{r subsetting-with-double-bracket-9, exercise = TRUE}
+
+```
+
+```{r subsetting-with-double-bracket-9-hint-1, eval = FALSE}
+levels(...)
+```
+
+```{r subsetting-with-double-bracket-9-test, include = FALSE}
+levels(diamonds$cut)
+```
+
+### 
+
+We see 5 different levels of `cut`: Fair, Good, Very Good, Premium and Ideal. Now lets recreate the code using `pull()`
+
+### Exercise 10
+
+Pipe `diamonds` to `pull()` with the argument `cut`. Next pipe it to `levels`.
+
+```{r subsetting-with-double-bracket-10, exercise = TRUE}
+
+```
+
+```{r subsetting-with-double-bracket-10-hint-1, eval = FALSE}
+... |> 
+  pull(...) |> 
+  levels()
+```
+
+```{r subsetting-with-double-bracket-10-test, include = FALSE}
+diamonds |> 
+  pull(cut) |> 
+  levels()
+```
+
+### 
+
+We see the same 5 levels once again here: Fair, Good, Very Good, Premium and Ideal.
+
+### Exercise 11
+
 An important difference between tibbles and data frames is that tibbles are much more strict when extracting columns with `$`.
 
 Create a data frame and set `x1` equal to `1`. Save th data frame in `df2`. Then on a new line type `df2$x` to extract a column from the data frame.
 
-```{r subsetting-with-double-brackes-9, exercise = TRUE}
+```{r subsetting-with-double-bracket-11, exercise = TRUE}
 df2 <- data.frame(x1 = 1)
 df2$x
 ```
 
-```{r subsetting-with-double-brackes-9-hint-1, eval = FALSE}
+```{r subsetting-with-double-bracket-11-hint-1, eval = FALSE}
 ... <- data.frame(...)
 ...$x
 ```
 
-```{r subsetting-with-double-brackes-9-test, include = FALSE}
+```{r subsetting-with-double-bracket-11-test, include = FALSE}
 df2 <- data.frame(x1 = 1)
 df2$x
 ```
@@ -733,13 +778,13 @@ df2$x
 
 Although there is no column named `x` in `df2`, the code is still able to output the values in column `x1`. This is because data frames are able to match the prefix of any variable's name (so-called **partial matching**) without returning an error if the column doesn't exist.
 
-### Exercise 10
+### Exercise 12
 
 However, tibbles are much stricter: they only ever match variable names exactly and they will generate a warning if the column you are trying to access doesn't exist.
 
 Create a tibble and set `x1` equal to `1`. Save the tibble in `tb2`. Then on a new line type `tb2$x` to extract a column from the tibble.
 
-```{r subsetting-with-double-brackes-10, exercise = TRUE}
+```{r subsetting-with-double-bracket-12, exercise = TRUE}
 tb2 <- tibble(x1 = 1)
 tb2$x
 ```
@@ -749,7 +794,7 @@ tb2$x
 ...$x
 ```
 
-```{r subsetting-with-double-brackes-10-test, include = FALSE}
+```{r subsetting-with-double-bracket-12-test, include = FALSE}
 tb2 <- tibble(x1 = 1)
 tb2$x
 ```
@@ -758,51 +803,55 @@ tb2$x
 
 Since there is no column named exactly `x1` in the tibble `tb2`, the code will print warning message and `NULL`. For this reason we sometimes joke that tibbles are lazy and surly: they do less and complain more.
 
-### Exercise 11
+### Exercise 13
 
 The double bracket operator `[[` and dollar sign `$` are really important when working with lists, and have differences compared to the single bracket operator `[`.
 
 Using the `list()` function, create a list. Set the first list element to `a`, which is equal to a range of integers from 1 to 3. Set the second list element to `b`, which is equal to the string `"a string"`. Set the third list element to `c`, which is equal to `pi`, and set the fourth list element to `d`, which is equal to another list containing `-1` and `-5`. Then, set the entire list equal to the variable `list1`. Type `list1` on the next line to see the result.
 
-```{r subsetting-with-double-brackes-11, exercise = TRUE}
+```{r subsetting-with-double-bracket-13, exercise = TRUE}
 
 ```
 
-```{r subsetting-with-double-brackes-11-hint-1, eval = FALSE}
+```{r subsetting-with-double-bracket-13-hint-1, eval = FALSE}
 list1 <- ...(
   ... = 1:3, 
   b = "...", 
   c = ..., 
   ... = list(-1, -5)
 )
+
+...
 ```
 
-```{r subsetting-with-double-brackes-11-test, include = FALSE}
+```{r subsetting-with-double-bracket-13-test, include = FALSE}
 list1 <- list(
-  a.. = 1:3, 
+  a = 1:3, 
   b = "a string", 
   c = pi, 
   d = list(-1, -5)
 )
+
+list1
 ```
 
 ### 
 
 Remember that the single bracket operator `[` is used to extract sub-components, while the double bracket operator `[[` is used to extract single elements.
 
-### Exercise 12
+### Exercise 14
 
 The `[` can be used to extract a sub-list. In the code chunk below, type in `str()`. Place `list1[1:2]` inside the parenthesis.
 
-```{r subsetting-with-double-brackes-12, exercise = TRUE}
+```{r subsetting-with-double-bracket-14, exercise = TRUE}
 
 ```
 
-```{r subsetting-with-double-brackes-12-hint-1, eval = FALSE}
+```{r subsetting-with-double-bracket-14-hint-1, eval = FALSE}
 str(list1[...:...])
 ```
 
-```{r subsetting-with-double-brackes-12-test, include = FALSE}
+```{r subsetting-with-double-bracket-14-test, include = FALSE}
 str(list1[1:2])
 ```
 
@@ -810,21 +859,21 @@ str(list1[1:2])
 
 As you can see, the code returns two lists: one list for `a` and one list for `b`. It doesn't matter how many elements you extract, the result will always be a list.
 
-### Exercise 13
+### Exercise 15
 
 Unlike the single bracket operator, which extracts a sub-list, the double bracket operator, `[[`, extracts a single component from a list.
 
 In the code chunk below, type in `str()`. Inside the function, type in `list1`, followed by double brackets, `[[]]`. Inside the double brackets, type in `4`. This will extract the list `d`. We can also replace the `4` with a `d` and obtain the same result because `[[]]` works with both variable names as well as the element number. 
 
-```{r subsetting-with-double-brackes-13, exercise = TRUE}
+```{r subsetting-with-double-bracket-15, exercise = TRUE}
 
 ```
 
-```{r subsetting-with-double-brackes-13-hint-1, eval = FALSE}
+```{r subsetting-with-double-bracket-15-hint-1, eval = FALSE}
 str(list1[[...]])
 ```
 
-```{r subsetting-with-double-brackes-13-test, include = FALSE}
+```{r subsetting-with-double-bracket-15-test, include = FALSE}
 str(list1[[4]])
 ```
 
@@ -832,21 +881,21 @@ str(list1[[4]])
 
 As you can see, the double bracket operator, `[[`, extracts all the components of column `d` in `list1`.
 
-### Exercise 14
+### Exercise 16
 
 Like the double bracket operator, the `$` operator also extracts a single component from a list. 
 
 In the code chunk below, type in `str()`, placing `list1` inside the function. Right next to `list1`, type in `$d`. 
 
-```{r subsetting-with-double-brackes-14, exercise = TRUE}
+```{r subsetting-with-double-bracket-16, exercise = TRUE}
 
 ```
 
-```{r subsetting-with-double-brackes-14-hint-1, eval = FALSE}
+```{r subsetting-with-double-bracket-16-hint-1, eval = FALSE}
 str(...$...)
 ```
 
-```{r subsetting-with-double-brackes-14-test, include = FALSE}
+```{r subsetting-with-double-bracket-16-test, include = FALSE}
 str(list1$d)
 ```
 
@@ -860,7 +909,7 @@ The difference between `[` and `[[` is particularly important for lists because 
 ## Apply family
 ### 
 
-In [Chapter 27](https://r4ds.hadley.nz/iteration.html), you learned tidyverse techniques for iteration like `dplyr::across()` and the map family of functions. In this section, you'll learn about their base equivalents, the **apply family**. In this context apply and map are synonyms because another way of saying "map a function over each element of a vector" is "apply a function over each element of a vector". Here we'll give you a quick overview of this family so you can recognize them in the wild.
+In [Chapter 26](https://r4ds.hadley.nz/iteration.html), you learned tidyverse techniques for iteration like `dplyr::across()` and the map family of functions. In this section, you'll learn about their base equivalents, the **apply family**. In this context apply and map are synonyms because another way of saying "map a function over each element of a vector" is "apply a function over each element of a vector". Here we'll give you a quick overview of this family so you can recognize them in the wild.
 
 ### Exercise 1
 
@@ -901,11 +950,15 @@ question_text(NULL,
 Create a tibble where `a = 1`, `b = 2`, `c= "a"`, `d = "b"` and `e = 4`. Then save the tibble into variable `df4`.
 
 ```{r apply-family-3, exercise = TRUE}
-df4 <- tibble(a = 1, b = 2, c = "a", d = "b", e = 4)
+
 ```
 
 ```{r apply-family-3-hint-1, eval = FALSE}
 df4 <- tibble(..., ..., ..., ..., e = 4)
+```
+
+```{r apply-family-3-test, include = FALSE}
+df4 <- tibble(a = 1, b = 2, c = "a", d = "b", e = 4)
 ```
 
 ### 
@@ -922,10 +975,12 @@ Lets find all the numeric columns in `df4`, using `sapply()`. In the code chunk 
 
 ```{r apply-family-4-hint-1, eval = FALSE}
 num_cols <- ...(df4, ...)
+...
 ```
 
 ```{r apply-family-4-test, include = FALSE}
 num_cols <- sapply(df4, is.numeric)
+num_cols
 ```
 
 ### 
@@ -942,10 +997,12 @@ Now, lets transform each column with `lapply()` and then replace the original va
 
 ```{r apply-family-5-hint-1, eval = FALSE}
 df4[, ...] <- ...(df4[, ..., ... = FALSE], \(x) x * 2)
+...
 ```
 
 ```{r apply-family-5-test, include = FALSE}
 df4[, num_cols] <- lapply(df4[, num_cols, drop = FALSE], \(x) x * 2)
+df4
 ```
 
 ### 
@@ -954,7 +1011,7 @@ This code transforms each numeric column of `df4` to store the original number m
 
 ### Exercise 6
 
-Base R provides a stricter version of `sapply()` called `vapply()`, short for vector apply. It takes an additional argument that specifies the expected type, ensuring that simplification occurs the same way regardless of the input.
+Base R provides a stricter version of `sapply()` called `vapply()`, short for **v**ector apply. It takes an additional argument that specifies the expected type, ensuring that simplification occurs the same way regardless of the input.
 
 We can replace the `sapply()` code from Exercise 4 with `vapply()`, making sure to specify that `is.numeric()` returns a logical vector of length 1.
 
@@ -979,14 +1036,22 @@ The distinction between `sapply()` and `vapply()` is really important when they'
 
 ### Exercise 7
 
-Another important member of the apply family is `tapply()` which computes a single grouped summary. Lets use this on the **diamonds** package. In the code chunk below, type in `diamonds` and press "Run Code".
+Another important member of the apply family is `tapply()` which computes a single grouped summary. Lets use this on the **diamonds** package. In the code chunk below, pipe `diamonds` to `group_by(cut)`. Then continue the pipe to `summarize()` with the argument `price = mean(price)`
 
 ```{r apply-family-7, exercise = TRUE}
 
 ```
 
+```{r apply-family-7-hint-1, eval = FALSE}
+diamonds |> 
+  group_by(...) |> 
+  summarize(...)
+```
+
 ```{r apply-family-7-test, include = FALSE}
-diamonds
+diamonds |> 
+  group_by(cut) |> 
+  summarize(price = mean(price))
 ```
 
 ### 
@@ -994,6 +1059,7 @@ diamonds
 If you want to see how you might use `tapply()` or other base techniques to perform other grouped summaries, Hadley has collected a [few techniques](https://gist.github.com/hadley/c430501804349d382ce90754936ab8ec).
 
 <!-- Add exercises and follow steps from the book.  -->
+<!-- TJ: There are no more exercies in the book. -->
 
 ### Exercise 8
 
@@ -1021,7 +1087,7 @@ The final member of the apply family is the titular `apply()`, which works with 
 ## For loops
 ### 
 
-`for` loops are the fundamental building block of iteration that both the *apply()* and *map()* families use under the hood. The structure for `for` loops looks like this:
+`for` loops are the fundamental building block of iteration that both the **apply()** and **map()** families use under the hood. The structure for `for` loops looks like this:
 
 ```         
 for (element in vector) {
@@ -1369,6 +1435,8 @@ plot(diamonds$carat, diamonds$price)
 ### 
 
 Note that base plotting functions work with vectors, so you need to pull columns out of the data frame using `$` or some other technique.
+
+<!-- TJ: This tutorial seems alright, is there something I am missing? -->
 
 ## Summary
 ### 
