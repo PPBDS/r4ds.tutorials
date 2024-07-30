@@ -15,6 +15,7 @@ description: 'Tutorial for Chapter 15: Regular expressions'
 library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
+library(babynames)
 knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
@@ -37,17 +38,20 @@ people <- tribble(
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- DK: Knowledge drop the two links from the summary. -->
+<!-- DK: Knowledge drop the two links from the summary. - DONE -->
 
-<!-- Maybe one of the nice looking babynames lots could go at the end of this tutorial. Or maybe we make a new one? -->
+<!-- DK: This tutorial is long! Maybe don't include the practice section? Or maybe it is just long to write! -->
+<!-- SD: The average for this one was 33 minutes and the most it took any student was 78 minutes. I wouldnt consider that very long, especially considering that the other tutorial assigned for that day took roughly the same amount of time. -->
 
-<!-- This tutorial is long! Maybe don't include the practice section? Or maybe it is just long to write! -->
+<!-- DK: FIX - Maybe one of the nice looking babynames plots could go at the end of this tutorial. Or maybe we make a new one? -->
 
 
 ## Introduction
 ### 
 
 This tutorial covers [Chapter 15: Regular expressions](https://r4ds.hadley.nz/regexps.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. With the help of the [**stringr**](https://stringr.tidyverse.org/index.html) package, we use regular expressions, a concise and powerful language for describing patterns within strings. 
+
+If you want to learn more, a good place to start is [`vignette("regular-expressions", package = "stringr")`](https://stringr.tidyverse.org/articles/regular-expressions.html): it documents the full set of syntax supported by the [**stringr**](https://stringr.tidyverse.org/index.html) package. Another useful reference is `https://www.regular-expressions.info/`. It’s not R specific, but you can use it to learn about the most advanced features of regexes and how they work under the hood.
 
 
 ## Pattern basics
@@ -87,6 +91,10 @@ Load the **babynames** package with `library()` below. Don't forget to hit "Run 
 library(...)
 ```
 
+```{r pattern-basics-2-test, include = FALSE}
+library(babynames)
+```
+
 There is no return value.
 
 
@@ -122,6 +130,10 @@ Run `glimpse()` on the `babynames` tibble.
 
 ```{r pattern-basics-4-hint-1, eval = FALSE}
 glimpse(...)
+```
+
+```{r pattern-basics-4-test, include = FALSE}
+glimpse(babynames)
 ```
 
 ### 
@@ -191,6 +203,10 @@ A `.` will match any character, so `"a."` will match any string that contains an
 str_view(c("a", "ab", "ae", "bd", "ea", "eab"), ...)
 ```
 
+```{r pattern-basics-7-test, include = FALSE}
+str_view(c("a", "ab", "ae", "bd", "ea", "eab"), "a.")
+```
+
 ### 
 
 There are three matches. Notice how the `<>` pull out the actual match itself, leaving irrelevant letters, like the "e" in the last match, outside.
@@ -205,6 +221,10 @@ Run `str_view()` on `fruit` as the vector and `"a...e"` as the pattern.
 
 ```{r pattern-basics-8-hint-1, eval = FALSE}
 str_view(..., "a...e")
+```
+
+```{r pattern-basics-8-test, include = FALSE}
+str_view(fruit, "a...e")
 ```
 
 Try to interpret the pattern before we tell you the answer . . .
@@ -233,6 +253,10 @@ Run `str_view()` on `c("a", "ab", "abb")` as the vector and `"ab?"` as the patte
 str_view(c("a", "ab", "abb"), ...)
 ```
 
+```{r pattern-basics-9-test, include = FALSE}
+str_view(c("a", "ab", "abb"), "ab?")
+```
+
 ### 
 
 Note how "a" matches "ab?" because the "?" makes the "b" optional.
@@ -249,6 +273,10 @@ Run `str_view()` on `c("a", "ab", "abb")` as the vector and `"ab+"` as the patte
 
 ```{r pattern-basics-10-hint-1, eval = FALSE}
 str_view(..., "ab+")
+```
+
+```{r pattern-basics-10-test, include = FALSE}
+str_view(c("a", "ab", "abb"), "ab+")
 ```
 
 ### 
@@ -269,6 +297,10 @@ Run `str_view()` on `c("a", "ab", "abb")` as the vector and `"ab*"` as the patte
 str_view(c("a", "ab", "abb"), ...)
 ```
 
+```{r pattern-basics-11-test, include = FALSE}
+str_view(c("a", "ab", "abb"), "ab*")
+```
+
 ### 
 
 `ab*` matches an "a", followed by any number of "b"s, including zero "b"s.
@@ -287,6 +319,10 @@ Run `str_view()` on `words` as the vector and `"[aeiou]x[aeiou]"` as the pattern
 
 ```{r pattern-basics-12-hint-1, eval = FALSE}
 str_view(..., "[aeiou]x[aeiou]")
+```
+
+```{r pattern-basics-12-test, include = FALSE}
+str_view(words, "[aeiou]x[aeiou]")
 ```
 
 Can you explain what is going on?
@@ -311,6 +347,10 @@ Run `str_view()` on `words` as the vector and `"[^aeiou]y[^aeiou]"` as the patte
 str_view(words, "...")
 ```
 
+```{r pattern-basics-13-test, include = FALSE}
+str_view(words, "[^aeiou]y[^aeiou]")
+```
+
 ### 
 
 The `"[^aeiou]y[^aeiou]"` pattern finds every instance of any non-vowel, followed by "y", followed by any non-vowel.
@@ -329,6 +369,10 @@ Run `str_view()` on `fruit` as the vector and `"apple|melon|nut"` as the pattern
 str_view(..., "apple|melon|nut")
 ```
 
+```{r pattern-basics-14-test, include = FALSE}
+str_view(fruit, "apple|melon|nut")
+```
+
 ### 
 
 The `"apple|melon|nut"` pattern matches any fruit which contains one of the three options.
@@ -345,6 +389,10 @@ Run `str_view()` on `fruit` as the vector and `"aa|ee|ii|oo|uu"` as the pattern.
 
 ```{r pattern-basics-15-hint-1, eval = FALSE}
 str_view(fruit, ...)
+```
+
+```{r pattern-basics-15-test, include = FALSE}
+str_view(fruit, "aa|ee|ii|oo|uu")
 ```
 
 ### 
@@ -370,6 +418,11 @@ str_detect(string = ...,
            pattern = ...)
 ```
 
+```{r key-functions-1-test, include = FALSE}
+str_detect(string = c("a", "b", "c"), 
+           pattern = "[aeiou]")
+```
+
 ### 
 
 Most of the time, we admit the argument names (`string` and `pattern`) and simply rely on "positional mapping," meaning that `string` is always the first argument (and `pattern` the second) because that is how the function is defined.
@@ -385,6 +438,11 @@ Since `str_detect()` returns a logical vector of the same length as the initial 
 ```{r key-functions-2-hint-1, eval = FALSE}
 babynames |> 
   filter(...(name, ...))
+```
+
+```{r key-functions-2-test, include = FALSE}
+babynames |> 
+  filter(str_detect(name, "x"))
 ```
 
 ### 
@@ -410,6 +468,12 @@ Continue the pipe with `count()`, using the arguments `name, wt = n, sort = TRUE
   count(..., wt = n, ... = TRUE)
 ```
 
+```{r key-functions-3-test, include = FALSE}
+babynames |> 
+  filter(str_detect(name, "x")) |>
+  count(name, wt = n, sort = TRUE)
+```
+
 ### 
 
 We want to determine the most popular `name`'s with an "x" in them, which is why we have `sort = TRUE`. We need `wt = n` because we want to account for the role of `n` in indicating how many times, in a single year, a given names was used.
@@ -429,6 +493,11 @@ Pipe `babynames` to `summarize()` with the argument `prop_x = mean(str_detect(na
 ```{r key-functions-4-hint-1, eval = FALSE}
 babynames |> 
   summarize(prop_x = ...(str_detect(name, ...)))
+```
+
+```{r key-functions-4-test, include = FALSE}
+babynames |> 
+  summarize(prop_x = mean(str_detect(name, "x")))
 ```
 
 ### 
@@ -451,13 +520,19 @@ babynames |>
             .by = ...)
 ```
 
+```{r key-functions-5-test, include = FALSE}
+babynames |> 
+  summarize(prop_x = mean(str_detect(name, "x")),
+            .by = year)
+```
+
 ### 
 
 This gives us the proportion of names that contain an "x." if you wanted the proportion of babies with a name containing an "x," you would need to perform a weighted mean.
 
 ### Exercise 6
 
-Continue the pipe to a call to `ggplot()`, with `aes(x = year, y = prop_x)`. Add `geom_line()`. Don;t forget that commands after `ggplot()` are separated by `+`, not `|>`.
+Continue the pipe to a call to `ggplot()`, with `aes(x = year, y = prop_x)`. Add `geom_line()`. Don't forget that commands after `ggplot()` are separated by `+`, not `|>`.
 
 ```{r key-functions-6, exercise = TRUE}
 
@@ -469,6 +544,14 @@ Continue the pipe to a call to `ggplot()`, with `aes(x = year, y = prop_x)`. Add
 ... |> 
   ggplot(aes(x = ..., ... = prop_x)) + 
   geom_...()
+```
+
+```{r key-functions-6-test, include = FALSE}
+babynames |> 
+  summarize(prop_x = mean(str_detect(name, "x")),
+            .by = year) |>
+  ggplot(aes(x = year, y = prop_x)) +
+  geom_line()
 ```
 
 ### 
@@ -491,6 +574,10 @@ The next step up in complexity from `str_detect()` is `str_count()`: rather than
 str_count(..., "p")
 ```
 
+```{r key-functions-7-test, include = FALSE}
+str_count(c("apple", "banana", "pear"), "p")
+```
+
 ### 
 
 There are two "p"'s in "apple" but one in "pear."
@@ -508,6 +595,10 @@ Run `str_count()` on `"abababa"` and `"aba"`.
 
 ```{r key-functions-8-hint-1, eval = FALSE}
 str_count("abababa", ...)
+```
+
+```{r key-functions-8-test, include = FALSE}
+str_count("abababa", "aba")
 ```
 
 ### 
@@ -528,6 +619,10 @@ To better see this, `str_view()` on `"abababa"` and `"aba"`.
 str_view(..., "aba")
 ```
 
+```{r key-functions-9-test, include = FALSE}
+str_view("abababa", "aba")
+```
+
 ### 
 
 In other words, the "second" "aba" string, which relies on the second "a" in the first "aba" string, does not count because regular expressions, by default, are exclusive.
@@ -545,6 +640,11 @@ Pipe `babynames` to `count(name)`.
 ```{r key-functions-10-hint-1, eval = FALSE}
 babynames |> 
   ...(name)
+```
+
+```{r key-functions-10-test, include = FALSE}
+babynames |> 
+  count(name)
 ```
 
 ### 
@@ -569,6 +669,13 @@ babynames |>
   )
 ```
 
+```{r key-functions-11-test, include = FALSE}
+babynames |> 
+  count(name) |> 
+  mutate(
+    vowels = str_count(name, "[aeiou]"))
+```
+
 ### 
 
 If you look closely, you’ll notice that there’s something off with our calculations: “Aaban” contains three “a”s, but our summary reports only two vowels. That’s because regular expressions are case sensitive. Ignore that error for now.
@@ -590,6 +697,15 @@ babynames |>
   mutate(
     vowels = str_count(name, "[aeiou]"),
     consonants = ...(name, ...)
+  )
+```
+
+```{r key-functions-12-test, include = FALSE}
+babynames |> 
+  count(name) |> 
+  mutate(
+    vowels = str_count(name, "[aeiou]"),
+    consonants = str_count(name, "[^aeiou]")
   )
 ```
 
@@ -621,6 +737,16 @@ babynames |>
   )
 ```
 
+```{r key-functions-13-test, include = FALSE}
+babynames |> 
+  count(name) |> 
+  mutate(
+    name = str_to_lower(name),
+    vowels = str_count(name, "[aeiou]"),
+    consonants = str_count(name, "[^aeiou]")
+  )
+```
+
 ### 
 
 This variety of approaches is pretty typical when working with strings — there are often multiple ways to reach your goal, either by making your pattern more complicated or by doing some preprocessing on your string. If you get stuck trying one approach, it can often be useful to switch gears and tackle the problem from a different perspective.
@@ -642,6 +768,12 @@ str_replace_all(string = ...,
                 replacement = ...)
 ```
 
+```{r key-functions-14-test, include = FALSE}
+str_replace_all(string = c("apple", "pear", "banana"), 
+                pattern = "[aeiou]", 
+                replacement = "-")
+```
+
 ### 
 
 We usually omit the argument names, so this code would normally be: `str_replace_all(c("apple", "pear", "banana"), "[aeiou]", "-")`.
@@ -661,6 +793,10 @@ We usually omit the argument names, so this code would normally be: `str_replace
 str_remove_all(c("apple", "pear", "banana"), ...)
 ```
 
+```{r key-functions-15-test, include = FALSE}
+str_remove_all(c("apple", "pear", "banana"), "[aeiou]")
+```
+
 ### 
 
 These commands with the `_all` suffix just act on the *first* match in each element of the vector. Try `str_remove(c("apple", "pear", "banana"), "[aeiou]")` for an example.
@@ -678,6 +814,10 @@ Run `people` to examine the tibble which we will use.
 ```
 
 ```{r key-functions-16-hint-1, eval = FALSE}
+people
+```
+
+```{r key-functions-16-test, include = FALSE}
 people
 ```
 
@@ -705,8 +845,18 @@ people |>
   )
 ```
 
-```{r key-functions-17-hint-1, eval = FALSE}
-No hint needed!
+```{r key-functions-17-test, include = FALSE}
+people |> 
+  separate_wider_regex(
+    str,
+    patterns = c(
+      "<", 
+      name = "[A-Za-z]+", 
+      ">-", 
+      gender = ".", "_", 
+      age = "[0-9]+"
+    )
+  )
 ```
 
 ### 
@@ -740,8 +890,12 @@ str_view(dot)
 str_view(c("abc", "a.c", "bef"), "a\\.c")
 ```
 
-```{r pattern-details-1-hint-1, eval = FALSE}
-No hint needed.
+```{r pattern-details-1-test, include = FALSE}
+dot <- "\\."
+
+str_view(dot)
+
+str_view(c("abc", "a.c", "bef"), "a\\.c")
 ```
 
 ### 
@@ -760,8 +914,10 @@ str_view(x)
 str_view(x, "\\\\")
 ```
 
-```{r pattern-details-2-hint-1, eval = FALSE}
-No hint needed.
+```{r pattern-details-2-test, include = FALSE}
+x <- "a\\b"
+str_view(x)
+str_view(x, "\\\\")
 ```
 
 ### 
@@ -777,8 +933,9 @@ x <- "a\\b"
 str_view(x, r"{\\}")
 ```
 
-```{r pattern-details-3-hint-1, eval = FALSE}
-No hint needed.
+```{r pattern-details-3-test, include = FALSE}
+x <- "a\\b"
+str_view(x, r"{\\}")
 ```
 
 ### 
@@ -794,8 +951,9 @@ str_view(c("abc", "a.c", "a*c", "a c"), "a[.]c")
 str_view(c("abc", "a.c", "a*c", "a c"), ".[*]c")
 ```
 
-```{r pattern-details-4-hint-1, eval = FALSE}
-No hint needed.
+```{r pattern-details-4-test, include = FALSE}
+str_view(c("abc", "a.c", "a*c", "a c"), "a[.]c")
+str_view(c("abc", "a.c", "a*c", "a c"), ".[*]c")
 ```
 
 ### 
@@ -812,6 +970,10 @@ By default, regular expressions will match any part of a string. If you want to 
 
 ```{r pattern-details-5-hint-1, eval = FALSE}
 str_view(fruit, ...)
+```
+
+```{r pattern-details-5-test, include = FALSE}
+str_view(fruit, "^a")
 ```
 
 ### 
@@ -832,6 +994,10 @@ Run `str_view()` with `fruit` as the first argument and `"a$"` as the second.
 str_view(fruit, ...)
 ```
 
+```{r pattern-details-6-test, include = FALSE}
+str_view(fruit, "a$")
+```
+
 ### 
 
 Note how we use `"^a"` with the `^` at the front of the pattern, indicating that "a" belongs at the start of the string, and `"a$`, with the `$` at the end of the pattern, indicating that "a" belongs at the end of the string.
@@ -849,6 +1015,11 @@ str_view(..., "apple")
 str_view(fruit, ...)
 ```
 
+```{r pattern-details-7-test, include = FALSE}
+str_view(fruit, "apple")
+str_view(fruit, "^apple$")
+```
+
 ### 
 
 Are you getting overwhelmed yet? No worries. The rise of ChatGPT and other AI tools makes the creation of regular expressions to do exactly what you want much easier.
@@ -859,12 +1030,16 @@ You can also match the boundary between words (i.e. the start or end of a word) 
 
 ```{r pattern-details-8, exercise = TRUE}
 x <- c("summary(x)", "summarize(df)", "rowsum(x)", "sum(x)")
-
 ```
 
 ```{r pattern-details-8-hint-1, eval = FALSE}
 x <- c("summary(x)", "summarize(df)", "rowsum(x)", "sum(x)")
 str_view(..., "sum")
+```
+
+```{r pattern-details-8-test, include = FALSE}
+x <- c("summary(x)", "summarize(df)", "rowsum(x)", "sum(x)")
+str_view(x, "sum")
 ```
 
 ### 
@@ -883,6 +1058,11 @@ x <- c("summary(x)", "summarize(df)", "rowsum(x)", "sum(x)")
 ```{r pattern-details-9-hint-1, eval = FALSE}
 x <- c("summary(x)", "summarize(df)", "rowsum(x)", "sum(x)")
 str_view(x, ...)
+```
+
+```{r pattern-details-9-test, include = FALSE}
+x <- c("summary(x)", "summarize(df)", "rowsum(x)", "sum(x)")
+str_view(x, "\\bsum\\b")
 ```
 
 ### 
@@ -904,6 +1084,10 @@ When used alone, anchors will produce a zero-width match. Run `str_view()` on th
 str_view(..., c("$", "^", "\\b"))
 ```
 
+```{r pattern-details-10-test, include = FALSE}
+str_view("abc", c("$", "^", "\\b"))
+```
+
 ### 
 
 Note how we have a single string but three different patterns, each of which does match the string. The display, with its zero-width brackets --- `<>` --- indicates that the matches do not involve the contents of the string.
@@ -919,6 +1103,10 @@ The previous example helps you understand what happens when you replace a standa
 
 ```{r pattern-details-11-hint-1, eval = FALSE}
 str_replace_all("abc", ..., "--")
+```
+
+```{r pattern-details-11-test, include = FALSE}
+str_replace_all("abc", c("$", "^", "\\b"), "--")
 ```
 
 ### 
