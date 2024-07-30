@@ -492,7 +492,7 @@ There were more than 144 millions checkouts.
 
 ### Exercise 6
 
-To determine total checkouts by year, add `.by = CheckoutYear` to the call to `summarize()` in the Console. After `summarize()` in the pipe, add `arrange(CheckoutYear)`. CP/CR.
+To determine total checkouts by year, add `.by = CheckoutYear` to the call to `summarize()` in the Console. Continue the pipe to `ggplot()`, map `CheckoutYear` to the x-axis and `Checkouts` to the y-axis. CP/CR.
 
 ```{r opening-a-dataset-6}
 question_text(NULL,
@@ -505,15 +505,54 @@ question_text(NULL,
 
 ```{r opening-a-dataset-6-test, include = FALSE}
 seattle_csv |>
-  summarise(Checkouts = sum(Checkouts), .by = CheckoutYear) |>
-  arrange(CheckoutYear) |>
-  collect()
+   summarise(Checkouts = sum(Checkouts), .by = CheckoutYear) |>
+   collect() |> ggplot(aes(x = CheckoutYear, y = Checkouts))
 ```
 
 ### 
 
 Thanks to **arrow**, this code will work regardless of how large the underlying dataset is. But it’s currently rather slow, taking several seconds to run. That’s not terrible given how much data we have, but we can make it much faster by switching to a better format.
 
+### Exercise 7
+
+Add the `geom_point()` and `geom_line()` layers. CP/CR
+
+```{r opening-a-dataset-7-ex}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+```{r -test, include = FALSE}
+seattle_csv |>
+   summarise(Checkouts = sum(Checkouts), .by = CheckoutYear) |>
+   collect() |> ggplot(aes(x = CheckoutYear, y = Checkouts)) + geom_point() + geom_line()
+```
+
+
+###
+
+We should have a cool looking graph here displaying checkouts by year
+
+### Exercise 8
+
+Add labels to your graph.
+
+```{r opening-a-dataset-8-ex}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+###
+
+Next we will be dealing with the parquet format.
 
 ## The parquet format
 ### 
