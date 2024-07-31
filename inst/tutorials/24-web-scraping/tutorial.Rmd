@@ -199,7 +199,7 @@ html_2 |>
 
 ### 
 
-`html_elements()` pulls out all the elements that match the selector, which is provided to the `css` argument. "Elements" consist of a start tag (e.g. <p>), optional attributes (id='first'), an end tag4 (like </p>). The "contents" of an element are everything in between the start and end tag.
+`html_elements()` pulls out all the elements that match the selector, which is provided to the `css` argument. "Elements" consist of a start tag (e.g. \<p\>), optional attributes (id='first'), an end tag4 (like \</p\>). The "contents" of an element are everything in between the start and end tag.
 
 Since there are two elements with the "p" tag, where the "p" is for "paragraph," the result from `html_elements()` are those two elements. The element with the "h1" tag is not included.
 
@@ -238,7 +238,7 @@ html_2 |>
 
 Id attributes must be unique within a document, so this will only ever select a single element.
 
-CSS is short for cascading style sheets, and is a tool for defining the visual styling of HTML documents. CSS includes a miniature language for selecting elements on a page called CSS selectors. CSS selectors define patterns for locating HTML elements, and are useful for scraping because they provide a concise way of describing which elements you want to extract.
+CSS is short for **c**ascading **s**tyle **s**heets, and is a tool for defining the visual styling of HTML documents. CSS includes a miniature language for selecting elements on a page called CSS selectors. CSS selectors define patterns for locating HTML elements, and are useful for scraping because they provide a concise way of describing which elements you want to extract.
 
 ### Exercise 10
 
@@ -254,8 +254,6 @@ html_3 <- minimal_html("
   </ul>
   ")
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r web-scaping-basics-10-hint-1, eval = FALSE}
 ...
@@ -275,8 +273,6 @@ Pipe `html_3` to `html_elements("li")` in order to make a vector where each elem
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r web-scaping-basics-11-hint-1, eval = FALSE}
 html_3 |> 
   html_elements("..")
@@ -284,7 +280,7 @@ html_3 |>
 
 ### 
 
-There’s an important difference between `html_element()` and `html_elements()` when you use a selector that doesn’t match any elements. html_elements() returns a vector of length 0, where html_element() returns a missing value. 
+There’s an important difference between `html_element()` and `html_elements()` when you use a selector that doesn’t match any elements. `html_elements()` returns a vector of length 0, whereas `html_element()` returns a missing value. 
 
 ### Exercise 12
 
@@ -303,7 +299,7 @@ Continue the pipe to `html_element("b")`, which will pull out the elements from 
 
 ### 
 
-We are using clues in the html formatting --- bolding, in this case --- to determine a substantive issue, what are the names of the characters. Nothing guarantees that this two things are connected. They don't have to me! And, if the html document itself is sloppy or inconsistent, they won't be. 
+We are using clues in the HTML formatting --- bolding, in this case --- to determine a substantive issue, which are the names of the characters. Nothing guarantees that this two things are connected. They don't have to be! And, if the HTML document itself is sloppy or inconsistent, they won't be. 
 
 You need to look closely at your results as you build your pipe, step-by-step.
 
@@ -347,8 +343,6 @@ html_4 <- minimal_html("
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r web-scaping-basics-14-hint-1, eval = FALSE}
 ...
 
@@ -367,8 +361,6 @@ Pipe `html_4` to `html_element(".mytable")`
 ```{r web-scaping-basics-15, exercise = TRUE}
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r web-scaping-basics-15-hint-1, eval = FALSE}
 html_4 |> 
@@ -398,14 +390,14 @@ Continue the pipe to `html_table()`.
 
 You won't always be lucky enough to have the data you want in a table, but, if you are, `html_table()` is magic.
 
-With tools like  `html_element(s)()`, `html_text2()` and `html_table()`, you are ready to deal with html documents from the wild.
+With tools like  `html_element(s)()`, `html_text2()` and `html_table()`, you are ready to deal with HTML documents from the wild.
 
 
 
 ## Web scaping examples
 ### 
 
-Consider two examples of material we might want to scrape. The [first](https://rvest.tidyverse.org/articles/starwars.html) is information about 7 Star Wars films from a vignette from the **rvest** package. The second involves the [250 highest rated films](https://www.imdb.com/chart/top) from IMDB. In this Section, we will scape and organize information from both.
+Consider two examples of material we might want to scrape. The [first](https://rvest.tidyverse.org/articles/starwars.html) is information about 7 Star Wars films from a vignette from the **rvest** package. The second involves the [250 highest rated films](https://www.imdb.com/chart/top) from IMDB. In this section, we will scrape and organize information from both.
 
 ### Exercise 1
 
@@ -440,7 +432,7 @@ The structure of the underlying HTML looks like this:
 
 ### Exercise 2
 
-Continue the pipe with `html_elements("section")`
+Continue the pipe with `html_elements("section")`.
 
 ```{r web-scaping-examples-2, exercise = TRUE}
 
@@ -456,7 +448,7 @@ Continue the pipe with `html_elements("section")`
 
 ### 
 
-We almost always begin scraping by creating an html document which can then be manipulated with functions like `html_elements()`. Note that `html_elements()` is not the same thing as `html_element()`, without the "s".
+We almost always begin scraping by creating an HTML document which can then be manipulated with functions like `html_elements()`. Note that `html_elements()` is not the same thing as `html_element()`, without the "s".
 
 ### Exercise 3
 
@@ -492,6 +484,8 @@ Continue the pipe with `html_text2()`. We almost always want to clean up the und
 ... |> 
   html_...()
 ```
+
+### 
 
 This character vector is the result we are looking for. 
 
@@ -534,14 +528,19 @@ tibble(title = section |> html_elements("h2") |> html_text2(),
 
 ### Exercise 6
 
-Consider [the highest rated movies](https://www.imdb.com/chart/top) on [IMDb](https://en.wikipedia.org/wiki/IMDb), the Internet Movie Database. The URL is `https://www.imdb.com/chart/top`. Pipe that URL (with quotation marks) to `read_html()`.
+<!-- AC: Changing the IMDb website to the web archive version.
+View the following Discord messages: 
+https://discord.com/channels/1066524559240597595/1066524726278762608/1267599310019625141
+https://discord.com/channels/1066524559240597595/1066524726278762608/1267869199544619018 -->
+
+Consider [the highest rated movies](https://www.imdb.com/chart/top) on [IMDb](https://en.wikipedia.org/wiki/IMDb), the Internet Movie Database. The URL is `https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/`. Pipe that URL (with quotation marks) to `read_html()`.
 
 ```{r web-scaping-examples-6, exercise = TRUE}
 
 ```
 
 ```{r web-scaping-examples-6-hint-1, eval = FALSE}
-"https://www.imdb.com/chart/top" |> 
+"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> 
   ...
 ```
 
@@ -552,7 +551,7 @@ Note that `read_html()` takes longer to run than the previous example because th
 
 ### Exercise 7
 
-The key element is a table, which is often the case with web scraping exercises. Continue the pipe to `html_element("table")`
+The key element is a table, which is often the case with web scraping exercises. Continue the pipe to `html_element("table")`.
 
 
 ```{r web-scaping-examples-7, exercise = TRUE}
@@ -568,7 +567,7 @@ The key element is a table, which is often the case with web scraping exercises.
 
 ### 
 
-The result is no longer an "html_document." Instead, it is an "html_node." 
+The result is no longer an "html_document". Instead, it is an "html_node". 
 
 <!-- Drop knowledge! Use of the "table" tag (?) and then use of html_table(). Two uses of "table" connected or random? -->
 
@@ -633,11 +632,11 @@ Continue the pipe with a call to `mutate()` which runs `str_squish()` on `rank_t
 
 ### 
 
-`[str_squish()](https://stringr.tidyverse.org/reference/str_trim.html)` removes whitespace at the start and end or a character variable, and replaces all internal whitespace with a single space.
+[`str_squish()`](https://stringr.tidyverse.org/reference/str_trim.html) removes whitespace at the start and end or a character variable, and replaces all internal whitespace with a single space.
 
 ### Exercise 11
 
-Continue the pipe with a call to `mutate()`, creating a new variable called `rank` which is the result of running `parse_number()` on `rank_title_year`.
+Continue the call to `mutate()`, creating a new variable called `rank` which is the result of running `parse_number()` on `rank_title_year`.
 
 ```{r web-scaping-examples-11, exercise = TRUE}
 
@@ -652,8 +651,9 @@ Continue the pipe with a call to `mutate()`, creating a new variable called `ran
 
 ### 
 
-This approach depends on the fact that `[parse_number()](https://readr.tidyverse.org/reference/parse_number.html)` grabs the first number it can find in the string. It ignores characters and numbers which come after.
+This approach depends on the fact that [`parse_number()`](https://readr.tidyverse.org/reference/parse_number.html) grabs the first number it can find in the string. It ignores characters and numbers which come after.
 
+<!-- AC: Not sure why we need multiple calls to mutate? We could just put it all in one? -->
 
 ### Exercise 12
 
@@ -673,7 +673,7 @@ Continue the pipe to `mutate()`, creating a new variable `title` which is the re
 
 ### 
 
-We gave  [ChatGPT](https://chat.openai.com/) this prompt:
+We gave [ChatGPT](https://chat.openai.com/) this prompt:
 
 > Using the stringr package in R, I want to run str_extract() on the string "1. The Shawshank Redemption (1994)" and extract just "The Shawshank Redemption". What pattern should I use?
 
@@ -694,7 +694,7 @@ Complete the pipe with a `select()` statement which keeps `rank`, `title` and `r
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r web-scaping-examples-13-hint-1, eval = FALSE}
-"https://www.imdb.com/chart/top" |> 
+"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> 
   read_html() |> 
   html_element("table") |> 
   html_table() |>   
