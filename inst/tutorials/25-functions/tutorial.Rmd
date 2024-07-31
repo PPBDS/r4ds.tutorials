@@ -103,6 +103,10 @@ first_upper <- function(x) {
   x
 }
 
+df1 <- tibble(group = rep(1:5, each = 3), 
+              group_var = rep(6:10, each = 3), 
+              x = 1:15)
+
 
 sorted_bars <- function(df, var) {
   df |> 
@@ -158,7 +162,7 @@ count_missing <- function(df, group_vars, x_var) {
 
 This tutorial covers [Chapter 25: Functions](https://r4ds.hadley.nz/functions.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to make simple functions at the beginning but will progress into making vector, data frame, and plot functions which are much more complex than the simple functions. Functions allow you to automate common tasks in a more powerful and general way than copy-and-pasting. Writing a function has four big advantages over using copy-and-paste.
 
-## Simple function
+## Simple functions
 ### 
 
 One of the best ways to improve your reach as a data scientist is to write functions. Functions allow you to automate common tasks in a more powerful and general way than copy-and-pasting. Writing a function has four big advantages over using copy-and-paste:
@@ -620,7 +624,7 @@ Let's now use the function on a vector of strings.
 
 ### Exercise 13
 
-Type `commas()` and pass in a vector `c("cat","dog","piegon")`./
+Type `commas()` and pass in a vector `c("cat","dog","piegon")`.
 
 ```{r vector-functions-13, exercise = TRUE}
 
@@ -636,7 +640,7 @@ You can also write functions with multiple vector inputs.
 
 ### Exercise 14
 
-For example, maybe you want to compute the mean absolute prediction error to help you compare model predictions with actual values. Create a function `mape` and adding to `function()` and pass in `actual` and `predicted` as variables. Within the curly braces, pass in `sum(abs((actual - predicted) / actual)) / length(actual)`.
+For example, maybe you want to compute the mean absolute prediction error to help you compare model predictions with actual values. Create a function `mape` and adding to `function()` and pass in `actual` and `predicted` as arguments. Within the curly braces, pass in `sum(abs((actual - predicted) / actual)) / length(actual)`.
 
 ```{r vector-functions-14, exercise = TRUE}
 
@@ -650,29 +654,27 @@ For example, maybe you want to compute the mean absolute prediction error to hel
 
 ### 
 
-Good Work!
+Good work!
 
-Now that you have knowledge on vector functions, let's move on to Data Frame functions.
+Now that you have knowledge on vector functions, let's move on to data frame functions.
 
 
 ## Data frame functions
 ### 
 
-Vector functions reduce code repetition in dplyr verbs. When duplicating verbs multiple times in a pipeline, consider writing a data frame function. These functions, like dplyr verbs, take a data frame as the first argument, additional arguments for operations, and return a data frame or vector.
+Vector functions reduce code repetition in **dplyr** verbs. When duplicating verbs multiple times in a pipeline, consider writing a data frame function. These functions, like **dplyr** verbs, take a data frame as the first argument, additional arguments for operations, and return a data frame or vector.
 
 To address indirection challenges, embrace the `{{ }}` syntax. We provide various examples to illustrate its application.
 
 ### Exercise 1
 
-When you start writing functions that use dplyr verbs you rapidly hit the problem of indirection. Let’s illustrate the problem with a very simple function: `grouped_mean()`. The goal of this function is to compute the mean of `mean_var` grouped by `group_var`.
+When you start writing functions that use **dplyr** verbs you rapidly hit the problem of indirection. Let’s illustrate the problem with a very simple function: `grouped_mean()`. The goal of this function is to compute the mean of `mean_var` grouped by `group_var`.
 
 Type `grouped_mean` and assign it to `function(df, group_var, mean_var)`, then add curly braces.
 
 ```{r data-frame-functions-1, exercise = TRUE}
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r data-frame-functions-1-hint-1, eval = FALSE}
 grouped_mean <- function(...){
@@ -682,7 +684,7 @@ grouped_mean <- function(...){
 
 ### 
 
-Tidy evaluation is incredibly useful in most cases, as it simplifies data analyses by eliminating the need to explicitly specify the data frame a variable belongs to - it is inferred from the context. However, when we aim to encapsulate repetitive tidyverse code into a function, the challenge arises.
+Tidy evaluation is incredibly useful in most cases, as it simplifies data analyses by eliminating the need to explicitly specify the data frame a variable belongs to --- it is inferred from the context. However, when we aim to encapsulate repetitive **tidyverse** code into a function, the challenge arises.
 
 ### Exercise 2
 
@@ -704,7 +706,7 @@ Within the curly braces, start a pipe with `df` to `group_by()` and pass in `gro
 
 ### 
 
-Now that we the function, ready, let's implement the functions on the diamonds dataset.
+Now that we have the function ready, let's implement the functions on the `diamonds` dataset.
 
 ### Exercise 3
 
@@ -720,34 +722,36 @@ diamonds |> grouped_mean(...,...)
 
 ### 
 
-When encountering an error stating that the group by variables should be found in the diamonds data set, it may not be directly related to the cut variable itself. The issue might be that dplyr interprets group_var as a column instead of recognizing it as a variable.
+When encountering an error stating that the group by variables should be found in the `diamonds` data set, it may not be directly related to the `cut` variable itself. The issue might be that **dplyr** interprets `group_var` as a column instead of recognizing it as a variable.
 
 ### Exercise 4
 
-To make this clear, let's start a pipe with `df1` to `grouped_mean()` and pass in `group` and `x` and to clarify, this data set has a column named `group_var`
+<!-- AC: It may be better to just give a preview of df1 first (whether in an exercise or just in a paragraph). -->
+
+To make this clear, let's start a pipe with `df1` to `grouped_mean()` and pass in `group` and `x`. Note that this data set has a column named `group_var`. 
+
+```{r}
+df1
+```
+
 
 ```{r data-frame-functions-4, exercise = TRUE}
 
 ```
 
-```{r data-frame-functions-4-hint-1, eval = FALSE}
+```{r data-frame-functions-4-hint-1, eval = TRUE}
 df1 |> grouped_mean(group, x)
 ```
 
 ### 
 
-This time the code actually ran and returned `group_var` instead of `group` column. This is a what is called `indirenction`. Now to fix this ,we need a mechanism to instruct `grouped_mean()` to interpret `group_var` and `mean_var` as containers holding the desired variables, rather than treating them as variable names themselves.
+This time the code actually ran and returned `group_var` instead of `group`. This is a what is called *indirection*. Now to fix this, we need a mechanism to instruct `grouped_mean()` to interpret `group_var` and `mean_var` as containers holding the desired variables, rather than treating them as variable names themselves.
 
 ### Exercise 5
 
-Tidy evaluation includes a solution to this problem called embracing 🤗. Embracing a variable means to wrap it in braces so (e.g.) var becomes `{{ var }}`. Embracing a variable tells dplyr to use the value stored inside the argument, not the argument as the literal variable name.
+Tidy evaluation includes a solution to this problem called embracing 🤗. Embracing a variable means to wrap it in braces so (e.g.) var becomes `{{ var }}`. Embracing a variable tells **dplyr** to use the value stored inside the argument, not the argument as the literal variable name.
 
-Copy the code for `grouped_mean` and rename the function to `grouped_mean1`. Modify the arguments within `group_by()`` and `summarize()` to be enclosed with `{{}}`.
-
-
-
-
-
+Copy the code for `grouped_mean` from Exercise 2 and rename the function to `grouped_mean1`. Modify the arguments within `group_by()` and `summarize()` to be enclosed with `{{}}`.
 
 
 ```{r data-frame-functions-5, exercise = TRUE}
@@ -764,17 +768,15 @@ Copy the code for `grouped_mean` and rename the function to `grouped_mean1`. Mod
 
 ### 
 
-One helpful way to conceptualize what's happening is to imagine `{{ }}` as peering down a tunnel. In this analogy, `{{ var }}` directs a dplyr function to delve inside the variable var itself, rather than searching for a variable specifically named var.
+One helpful way to conceptualize what's happening is to imagine `{{ }}` as peering down a tunnel. In this analogy, `{{ var }}` directs a **dplyr** function to delve inside the variable `var` itself, rather than searching for a variable specifically named `var`.
 
 ### Exercise 6
 
-Let's start a pipe with `diamonds` to `grouped_mean1` and pass in `cut` and `carat`.
+Let's start a pipe with `diamonds` to `grouped_mean1()` and pass in `cut` and `carat`.
 
 ```{r data-frame-functions-6, exercise = TRUE}
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r data-frame-functions-6-hint-1, eval = FALSE}
 ... |> grouped_mean(..., carat)
@@ -786,20 +788,13 @@ Success! But the key challenge in writing data frame functions is figuring out w
 
 ### Exercise 7
 
-So, when writing data frame functions, a key challenge is determining which arguments need to be embraced. Fortunately, this task is made easy because you can find the relevant information in the documentation 😄. In the documentation, there are two terms you should look for that correspond to the two most common sub-types of tidy evaluation:
+Fortunately, this task is made easy because you can find the relevant information in the documentation 😄. In the documentation, there are two terms you should look for that correspond to the two most common sub-types of tidy evaluation:
 
 Data-masking: This is used in functions like `arrange()`, `filter()`, and `summarize()` that perform computations with variables.
 
 Tidy-selection: This is used in functions like `select()`, `relocate()`, and `rename()` that involve selecting variables.
 
-For many common functions, your intuition about which arguments use tidy evaluation should be sufficient—just consider whether you need to perform computations (e.g., x + 1) or select variables (e.g., a:x).
-
-
-
-
-
-
-
+For many common functions, your intuition about which arguments use tidy evaluation should be sufficient —-- just consider whether you need to perform computations (e.g., `x + 1`) or select variables (e.g., `a:x`).
 
 ### 
 
@@ -841,7 +836,7 @@ diamonds |> summary6(...)
 
 ### 
 
-Note how the name is very purposeful, as the function gives us a summary of the data as well as giving you 6 different columns. Also Whenever you wrap summarize() in a helper, we think it’s good practice to set .groups = "drop" to both avoid the message and leave the data in an ungrouped state.
+Note how the name is very purposeful, as the function gives us a summary of the data as well as giving you 6 different columns. Also, whenever you wrap `summarize()` in a helper, we think it’s good practice to set `.groups = "drop"` to both avoid the message and leave the data in an ungrouped state.
 
 ### Exercise 10
 
