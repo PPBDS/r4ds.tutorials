@@ -43,6 +43,7 @@ people <- tribble(
 <!-- DK: This tutorial is long! Maybe don't include the practice section? Or maybe it is just long to write! - DONE -->
 
 <!-- DK: FIX - Maybe one of the nice looking babynames plots could go at the end of this tutorial. Or maybe we make a new one? -->
+<!-- SD: Maybe we shouldn't make a plot for this tutorial as it took the students 78 mins on avg, so we shouldn't add an extra section just to make a model. -->
 
 
 ## Introduction
@@ -451,9 +452,9 @@ Note that `name` is one of the variables in `babynames`. This pipe reduces the a
 
 ### Exercise 3
 
-<!-- DK: Note how the `n` column in `babynames` makes this code harder than we would like. Maybe break this up into three steps? -->
+<!-- DK: Note how the `n` column in `babynames` makes this code harder than we would like. Maybe break this up into three steps? - DONE -->
 
-Continue the pipe with `count()`, using the arguments `name, wt = n, sort = TRUE`. 
+Continue the pipe with `count()`, using the argument `name` to indicate that we want to use the `name` variable. 
 
 
 ```{r key-functions-3, exercise = TRUE}
@@ -464,48 +465,51 @@ Continue the pipe with `count()`, using the arguments `name, wt = n, sort = TRUE
 
 ```{r key-functions-3-hint-1, eval = FALSE}
 ... |> 
-  count(..., wt = n, ... = TRUE)
+  count(...)
 ```
 
 ```{r key-functions-3-test, include = FALSE}
 babynames |> 
   filter(str_detect(name, "x")) |>
-  count(name, wt = n, sort = TRUE)
+  count(name)
 ```
 
 ### 
 
-We want to determine the most popular `name`'s with an "x" in them, which is why we have `sort = TRUE`. We need `wt = n` because we want to account for the role of `n` in indicating how many times, in a single year, a given names was used.
+Notice how although you have good data, it's all arranged in a random order, so you won't be able to tell which name is the most popular.
+
 
 ### Exercise 4
 
-<!-- DK: Should this be `x` or `string` in this paragraph? -->
-
-We can also use `str_detect()` with `summarize()` by pairing it with `sum()` or `mean()`: `sum(str_detect(x, pattern))` tells you the number of observations that match and `mean(str_detect(x, pattern))` tells you the proportion that match. 
-
-Pipe `babynames` to `summarize()` with the argument `prop_x = mean(str_detect(name, "x"))`.
+Add `wt = n` after you stated your string in `count()`.
 
 ```{r key-functions-4, exercise = TRUE}
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r key-functions-4-hint-1, eval = FALSE}
-babynames |> 
-  summarize(prop_x = ...(str_detect(name, ...)))
+... |> 
+  count(name, ... = n)
 ```
 
 ```{r key-functions-4-test, include = FALSE}
 babynames |> 
-  summarize(prop_x = mean(str_detect(name, "x")))
+  filter(str_detect(name, "x")) |>
+  count(name, wt = n)
 ```
 
 ### 
 
-The result indicates that about 0.8% of the `names` in `babynames` include the letter "x."
+We need `wt = n` because we want to account for the role of `n` in indicating how many times, in a single year, a given names was used.
+
 
 ### Exercise 5
 
-We are interested in how this percentage has changed over time, so modify the code by adding `.by = year` to the class to `summarize()`.
+Remember how your data wasn't arranged in order? Let's fix that:
+
+Add `sort = TRUE` at the end of your `count()` function.
 
 ```{r key-functions-5, exercise = TRUE}
 
@@ -514,12 +518,64 @@ We are interested in how this percentage has changed over time, so modify the co
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r key-functions-5-hint-1, eval = FALSE}
+... |> 
+  count(name, wt = n, sort = ...)
+```
+
+```{r key-functions-5-test, include = FALSE}
+babynames |> 
+  filter(str_detect(name, "x")) |>
+  count(name, wt = n, sort = TRUE)
+```
+
+### 
+
+We want to determine the most popular `name`s with an "x" in them, which is why we have `sort = TRUE`.
+
+
+### Exercise 6
+
+<!-- DK: Should this be `x` or `string` in this paragraph? - DONE -->
+
+We can also use `str_detect()` with `summarize()` by pairing it with `sum()` or `mean()`: `sum(str_detect([your-data-string], pattern))` tells you the number of observations that match and `mean(str_detect([your-data-string], pattern))` tells you the proportion that match. 
+
+Pipe `babynames` to `summarize()` with the argument `prop_x = mean(str_detect(name, "x"))`.
+
+```{r key-functions-6, exercise = TRUE}
+
+```
+
+```{r key-functions-6-hint-1, eval = FALSE}
+babynames |> 
+  summarize(prop_x = ...(str_detect(name, ...)))
+```
+
+```{r key-functions-6-test, include = FALSE}
+babynames |> 
+  summarize(prop_x = mean(str_detect(name, "x")))
+```
+
+### 
+
+The result indicates that about 0.8% of the `names` in `babynames` include the letter "x."
+
+### Exercise 7
+
+We are interested in how this percentage has changed over time, so modify the code by adding `.by = year` to the class to `summarize()`.
+
+```{r key-functions-7, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r key-functions-7-hint-1, eval = FALSE}
 babynames |> 
   summarize(... = mean(str_detect(name, "x")),
             .by = ...)
 ```
 
-```{r key-functions-5-test, include = FALSE}
+```{r key-functions-7-test, include = FALSE}
 babynames |> 
   summarize(prop_x = mean(str_detect(name, "x")),
             .by = year)
@@ -529,23 +585,23 @@ babynames |>
 
 This gives us the proportion of names that contain an "x." if you wanted the proportion of babies with a name containing an "x," you would need to perform a weighted mean.
 
-### Exercise 6
+### Exercise 8
 
 Continue the pipe to a call to `ggplot()`, with `aes(x = year, y = prop_x)`. Add `geom_line()`. Don't forget that commands after `ggplot()` are separated by `+`, not `|>`.
 
-```{r key-functions-6, exercise = TRUE}
+```{r key-functions-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r key-functions-6-hint-1, eval = FALSE}
+```{r key-functions-8-hint-1, eval = FALSE}
 ... |> 
   ggplot(aes(x = ..., ... = prop_x)) + 
   geom_...()
 ```
 
-```{r key-functions-6-test, include = FALSE}
+```{r key-functions-8-test, include = FALSE}
 babynames |> 
   summarize(prop_x = mean(str_detect(name, "x")),
             .by = year) |>
@@ -561,19 +617,19 @@ There are two functions that are closely related to `str_detect()`:
 * `str_which()` returns an integer vector giving the positions of the strings that match.
 
 
-### Exercise 7
+### Exercise 9
 
 The next step up in complexity from `str_detect()` is `str_count()`: rather than a true or false, it tells you how many matches there are in each string. Run `str_count()` with two arguments: the vector `c("apple", "banana", "pear")` and the letter "p".
 
-```{r key-functions-7, exercise = TRUE}
+```{r key-functions-9, exercise = TRUE}
 
 ```
 
-```{r key-functions-7-hint-1, eval = FALSE}
+```{r key-functions-9-hint-1, eval = FALSE}
 str_count(..., "p")
 ```
 
-```{r key-functions-7-test, include = FALSE}
+```{r key-functions-9-test, include = FALSE}
 str_count(c("apple", "banana", "pear"), "p")
 ```
 
@@ -581,55 +637,11 @@ str_count(c("apple", "banana", "pear"), "p")
 
 There are two "p"'s in "apple" but one in "pear."
 
-### Exercise 8
+### Exercise 10
 
 Note that each match starts at the end of the previous match, i.e. regex matches never overlap. 
 
 Run `str_count()` on `"abababa"` and `"aba"`.
-
-
-```{r key-functions-8, exercise = TRUE}
-
-```
-
-```{r key-functions-8-hint-1, eval = FALSE}
-str_count("abababa", ...)
-```
-
-```{r key-functions-8-test, include = FALSE}
-str_count("abababa", "aba")
-```
-
-### 
-
-For example, in "abababa", how many times will the pattern "aba" match? Regular expressions say two, not three.
-
-### Exercise 9
-
-To better see this, `str_view()` on `"abababa"` and `"aba"`.
-
-```{r key-functions-9, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r key-functions-9-hint-1, eval = FALSE}
-str_view(..., "aba")
-```
-
-```{r key-functions-9-test, include = FALSE}
-str_view("abababa", "aba")
-```
-
-### 
-
-In other words, the "second" "aba" string, which relies on the second "a" in the first "aba" string, does not count because regular expressions, by default, are exclusive.
-
-
-### Exercise 10
-
-Pipe `babynames` to `count(name)`.
 
 
 ```{r key-functions-10, exercise = TRUE}
@@ -637,22 +649,20 @@ Pipe `babynames` to `count(name)`.
 ```
 
 ```{r key-functions-10-hint-1, eval = FALSE}
-babynames |> 
-  ...(name)
+str_count("abababa", ...)
 ```
 
 ```{r key-functions-10-test, include = FALSE}
-babynames |> 
-  count(name)
+str_count("abababa", "aba")
 ```
 
 ### 
 
-The reduces the almost 2 million entries to just the 100,000 or so unique names. Note how often the letter "a" appears in the first ten names.
+For example, in "abababa", how many times will the pattern "aba" match? Regular expressions say two, not three.
 
 ### Exercise 11
 
-Continue the pipe with `mutate()`, creating a new variable, `vowels`, which is equal to `str_count(name, "[aeiou]")`.
+To better see this, `str_view()` on `"abababa"` and `"aba"`.
 
 ```{r key-functions-11, exercise = TRUE}
 
@@ -661,6 +671,52 @@ Continue the pipe with `mutate()`, creating a new variable, `vowels`, which is e
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r key-functions-11-hint-1, eval = FALSE}
+str_view(..., "aba")
+```
+
+```{r key-functions-11-test, include = FALSE}
+str_view("abababa", "aba")
+```
+
+### 
+
+In other words, the "second" "aba" string, which relies on the second "a" in the first "aba" string, does not count because regular expressions, by default, are exclusive.
+
+
+### Exercise 12
+
+Pipe `babynames` to `count(name)`.
+
+
+```{r key-functions-12, exercise = TRUE}
+
+```
+
+```{r key-functions-12-hint-1, eval = FALSE}
+babynames |> 
+  ...(name)
+```
+
+```{r key-functions-12-test, include = FALSE}
+babynames |> 
+  count(name)
+```
+
+### 
+
+The reduces the almost 2 million entries to just the 100,000 or so unique names. Note how often the letter "a" appears in the first ten names.
+
+### Exercise 13
+
+Continue the pipe with `mutate()`, creating a new variable, `vowels`, which is equal to `str_count(name, "[aeiou]")`.
+
+```{r key-functions-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r key-functions-13-hint-1, eval = FALSE}
 babynames |> 
   count(name) |> 
   mutate(
@@ -668,7 +724,7 @@ babynames |>
   )
 ```
 
-```{r key-functions-11-test, include = FALSE}
+```{r key-functions-13-test, include = FALSE}
 babynames |> 
   count(name) |> 
   mutate(
@@ -680,17 +736,17 @@ babynames |>
 If you look closely, you’ll notice that there’s something off with our calculations: “Aaban” contains three “a”s, but our summary reports only two vowels. That’s because regular expressions are case sensitive. Ignore that error for now.
 
 
-### Exercise 12
+### Exercise 14
 
 Add another variable creation argument to `mutate()`. Create `consonants` as the result of `str_count(name, "[^aeiou]")`.
 
-```{r key-functions-12, exercise = TRUE}
+```{r key-functions-14, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r key-functions-12-hint-1, eval = FALSE}
+```{r key-functions-14-hint-1, eval = FALSE}
 babynames |> 
   count(name) |> 
   mutate(
@@ -699,7 +755,7 @@ babynames |>
   )
 ```
 
-```{r key-functions-12-test, include = FALSE}
+```{r key-functions-14-test, include = FALSE}
 babynames |> 
   count(name) |> 
   mutate(
@@ -716,17 +772,17 @@ This suffers from the same problem as `vowels`. The capital letter "A" is not in
 
 * Telling the regular expression to ignore case: `str_count(name, regex("[aeiou]", ignore_case = TRUE))`.
 
-### Exercise 13
+### Exercise 15
 
 Change `mutate()` so that the first step is to change-in-place the variable `name` to be all in lower case. We do that with `name = str_to_lower(name)`.
 
-```{r key-functions-13, exercise = TRUE}
+```{r key-functions-15, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r key-functions-13-hint-1, eval = FALSE}
+```{r key-functions-15-hint-1, eval = FALSE}
 babynames |> 
   count(name) |> 
   mutate(
@@ -736,7 +792,7 @@ babynames |>
   )
 ```
 
-```{r key-functions-13-test, include = FALSE}
+```{r key-functions-15-test, include = FALSE}
 babynames |> 
   count(name) |> 
   mutate(
@@ -750,24 +806,24 @@ babynames |>
 
 This variety of approaches is pretty typical when working with strings — there are often multiple ways to reach your goal, either by making your pattern more complicated or by doing some preprocessing on your string. If you get stuck trying one approach, it can often be useful to switch gears and tackle the problem from a different perspective.
 
-### Exercise 14
+### Exercise 16
 
 As well as detecting and counting matches, we can also modify them with `str_replace()` and `str_replace_all()`. Run `str_replace_all()` on with `string` equal to `c("apple", "pear", "banana")`, `pattern` equal to  `"[aeiou]"`, and `replacement` equal to `"-"`.
 
 
-```{r key-functions-14, exercise = TRUE}
+```{r key-functions-16, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r key-functions-14-hint-1, eval = FALSE}
+```{r key-functions-16-hint-1, eval = FALSE}
 str_replace_all(string = ..., 
                 ... = "[aeiou]", 
                 replacement = ...)
 ```
 
-```{r key-functions-14-test, include = FALSE}
+```{r key-functions-16-test, include = FALSE}
 str_replace_all(string = c("apple", "pear", "banana"), 
                 pattern = "[aeiou]", 
                 replacement = "-")
@@ -777,22 +833,22 @@ str_replace_all(string = c("apple", "pear", "banana"),
 
 We usually omit the argument names, so this code would normally be: `str_replace_all(c("apple", "pear", "banana"), "[aeiou]", "-")`.
 
-### Exercise 15
+### Exercise 17
 
 `str_remove()` and `str_remove_all()` are handy shortcuts for `str_replace(x, pattern, "")`. Run `str_remove_all()` on `c("apple", "pear", "banana")` and `"[aeiou]"`.
 
 
-```{r key-functions-15, exercise = TRUE}
+```{r key-functions-17, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r key-functions-15-hint-1, eval = FALSE}
+```{r key-functions-17-hint-1, eval = FALSE}
 str_remove_all(c("apple", "pear", "banana"), ...)
 ```
 
-```{r key-functions-15-test, include = FALSE}
+```{r key-functions-17-test, include = FALSE}
 str_remove_all(c("apple", "pear", "banana"), "[aeiou]")
 ```
 
@@ -802,21 +858,21 @@ These commands with the `_all` suffix just act on the *first* match in each elem
 
 These functions are naturally paired with `mutate()` when doing data cleaning, and you’ll often apply them repeatedly to peel off layers of inconsistent formatting.
 
-### Exercise 16
+### Exercise 18
 
 The last function we’ll discuss in this section uses regular expressions to extract data out of one column into one or more new columns: `separate_wider_regex()`. It’s a peer of the `separate_wider_position()` and `separate_wider_delim()` functions that you learned about previously. These functions live in the **tidyr** package because they operate on (columns of) data frames, rather than individual vectors.
 
 Run `people` to examine the tibble which we will use.
 
-```{r key-functions-16, exercise = TRUE}
+```{r key-functions-18, exercise = TRUE}
 
 ```
 
-```{r key-functions-16-hint-1, eval = FALSE}
+```{r key-functions-18-hint-1, eval = FALSE}
 people
 ```
 
-```{r key-functions-16-test, include = FALSE}
+```{r key-functions-18-test, include = FALSE}
 people
 ```
 
@@ -824,13 +880,14 @@ people
 
 We have the name, gender, and age of a bunch of people in a rather weird format. We wish we could reassure you that you’d never see something this weird in real life, but unfortunately over the course of your career you’re likely to see much weirder!
 
-### Exercise 17
+### Exercise 19
 
 To extract this data using separate_wider_regex() we just need to construct a sequence of regular expressions that match each piece. If we want the contents of that piece to appear in the output, we give it a name. Consider:
 
 <!-- DK: Shouldn't we split this up into a series of steps, perhaps with on-purpose errors and debugging? -->
+<!-- SD: Although I do feel that it would be beneficial, I don't think that the benefits of extending this question would outweigh the toll that it has on the time that the student spends on it - frankly, I think that it's better to save the students' some time. -->
 
-```{r key-functions-17, exercise = TRUE}
+```{r key-functions-19, exercise = TRUE}
 people |> 
   separate_wider_regex(
     str,
@@ -844,7 +901,7 @@ people |>
   )
 ```
 
-```{r key-functions-17-test, include = FALSE}
+```{r key-functions-19-test, include = FALSE}
 people |> 
   separate_wider_regex(
     str,
@@ -869,6 +926,7 @@ If the match fails, you can use `too_few = "debug"` to figure out what went wron
 ### 
 
 <!-- DK: Revisit this section. There are too many paragraphs of prose. And too many instructions to just run some code. -->
+<!-- SD: I disagree, back when I did this tutorial I was relieved that everything was laid out in front of me and that I didn't have to do any hard work. With the rise of AI, most of these Regular Expressions would be forgotten anyways so I feel that it's best not to waste students' time by making them write code. -->
 
 Now that you understand the basics of the pattern language and how to use it with some stringr and tidyr functions, it’s time to dig into more of the details. First, we’ll start with **escaping**, which allows you to match metacharacters that would otherwise be treated specially. Next, you’ll learn about **anchors** which allow you to match the start or end of the string. Then, you’ll learn more about **character classes** and their shortcuts which allow you to match any character from a set. Next, you’ll learn the final details of **quantifiers** which control how many times a pattern can match. Then, we have to cover the important (but complex) topic of **operator precedence** and parentheses. And we’ll finish off with some details of **grouping** components of the pattern.
 
@@ -1071,16 +1129,18 @@ This is not easy. `\b` means a word boundary, which includes the implicit start 
 
 ### Exercise 10
 
-<!-- DK: need to start with a simple example which explains using a vector of parameters. -->
+<!-- DK: FIX - need to start with a simple example which explains using a vector of parameters. - DONE -->
 
-When used alone, anchors will produce a zero-width match. Run `str_view()` on the string "abc" and the patterns `c("$", "^", "\\b")`.
+When used alone, anchors will produce a zero-width match. This means that they mark the positions of the part of the string that they mark (for example, `"$"` would be at the end of a string to signify that it marks the end of any given string).
+
+Run `str_view()` on the string `"abc"` and the patterns `c("$", "^", "\\b")`.
 
 ```{r pattern-details-10, exercise = TRUE}
 
 ```
 
 ```{r pattern-details-10-hint-1, eval = FALSE}
-str_view(..., c("$", "^", "\\b"))
+str_view("...", c("$", "^", "\\b"))
 ```
 
 ```{r pattern-details-10-test, include = FALSE}
@@ -1112,7 +1172,7 @@ str_replace_all("abc", c("$", "^", "\\b"), "--")
 
 Even though the input is a single string, the three patterns generate a vector of three elements as the output. 
 
-
+<!-- SD: Old Vestigial Sections that were Previously Removed due to Length Concerns -->
 <!-- ## Pattern control -->
 <!-- ###  -->
 
