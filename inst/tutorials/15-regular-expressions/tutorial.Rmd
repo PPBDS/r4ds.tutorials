@@ -30,6 +30,9 @@ people <- tribble(
   "<Justin>-M_41", 
   "<Patricia>-F_84", 
 )
+
+rgb <- c("red", "green", "blue")
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -38,7 +41,7 @@ people <- tribble(
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- DK: Finish missing sections below. -->
+<!-- DK: Finish missing sections below. - DONE -->
 
 ## Introduction
 ### 
@@ -1155,15 +1158,357 @@ str_replace_all("abc", c("$", "^", "\\b"), "--")
 
 Even though the input is a single string, the three patterns generate a vector of three elements as the output. 
 
-<!-- SD: Old Vestigial Sections that were Previously Removed due to Length Concerns -->
-<!-- ## Pattern control -->
-<!-- ###  -->
+<!-- SD: The following 3 sections are trying to be concise so it doesn't take up too much of the students' time. They involve just blatantly running code blocks to save time. -->
 
-<!-- ## Practice -->
-<!-- ###  -->
+## Pattern control
+### 
 
-<!-- ## Regular expressions in other places -->
-<!-- ###  -->
+It’s possible to exercise extra control over the details of the match by using a pattern object instead of just a string. This allows you to control the so called regex flags and match various types of fixed strings, as described below.
+
+
+### Exercise 1
+
+Notice the following tibble in the code box.
+
+Below it, use `str_view()` on `bananas` to find the pattern `"bananas"`.
+
+```{r pattern-control-1, exercise = TRUE}
+bananas <- c("banana", "Banana", "BANANA")
+```
+
+```{r pattern-control-1-hint-1, eval = FALSE}
+bananas <- c("banana", "Banana", "BANANA")
+str_...(bananas, "...")
+```
+
+```{r pattern-control-1-test, include = FALSE}
+bananas <- c("banana", "Banana", "BANANA")
+str_view(bananas, "banana")
+```
+
+### 
+
+Notice how it only directed to one of the entries even though all of the entries in the tibble were the same word. This is because by default, it wants to match the case.
+
+
+### Exercise 2
+
+What if we didn't want our search to be case-sensistive? Well, enter the world of `regex()` flags, which alow us to filter our searches.
+
+Cope the previous code, and surround `"bananas"` with `regex()`. Then, add the argument `ignore_case = TRUE`.
+
+```{r pattern-control-2, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r pattern-control-2-hint-1, eval = FALSE}
+bananas <- c("banana", "Banana", "BANANA")
+str_view(bananas, regex("banana", ignore_case = ...))
+```
+
+```{r pattern-control-2-test, include = FALSE}
+bananas <- c("banana", "Banana", "BANANA")
+str_view(bananas, regex("banana", ignore_case = TRUE))
+```
+
+### Exercise 3
+
+If you’re doing a lot of work with multiline strings (i.e. strings that contain `\n`), `dotall` may also be useful.
+
+Note that anything after `\n` is in a new line, so `x` would look something like this:
+
+```
+Hello
+World
+```
+
+First, run the following code in the box. Note that `.*` means that it should print everything.
+
+```{r pattern-control-3, exercise = TRUE}
+x <- "Hello\nWorld"
+
+str_match(x, ".*")
+```
+
+```{r pattern-control-3-test, include = FALSE}
+x <- "Hello\nWorld"
+
+str_match(x, ".*")
+```
+
+### 
+
+Notice how instead of printing everything, it only prints everything on the first line!
+
+
+### Exercise 4
+
+To make it read all other lines, we need to utilize the argument `dotall`. 
+
+Notice how the following code has the `dotall` argument inside `regex()`. Run it and notice how it scans both lines now.
+
+```{r pattern-control-4, exercise = TRUE}
+str_match(x, regex(".*", dotall = TRUE))
+```
+
+```{r pattern-control-4-test, include = FALSE}
+str_match(x, regex(".*", dotall = TRUE))
+```
+
+### Exercise 5
+
+Similarly, we can utilize the `multiline` argument to make `^` and `$` match the start and end of each line rather than the start and end of the complete string:
+
+```{r pattern-control-5, exercise = TRUE}
+y <- "Line 1\nLine 2\nLine 3"
+
+str_view(y, "^Line")
+
+str_view(y, regex("^Line", multiline = TRUE))
+```
+
+```{r pattern-control-5-test, include = FALSE}
+y <- "Line 1\nLine 2\nLine 3"
+
+str_view(y, "^Line")
+
+str_view(y, regex("^Line", multiline = TRUE))
+```
+
+### 
+
+Notice how the outcome of the first call only selects `Line` in Line 1, whereas the second call addresses it in all 3 lines.
+
+<!-- SD: There was also a section in R4DS that used the `comments = TRUE` argument but I thought it would be too confusing and obscure for the students, so I left it out. -->
+
+
+### Exercise 6
+
+On the other hand, if you don't want to follow the regular expression rules, you can use `fixed()` instead of `regrex()`.
+
+Run the following code:
+
+```{r pattern-control-6, exercise = TRUE}
+str_view(c("", "a", "."), stringr::fixed("."))
+```
+
+```{r pattern-control-6-test, include = FALSE}
+str_view(c("", "a", "."), stringr::fixed("."))
+```
+
+Notice how it filtered out `.` without adding any special backslashes or any other trickery involving regular expressions.
+
+### 
+
+Note that in this case, we used `stringr::` to tell R to get the package from **stringr**. We did this is because we already have a package loaded in that also has a `fixed()` function that works very differently from this one. To make sure that we pull it from the correct package, we have to specify the package in front of the function.
+
+
+### Exercise 7
+
+`fixed()` also gives you the ability to ignore case, just like `regrex()`.
+
+Run the following code to see this in action.
+
+```{r pattern-control-7, exercise = TRUE}
+str_view("x X", "X")
+
+str_view("x X", stringr::fixed("X", ignore_case = TRUE))
+```
+
+```{r pattern-control-7-test, include = FALSE}
+str_view("x X", "X")
+
+str_view("x X", stringr::fixed("X", ignore_case = TRUE))
+```
+
+###
+
+Notice how the first entry returns just one `X` being highlighted, while the second entry shows both `X`s being highlighted, indicating that it isn't case-sensitive.
+
+
+## Practice
+### 
+
+What if we wanted to find all sentences that mention a color? 
+
+The basic idea is simple: we just combine alternation with word boundaries, as so:
+
+```
+str_view(sentences, "\\b(red|green|blue)\\b")
+```
+
+
+### Exercise 1
+
+As the number of colors grows, it would quickly get tedious to construct this pattern by hand.
+
+Let's store the colors in a vector. We’d just need to create the pattern from the vector using `str_c()` and `str_flatten()`.
+
+In the background, we have stored the following variable:
+
+```
+rgb <- c("red", "green", "blue")
+```
+
+Run the following code, which stores the colors in a vector:
+
+```{r practice-1, exercise = TRUE}
+str_c("\\b(", str_flatten(rgb, "|"), ")\\b")
+```
+
+```{r practice-1-test, include = FALSE}
+str_c("\\b(", str_flatten(rgb, "|"), ")\\b")
+```
+
+### 
+
+In this code, `str_flatten` turns our `rgb` list into `red|green|blue`. 
+
+You might be thinking why we had to do it this way, and this will be come apparent in the following steps.
+
+
+### Exercise 2
+
+We could make this pattern more comprehensive if we had a good list of colors. One place we could start from is the list of built-in colors that R can use for plots.
+
+Run `str_view()` on `colors()`.
+
+```{r practice-2, exercise = TRUE}
+
+```
+
+```{r practice-2-hint-1, eval = FALSE}
+str_view(...())
+```
+
+```{r practice-2-test, include = FALSE}
+str_view(colors())
+```
+
+### Exercise 3
+
+Notice how the list had multiple versions of the same color. Let's remove those numbered variants with the following code:
+
+```{r practice-3, exercise = TRUE}
+cols <- colors()
+cols <- cols[!str_detect(cols, "\\d")]
+str_view(cols)
+```
+
+```{r practice-3-test, include = FALSE}
+cols <- colors()
+cols <- cols[!str_detect(cols, "\\d")]
+str_view(cols)
+```
+
+### Exercise 4
+
+Now let's turn this into one giant pattern. We mapped our previous pattern to the variable `pattern` for you, so you don't have to type it out. 
+
+Below the code, run `str_view()` on `sentences`, setting the pattern as the variable `pattern`.
+
+```{r practice-4, exercise = TRUE}
+pattern <- str_c("\\b(", str_flatten(cols, "|"), ")\\b")
+```
+
+```{r practice-4-hint-1, eval = FALSE}
+pattern <- str_c("\\b(", str_flatten(cols, "|"), ")\\b")
+
+..._view(..., pattern)
+```
+
+```{r practice-4-hint-2, eval = FALSE}
+pattern <- str_c("\\b(", str_flatten(cols, "|"), ")\\b")
+
+str_view(sentences, pattern)
+```
+
+```{r practice-4-test, include = FALSE}
+pattern <- str_c("\\b(", str_flatten(cols, "|"), ")\\b")
+
+str_view(sentences, pattern)
+```
+
+### 
+
+Now you see why we had to set `pattern` the way we did? It was because we had data of colors, but needed to format it so we could search with it.
+
+
+## Regular expressions in other places
+### 
+
+Just like in the stringr and tidyr functions, there are many other places in R where you can use regular expressions. The following sections describe some other useful functions in the wider tidyverse and base R.
+
+
+### Exercise 1
+
+As part of the **Tidyverse** package, `matches()` is a very useful function that looks for variables with the matching pattern. 
+
+In this example, let's look for all columns in `penguins` (from the **PalmerPenguins** package) that have the pattern "bill".
+
+Below the code, pipe `penguins` to `select()`, and within `select()`, insert `matches("bill")`.
+
+```{r regular-expressions-in-other-p-1, exercise = TRUE}
+library(palmerpenguins)
+```
+
+```{r regular-expressions-in-other-p-1-hint-1, eval = FALSE}
+library(palmerpenguins)
+
+penguins |>
+  ...(matches("..."))
+```
+
+```{r regular-expressions-in-other-p-1-test, include = FALSE}
+library(palmerpenguins)
+
+penguins |>
+  select(matches("bill"))
+```
+
+### 
+
+Notice how it only returned the columns that have the pattern "bill" in their names. This is very useful when handling alrge datasets with many columns!
+
+<!-- SD: Here, the book also talks about `pivot_longer()`'s `names_pattern` argument and the `delim` argument in `separate_[longer/wider]_delim()`, but both of those seem to obscure and too hard/long to explain to be worthy of being in this section. -->
+
+
+### Exercise 2
+
+`apropos()` is also a very useful function that comes from **Base R** itself (no packages). It searches all objects available from the global environment that match the given pattern. This is useful if you can’t quite remember the name of a function.
+
+In the Console, type `apropos("replace")`. This searches for all functions that have "replace" in their name. CP/CR.
+
+```{r regular-expressions-in-other-p-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Do you see how useful this is?!! If you forget a function and need it on the fly, all you have to recall is one word from it, and this function will find it for you!
+
+
+### Exercise 3
+
+The `pattern` argument in `list.files()` is surely one that you've seen so far, and also comes from **Base R**. It allows you to look for files that have the given pattern in their name.
+
+Just for funsies, type `list.files(pattern = regular)` into the Console. This will most likely return `character(0)`, which means that it didn't find anything. However, still CP/CR for fun.
+
+```{r regular-expressions-in-other-p-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
 
 ## Summary
 ### 
