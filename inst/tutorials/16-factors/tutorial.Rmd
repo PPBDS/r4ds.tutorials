@@ -16,7 +16,7 @@ library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
 
-# Without thishack, we fail on GHA! cols() and col_factor() have conflicting
+# Without this hack, we fail on GHA! cols() and col_factor() have conflicting
 # versions in readr, vroom and scales. Of course, we want the readr versions. We
 # could solve this with either:
 
@@ -59,9 +59,7 @@ Jan,12"
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- Make sure exercises have test cases. -->
-<!-- Make sure test chunks have a code chunk name. -->
-<!-- Add knowledge drops where there are none.  -->
+<!-- DK: Add knowledge drops where there are none.  -->
 
 
 ## Introduction
@@ -251,8 +249,7 @@ Since "Jam" is not one of the levels, `factor()` coerces it to be missing, as sh
 
 Instead of `factor()`, we recommend using the `fct()` function from the **forcats** package, precisely because it generates an explicit error rather than a silent conversion to `NA`.
 
-Run `fct(x2, levels = month_levels)`.
-
+Run `fct(x2, levels = month_levels)` to see an example of this error.
 
 ```{r factor-basics-10, exercise = TRUE}
 
@@ -264,13 +261,10 @@ Run `fct(x2, levels = month_levels)`.
 ...(x2, ... = month_levels)
 ```
 
-```{r factor-basics-10-test, include = FALSE}
-#fct(x2, levels = month_levels)
-```
-
-### 
+<!-- Still haven't figure out how to test code which produces an error. -->
 
 Notice the thorough error message. "Jam" is missing from the `levels` as defined in the `month_levels` variable.
+
 
 ### Exercise 11
 
@@ -781,11 +775,11 @@ gss_cat |>
 ```
 
 ```{r modifying-factor-order-8-test, include = FALSE}
-#gss_cat |>
- # summarize(n = n(),
-#            tvhours = mean(tvhours, na.rm = TRUE),
-#            .by = relig) |> 
-#  ggplot(aes(x = tvhours, y = fct_reorder(relig, tvhours))) +
+gss_cat |>
+  summarize(n = n(),
+           tvhours = mean(tvhours, na.rm = TRUE),
+           .by = relig) |>
+  ggplot(aes(x = tvhours, y = fct_reorder(relig, tvhours)))
 ```
 
 ### 
