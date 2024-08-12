@@ -195,7 +195,7 @@ Run `factor(x1, levels = month_levels)`.
 factor(x1, ... = month_levels)
 ```
 
-```{r include = FALSE}
+```{r factor-basics-7-test, include = FALSE}
 factor(x1, levels = month_levels)
 ```
 
@@ -217,7 +217,7 @@ Wrap `factor(x1, levels = month_levels)` within a call to `sort()`.
 sort(...(x1, levels = ...))
 ```
 
-```{r include = FALSE}
+```{r factor-basics-8-test, include = FALSE}
 sort(factor(x1, levels = month_levels))
 ```
 
@@ -239,7 +239,7 @@ Run `factor()` with two arguments: `x2` and `levels = month_levels`.
 ...(x2, ... = month_levels)
 ```
 
-```{r include = FALSE}
+```{r factor-basics-9-test, include = FALSE}
 factor(x2, levels = month_levels)
 ```
 
@@ -264,6 +264,10 @@ Run `fct(x2, levels = month_levels)`.
 ...(x2, ... = month_levels)
 ```
 
+```{r factor-basics-10-test, include = FALSE}
+#fct(x2, levels = month_levels)
+```
+
 ### 
 
 Notice the thorough error message. "Jam" is missing from the `levels` as defined in the `month_levels` variable.
@@ -280,7 +284,7 @@ Run `factor()` and `x1`.
 factor(...)
 ```
 
-```{r include = FALSE}
+```{r factor-basics-11-test, include = FALSE}
 factor(x1)
 ```
 
@@ -302,7 +306,7 @@ Run `fct()` and `x1`.
 fct(...)
 ```
 
-```{r include = FALSE}
+```{r factor-basics-12-test, include = FALSE}
 fct(x1)
 ```
 
@@ -324,7 +328,7 @@ Take the code from the previous exercise use it as an argument to the function `
 levels(fct(...))
 ```
 
-```{r include = FALSE}
+```{r factor-basics-13-test, include = FALSE}
 levels(fct(x1))
 ```
 
@@ -358,7 +362,7 @@ Run `read_csv()` with `csv` set as the argument
 read_csv(...)
 ```
 
-```{r include = FALSE}
+```{r factor-basics-15-test, include = FALSE}
 read_csv(csv)
 ```
 
@@ -380,7 +384,7 @@ Currently, the month column is a character type variable and the value column is
 read_csv(csv, ...)
 ```
 
-```{r include = FALSE}
+```{r factor-basics-16-test, include = FALSE}
 read_csv(csv, col_types = "cc")
 ```
 
@@ -402,7 +406,7 @@ Change the value of `col_types` from `"cc"` to `cols(month = "c")` inside of `re
 read_csv(csv, col_types = cols(...))
 ```
 
-```{r include = FALSE}
+```{r factor-basics-17-test, include = FALSE}
 read_csv(csv, col_types = cols(month = "c"))
 ```
 
@@ -422,7 +426,7 @@ Change the value of `col_types` to `cols(month = "f"))`
 read_csv(csv, col_types = cols(...))
 ```
 
-```{r include = FALSE}
+```{r factor-basics-18-test, include = FALSE}
 read_csv(csv, col_types = cols(month = "f"))
 ```
 
@@ -445,7 +449,7 @@ Continue the current pipe to `count()`. Set the argument to `month`.
   count(...)
 ```
 
-```{r include = FALSE}
+```{r factor-basics-19-test, include = FALSE}
 read_csv(csv, col_types = cols(month = "f")) |> count(month)
 ```
 
@@ -468,7 +472,7 @@ read_csv(csv, col_types = ...) |>
   count(month)
 ```
 
-```{r include = FALSE}
+```{r factor-basics-20-test, include = FALSE}
 read_csv(csv, 
          col_types = cols(month = col_factor(month_levels))) |>  
   count(month)
@@ -495,7 +499,7 @@ Type `gss_cat` and hit "Run Code."
 gss_cat
 ```
 
-```{r include = FALSE}
+```{r general-social-survey-1-test, include = FALSE}
 gss_cat
 ```
 
@@ -534,7 +538,7 @@ gss_cat |>
   ...(race)
 ```
 
-```{r include = FALSE}
+```{r general-social-survey-3-test, include = FALSE}
 gss_cat |>
   count(race)
 ```
@@ -578,7 +582,7 @@ Run `glimpse()` on `gss_cat`.
 glimpse(...)
 ```
 
-```{r include = FALSE}
+```{r modifying-factor-order-1-test, include = FALSE}
 glimpse(gss_cat)
 ```
 
@@ -595,6 +599,11 @@ Pipe `gss_cat` to `summarize(n = n())`
 ```
 
 ```{r modifying-factor-order-2-hint-1, eval = FALSE}
+gss_cat |>
+  summarize(n = n())
+```
+
+```{r modifying-factor-order-2-test, include = FALSE}
 gss_cat |>
   summarize(n = n())
 ```
@@ -619,6 +628,12 @@ gss_cat |>
             .by = relig)
 ```
 
+```{r modifying-factor-order-3-test, include = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            .by = relig)
+```
+
 ### 
 
 The result is a tibble with one row for each level of `relig`. (Older R code will often use the `group_by()` function when calculating statistics for each level of a factor. You should avoid this approach. Use the `.by` argument to `summarize()` and similar functions.)
@@ -634,6 +649,13 @@ Use the same code again, adding another variable creation step to `summarize()`:
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r modifying-factor-order-4-hint-1, eval = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            tvhours = mean(tvhours),
+            .by = relig)
+```
+
+```{r modifying-factor-order-4-test, include = FALSE}
 gss_cat |>
   summarize(n = n(),
             tvhours = mean(tvhours),
@@ -662,6 +684,13 @@ gss_cat |>
             .by = relig)
 ```
 
+```{r modifying-factor-order-5-test, include = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            tvhours = mean(tvhours, na.rm = TRUE),
+            .by = relig)
+```
+
 ### 
 
 All statistical functions in R will produce a value of NA if even a single one of the input values is NA, consistent with the rules of mathematics. Most statistical functions have a `na.rm` --- short for NA remove --- which allows us to remove any NA values prior to the calculation.
@@ -684,6 +713,14 @@ gss_cat |>
   ggplot(aes(x = tvhours, y = relig))
 ```
 
+```{r modifying-factor-order-6-test, include = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            tvhours = mean(tvhours, na.rm = TRUE),
+            .by = relig) |> 
+  ggplot(aes(x = tvhours, y = relig))
+```
+
 ### 
 
 Without a geom function, no data is plotted. But we still get the plotting area and the axis labels. Does the ordering of the religious affiliations on the y-axis seem reasonable? 
@@ -699,6 +736,15 @@ Add `geom_point()` to the pipe. Don't forget that calls to **ggplot** components
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r modifying-factor-order-7-hint-1, eval = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            tvhours = mean(tvhours, na.rm = TRUE),
+            .by = relig) |> 
+  ggplot(aes(x = tvhours, y = relig)) +
+  geom_point()
+```
+
+```{r modifying-factor-order-7-test, include = FALSE}
 gss_cat |>
   summarize(n = n(),
             tvhours = mean(tvhours, na.rm = TRUE),
@@ -734,6 +780,14 @@ gss_cat |>
   geom_point()
 ```
 
+```{r modifying-factor-order-8-test, include = FALSE}
+#gss_cat |>
+ # summarize(n = n(),
+#            tvhours = mean(tvhours, na.rm = TRUE),
+#            .by = relig) |> 
+#  ggplot(aes(x = tvhours, y = fct_reorder(relig, tvhours))) +
+```
+
 ### 
 
 Reordering religion makes it much easier to see that people in the “Don’t know” category watch much more TV, and Hinduism & Other Eastern religions watch much less.
@@ -755,6 +809,16 @@ gss_cat |>
             .by = relig) |> 
   mutate(... = fct_reorder(relig, ...)) |> 
   ggplot(aes(x = tvhours, ... = relig)) +
+  geom_point()
+```
+
+```{r modifying-factor-order-9-test, include = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            tvhours = mean(tvhours, na.rm = TRUE),
+            .by = relig) |> 
+  mutate(relig = fct_reorder(relig, tvhours)) |> 
+  ggplot(aes(x = tvhours, y = relig)) +
   geom_point()
 ```
 
@@ -782,6 +846,20 @@ plot1
        subtitle = ...,
        x = ...,
        ... = "Religious Affiliation")
+```
+
+```{r modifying-factor-order-10-test, include = FALSE}
+gss_cat |>
+  summarize(n = n(),
+            tvhours = mean(tvhours, na.rm = TRUE),
+            .by = relig) |> 
+  mutate(relig = fct_reorder(relig, tvhours)) |> 
+  ggplot(aes(x = tvhours, y = relig)) +
+  geom_point()+
+  labs(title = "TV Watching and Religious Affiliation",
+       subtitle = "???",
+       x = "Hours watched",
+       y = "Religious Affiliation")
 ```
 
 ### 
@@ -822,6 +900,11 @@ gss_cat |>
   filter(...)
 ```
 
+```{r modifying-factor-order-11-test, include = FALSE}
+gss_cat |>
+  filter(!is.na(age))
+```
+
 ### 
 
 This will remove all rows with a `NA` response to `age`, allowing for easier calculations in the future.
@@ -839,6 +922,11 @@ Continue the pipe to `count()`, with `age` and `marital` set as the arguments
 ```{r modifying-factor-order-12-hint-1, eval = FALSE}
 ... |>
   count(age, ...)
+```
+
+```{r modifying-factor-order-12-test, include = FALSE}
+gss_cat |>
+  filter(!is.na(age))|> count(age,marital)
 ```
 
 ### Exercise 13
@@ -978,7 +1066,7 @@ Pipe `gss_cat` to `count(partyid)`
   count(...)
 ```
 
-```{r include = FALSE}
+```{r modifying-factor-levels-1-test, include = FALSE}
 gss_cat |> 
   count(partyid)
 ```
@@ -1099,7 +1187,7 @@ Continue the pipe to `count(partyid)` to confirm that the recoding has worked.
   count(partyid)
 ```
 
-```{r include = FALSE}
+```{r modifying-factor-levels-5-test, include = FALSE}
 gss_cat |>
   mutate(
     partyid = fct_recode(partyid,
@@ -1192,7 +1280,7 @@ Continue the pipe to the function `count()` with `relig` as its argument.
   count(...)
 ```
 
-```{r include = FALSE}
+```{r modifying-factor-levels-8-test, include = FALSE}
 gss_cat |>
   mutate(relig = fct_lump_lowfreq(relig)) |>
   count(relig)
@@ -1217,7 +1305,7 @@ gss_cat |>
   mutate(relig = ...)
 ```
 
-###
+### 
 
 <!-- DK: Add knowledge drop. -->
 
@@ -1236,7 +1324,7 @@ Continue the pipe to `count()`. Add `relig` as an argument, as well as `sort = T
   count(relig, ...)
 ```
 
-```{r include = FALSE}
+```{r modifying-factor-levels-10-test, include = FALSE}
 gss_cat |>
   mutate(relig = fct_lump_n(relig, n = 10)) |>
   count(relig, sort = TRUE)
@@ -1259,7 +1347,7 @@ Run this code
 ordered(c("a", "b", "c"))
 ```
 
-```{r include = FALSE}
+```{r ordered-factors-1-test, include = FALSE}
 ordered(c("a", "b", "c"))
 ```
 
