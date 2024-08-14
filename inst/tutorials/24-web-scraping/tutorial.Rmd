@@ -1,12 +1,12 @@
 ---
 title: Web scraping
-author: 'David Kane'
+author: David Kane
 tutorial:
   id: web-scraping
 output:
   learnr::tutorial:
-    progressive: true
-    allow_skip: true
+    progressive: yes
+    allow_skip: yes
 runtime: shiny_prerendered
 description: 'Tutorial for Chapter 24: Web scraping'
 ---
@@ -82,6 +82,10 @@ The key package for web scraping with R is [**rvest**](https://rvest.tidyverse.o
 library(rvest)
 ```
 
+```{r web-scaping-basics-1-test, include = FALSE}
+
+```
+
 ### 
 
 The "Web Scraping 101" [article](https://rvest.tidyverse.org/articles/rvest.html) from the **rvest** [homepage](https://rvest.tidyverse.org/) provides useful background. 
@@ -96,6 +100,10 @@ Look up the help page for the **rvest** package using the `help()` function. Don
 
 ```{r web-scaping-basics-2-hint-1, eval = FALSE}
 help(package = "...")
+```
+
+```{r web-scaping-basics-2-test, include = FALSE}
+
 ```
 
 ### 
@@ -115,6 +123,10 @@ question_text(NULL,
 	rows = 3)
 ```
 
+```{r web-scaping-basics-3-test, include = FALSE}
+
+```
+
 ### 
 
 As the DESCRIPTION file mentions, **rvest** is mostly supplying wrappers for the more lower level (but harder to use) **xml2** and **httr** packages. (As always, note how we, and everyone else uses the words "package" and "library" interchangeably.)
@@ -129,6 +141,10 @@ As the DESCRIPTION file mentions, **rvest** is mostly supplying wrappers for the
 
 ```{r web-scaping-basics-4-hint-1, eval = FALSE}
 minimal_html("test")
+```
+
+```{r web-scaping-basics-4-test, include = FALSE}
+
 ```
 
 ### 
@@ -149,6 +165,10 @@ Assign the output of `minimal_html()` to an object called `html_1`. Then, on the
 ```{r web-scaping-basics-5-hint-1, eval = FALSE}
 html_1 <- minimal_html("test")
 class(html_1)
+```
+
+```{r web-scaping-basics-5-test, include = FALSE}
+
 ```
 
 ### 
@@ -180,6 +200,10 @@ html_2 <- minimal_html("
 html_2
 ```
 
+```{r web-scaping-basics-6-test, include = FALSE}
+
+```
+
 ### 
 
 Just typing/returning `html_2` produces the same result as `print(html_2)`. By design, the `print()` function should provide the key information about the object being printed. The first line tells us that `html_2` is an HTML document. The two listed elements ("head" and "body") are the two key parts of every HTML document. The "body" is the more important part since it contains all the information.
@@ -195,6 +219,10 @@ We have added `html_2` to your workspace so that you can use it to start pipes. 
 ```{r web-scaping-basics-7-hint-1, eval = FALSE}
 html_2 |> 
   html_elements("...")
+```
+
+```{r web-scaping-basics-7-test, include = FALSE}
+
 ```
 
 ### 
@@ -217,6 +245,10 @@ html_2 |>
   html_elements(".important")
 ```
 
+```{r web-scaping-basics-8-test, include = FALSE}
+
+```
+
 ### 
 
 When using `html_elements()` to select nodes on the basis of the class attribute rather than a tags we need a leading dot. Tags, on the other hand, are provided as is. Notice that the result of a call to `html_elements()` is an "xml_nodeset" rather than a full HTML document.
@@ -232,6 +264,10 @@ Pipe `html_2` to `html_elements("#first")`. Note that the `css` argument is "#fi
 ```{r web-scaping-basics-9-hint-1, eval = FALSE}
 html_2 |> 
   html_elements("...")
+```
+
+```{r web-scaping-basics-9-test, include = FALSE}
+
 ```
 
 ### 
@@ -261,6 +297,10 @@ html_3 <- minimal_html("
 print(html_3)
 ```
 
+```{r web-scaping-basics-10-test, include = FALSE}
+
+```
+
 ### 
 
 Notice how the "body" portion of the html_document includes the raw html text, especially the nested list. The `<ul>` tag starts an **u**nordered **l**ist. The `<li>` tag starts an ordered **li**st.
@@ -276,6 +316,10 @@ Pipe `html_3` to `html_elements("li")` in order to make a vector where each elem
 ```{r web-scaping-basics-11-hint-1, eval = FALSE}
 html_3 |> 
   html_elements("..")
+```
+
+```{r web-scaping-basics-11-test, include = FALSE}
+
 ```
 
 ### 
@@ -297,6 +341,10 @@ Continue the pipe to `html_element("b")`, which will pull out the elements from 
   html_element("b")
 ```
 
+```{r web-scaping-basics-12-test, include = FALSE}
+
+```
+
 ### 
 
 We are using clues in the HTML formatting --- bolding, in this case --- to determine a substantive issue, which are the names of the characters. Nothing guarantees that this two things are connected. They don't have to be! And, if the HTML document itself is sloppy or inconsistent, they won't be. 
@@ -316,6 +364,10 @@ Continue the pipe to `html_text2()`.
 ```{r web-scaping-basics-13-hint-1, eval = FALSE}
 ... |> 
   html_text2()
+```
+
+```{r web-scaping-basics-13-test, include = FALSE}
+
 ```
 
 ### 
@@ -349,6 +401,10 @@ html_4 <- minimal_html("
 print(html_4)
 ```
 
+```{r web-scaping-basics-14-test, include = FALSE}
+
+```
+
 ### 
 
 Note how the `<body>` section of the html_document begins with the `<table>` element. Also, note how the class of the table object is "mytable".
@@ -365,6 +421,10 @@ Pipe `html_4` to `html_element(".mytable")`
 ```{r web-scaping-basics-15-hint-1, eval = FALSE}
 html_4 |> 
   html_element("..")
+```
+
+```{r web-scaping-basics-15-test, include = FALSE}
+
 ```
 
 ### 
@@ -384,6 +444,10 @@ Continue the pipe to `html_table()`.
 ```{r web-scaping-basics-16-hint-1, eval = FALSE}
 ... |> 
   html_table()
+```
+
+```{r web-scaping-basics-16-test, include = FALSE}
+
 ```
 
 ### 
@@ -410,6 +474,10 @@ Examine the [webpage](https://rvest.tidyverse.org/articles/starwars.html) for th
 ```{r web-scaping-examples-1-hint-1, eval = FALSE}
 "https://rvest.tidyverse.org/articles/starwars.html" |> 
   read_..()
+```
+
+```{r web-scaping-examples-1-test, include = FALSE}
+
 ```
 
 ### 
@@ -446,6 +514,10 @@ Continue the pipe with `html_elements("section")`.
 
 ```
 
+```{r web-scaping-examples-2-test, include = FALSE}
+
+```
+
 ### 
 
 We almost always begin scraping by creating an HTML document which can then be manipulated with functions like `html_elements()`. Note that `html_elements()` is not the same thing as `html_element()`, without the "s".
@@ -463,6 +535,10 @@ Continue the pipe with `html_element("h2")`. We want to pull out just the title 
 ```{r web-scaping-examples-3-hint-1, eval = FALSE}
 ... |> 
   html_element("h2")
+```
+
+```{r web-scaping-examples-3-test, include = FALSE}
+
 ```
 
 ### 
@@ -483,6 +559,10 @@ Continue the pipe with `html_text2()`. We almost always want to clean up the und
 ```{r web-scaping-examples-4-hint-1, eval = FALSE}
 ... |> 
   html_...()
+```
+
+```{r web-scaping-examples-4-test, include = FALSE}
+
 ```
 
 ### 
@@ -509,6 +589,10 @@ tibble(title =
          html_elements("section") |> 
          html_elements("h2") |> 
          html_text2())
+```
+
+```{r web-scaping-examples-5-test, include = FALSE}
+
 ```
 
 ### 
@@ -544,6 +628,10 @@ Consider [the highest rated movies](https://www.imdb.com/chart/top) on [IMDb](ht
   ...
 ```
 
+```{r web-scaping-examples-6-test, include = FALSE}
+
+```
+
 ### 
 
 Note that `read_html()` takes longer to run than the previous example because the underlying webpage is much more complex.
@@ -565,6 +653,10 @@ The key element is a table, which is often the case with web scraping exercises.
   html_table("...")
 ```
 
+```{r web-scaping-examples-7-test, include = FALSE}
+
+```
+
 ### 
 
 The result is no longer an "html_document". Instead, it is an "html_node". 
@@ -584,6 +676,10 @@ Continue the pipe to `html_table()`.
 ```{r web-scaping-examples-8-hint-1, eval = FALSE}
 ... |> 
   html_table()
+```
+
+```{r web-scaping-examples-8-test, include = FALSE}
+
 ```
 
 ### 
@@ -608,6 +704,10 @@ Continue the pipe to a `select()` call which renames the second column to `rank_
     )
 ```
 
+```{r web-scaping-examples-9-test, include = FALSE}
+
+```
+
 ### 
 
 `select()` does two things: it keeps only two columns, both of which it renames. But the `rank_title_year` is a mess because it really includes three different variables, all mashed together.
@@ -630,6 +730,10 @@ Continue the pipe with a call to `mutate()` which runs `str_squish()` on `rank_t
   )
 ```
 
+```{r web-scaping-examples-10-test, include = FALSE}
+
+```
+
 ### 
 
 [`str_squish()`](https://stringr.tidyverse.org/reference/str_trim.html) removes whitespace at the start and end or a character variable, and replaces all internal whitespace with a single space.
@@ -647,6 +751,10 @@ Continue the call to `mutate()`, creating a new variable called `rank` which is 
 ```{r web-scaping-examples-11-hint-1, eval = FALSE}
 ... |> 
   mutate(rank = parse_number(rank_title_year))
+```
+
+```{r web-scaping-examples-11-test, include = FALSE}
+
 ```
 
 ### 
@@ -669,6 +777,10 @@ Continue the pipe to `mutate()`, creating a new variable `title` which is the re
 ... |> 
   mutate(title = str_extract(rank_title_year, 
                              pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))"))
+```
+
+```{r web-scaping-examples-12-test, include = FALSE}
+
 ```
 
 ### 
@@ -710,6 +822,10 @@ Complete the pipe with a `select()` statement which keeps `rank`, `title` and `r
            str_extract(rank_title_year, 
                        pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))")) |> 
   select(rank, title, rating)
+```
+
+```{r web-scaping-examples-13-test, include = FALSE}
+
 ```
 
 ### 
