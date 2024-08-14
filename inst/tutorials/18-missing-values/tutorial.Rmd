@@ -49,31 +49,31 @@ health <- tibble(
 ```
 
 ## Introduction
-###
+### 
 
 This tutorial covers [Chapter 18: Missing values](https://r4ds.hadley.nz/missing-values.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. The primary focus of this tutorial will be to teach you how to use commands like [`fill()`] to fill in missing values, [`coalesce()`] to replace missing values with another value, and [`na_if()`] to replace certain values with a missing value, [`NA`]. Additionally we will look at functions like [`complete()`] which lets you generate missing values from a set of variables, and how to use [`anti_join()`] for missing values when joining data sets.
 
 
 ## Explicit Missing Values
-###
+### 
 
 ### Exercise 1
 
 Load the **tidyverse** package with the `library()` command.
 
-```{r explicit-missing-val-1, exercise = TRUE}
+```{r explicit-missing-values-1, exercise = TRUE}
 
 ```
 
-```{r explicit-missing-val-1-hint, eval = FALSE}
+```{r explicit-missing-values-1-hint-1, eval = FALSE}
 library(...)
 ```
 
-```{r, include=FALSE}
+```{r explicit-missing-values-1-test, include = FALSE}
 library(tidyverse)
 ```
 
-###
+### 
 
 The functions for working with missing data mostly come from dplyr and tidyr, which are core members of the tidyverse.
 
@@ -81,7 +81,7 @@ The functions for working with missing data mostly come from dplyr and tidyr, wh
 
 Run this code in order to create a tibble called `treatment`.
 
-```{r explicit-missing-val-2, exercise = TRUE}
+```{r explicit-missing-values-2, exercise = TRUE}
 treatment <- tribble(
   ~person,           ~treatment, ~response,
   "Derrick Whitmore", 1,         7,
@@ -91,7 +91,7 @@ treatment <- tribble(
 )
 ```
 
-###
+### 
 
 A common use for missing values is as a data entry convenience. When data is entered by hand, missing values sometimes indicate that the value in the previous row has been repeated (or carried forward).
 
@@ -99,19 +99,19 @@ A common use for missing values is as a data entry convenience. When data is ent
 
 Write `treatment` and hit "Run Code".
 
-```{r explicit-missing-val-3, exercise = TRUE}
+```{r explicit-missing-values-3, exercise = TRUE}
 
 ```
 
-```{r explicit-missing-val-3-hint, eval = FALSE}
+```{r explicit-missing-values-3-hint-1, eval = FALSE}
 treatment
 ```
 
-```{r, include = FALSE}
+```{r explicit-missing-values-3-test, include = FALSE}
 treatment
 ```
 
-###
+### 
 
 Use `glimpse()` or `View()` for alternative ways to view the data.
 
@@ -119,23 +119,23 @@ Use `glimpse()` or `View()` for alternative ways to view the data.
 
 Pipe `treatment` to `fill()` with the argument `response`.
 
-```{r explicit-missing-val-4, exercise = TRUE}
+```{r explicit-missing-values-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r explicit-missing-val-4-hint, eval = FALSE}
+```{r explicit-missing-values-4-hint-1, eval = FALSE}
 treatment |>
   ...(response)
 ```
 
-```{r, include = FALSE}
+```{r explicit-missing-values-4-test, include = FALSE}
 treatment |>
   fill(response)
 ```
 
-###
+### 
 
 This treatment is sometimes called “last observation carried forward”, or locf for short.
 
@@ -143,23 +143,23 @@ This treatment is sometimes called “last observation carried forward”, or lo
 
 Use the same code, but replace `response` with `everything()`. Recall that `everything()` is a function which returns all the variables in a tibble.
 
-```{r explicit-missing-val-5, exercise = TRUE}
+```{r explicit-missing-values-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r explicit-missing-val-5-hint, eval = FALSE}
+```{r explicit-missing-values-5-hint-1, eval = FALSE}
 treatment |>
   fill(...)
 ```
 
-```{r, include = FALSE}
+```{r explicit-missing-values-5-test, include = FALSE}
 treatment |>
   fill(everything())
 ```
 
-###
+### 
 
 You can use the `.direction` argument to fill in missing values that have been generated in more exotic ways.
 
@@ -167,11 +167,11 @@ You can use the `.direction` argument to fill in missing values that have been g
 
 Run this code to assign a vector with a missing value to the variable `x`.
 
-```{r explicit-misisng-values-6, exercise = TRUE}
+```{r explicit-missing-values-6, exercise = TRUE}
 x <- c(1, 4, 5, 7, NA)
 ```
 
-###
+### 
 
 Many times we will see missing values that actually represent some fixed known value, most commonly 0. 
 
@@ -179,7 +179,7 @@ Many times we will see missing values that actually represent some fixed known v
 
 Copy the previous code and use `coalesce()`  from `dplyr` with `x` and `0` as arguments to replace the missing values with `0`
 
-```{r explicit-misisng-values-7, exercise = TRUE}
+```{r explicit-missing-values-7, exercise = TRUE}
 
 ```
 
@@ -190,12 +190,12 @@ x <- c(1, 4, 5, 7, NA)
 coalesce(x,...)
 ```
 
-```{r, include = FALSE}
+```{r explicit-missing-values-7-test, include = FALSE}
 x <- c(1, 4, 5, 7, NA)
 coalesce(x,0)
 ```
 
-###
+### 
 
 As we can see, the `NA` value turned into a `0`.
 
@@ -203,11 +203,11 @@ As we can see, the `NA` value turned into a `0`.
 
 Run this code to assign a vector to the variable `x`.
 
-```{r explicit-misisng-values-8, exercise = TRUE}
+```{r explicit-missing-values-8, exercise = TRUE}
 x <- c(1, 4, 5, 7, -99)
 ```
 
-###
+### 
 
 At times we will see the opposite issue where some fixed known value actually represents a missing value. 
 
@@ -215,7 +215,7 @@ At times we will see the opposite issue where some fixed known value actually re
 
 Copy the previous code and use `na_if()` from the `dplyr` package and use `x` and `-99` to replace the `-99` with a missing value.
 
-```{r explicit-misisng-values-9, exercise = TRUE}
+```{r explicit-missing-values-9, exercise = TRUE}
 
 ```
 
@@ -226,12 +226,12 @@ x <- c(1, 4, 5, 7, -99)
 na_if(x, ...)
 ```
 
-```{r, include=FALSE}
+```{r explicit-missing-values-9-test, include = FALSE}
 x <- c(1, 4, 5, 7, -99)
 na_if(x, -99)
 ```
 
-###
+### 
 
 This usually happens when data is generated by some older software that is forced to use a value like `99` or `-999` as a missing value.
 
@@ -243,21 +243,21 @@ Before we continue, there’s one special type of missing value that you’ll en
 
 Multiply the pre-written vector by 10.
 
-```{r explicit-missing-val-10, exercise = TRUE}
+```{r explicit-missing-values-10, exercise = TRUE}
  x <- c(NA, NaN)
 ```
 
-```{r explicit-missing-val-10-hint-1, eval = FALSE}
+```{r explicit-missing-values-10-hint-1, eval = FALSE}
 x <- c(NA, NaN)
 x * ...
 ```
 
-```{r, include = FALSE}
+```{r explicit-missing-values-10-test, include = FALSE}
 x <- c(NA, NaN)
 x * 10
 ```
 
-###
+### 
 
 As you can see, any mathematical operation on a missing value is still a missing value.
 
@@ -265,23 +265,23 @@ As you can see, any mathematical operation on a missing value is still a missing
 
 Compare the vector x to the number 1.
 
-```{r explicit-missing-val-11, exercise = TRUE}
+```{r explicit-missing-values-11, exercise = TRUE}
 x <- c(NA, NaN)
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r explicit-missing-val-11-hint, eval = FALSE}
+```{r explicit-missing-values-11-hint-1, eval = FALSE}
 x <- c(NA, NaN)
 x == ...
 ```
 
-```{r, include = FALSE}
+```{r explicit-missing-values-11-test, include = FALSE}
 x <- c(NA, NaN)
 x == 1
 ```
 
-###
+### 
 
 Comparing `NaN` with a number will give you `NA` because `NaN` is not a number, making it an invalid comparison.
 
@@ -289,25 +289,25 @@ Comparing `NaN` with a number will give you `NA` because `NaN` is not a number, 
 
 Now, copy the code from the previous exercise and run the command `is.na()` with the argument `x`.
 
-```{r explicit-missing-val-12, exercise = TRUE}
+```{r explicit-missing-values-12, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r explicit-missing-val-12-hint, eval = FALSE}
+```{r explicit-missing-values-12-hint-1, eval = FALSE}
 x <- c(NA, NaN)
 x == 1
 is.na(...)
 ```
 
-```{r, include = FALSE}
+```{r explicit-missing-values-12-test, include = FALSE}
 x <- c(NA, NaN)
 x == 1
 is.na(x)
 ```
 
-###
+### 
 
 In the rare case you need to distinguish an NA from a NaN, you can use is.nan(x).
 
@@ -315,20 +315,19 @@ In the rare case you need to distinguish an NA from a NaN, you can use is.nan(x)
 
 Divide `0` by `0`.
 
-```{r explicit-missing-val-13, exercise = TRUE}
+```{r explicit-missing-values-13, exercise = TRUE}
 
 ```
 
-
-```{r explicit-missing-val-13-hint, eval = FALSE}
+```{r explicit-missing-values-13-hint-1, eval = FALSE}
 .../...
 ```
 
-```{r, include = FALSE}
+```{r explicit-missing-values-13-test, include = FALSE}
 0/0
 ```
 
-###
+### 
 
 This mathematical operation yields an indeterminate result which produces `NaN`.
 
@@ -336,20 +335,19 @@ This mathematical operation yields an indeterminate result which produces `NaN`.
 
 Subtract `Inf` from `Inf`.
 
-```{r explicit-missing-val-14, exercise = TRUE}
+```{r explicit-missing-values-14, exercise = TRUE}
 
 ```
 
-
-```{r explicit-missing-val-14-hint, eval = FALSE}
+```{r explicit-missing-values-14-hint-1, eval = FALSE}
 ...-...
 ```
 
-```{r, include = FALSE}
+```{r explicit-missing-values-14-test, include = FALSE}
 Inf-Inf
 ```
 
-###
+### 
 
 This is also an indeterminate mathematical operation. 
 
@@ -357,19 +355,19 @@ This is also an indeterminate mathematical operation.
 
 Multiply `0` and `Inf`.
 
-```{r explicit-missing-val-15, exercise = TRUE}
+```{r explicit-missing-values-15, exercise = TRUE}
 
 ```
 
-```{r explicit-missing-val-15-hint, eval = FALSE}
+```{r explicit-missing-values-15-hint-1, eval = FALSE}
 ...*...
 ```
 
-```{r, include = FALSE}
+```{r explicit-missing-values-15-test, include = FALSE}
 0*Inf
 ```
 
-###
+### 
 
 This also produces `NaN` because it is indeterminate.
 
@@ -377,30 +375,30 @@ This also produces `NaN` because it is indeterminate.
 
 Use `sqrt()` to take the square root of `-1`.
 
-```{r explicit-missing-val-16, exercise = TRUE}
+```{r explicit-missing-values-16, exercise = TRUE}
 
 ```
 
-```{r explicit-missing-val-16-hint, eval = FALSE}
+```{r explicit-missing-values-16-hint-1, eval = FALSE}
 sqrt(...)
 ```
 
-```{r, include = FALSE}
+```{r explicit-missing-values-16-test, include = FALSE}
 sqrt(-1)
 ```
 
-###
+### 
 
 This yet again produces `NaN` because of its indeterminate result.
 
 ## Implicit missing values
-###
+### 
 
 ### Exercise 1
 
 Run this code to create a tibble called `stocks`
 
-```{r implicit-missing-val-1, exercise = TRUE}
+```{r implicit-missing-values-1, exercise = TRUE}
 stocks <- tibble(
   year  = c(2020, 2020, 2020, 2020, 2021, 2021, 2021),
   qtr   = c(   1,    2,    3,    4,    2,    3,    4),
@@ -408,7 +406,7 @@ stocks <- tibble(
 )
 ```
 
-###
+### 
 
 Missing values can also be **implicitly** missing, if an entire row of data is simply absent from the data.
 
@@ -416,19 +414,19 @@ Missing values can also be **implicitly** missing, if an entire row of data is s
 
 Write `stocks` and hit "Run Code".
 
-```{r implicit-missing-val-2, exercise = TRUE}
+```{r implicit-missing-values-2, exercise = TRUE}
 
 ```
 
-```{r implicit-missing-val-2-hint, eval = FALSE}
+```{r implicit-missing-values-2-hint-1, eval = FALSE}
 stocks
 ```
 
-```{r, include = FALSE}
+```{r implicit-missing-values-2-test, include = FALSE}
 stocks
 ```
 
-###
+### 
 
 The price in the fourth quarter of 2020 is explicitly missing, because its value is NA. The price for the first quarter of 2021 is implicitly missing, because it simply does not appear in the dataset.
 
@@ -436,18 +434,18 @@ The price in the fourth quarter of 2020 is explicitly missing, because its value
 
 Pipe `stocks` to the command `pivot_wider()` (Don't worry this will produce an error).
 
-```{r implicit-missing-val-3, exercise = TRUE}
+```{r implicit-missing-values-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r implicit-missing-val-3-hint, eval = FALSE}
+```{r implicit-missing-values-3-hint-1, eval = FALSE}
 stocks |>
   ...()
 ```
 
-###
+### 
 
 Note that this caused an error because `pivot_wider()` is looking for a `names_from` argument. 
 
@@ -455,18 +453,18 @@ Note that this caused an error because `pivot_wider()` is looking for a `names_f
 
 Copy the previous code and add the `names_from` argument and set it equal to `qtr` (Don't worry this will produce an error).
 
-```{r implicit-missing-val-4, exercise = TRUE}
+```{r implicit-missing-values-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r implicit-missing-val-4-hint, eval = FALSE}
+```{r implicit-missing-values-4-hint-1, eval = FALSE}
 stocks |>
   pivot_wider(names_from = ...)
 ```
 
-###
+### 
 
 Note that this caused an error because the command is looking for a `values_from` argument. Make sure to examine the help page for more information by typing `?pivot_wider` into the console.
 
@@ -474,25 +472,25 @@ Note that this caused an error because the command is looking for a `values_from
 
 Copy the previous code and add a `values_from` argument setting it equal to `price`.
 
-```{r implicit-missing-val-5, exercise = TRUE}
+```{r implicit-missing-values-5, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r implicit-missing-val-5-hint, eval = FALSE}
+```{r implicit-missing-values-5-hint-1, eval = FALSE}
 
 stocks |>
   pivot_wider(names_from = qtr, values_from = ...)
 
 ```
 
-```{r, include = FALSE}
+```{r implicit-missing-values-5-test, include = FALSE}
 stocks |>
   pivot_wider(names_from = qtr, values_from = price)
 ```
 
-###
+### 
 
 Making data wider can make implicit missing values explicit because every combination of the rows and new columns must have some value. For example, if we pivot stocks to put the quarter in the columns, both missing values become explicit.
 
@@ -501,25 +499,25 @@ Making data wider can make implicit missing values explicit because every combin
 
 Pipe `stocks` to the command `complete()` with the argument `year`.
 
-```{r implicit-missing-val-6, exercise = TRUE}
+```{r implicit-missing-values-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r implicit-missing-val-6-hint, eval = FALSE}
+```{r implicit-missing-values-6-hint-1, eval = FALSE}
 
 stocks |> 
   ...(year)
 
 ```
 
-```{r, include = FALSE}
+```{r implicit-missing-values-6-test, include = FALSE}
 stocks |>
   complete(year)
 ```
 
-###
+### 
 
 `tidyr::complete()` allows you to generate explicit missing values by providing a set of variables that define the combination of rows that should exist.
 
@@ -527,23 +525,23 @@ stocks |>
 
 Copy the previous code, but add the argument `qtr` to the `complete()` command.
 
-```{r implicit-missing-val-7, exercise = TRUE}
+```{r implicit-missing-values-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r implicit-missing-val-7-hint, eval = FALSE}
+```{r implicit-missing-values-7-hint-1, eval = FALSE}
 stocks |>
   complete(year, ...)
 ```
 
-```{r, include = FALSE}
+```{r implicit-missing-values-7-test, include = FALSE}
 stocks |>
   complete(year, qtr)
 ```
 
-###
+### 
 
 Typically, you’ll call `complete()` with names of existing variables, filling in the missing combinations. 
 
@@ -551,23 +549,23 @@ Typically, you’ll call `complete()` with names of existing variables, filling 
 
 Copy the previous code and set the `year` argument to `2019`.
 
-```{r implicit-missing-val-8, exercise = TRUE}
+```{r implicit-missing-values-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r implicit-missing-val-8-hint, eval = FALSE}
+```{r implicit-missing-values-8-hint-1, eval = FALSE}
 stocks |>
   complete(year = ..., qtr)
 ```
 
-```{r , include = FALSE}
+```{r implicit-missing-values-8-test, include = FALSE}
 stocks |>
   complete(year = 2019, qtr)
 ```
 
-###
+### 
 
 Sometimes the individual variables are themselves incomplete, so you can instead provide your own data.
 
@@ -575,23 +573,23 @@ Sometimes the individual variables are themselves incomplete, so you can instead
 
 Copying the code from the previous exercise, set the `year` argument to the year range `2019:2021`.
 
-```{r implicit-missing-val-9, exercise = TRUE}
+```{r implicit-missing-values-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r implicit-missing-val-9-hint, eval = FALSE}
+```{r implicit-missing-values-9-hint-1, eval = FALSE}
 stocks |>
   complete(year = ..., qtr)
 ```
 
-```{r , include = FALSE}
+```{r implicit-missing-values-9-test, include = FALSE}
 stocks |>
   complete(year = 2019:2021, qtr)
 ```
 
-###
+### 
 
 For example, you might know that the stocks dataset is supposed to run from `2019` to `2021`, so you could explicitly supply those values for year.
 
@@ -599,17 +597,17 @@ For example, you might know that the stocks dataset is supposed to run from `201
 
 Load in the `nycflights13` package with `library()`.
 
-```{r implicit-missing-val-10, exercise = TRUE}
+```{r implicit-missing-values-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r implicit-missing-val-10-hint, eval = FALSE}
+```{r implicit-missing-values-10-hint-1, eval = FALSE}
 library(...)
 ```
 
-###
+### 
 
 Recall that `nycflights13` is a data package that holds all the flight information from the three biggest New York City airports in 2013.
 
@@ -617,15 +615,15 @@ Recall that `nycflights13` is a data package that holds all the flight informati
 
 Write `flights` to print it out and view the data.
 
-```{r implicit-missing-val-11, exercise = TRUE}
+```{r implicit-missing-values-11, exercise = TRUE}
 
 ```
 
-```{r implicit-missing-val-11-hint, eval = FALSE}
+```{r implicit-missing-values-11-hint-1, eval = FALSE}
 flights
 ```
 
-###
+### 
 
 Recall that `distinct()` displays all unique rows in the dataset.
 
@@ -633,23 +631,23 @@ Recall that `distinct()` displays all unique rows in the dataset.
 
 Pipe `flights` to the command `distinct()` with the argument `dest`.
 
-```{r implicit-missing-val-12, exercise = TRUE}
+```{r implicit-missing-values-12, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r implicit-missing-val-12-hint, eval = FALSE}
+```{r implicit-missing-values-12-hint-1, eval = FALSE}
 flights |>
   ...(dest)
 ```
 
-```{r, include = FALSE}
+```{r implicit-missing-values-12-test, include = FALSE}
 flights |>
   distinct(dest)
 ```
 
-###
+### 
 
 Note this produces 105 unique flight destinations.
 
@@ -657,23 +655,23 @@ Note this produces 105 unique flight destinations.
 
 Copy the previous code but change the argument name to `faa = dest` to change the column name.
 
-```{r implicit-missing-val-13, exercise = TRUE}
+```{r implicit-missing-values-13, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r implicit-missing-val-13-hint, eval = FALSE}
+```{r implicit-missing-values-13-hint-1, eval = FALSE}
 flights |>
   distinct(faa = ...)
 ```
 
-```{r, include = FALSE}
+```{r implicit-missing-values-13-test, include = FALSE}
 flights |>
   distinct(faa = dest)
 ```
 
-###
+### 
 
 Note we change this because the column is listed as `dest` in `flights` but `faa` in `airports` and our next command, `anti_join()` requires common variables.
 
@@ -681,25 +679,25 @@ Note we change this because the column is listed as `dest` in `flights` but `faa
 
 Copy the previous code and pipe it with `anti_join()` with the argument `airports`. 
 
-```{r implicit-missing-val-14, exercise = TRUE}
+```{r implicit-missing-values-14, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r implicit-missing-val-14-hint, eval = FALSE}
+```{r implicit-missing-values-14-hint-1, eval = FALSE}
 flights |>
   distinct(faa = dest) |>
   anti_join(...)
 ```
 
-```{r, include = FALSE}
+```{r implicit-missing-values-14-test, include = FALSE}
 flights |>
   distinct(faa = dest) |>
   anti_join(airports)
 ```
 
-###
+### 
 
 You can often only know that values are missing from one dataset when you compare it to another. `anti_join()` is a particularly useful tool here because it selects only the rows in `flights` that don’t have a match in `airports`
 
@@ -707,21 +705,21 @@ You can often only know that values are missing from one dataset when you compar
 
 Pipe `flights` with the command `distinct()` again except with the argument `tailnum`.
 
-```{r implicit-missing-val-15, exercise = TRUE}
+```{r implicit-missing-values-15, exercise = TRUE}
 
 ```
 
-```{r implicit-missing-val-15-hint, eval = FALSE}
+```{r implicit-missing-values-15-hint-1, eval = FALSE}
 flights |>
   distinct(...)
 ```
 
-```{r, include = FALSE}
+```{r implicit-missing-values-15-test, include = FALSE}
 flights |>
   distinct(tailnum)
 ```
 
-###
+### 
 
 Note that this produces all 4,044 unique tail number, or every unique plane.
 
@@ -729,13 +727,13 @@ Note that this produces all 4,044 unique tail number, or every unique plane.
 
 Copy the previous code and pipe it to `anti_join()` with the argument `planes`.
 
-```{r implicit-missing-val-16, exercise = TRUE}
+```{r implicit-missing-values-16, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r implicit-missing-val-16-hint, eval = FALSE}
+```{r implicit-missing-values-16-hint-1, eval = FALSE}
 
 flights |>
   distinct(tailnum) |>
@@ -743,24 +741,24 @@ flights |>
 
 ```
 
-```{r, include = FALSE}
+```{r implicit-missing-values-16-test, include = FALSE}
 flights |>
   distinct(tailnum) |>
   anti_join(planes)
 ```
 
-###
+### 
 
 We can use two `anti_join()`s to reveal that we’re missing information for four airports and 722 planes mentioned in `flights`.
 
 ## Factors and empty groups
-###
+### 
 
 ### Exercise 1
 
 Run this code to assign a tibble to `health`.
 
-```{r factors-and-empty-gr-1, exercise = TRUE}
+```{r factors-and-empty-groups-1, exercise = TRUE}
 health <- tibble(
   name   = c("Ikaia", "Oletta", "Leriah", "Dashay", "Tresaun"),
   smoker = factor(c("no", "no", "no", "no", "no"), levels = c("yes", "no")),
@@ -768,7 +766,7 @@ health <- tibble(
 )
 ```
 
-###
+### 
 
 Recall from Chapter 17 that factors are used for categorical variables, variables that have a fixed and known set of possible values.
 
@@ -776,15 +774,15 @@ Recall from Chapter 17 that factors are used for categorical variables, variable
 
 Type `health` and hit "Run Code" to view the data.
 
-```{r factors-and-empty-gr-2, exercise = TRUE}
+```{r factors-and-empty-groups-2, exercise = TRUE}
 
 ```
 
-```{r factors-and-empty-gr-2-hint, eval = FALSE}
+```{r factors-and-empty-groups-2-hint-1, eval = FALSE}
 health
 ```
 
-###
+### 
 
 A final type of missingness is the empty group, a group that doesn’t contain any observations, which can arise when working with factors.
 
@@ -792,23 +790,23 @@ A final type of missingness is the empty group, a group that doesn’t contain a
 
 Let's count the number of smokers by piping `health` to the command `count()` with the argument `smoker`.
 
-```{r factors-and-empty-gr-3, exercise = TRUE}
+```{r factors-and-empty-groups-3, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-3-hint, eval = FALSE}
+```{r factors-and-empty-groups-3-hint-1, eval = FALSE}
 health |> 
   count(...)
 ```
 
-```{r, include = FALSE}
+```{r factors-and-empty-groups-3-test, include = FALSE}
 health |> 
   count(smoker)
 ```
 
-###
+### 
 
 This dataset only contains non-smokers, but we know that smokers exist; the group of non-smoker is empty.
 
@@ -816,23 +814,23 @@ This dataset only contains non-smokers, but we know that smokers exist; the grou
 
 Copy the previous code and add the `.drop = FALSE` argument to keep all the groups, even those not seen in the data.
 
-```{r factors-and-empty-gr-4, exercise = TRUE}
+```{r factors-and-empty-groups-4, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-4-hint, eval = FALSE}
+```{r factors-and-empty-groups-4-hint-1, eval = FALSE}
 health |> 
   count(smoker, .drop = ...)
 ```
 
-```{r, include = FALSE}
+```{r factors-and-empty-groups-4-test, include = FALSE}
 health |> 
   count(smoker, .drop = FALSE)
 ```
 
-###
+### 
 
 Note how we can now see the `yes` row in the `smoker` column.
 
@@ -840,15 +838,15 @@ Note how we can now see the `yes` row in the `smoker` column.
 
 Create a plot with `ggplot()` with `health` as the argument.
 
-```{r factors-and-empty-gr-5, exercise = TRUE}
+```{r factors-and-empty-groups-5, exercise = TRUE}
 
 ```
 
-```{r factors-and-empty-gr-5-hint, eval = FALSE}
+```{r factors-and-empty-groups-5-hint-1, eval = FALSE}
 ggplot(...)
 ```
 
-###
+### 
 
 Note the plot is empty and we have not established the axes.
 
@@ -856,17 +854,17 @@ Note the plot is empty and we have not established the axes.
 
 Copy the previous code and add an aesthetic mapping using `aes()`
 
-```{r factors-and-empty-gr-6, exercise = TRUE}
+```{r factors-and-empty-groups-6, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-6-hint, eval = FALSE}
+```{r factors-and-empty-groups-6-hint-1, eval = FALSE}
 ggplot(health, ...())
 ```
 
-###
+### 
 
 Note this doesn't do anything. By looking at the help page by typing `?aes()` into the console, we see that it has an `x` and a `y` argument.
  
@@ -874,17 +872,17 @@ Note this doesn't do anything. By looking at the help page by typing `?aes()` in
 
 Copy the previous code and pass in `x = smoker` as an argument to the `aes()` command.
 
-```{r factors-and-empty-gr-7, exercise = TRUE}
+```{r factors-and-empty-groups-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-7-hint, eval = FALSE}
+```{r factors-and-empty-groups-7-hint-1, eval = FALSE}
 ggplot(health, aes(...))
 ```
 
-###
+### 
 
 As you can see, the x-axis is defined with the `smoker` column from `health`.
 
@@ -892,18 +890,18 @@ As you can see, the x-axis is defined with the `smoker` column from `health`.
 
 Add the command `geom_bar()` to the previous code using a `+`.
 
-```{r factors-and-empty-gr-8, exercise = TRUE}
+```{r factors-and-empty-groups-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-8-hint, eval = FALSE}
+```{r factors-and-empty-groups-8-hint-1, eval = FALSE}
 ggplot(health, aes(x = smoker)) +
   ...
 ```
 
-###
+### 
 
 We encounter a similar issue to before as `ggplot2` will also drop levels that don't have any values.
 
@@ -911,19 +909,19 @@ We encounter a similar issue to before as `ggplot2` will also drop levels that d
 
 Add the `scale_x_discrete()` command to the plot with a `+`.
 
-```{r factors-and-empty-gr-9, exercise = TRUE}
+```{r factors-and-empty-groups-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-9-hint, eval = FALSE}
+```{r factors-and-empty-groups-9-hint-1, eval = FALSE}
 ggplot(health, aes(x = smoker)) +
   geom_bar() + 
   scale_x_discrete()
 ```
 
-###
+### 
 
 This will not do anything right now, but this command allows us to manipulate the x-axis.
 
@@ -931,25 +929,25 @@ This will not do anything right now, but this command allows us to manipulate th
 
 Copy the previous code and pass the `drop` argument into the `scale_x_discrete()` command and assign it to `FALSE`.
 
-```{r factors-and-empty-gr-10, exercise = TRUE}
+```{r factors-and-empty-groups-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-10-hint, eval = FALSE}
+```{r factors-and-empty-groups-10-hint-1, eval = FALSE}
 ggplot(health, aes(x = smoker)) +
   geom_bar() + 
   scale_x_discrete(... = FALSE)
 ```
 
-```{r , include = FALSE}
+```{r factors-and-empty-groups-10-test, include = FALSE}
 ggplot(health, aes(x = smoker)) +
   geom_bar() + 
   scale_x_discrete(drop = FALSE)
 ```
 
-###
+### 
 
 You can force levels that don't have any values to display by supplying `drop = FALSE` to the appropriate discrete axis.
 
@@ -957,15 +955,15 @@ You can force levels that don't have any values to display by supplying `drop = 
 
 Type `health` and hit "Run Code" to re-familiarize yourself with the tibble.
 
-```{r factors-and-empty-gr-11, exercise = TRUE}
+```{r factors-and-empty-groups-11, exercise = TRUE}
 
 ```
 
-```{r factors-and-empty-gr-11-hint, eval = FALSE}
+```{r factors-and-empty-groups-11-hint-1, eval = FALSE}
 health
 ```
 
-###
+### 
 
 The same issue of empty groups that came up in plots are also commonly seen when using functions like `summarize()`.
 
@@ -973,18 +971,18 @@ The same issue of empty groups that came up in plots are also commonly seen when
 
 Pipe `health` to `group_by()` with the argument `smoker`. 
 
-```{r factors-and-empty-gr-12, exercise = TRUE}
+```{r factors-and-empty-groups-12, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-12-hint, eval = FALSE}
+```{r factors-and-empty-groups-12-hint-1, eval = FALSE}
 health |>
   group_by(...)
 ```
 
-###
+### 
 
 Note that we **strongly** urge you to avoid using `group_by()` and instead use the `.by` argument in `summarize()`, but it is necessary in this case.
 
@@ -992,18 +990,18 @@ Note that we **strongly** urge you to avoid using `group_by()` and instead use t
 
 Copy the previous code and add the argument `.drop = FALSE` to the `group_by()` command.
 
-```{r factors-and-empty-gr-13, exercise = TRUE}
+```{r factors-and-empty-groups-13, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-13-hint, eval = FALSE}
+```{r factors-and-empty-groups-13-hint-1, eval = FALSE}
 health |>
   group_by(smoker, ... = ...)
 ```
 
-###
+### 
 
 Although not seen in this exercise, you can use `.drop = FALSE` to preserve all factor levels similar to the axes in previous exercises.
 
@@ -1011,13 +1009,13 @@ Although not seen in this exercise, you can use `.drop = FALSE` to preserve all 
 
 Copy the previous code and continue the pipe with `summarize()` with the argument `n = n()`.
 
-```{r factors-and-empty-gr-14, exercise = TRUE}
+```{r factors-and-empty-groups-14, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-14-hint, eval = FALSE}
+```{r factors-and-empty-groups-14-hint-1, eval = FALSE}
 health |>
   group_by(smoker, .drop = FALSE) |>
   ...(
@@ -1025,7 +1023,7 @@ health |>
   )
 ```
 
-###
+### 
 
 Although seemingly redundant, recall that `n = n()` is a common and useful summary that will return the number of rows in each group.
 
@@ -1033,13 +1031,13 @@ Although seemingly redundant, recall that `n = n()` is a common and useful summa
 
 Copy the previous code and add `mean_age` to the summary using the `mean()` function and the argument `age`.
 
-```{r factors-and-empty-gr-15, exercise = TRUE}
+```{r factors-and-empty-groups-15, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-15-hint, eval = FALSE}
+```{r factors-and-empty-groups-15-hint-1, eval = FALSE}
 health |>
   group_by(smoker, .drop = FALSE) |>
   summarize(
@@ -1048,7 +1046,7 @@ health |>
   )
 ```
 
-###
+### 
 
 Pay attention to how the `mean()` function produced a `NaN` in the `yes` row. This is because the `mean()` command will perform `sum(age)/length(age)` which here is `0/0`.
 
@@ -1056,13 +1054,13 @@ Pay attention to how the `mean()` function produced a `NaN` in the `yes` row. Th
 
 Add `min_age` to the `summarize()` function and set it equal to the command `min()` with the argument `age`.
 
-```{r factors-and-empty-gr-16, exercise = TRUE}
+```{r factors-and-empty-groups-16, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-16-hint, eval = FALSE}
+```{r factors-and-empty-groups-16-hint-1, eval = FALSE}
 health |>
   group_by(smoker, .drop = FALSE) |>
   summarize(
@@ -1072,7 +1070,7 @@ health |>
   )
 ```
 
-###
+### 
 
 Note that `min()` produces `Inf` in the `yes` row because it is operated on an empty vector.
 
@@ -1080,13 +1078,13 @@ Note that `min()` produces `Inf` in the `yes` row because it is operated on an e
 
 Add `max_age` to the `summarize()` function and set it equal to the command `max()` with the argument `age`.
 
-```{r factors-and-empty-gr-17, exercise = TRUE}
+```{r factors-and-empty-groups-17, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-17-hint, eval = FALSE}
+```{r factors-and-empty-groups-17-hint-1, eval = FALSE}
 health |>
   group_by(smoker, .drop = FALSE) |>
   summarize(
@@ -1097,7 +1095,7 @@ health |>
   )
 ```
 
-###
+### 
 
 Note that `max()` produces `-Inf` in the `yes` row because it is operated on an empty vector.
 
@@ -1105,13 +1103,13 @@ Note that `max()` produces `-Inf` in the `yes` row because it is operated on an 
 
 Finally, add `sd_age` to the `summarize()` function and set it equal to the command `sd()` with the argument `age`.
 
-```{r factors-and-empty-gr-18, exercise = TRUE}
+```{r factors-and-empty-groups-18, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-18-hint, eval = FALSE}
+```{r factors-and-empty-groups-18-hint-1, eval = FALSE}
 health |>
   group_by(smoker, .drop = FALSE) |>
   summarize(
@@ -1123,7 +1121,7 @@ health |>
   )
 ```
 
-```{r, include = FALSE}
+```{r factors-and-empty-groups-18-test, include = FALSE}
 health |>
   group_by(smoker, .drop = FALSE) |>
   summarize(
@@ -1135,7 +1133,7 @@ health |>
   )
 ```
 
-###
+### 
 
 It is important to note that the `sd()` function produces `Na` because it is operated on a zero-length vector. This is written in the help page so visit `?sd` for more information.
 
@@ -1143,21 +1141,21 @@ It is important to note that the `sd()` function produces `Na` because it is ope
 
 Use the `length()` function on this pre-made vector of missing values.
 
-```{r factors-and-empty-gr-19, exercise = TRUE}
+```{r factors-and-empty-groups-19, exercise = TRUE}
 x1 <- c(NA, NA)
 ```
 
-```{r factors-and-empty-gr-19-hint, eval = FALSE}
+```{r factors-and-empty-groups-19-hint-1, eval = FALSE}
 x1 <- c(NA, NA)
 length(...)
 ```
 
-```{r, include = FALSE}
+```{r factors-and-empty-groups-19-test, include = FALSE}
 x1 <- c(NA, NA)
 length(x1)
 ```
 
-###
+### 
 
 Note that this `length()` function returns `2` despite that it is all missing values. The interesting results we got with the `summarize()` function were a result of operating on a zero-length vector.
 
@@ -1165,16 +1163,16 @@ Note that this `length()` function returns `2` despite that it is all missing va
 
 Use the `length()` function on this pre-made empty vector.
 
-```{r factors-and-empty-gr-20, exercise = TRUE}
+```{r factors-and-empty-groups-20, exercise = TRUE}
 x2 <- numeric()
 ```
 
-```{r , include = FALSE}
+```{r factors-and-empty-groups-20-test, include = FALSE}
 x2 <- numeric()
 length(x2)
 ```
 
-###
+### 
 
 Not that this `length()` function returns 0 as it is an empty vector. There’s an important distinction between empty vectors, which have length 0, and missing values, each of which has length 1.
 
@@ -1182,13 +1180,13 @@ Not that this `length()` function returns 0 as it is an empty vector. There’s 
 
 Copy the code from exercise 18 and delete the `.drop = FALSE` argument from the `group_by()` function.
 
-```{r factors-and-empty-gr-21, exercise = TRUE}
+```{r factors-and-empty-groups-21, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-21-hint, eval = FALSE}
+```{r factors-and-empty-groups-21-hint-1, eval = FALSE}
 health |>
   group_by(smoker) |>
   summarize(
@@ -1200,7 +1198,7 @@ health |>
   )
 ```
 
-###
+### 
 
 Note that this completely removes the `yes` row as it is an empty group.
 
@@ -1208,13 +1206,13 @@ Note that this completely removes the `yes` row as it is an empty group.
 
 Now, continue the pipe with `complete()` and use `smoker` as the argument.
 
-```{r factors-and-empty-gr-22, exercise = TRUE}
+```{r factors-and-empty-groups-22, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r factors-and-empty-gr-22-hint, eval = FALSE}
+```{r factors-and-empty-groups-22-hint-1, eval = FALSE}
 health |>
   group_by(smoker) |>
   summarize(
@@ -1227,7 +1225,7 @@ health |>
   complete(...)
 ```
 
-```{r, include = FALSE}
+```{r factors-and-empty-groups-22-test, include = FALSE}
 health |>
   group_by(smoker) |>
   summarize(
@@ -1240,12 +1238,12 @@ health |>
   complete(smoker)
 ```
 
-###
+### 
 
 Sometimes a simpler approach is to perform the summary and then make the implicit missings explicit with `complete()`. However, the main drawback of this approach is that you get an NA for the count, even though you know that it should be zero.
 
 ## Summary
-###
+### 
 
 This tutorial covered [Chapter 18: Missing values](https://r4ds.hadley.nz/missing-values.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. The primary focus of this tutorial was to teach you how to use commands like [`fill()`] to fill in missing values, [`coalesce()`] to replace missing values with another value, and [`na_if()`] to replace certain values with a missing value, [`NA`]. Additionally we looked at functions like [`complete()`] which let you generate missing values from a set of variables, and how to use [`anti_join()`] for missing values when joining data sets.
 
