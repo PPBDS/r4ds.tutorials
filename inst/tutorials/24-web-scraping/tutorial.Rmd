@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
+html_1 <- minimal_html("test")
 
 html_2 <- minimal_html("
   <h1>This is a heading</h1>
@@ -165,7 +166,6 @@ class(html_1)
 ```
 
 ```{r web-scaping-basics-5-test, include = FALSE}
-html_1 <- minimal_html("test")
 class(html_1)
 ```
 
@@ -199,12 +199,6 @@ html_2
 ```
 
 ```{r web-scaping-basics-6-test, include = FALSE}
-html_2 <- minimal_html("
-  <h1>This is a heading</h1>
-  <p id='first'>This is a paragraph</p>
-  <p class='important'>This is an important paragraph</p>
-")
-
 html_2
 ```
 
@@ -296,6 +290,8 @@ html_3 <- minimal_html("
     <li><b>R4-P17</b> is a <i>droid</i></li>
   </ul>
   ")
+
+
 ```
 
 ```{r web-scaping-basics-10-hint-1, eval = FALSE}
@@ -305,16 +301,7 @@ print(html_3)
 ```
 
 ```{r web-scaping-basics-10-test, include = FALSE}
-html_3 <- minimal_html("
-  <ul>
-    <li><b>C-3PO</b> is a <i>droid</i> that weighs <span class='weight'>167 kg</span></li>
-    <li><b>R2-D2</b> is a <i>droid</i> that weighs <span class='weight'>96 kg</span></li>
-    <li><b>Yoda</b> weighs <span class='weight'>66 kg</span></li>
-    <li><b>R4-P17</b> is a <i>droid</i></li>
-  </ul>
-  ")
 print(html_3)
-
 ```
 
 ### 
@@ -424,14 +411,6 @@ print(html_4)
 ```
 
 ```{r web-scaping-basics-14-test, include = FALSE}
-html_4 <- minimal_html("
-  <table class='mytable'>
-    <tr><th>x</th>   <th>y</th></tr>
-    <tr><td>1.5</td> <td>2.7</td></tr>
-    <tr><td>4.9</td> <td>1.3</td></tr>
-    <tr><td>7.2</td> <td>8.1</td></tr>
-  </table>
-  ")
 print(html_4)
 ```
 
@@ -496,6 +475,8 @@ With tools like  `html_element(s)()`, `html_text2()` and `html_table()`, you are
 
 Consider two examples of material we might want to scrape. The [first](https://rvest.tidyverse.org/articles/starwars.html) is information about 7 Star Wars films from a vignette from the **rvest** package. The second involves the [250 highest rated films](https://www.imdb.com/chart/top) from IMDB. In this section, we will scrape and organize information from both.
 
+If you do not have access to the internet while doing this tutorial, you can replace "https://rvest.tidyverse.org/articles/starwars.html" with "data/star_wars.html" in all the questions below and everything should work.
+
 ### Exercise 1
 
 Examine the [webpage](https://rvest.tidyverse.org/articles/starwars.html) for the Star Wars films. The URL is `https://rvest.tidyverse.org/articles/starwars.html`. Pipe this URL to `read_html()`. (Be sure to surround the URL with quotation marks.)
@@ -510,7 +491,7 @@ Examine the [webpage](https://rvest.tidyverse.org/articles/starwars.html) for th
 ```
 
 ```{r web-scaping-examples-1-test, include = FALSE}
-"https://rvest.tidyverse.org/articles/starwars.html" |> 
+"data/star_wars.html" |> 
   read_html()
 ```
 
@@ -549,7 +530,7 @@ Continue the pipe with `html_elements("section")`.
 ```
 
 ```{r web-scaping-examples-2-test, include = FALSE}
-"https://rvest.tidyverse.org/articles/starwars.html" |> 
+"data/star_wars.html" |> 
   read_html()|> 
   html_elements("section")
 ```
@@ -574,7 +555,7 @@ Continue the pipe with `html_element("h2")`. We want to pull out just the title 
 ```
 
 ```{r web-scaping-examples-3-test, include = FALSE}
-"https://rvest.tidyverse.org/articles/starwars.html" |> 
+"data/star_wars.html" |> 
   read_html()|> 
   html_elements("section")|> 
   html_element("h2")
@@ -601,7 +582,7 @@ Continue the pipe with `html_text2()`. We almost always want to clean up the und
 ```
 
 ```{r web-scaping-examples-4-test, include = FALSE}
-"https://rvest.tidyverse.org/articles/starwars.html" |> 
+"data/star_wars.html" |> 
   read_html()|> 
   html_elements("section")|> 
   html_element("h2") |> 
@@ -612,7 +593,7 @@ Continue the pipe with `html_text2()`. We almost always want to clean up the und
 
 This character vector is the result we are looking for. 
 
-<!-- Add knowledge drop -->
+<!-- DK: Add knowledge drop -->
 
 ### Exercise 5
 
@@ -626,7 +607,7 @@ Place the above chunk of code into the middle of a call to `tibble()` in which y
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r web-scaping-examples-5-hint-1, eval = FALSE}
-tibble(title = 
+...(title = 
          "https://rvest.tidyverse.org/articles/starwars.html" |> 
          read_html() |> 
          html_elements("section") |> 
@@ -636,7 +617,7 @@ tibble(title =
 
 ```{r web-scaping-examples-5-test, include = FALSE}
 tibble(title = 
-         "https://rvest.tidyverse.org/articles/starwars.html" |> 
+         "data/star_wars.html" |> 
          read_html() |> 
          html_elements("section") |> 
          html_elements("h2") |> 
@@ -645,6 +626,8 @@ tibble(title =
 
 ### 
 
+<!-- DK: Turn the below into one or two proper questions. -->
+
 We can use the same approach to add other variables to this tibble, like the director and release date. To avoid code duplication, we should create an object, perhaps called `section`, which is the result of the first three steps in the pipe. Then, each variable creation would look something like
 
 ```{r echo = TRUE}
@@ -652,13 +635,19 @@ section <- "https://rvest.tidyverse.org/articles/starwars.html" |>
          read_html() |> 
          html_elements("section")
 
-tibble(title = section |> html_elements("h2") |> html_text2(),
-       director = section |> html_element(".director") |> html_text2())
+tibble(title = section |> 
+         html_elements("h2") |> 
+         html_text2(),
+       director = section |> 
+         html_element(".director") |> 
+         html_text2())
 ```
 
-<!-- DK: Might split the above up into a couple of questions, fully replicating the example in the book. -->
+
 
 ### Exercise 6
+
+<!-- DK: Examine the below and report back to me. Consult the book. -->
 
 <!-- AC: There are issues with the current IMDb url. Tried fixing. 
 View the following Discord messages: 
@@ -675,6 +664,8 @@ Consider [the highest rated movies](https://www.imdb.com/chart/top) on [IMDb](ht
 "https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> 
   ...
 ```
+
+<!-- DK: Do the same trick with this webpage as we did with Starwars. -->
 
 ```{r web-scaping-examples-6-test, include = FALSE}
 "https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> read_html()
