@@ -83,7 +83,7 @@ library(rvest)
 ```
 
 ```{r web-scaping-basics-1-test, include = FALSE}
-
+library(rvest)
 ```
 
 ### 
@@ -103,7 +103,7 @@ help(package = "...")
 ```
 
 ```{r web-scaping-basics-2-test, include = FALSE}
-
+help(package = "rvest")
 ```
 
 ### 
@@ -123,9 +123,6 @@ question_text(NULL,
 	rows = 3)
 ```
 
-```{r web-scaping-basics-3-test, include = FALSE}
-
-```
 
 ### 
 
@@ -144,7 +141,7 @@ minimal_html("test")
 ```
 
 ```{r web-scaping-basics-4-test, include = FALSE}
-
+minimal_html("test")
 ```
 
 ### 
@@ -168,7 +165,8 @@ class(html_1)
 ```
 
 ```{r web-scaping-basics-5-test, include = FALSE}
-
+html_1 <- minimal_html("test")
+class(html_1)
 ```
 
 ### 
@@ -201,7 +199,13 @@ html_2
 ```
 
 ```{r web-scaping-basics-6-test, include = FALSE}
+html_2 <- minimal_html("
+  <h1>This is a heading</h1>
+  <p id='first'>This is a paragraph</p>
+  <p class='important'>This is an important paragraph</p>
+")
 
+html_2
 ```
 
 ### 
@@ -222,7 +226,8 @@ html_2 |>
 ```
 
 ```{r web-scaping-basics-7-test, include = FALSE}
-
+html_2 |> 
+  html_elements("p")
 ```
 
 ### 
@@ -246,7 +251,8 @@ html_2 |>
 ```
 
 ```{r web-scaping-basics-8-test, include = FALSE}
-
+html_2 |> 
+  html_elements(".important")
 ```
 
 ### 
@@ -267,7 +273,8 @@ html_2 |>
 ```
 
 ```{r web-scaping-basics-9-test, include = FALSE}
-
+html_2 |> 
+  html_elements("#first")
 ```
 
 ### 
@@ -298,6 +305,15 @@ print(html_3)
 ```
 
 ```{r web-scaping-basics-10-test, include = FALSE}
+html_3 <- minimal_html("
+  <ul>
+    <li><b>C-3PO</b> is a <i>droid</i> that weighs <span class='weight'>167 kg</span></li>
+    <li><b>R2-D2</b> is a <i>droid</i> that weighs <span class='weight'>96 kg</span></li>
+    <li><b>Yoda</b> weighs <span class='weight'>66 kg</span></li>
+    <li><b>R4-P17</b> is a <i>droid</i></li>
+  </ul>
+  ")
+print(html_3)
 
 ```
 
@@ -319,7 +335,8 @@ html_3 |>
 ```
 
 ```{r web-scaping-basics-11-test, include = FALSE}
-
+html_3 |> 
+  html_elements("li")
 ```
 
 ### 
@@ -342,7 +359,9 @@ Continue the pipe to `html_element("b")`, which will pull out the elements from 
 ```
 
 ```{r web-scaping-basics-12-test, include = FALSE}
-
+html_3 |> 
+  html_elements("li")  |> 
+  html_element("b")
 ```
 
 ### 
@@ -367,7 +386,10 @@ Continue the pipe to `html_text2()`.
 ```
 
 ```{r web-scaping-basics-13-test, include = FALSE}
-
+html_3 |> 
+  html_elements("li")  |> 
+  html_element("b")|> 
+  html_text2()
 ```
 
 ### 
@@ -402,7 +424,15 @@ print(html_4)
 ```
 
 ```{r web-scaping-basics-14-test, include = FALSE}
-
+html_4 <- minimal_html("
+  <table class='mytable'>
+    <tr><th>x</th>   <th>y</th></tr>
+    <tr><td>1.5</td> <td>2.7</td></tr>
+    <tr><td>4.9</td> <td>1.3</td></tr>
+    <tr><td>7.2</td> <td>8.1</td></tr>
+  </table>
+  ")
+print(html_4)
 ```
 
 ### 
@@ -424,7 +454,8 @@ html_4 |>
 ```
 
 ```{r web-scaping-basics-15-test, include = FALSE}
-
+html_4 |> 
+  html_element(".mytable")
 ```
 
 ### 
@@ -447,7 +478,9 @@ Continue the pipe to `html_table()`.
 ```
 
 ```{r web-scaping-basics-16-test, include = FALSE}
-
+html_4 |> 
+  html_element(".mytable")|> 
+  html_table()
 ```
 
 ### 
@@ -477,7 +510,8 @@ Examine the [webpage](https://rvest.tidyverse.org/articles/starwars.html) for th
 ```
 
 ```{r web-scaping-examples-1-test, include = FALSE}
-
+"https://rvest.tidyverse.org/articles/starwars.html" |> 
+  read_html()
 ```
 
 ### 
@@ -515,7 +549,9 @@ Continue the pipe with `html_elements("section")`.
 ```
 
 ```{r web-scaping-examples-2-test, include = FALSE}
-
+"https://rvest.tidyverse.org/articles/starwars.html" |> 
+  read_html()|> 
+  html_elements("section")
 ```
 
 ### 
@@ -538,7 +574,10 @@ Continue the pipe with `html_element("h2")`. We want to pull out just the title 
 ```
 
 ```{r web-scaping-examples-3-test, include = FALSE}
-
+"https://rvest.tidyverse.org/articles/starwars.html" |> 
+  read_html()|> 
+  html_elements("section")|> 
+  html_element("h2")
 ```
 
 ### 
@@ -562,7 +601,11 @@ Continue the pipe with `html_text2()`. We almost always want to clean up the und
 ```
 
 ```{r web-scaping-examples-4-test, include = FALSE}
-
+"https://rvest.tidyverse.org/articles/starwars.html" |> 
+  read_html()|> 
+  html_elements("section")|> 
+  html_element("h2") |> 
+  html_text2()
 ```
 
 ### 
@@ -592,7 +635,12 @@ tibble(title =
 ```
 
 ```{r web-scaping-examples-5-test, include = FALSE}
-
+tibble(title = 
+         "https://rvest.tidyverse.org/articles/starwars.html" |> 
+         read_html() |> 
+         html_elements("section") |> 
+         html_elements("h2") |> 
+         html_text2())
 ```
 
 ### 
@@ -629,7 +677,7 @@ Consider [the highest rated movies](https://www.imdb.com/chart/top) on [IMDb](ht
 ```
 
 ```{r web-scaping-examples-6-test, include = FALSE}
-
+"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> read_html()
 ```
 
 ### 
@@ -650,11 +698,12 @@ The key element is a table, which is often the case with web scraping exercises.
 
 ```{r web-scaping-examples-7-hint-1, eval = FALSE}
 ... |> 
-  html_table("...")
+  html_element("...")
 ```
 
 ```{r web-scaping-examples-7-test, include = FALSE}
-
+"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> read_html()|> 
+  html_element(".chart")
 ```
 
 ### 
@@ -679,7 +728,9 @@ Continue the pipe to `html_table()`.
 ```
 
 ```{r web-scaping-examples-8-test, include = FALSE}
-
+"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> read_html()|> 
+  html_element(".chart")|> 
+  html_table()
 ```
 
 ### 
@@ -705,7 +756,12 @@ Continue the pipe to a `select()` call which renames the second column to `rank_
 ```
 
 ```{r web-scaping-examples-9-test, include = FALSE}
-
+"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> read_html()|> 
+  html_element(".chart")|> 
+  html_table()|> 
+  select(
+      rank_title_year = `Rank & Title`,
+      rating = `IMDb Rating`)
 ```
 
 ### 
@@ -731,7 +787,14 @@ Continue the pipe with a call to `mutate()` which runs `str_squish()` on `rank_t
 ```
 
 ```{r web-scaping-examples-10-test, include = FALSE}
-
+"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> read_html()|> 
+  html_element(".chart")|> 
+  html_table()|> 
+  select(
+      rank_title_year = `Rank & Title`,
+      rating = `IMDb Rating`)|> 
+  mutate(
+    rank_title_year = str_squish(rank_title_year))
 ```
 
 ### 
@@ -754,7 +817,15 @@ Continue the call to `mutate()`, creating a new variable called `rank` which is 
 ```
 
 ```{r web-scaping-examples-11-test, include = FALSE}
-
+"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> read_html()|> 
+  html_element(".chart")|> 
+  html_table()|> 
+  select(
+      rank_title_year = `Rank & Title`,
+      rating = `IMDb Rating`)|> 
+  mutate(
+    rank_title_year = str_squish(rank_title_year))|> 
+  mutate(rank = parse_number(rank_title_year))
 ```
 
 ### 
@@ -780,7 +851,17 @@ Continue the pipe to `mutate()`, creating a new variable `title` which is the re
 ```
 
 ```{r web-scaping-examples-12-test, include = FALSE}
-
+"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> read_html()|> 
+  html_element(".chart")|> 
+  html_table()|> 
+  select(
+      rank_title_year = `Rank & Title`,
+      rating = `IMDb Rating`)|> 
+  mutate(
+    rank_title_year = str_squish(rank_title_year))|> 
+  mutate(rank = parse_number(rank_title_year)) |> 
+  mutate(title = str_extract(rank_title_year, 
+                             pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))"))
 ```
 
 ### 
@@ -825,7 +906,22 @@ Complete the pipe with a `select()` statement which keeps `rank`, `title` and `r
 ```
 
 ```{r web-scaping-examples-13-test, include = FALSE}
-
+"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> 
+  read_html() |> 
+  html_element(".chart") |> 
+  html_table() |>   
+  select(
+    rank_title_year = `Rank & Title`,
+    rating = `IMDb Rating`
+) |> 
+  mutate(
+    rank_title_year = str_squish(rank_title_year)
+) |> 
+  mutate(rank = parse_number(rank_title_year)) |>   
+  mutate(title = 
+           str_extract(rank_title_year, 
+                       pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))")) |> 
+  select(rank, title, rating)
 ```
 
 ### 
