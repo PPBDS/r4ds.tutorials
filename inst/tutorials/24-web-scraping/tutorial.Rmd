@@ -54,11 +54,16 @@ html_4 <- minimal_html("
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- DK: Format code (especially in tests) correctly. One statement per line. -->
 
+<!-- DK: Always spaces around the pipe \> -->
 
+<<<<<<< HEAD
 
 <!-- Perhaps mention the polite package. Or ethics and legalities? What about dynamic sites?  -->
 <!-- DK: More detail in Introduction/Summary. -->
+=======
+>>>>>>> 2e4ff6e68b9046b5aaea247b1f88244553ebd52f
 
 ## Introduction
 ### 
@@ -385,8 +390,11 @@ html_3 |>
 
 The last step of a web scrape is often `html_text2()`, since we (almost always) want to get rid of any weird formatting.
 
+<<<<<<< HEAD
 <!-- DK: The chapter includes an example of how html_element() differs from html_elements(), but I don't think it merits inclusion. I also skipped the use of html_attr(). -->
 <!-- DK: add a better knowledge drop -->
+=======
+>>>>>>> 2e4ff6e68b9046b5aaea247b1f88244553ebd52f
 ### Exercise 14
 
 The last web scraping trick we cover involves how to handle html tables. HTML tables are built up from four main elements: `<table>`, `<tr>` (table row), `<th>` (table heading), and `<td>` (table data). 
@@ -593,8 +601,6 @@ Continue the pipe with `html_text2()`. We almost always want to clean up the und
 
 ### 
 
-This character vector is the result we are looking for. 
-
 <!-- DK: Add knowledge drop -->
 
 ### Exercise 5
@@ -649,13 +655,6 @@ tibble(title = section |>
 
 ### Exercise 6
 
-<!-- DK: Examine the below and report back to me. Consult the book. -->
-
-<!-- AC: There are issues with the current IMDb url. Tried fixing. 
-View the following Discord messages: 
-https://discord.com/channels/1066524559240597595/1066524726278762608/1267599310019625141
-https://discord.com/channels/1066524559240597595/1066524726278762608/1267869199544619018 -->
-
 Consider [the highest rated movies](https://www.imdb.com/chart/top) on [IMDb](https://en.wikipedia.org/wiki/IMDb), the Internet Movie Database. The URL is `https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/`. Pipe that URL (with quotation marks) to `read_html()`.
 
 ```{r web-scaping-examples-6, exercise = TRUE}
@@ -667,10 +666,9 @@ Consider [the highest rated movies](https://www.imdb.com/chart/top) on [IMDb](ht
   ...
 ```
 
-<!-- DK: Do the same trick with this webpage as we did with Starwars. -->
-<!-- SJ: i couldn't figure this out w/o breaking everything -->
 ```{r web-scaping-examples-6-test, include = FALSE}
-"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> read_html()
+"data/imdb.html" |> 
+  read_html()
 ```
 
 ### 
@@ -695,7 +693,7 @@ The key element is a table, which is often the case with web scraping exercises.
 ```
 
 ```{r web-scaping-examples-7-test, include = FALSE}
-"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> read_html()|> 
+"data/imdb.html" |> read_html()|> 
   html_element(".chart")
 ```
 
@@ -719,10 +717,11 @@ Continue the pipe to `html_table()`.
 ... |> 
   html_table()
 ```
-<!-- SJ -->
+
 ```{r web-scaping-examples-8-test, include = FALSE}  
-"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> read_html()|> 
-  html_element(".chart")|> 
+"data/imdb.html" |> 
+  read_html() |> 
+  html_element(".chart") |> 
   html_table()
 
 #data/star_wars.html
@@ -751,7 +750,7 @@ Continue the pipe to a `select()` call which renames the second column to `rank_
 ```
 
 ```{r web-scaping-examples-9-test, include = FALSE}
-"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> read_html()|> 
+"data/imdb.html" |> read_html()|> 
   html_element(".chart")|> 
   html_table()|> 
   select(
@@ -782,7 +781,7 @@ Continue the pipe with a call to `mutate()` which runs `str_squish()` on `rank_t
 ```
 
 ```{r web-scaping-examples-10-test, include = FALSE}
-"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/"|> read_html()|> 
+"data/imdb.html"|> read_html()|> 
   html_element(".chart")|> 
   html_table()|> 
   select(
@@ -812,7 +811,7 @@ Continue the call to `mutate()`, creating a new variable called `rank` which is 
 ```
 
 ```{r web-scaping-examples-11-test, include = FALSE}
-"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/"|> read_html()|> 
+"data/imdb.html" |> read_html()|> 
   html_element(".chart")|> 
   html_table()|> 
   select(
@@ -846,7 +845,7 @@ Continue the pipe to `mutate()`, creating a new variable `title` which is the re
 ```
 
 ```{r web-scaping-examples-12-test, include = FALSE}
-"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/"|> read_html()|> 
+"data/imdb.html" |> read_html()|> 
   html_element(".chart")|> 
   html_table()|> 
   select(
@@ -882,7 +881,7 @@ Complete the pipe with a `select()` statement which keeps `rank`, `title` and `r
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r web-scaping-examples-13-hint-1, eval = FALSE}
-"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> 
+"data/imdb.html"  |> 
   read_html() |> 
   html_element(".chart") |> 
   html_table() |>   
@@ -901,7 +900,7 @@ Complete the pipe with a `select()` statement which keeps `rank`, `title` and `r
 ```
 
 ```{r web-scaping-examples-13-test, include = FALSE}
-"https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> 
+"data/imdb.html"  |> 
   read_html() |> 
   html_element(".chart") |> 
   html_table() |>   
