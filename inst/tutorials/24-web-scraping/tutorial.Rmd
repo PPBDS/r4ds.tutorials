@@ -58,6 +58,12 @@ html_4 <- minimal_html("
 
 <!-- DK: Always spaces around the pipe \> -->
 
+<<<<<<< HEAD
+
+<!-- Perhaps mention the polite package. Or ethics and legalities? What about dynamic sites?  -->
+<!-- DK: More detail in Introduction/Summary. -->
+=======
+>>>>>>> 2e4ff6e68b9046b5aaea247b1f88244553ebd52f
 
 ## Introduction
 ### 
@@ -384,6 +390,11 @@ html_3 |>
 
 The last step of a web scrape is often `html_text2()`, since we (almost always) want to get rid of any weird formatting.
 
+<<<<<<< HEAD
+<!-- DK: The chapter includes an example of how html_element() differs from html_elements(), but I don't think it merits inclusion. I also skipped the use of html_attr(). -->
+<!-- DK: add a better knowledge drop -->
+=======
+>>>>>>> 2e4ff6e68b9046b5aaea247b1f88244553ebd52f
 ### Exercise 14
 
 The last web scraping trick we cover involves how to handle html tables. HTML tables are built up from four main elements: `<table>`, `<tr>` (table row), `<th>` (table heading), and `<td>` (table data). 
@@ -589,7 +600,7 @@ Continue the pipe with `html_text2()`. We almost always want to clean up the und
 ```
 
 ### 
-
+html_text2() differs from html_text() slightly. while html_text() collapses all the text into a single string, html_text2() preserves the white space between elements, allowing you to retain the structure and formatting of the text as it appears on the web page.
 <!-- DK: Add knowledge drop -->
 
 ### Exercise 5
@@ -682,7 +693,8 @@ The key element is a table, which is often the case with web scraping exercises.
 ```
 
 ```{r web-scaping-examples-7-test, include = FALSE}
-"data/imdb.html" |> read_html()|> 
+"data/imdb.html" |>
+  read_html()|> 
   html_element(".chart")
 ```
 
@@ -739,11 +751,11 @@ Continue the pipe to a `select()` call which renames the second column to `rank_
 ```
 
 ```{r web-scaping-examples-9-test, include = FALSE}
-"data/imdb.html" |> read_html()|> 
+"data/imdb.html" |> 
+  read_html()|> 
   html_element(".chart")|> 
   html_table()|> 
-  select(
-      rank_title_year = `Rank & Title`,
+  select(rank_title_year = `Rank & Title`,
       rating = `IMDb Rating`)
 ```
 
@@ -770,14 +782,13 @@ Continue the pipe with a call to `mutate()` which runs `str_squish()` on `rank_t
 ```
 
 ```{r web-scaping-examples-10-test, include = FALSE}
-"data/imdb.html"|> read_html()|> 
+"data/imdb.html"|> 
+  read_html()|> 
   html_element(".chart")|> 
   html_table()|> 
-  select(
-      rank_title_year = `Rank & Title`,
+  select(rank_title_year = `Rank & Title`,
       rating = `IMDb Rating`)|> 
-  mutate(
-    rank_title_year = str_squish(rank_title_year))
+  mutate( rank_title_year = str_squish(rank_title_year))
 ```
 
 ### 
@@ -800,14 +811,12 @@ Continue the call to `mutate()`, creating a new variable called `rank` which is 
 ```
 
 ```{r web-scaping-examples-11-test, include = FALSE}
-"data/imdb.html" |> read_html()|> 
+"data/imdb.html" |> 
+  read_html()|> 
   html_element(".chart")|> 
   html_table()|> 
-  select(
-      rank_title_year = `Rank & Title`,
-      rating = `IMDb Rating`)|> 
-  mutate(
-    rank_title_year = str_squish(rank_title_year))|> 
+  select(rank_title_year = `Rank & Title`,rating = `IMDb Rating`)|> 
+  mutate(rank_title_year = str_squish(rank_title_year))|> 
   mutate(rank = parse_number(rank_title_year))
 ```
 
@@ -834,14 +843,12 @@ Continue the pipe to `mutate()`, creating a new variable `title` which is the re
 ```
 
 ```{r web-scaping-examples-12-test, include = FALSE}
-"data/imdb.html" |> read_html()|> 
+"data/imdb.html" |> 
+  read_html()|> 
   html_element(".chart")|> 
   html_table()|> 
-  select(
-      rank_title_year = `Rank & Title`,
-      rating = `IMDb Rating`)|> 
-  mutate(
-    rank_title_year = str_squish(rank_title_year))|> 
+  select(rank_title_year = `Rank & Title`,rating = `IMDb Rating`)|> 
+  mutate( rank_title_year = str_squish(rank_title_year))|> 
   mutate(rank = parse_number(rank_title_year)) |> 
   mutate(title = str_extract(rank_title_year, 
                              pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))"))
@@ -893,17 +900,10 @@ Complete the pipe with a `select()` statement which keeps `rank`, `title` and `r
   read_html() |> 
   html_element(".chart") |> 
   html_table() |>   
-  select(
-    rank_title_year = `Rank & Title`,
-    rating = `IMDb Rating`
-) |> 
-  mutate(
-    rank_title_year = str_squish(rank_title_year)
-) |> 
+  select( rank_title_year = `Rank & Title`, rating = `IMDb Rating`) |> 
+  mutate(rank_title_year = str_squish(rank_title_year)) |> 
   mutate(rank = parse_number(rank_title_year)) |>   
-  mutate(title = 
-           str_extract(rank_title_year, 
-                       pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))")) |> 
+  mutate(title = str_extract(rank_title_year,  pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))")) |> 
   select(rank, title, rating)
 ```
 
