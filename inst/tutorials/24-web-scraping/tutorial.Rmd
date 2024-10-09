@@ -54,16 +54,11 @@ html_4 <- minimal_html("
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- DK: Format code (especially in tests) correctly. One statement per line. -->
+<!-- The chapter includes an example of how html_element() differs from html_elements(), but I don't think it merits inclusion. I also skipped the use of html_attr(). -->
+
 
 <!-- DK: Always spaces around the pipe \> -->
 
-<<<<<<< HEAD
-
-<!-- Perhaps mention the polite package. Or ethics and legalities? What about dynamic sites?  -->
-<!-- DK: More detail in Introduction/Summary. -->
-=======
->>>>>>> 2e4ff6e68b9046b5aaea247b1f88244553ebd52f
 
 ## Introduction
 ### 
@@ -130,7 +125,6 @@ question_text(NULL,
 	incorrect = NULL,
 	rows = 3)
 ```
-
 
 ### 
 
@@ -381,8 +375,8 @@ Continue the pipe to `html_text2()`.
 
 ```{r web-scaping-basics-13-test, include = FALSE}
 html_3 |> 
-  html_elements("li")  |> 
-  html_element("b")|> 
+  html_elements("li") |> 
+  html_element("b") |> 
   html_text2()
 ```
 
@@ -390,11 +384,7 @@ html_3 |>
 
 The last step of a web scrape is often `html_text2()`, since we (almost always) want to get rid of any weird formatting.
 
-<<<<<<< HEAD
-<!-- DK: The chapter includes an example of how html_element() differs from html_elements(), but I don't think it merits inclusion. I also skipped the use of html_attr(). -->
-<!-- DK: add a better knowledge drop -->
-=======
->>>>>>> 2e4ff6e68b9046b5aaea247b1f88244553ebd52f
+
 ### Exercise 14
 
 The last web scraping trick we cover involves how to handle html tables. HTML tables are built up from four main elements: `<table>`, `<tr>` (table row), `<th>` (table heading), and `<td>` (table data). 
@@ -468,7 +458,7 @@ Continue the pipe to `html_table()`.
 
 ```{r web-scaping-basics-16-test, include = FALSE}
 html_4 |> 
-  html_element(".mytable")|> 
+  html_element(".mytable") |> 
   html_table()
 ```
 
@@ -600,8 +590,12 @@ Continue the pipe with `html_text2()`. We almost always want to clean up the und
 ```
 
 ### 
+ work
 `html_text2()` differs from `html_text()` slightly. while `html_text()` collapses all the text into a single string, `html_text2()` preserves the white space between elements, allowing you to retain the structure and formatting of the text as it appears on the web page.
 <!-- DK: Add knowledge drop :SJ: done-->
+
+
+
 
 ### Exercise 5
 
@@ -695,7 +689,31 @@ tibble(title = section |>
 
 
 
+<<<<<<< HEAD
+=======
+We can use the same approach to add other variables to this tibble, like the director and release date. To avoid code duplication, we should create an object, perhaps called `section`, which is the result of the first three steps in the pipe. Then, each variable creation would look something like
+
+```{r echo = TRUE}
+section <- "https://rvest.tidyverse.org/articles/starwars.html" |> 
+         read_html() |> 
+         html_elements("section")
+
+tibble(title = section |> 
+         html_elements("h2") |> 
+         html_text2(),
+       director = section |> 
+         html_element(".director") |> 
+         html_text2())
+```
+
+ work
+
+
+>>>>>>> 990955ee9e9d810950698191079dd4894193572f
 ### Exercise 8
+
+
+ main
 
 Consider [the highest rated movies](https://www.imdb.com/chart/top) on [IMDb](https://en.wikipedia.org/wiki/IMDb), the Internet Movie Database. The URL is `https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/`. Pipe that URL (with quotation marks) to `read_html()`.
 
@@ -761,7 +779,7 @@ Continue the pipe to `html_table()`.
   html_table()
 ```
 
-```{r web-scaping-examples-8-test, include = FALSE}  
+```{r web-scaping-examples-8-test, include = FALSE}
 "data/imdb.html" |> 
   read_html() |> 
   html_element(".chart") |> 
