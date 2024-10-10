@@ -590,8 +590,12 @@ Continue the pipe with `html_text2()`. We almost always want to clean up the und
 ```
 
 ### 
-
+ work
 `html_text2()` differs from `html_text()` slightly. while `html_text()` collapses all the text into a single string, `html_text2()` preserves the white space between elements, allowing you to retain the structure and formatting of the text as it appears on the web page.
+<!-- DK: Add knowledge drop :SJ: done-->
+
+
+
 
 ### Exercise 5
 
@@ -626,6 +630,67 @@ tibble(title =
 
 <!-- DK: Turn the below into one or two proper questions. -->
 
+### Exercise 6
+
+We can use the same approach to add other variables to this tibble, like the director and release date. To avoid code duplication, create an object called `section`, set its value to `https://rvest.tidyverse.org/articles/starwars.html`, then pipe this object to `read_html()`. COntinue that pipe to `html_elements()` with "section" being its argument.
+
+```{r web-scaping-examples-45, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-examples-45-hint-1, eval = FALSE}
+...<- "https://rvest.tidyverse.org/articles/starwars.html" |> 
+         read_html() |> 
+         html_elements(...)
+```
+
+```{r web-scaping-examples-45-test, include = FALSE}
+section <- "https://rvest.tidyverse.org/articles/starwars.html" |> 
+         read_html() |> 
+         html_elements("section")
+```
+
+### 
+
+
+### exercise 7
+
+Now that we have an object, we can use it for our tibble. Create a tibble using `title` and `director` for its arguments. set title equal to `section |>  html_elements("h2") |>   html_text2()`, and director to `section |>html_element(".director") |>  html_text2()`.
+```{r web-scaping-examples-46, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r web-scaping-examples-46-hint-1, eval = FALSE}
+tibble(title = section |> 
+         html_elements("h2") |> 
+         html_text2(),
+       director = section |> 
+         html_element(".director") |> 
+         html_text2())
+```
+
+```{r web-scaping-examples-46-test, include = FALSE}
+section <- "https://rvest.tidyverse.org/articles/starwars.html" |> 
+         read_html() |> 
+         html_elements("section")
+
+tibble(title = section |> 
+         html_elements("h2") |> 
+         html_text2(),
+       director = section |> 
+         html_element(".director") |> 
+         html_text2())
+```
+###
+
+
+
+
+
 We can use the same approach to add other variables to this tibble, like the director and release date. To avoid code duplication, we should create an object, perhaps called `section`, which is the result of the first three steps in the pipe. Then, each variable creation would look something like
 
 ```{r echo = TRUE}
@@ -641,7 +706,14 @@ tibble(title = section |>
          html_text2())
 ```
 
-### Exercise 6
+
+
+
+
+### Exercise 8
+
+
+
 
 Consider [the highest rated movies](https://www.imdb.com/chart/top) on [IMDb](https://en.wikipedia.org/wiki/IMDb), the Internet Movie Database. The URL is `https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/`. Pipe that URL (with quotation marks) to `read_html()`.
 
@@ -664,7 +736,7 @@ Consider [the highest rated movies](https://www.imdb.com/chart/top) on [IMDb](ht
 Note that `read_html()` takes longer to run than the previous example because the underlying webpage is much more complex.
 
 
-### Exercise 7
+### Exercise 9
 
 The key element is a table, which is often the case with web scraping exercises. Continue the pipe to `html_element(".chart")`.
 
@@ -692,7 +764,7 @@ The result is no longer an "html_document". Instead, it is an "html_node".
 
 <!-- Drop knowledge! Use of the "table" tag (?) and then use of html_table(). Two uses of "table" connected or random? -->
 
-### Exercise 8
+### Exercise 10
 
 Continue the pipe to `html_table()`.
 
@@ -720,7 +792,7 @@ Continue the pipe to `html_table()`.
 
 The result is a tibble with 250 rows and 5 columns. But, as you can see, the column names are a mess, as our the values in many of the cells. We need to clean it up.
 
-### Exercise 9
+### Exercise 11
 
 Continue the pipe to a `select()` call which renames the second column to `rank_title_year ` and the third column to `rating`.
 
@@ -751,7 +823,7 @@ Continue the pipe to a `select()` call which renames the second column to `rank_
 
 `select()` does two things: it keeps only two columns, both of which it renames. But the `rank_title_year` is a mess because it really includes three different variables, all mashed together.
 
-### Exercise 10
+### Exercise 12
 
 Continue the pipe with a call to `mutate()` which runs `str_squish()` on `rank_title_year`, assigning the result to `rank_title_year`. Modifying a variable "in place" like this is a common approach. We don't need to keep the original value around. 
 
@@ -783,7 +855,7 @@ Continue the pipe with a call to `mutate()` which runs `str_squish()` on `rank_t
 
 [`str_squish()`](https://stringr.tidyverse.org/reference/str_trim.html) removes whitespace at the start and end or a character variable, and replaces all internal whitespace with a single space.
 
-### Exercise 11
+### Exercise 13
 
 Continue the call to `mutate()`, creating a new variable called `rank` which is the result of running `parse_number()` on `rank_title_year`.
 
@@ -814,7 +886,7 @@ This approach depends on the fact that [`parse_number()`](https://readr.tidyvers
 
 <!-- AC: Not sure why we need multiple calls to mutate? We could just put it all in one? -->
 
-### Exercise 12
+### Exercise 14
 
 Continue the pipe to `mutate()`, creating a new variable `title` which is the result of running `str_extract()` on `rank_title_year` with the pattern argument set to `"(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))"`.
 
@@ -854,7 +926,7 @@ It gave back the regular expression above, explaining:
 
 Use AI to solve any regular expression problem that takes longer than 30 seconds.
 
-### Exercise 13
+### Exercise 15
 
 Complete the pipe with a `select()` statement which keeps `rank`, `title` and `rating` in that order.
 
