@@ -46,6 +46,8 @@ html_4 <- minimal_html("
   </table>
   ")
 
+# DK: Probably need section created here.
+
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -590,11 +592,8 @@ Continue the pipe with `html_text2()`. We almost always want to clean up the und
 ```
 
 ### 
- work
+
 `html_text2()` differs from `html_text()` slightly. while `html_text()` collapses all the text into a single string, `html_text2()` preserves the white space between elements, allowing you to retain the structure and formatting of the text as it appears on the web page.
-<!-- DK: Add knowledge drop :SJ: done-->
-
-
 
 
 ### Exercise 5
@@ -628,25 +627,29 @@ tibble(title =
 
 ### 
 
-<!-- DK: Turn the below into one or two proper questions. -->
+<!-- DK: Add knowledge drop. -->
+
+<!-- DK: Turn the below into one or two proper questions. First question, pipe http to read. Second, continue pipe to html_elements(). Third, we report that, behind the scenes, we jave assigned the result of this pipe to an object named "section." Then, we ask the question, "Type `section` and hit Run Code. -->
 
 ### Exercise 6
 
-We can use the same approach to add other variables to this tibble, like the director and release date. To avoid code duplication, create an object called `section`, set its value to `https://rvest.tidyverse.org/articles/starwars.html`, then pipe this object to `read_html()`. COntinue that pipe to `html_elements()` with "section" being its argument.
+We can use the same approach to add other variables to this tibble, like the director and release date. To avoid code duplication, create an object called `section`, set its value to `https://rvest.tidyverse.org/articles/starwars.html`, then pipe this object to `read_html()`. Continue that pipe to `html_elements()` with "section" being its argument.
 
-```{r web-scaping-examples-45, exercise = TRUE}
+```{r web-scaping-examples-6, exercise = TRUE}
 
 ```
 
+<!-- DK: Make sure all tests use local copies of data, not the http. -->
+
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r web-scaping-examples-45-hint-1, eval = FALSE}
-...<- "https://rvest.tidyverse.org/articles/starwars.html" |> 
+```{r web-scaping-examples-6-hint-1, eval = FALSE}
+... <- "https://rvest.tidyverse.org/articles/starwars.html" |> 
          read_html() |> 
          html_elements(...)
 ```
 
-```{r web-scaping-examples-45-test, include = FALSE}
+```{r web-scaping-examples-6-test, include = FALSE}
 section <- "https://rvest.tidyverse.org/articles/starwars.html" |> 
          read_html() |> 
          html_elements("section")
@@ -654,17 +657,20 @@ section <- "https://rvest.tidyverse.org/articles/starwars.html" |>
 
 ### 
 
+<!-- DK: Knowledge drops. -->
 
-### exercise 7
+
+### Exercise 7
 
 Now that we have an object, we can use it for our tibble. Create a tibble using `title` and `director` for its arguments. set title equal to `section |>  html_elements("h2") |>   html_text2()`, and director to `section |>html_element(".director") |>  html_text2()`.
-```{r web-scaping-examples-46, exercise = TRUE}
+
+```{r web-scaping-examples-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r web-scaping-examples-46-hint-1, eval = FALSE}
+```{r web-scaping-examples-7-hint-1, eval = FALSE}
 tibble(title = section |> 
          html_elements("h2") |> 
          html_text2(),
@@ -673,7 +679,7 @@ tibble(title = section |>
          html_text2())
 ```
 
-```{r web-scaping-examples-46-test, include = FALSE}
+```{r web-scaping-examples-7-test, include = FALSE}
 section <- "https://rvest.tidyverse.org/articles/starwars.html" |> 
          read_html() |> 
          html_elements("section")
@@ -685,11 +691,10 @@ tibble(title = section |>
          html_element(".director") |> 
          html_text2())
 ```
-###
 
+### 
 
-
-
+<!-- DK: Fix formatting. -->
 
 We can use the same approach to add other variables to this tibble, like the director and release date. To avoid code duplication, we should create an object, perhaps called `section`, which is the result of the first three steps in the pipe. Then, each variable creation would look something like
 
@@ -706,27 +711,20 @@ tibble(title = section |>
          html_text2())
 ```
 
-
-
-
-
 ### Exercise 8
-
-
-
 
 Consider [the highest rated movies](https://www.imdb.com/chart/top) on [IMDb](https://en.wikipedia.org/wiki/IMDb), the Internet Movie Database. The URL is `https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/`. Pipe that URL (with quotation marks) to `read_html()`.
 
-```{r web-scaping-examples-6, exercise = TRUE}
+```{r web-scaping-examples-8, exercise = TRUE}
 
 ```
 
-```{r web-scaping-examples-6-hint-1, eval = FALSE}
+```{r web-scaping-examples-8-hint-1, eval = FALSE}
 "https://web.archive.org/web/20200101054123/https://www.imdb.com/chart/top/" |> 
   ...
 ```
 
-```{r web-scaping-examples-6-test, include = FALSE}
+```{r web-scaping-examples-8-test, include = FALSE}
 "data/imdb.html" |> 
   read_html()
 ```
@@ -741,18 +739,18 @@ Note that `read_html()` takes longer to run than the previous example because th
 The key element is a table, which is often the case with web scraping exercises. Continue the pipe to `html_element(".chart")`.
 
 
-```{r web-scaping-examples-7, exercise = TRUE}
+```{r web-scaping-examples-9, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r web-scaping-examples-7-hint-1, eval = FALSE}
+```{r web-scaping-examples-9-hint-1, eval = FALSE}
 ... |> 
   html_element("...")
 ```
 
-```{r web-scaping-examples-7-test, include = FALSE}
+```{r web-scaping-examples-9-test, include = FALSE}
 "data/imdb.html" |>
   read_html()|> 
   html_element(".chart")
@@ -768,18 +766,18 @@ The result is no longer an "html_document". Instead, it is an "html_node".
 
 Continue the pipe to `html_table()`.
 
-```{r web-scaping-examples-8, exercise = TRUE}
+```{r web-scaping-examples-10, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r web-scaping-examples-8-hint-1, eval = FALSE}
+```{r web-scaping-examples-10-hint-1, eval = FALSE}
 ... |> 
   html_table()
 ```
 
-```{r web-scaping-examples-8-test, include = FALSE}
+```{r web-scaping-examples-10-test, include = FALSE}
 "data/imdb.html" |> 
   read_html() |> 
   html_element(".chart") |> 
@@ -796,13 +794,13 @@ The result is a tibble with 250 rows and 5 columns. But, as you can see, the col
 
 Continue the pipe to a `select()` call which renames the second column to `rank_title_year ` and the third column to `rating`.
 
-```{r web-scaping-examples-9, exercise = TRUE}
+```{r web-scaping-examples-11, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r web-scaping-examples-9-hint-1, eval = FALSE}
+```{r web-scaping-examples-11-hint-1, eval = FALSE}
 ... |> 
   select(
       rank_title_year = `Rank & Title`,
@@ -810,7 +808,7 @@ Continue the pipe to a `select()` call which renames the second column to `rank_
     )
 ```
 
-```{r web-scaping-examples-9-test, include = FALSE}
+```{r web-scaping-examples-11-test, include = FALSE}
 "data/imdb.html" |> 
   read_html()|> 
   html_element(".chart")|> 
@@ -828,20 +826,20 @@ Continue the pipe to a `select()` call which renames the second column to `rank_
 Continue the pipe with a call to `mutate()` which runs `str_squish()` on `rank_title_year`, assigning the result to `rank_title_year`. Modifying a variable "in place" like this is a common approach. We don't need to keep the original value around. 
 
 
-```{r web-scaping-examples-10, exercise = TRUE}
+```{r web-scaping-examples-12, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r web-scaping-examples-10-hint-1, eval = FALSE}
+```{r web-scaping-examples-12-hint-1, eval = FALSE}
 ... |> 
   mutate(
     rank_title_year = str_squish(rank_title_year)
   )
 ```
 
-```{r web-scaping-examples-10-test, include = FALSE}
+```{r web-scaping-examples-12-test, include = FALSE}
 "data/imdb.html"|> 
   read_html()|> 
   html_element(".chart")|> 
@@ -859,18 +857,18 @@ Continue the pipe with a call to `mutate()` which runs `str_squish()` on `rank_t
 
 Continue the call to `mutate()`, creating a new variable called `rank` which is the result of running `parse_number()` on `rank_title_year`.
 
-```{r web-scaping-examples-11, exercise = TRUE}
+```{r web-scaping-examples-13, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r web-scaping-examples-11-hint-1, eval = FALSE}
+```{r web-scaping-examples-13-hint-1, eval = FALSE}
 ... |> 
   mutate(rank = parse_number(rank_title_year))
 ```
 
-```{r web-scaping-examples-11-test, include = FALSE}
+```{r web-scaping-examples-13-test, include = FALSE}
 "data/imdb.html" |> 
   read_html()|> 
   html_element(".chart")|> 
@@ -890,19 +888,19 @@ This approach depends on the fact that [`parse_number()`](https://readr.tidyvers
 
 Continue the pipe to `mutate()`, creating a new variable `title` which is the result of running `str_extract()` on `rank_title_year` with the pattern argument set to `"(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))"`.
 
-```{r web-scaping-examples-12, exercise = TRUE}
+```{r web-scaping-examples-14, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r web-scaping-examples-12-hint-1, eval = FALSE}
+```{r web-scaping-examples-14-hint-1, eval = FALSE}
 ... |> 
   mutate(title = str_extract(rank_title_year, 
                              pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))"))
 ```
 
-```{r web-scaping-examples-12-test, include = FALSE}
+```{r web-scaping-examples-14-test, include = FALSE}
 "data/imdb.html" |> 
   read_html()|> 
   html_element(".chart")|> 
@@ -930,13 +928,13 @@ Use AI to solve any regular expression problem that takes longer than 30 seconds
 
 Complete the pipe with a `select()` statement which keeps `rank`, `title` and `rating` in that order.
 
-```{r web-scaping-examples-13, exercise = TRUE}
+```{r web-scaping-examples-15, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r web-scaping-examples-13-hint-1, eval = FALSE}
+```{r web-scaping-examples-15-hint-1, eval = FALSE}
 "data/imdb.html"  |> 
   read_html() |> 
   html_element(".chart") |> 
@@ -955,7 +953,7 @@ Complete the pipe with a `select()` statement which keeps `rank`, `title` and `r
   select(rank, title, rating)
 ```
 
-```{r web-scaping-examples-13-test, include = FALSE}
+```{r web-scaping-examples-15-test, include = FALSE}
 "data/imdb.html"  |> 
   read_html() |> 
   html_element(".chart") |> 
