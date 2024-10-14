@@ -46,7 +46,6 @@ html_4 <- minimal_html("
   </table>
   ")
 
-# DK: Probably need section created here.
 section <- "https://rvest.tidyverse.org/articles/starwars.html" |> 
          read_html() |> 
          html_elements("section")
@@ -61,7 +60,7 @@ section <- "https://rvest.tidyverse.org/articles/starwars.html" |>
 <!-- The chapter includes an example of how html_element() differs from html_elements(), but I don't think it merits inclusion. I also skipped the use of html_attr(). -->
 
 
-<!-- DK: Always spaces around the pipe \> -->
+<!-- DK: Always spaces around the pipe |> SJ: done-->
 
 
 ## Introduction
@@ -535,7 +534,7 @@ Continue the pipe with `html_elements("section")`.
 
 ```{r web-scaping-examples-2-test, include = FALSE}
 "data/star_wars.html" |> 
-  read_html()|> 
+  read_html() |> 
   html_elements("section")
 ```
 
@@ -560,8 +559,8 @@ Continue the pipe with `html_element("h2")`. We want to pull out just the title 
 
 ```{r web-scaping-examples-3-test, include = FALSE}
 "data/star_wars.html" |> 
-  read_html()|> 
-  html_elements("section")|> 
+  read_html() |> 
+  html_elements("section") |> 
   html_element("h2")
 ```
 
@@ -587,8 +586,8 @@ Continue the pipe with `html_text2()`. We almost always want to clean up the und
 
 ```{r web-scaping-examples-4-test, include = FALSE}
 "data/star_wars.html" |> 
-  read_html()|> 
-  html_elements("section")|> 
+  read_html() |> 
+  html_elements("section") |> 
   html_element("h2") |> 
   html_text2()
 ```
@@ -628,14 +627,24 @@ tibble(title =
 ```
 
 ### 
+
 A tibble is a data frame, but it tweaks some older behaviors to make life easier. R is an old language, and some features useful then now get in your way. The tibble package allows you to make data frames in a more streamlined and cleaner way compared to R's traditional data frames.
-<!-- DK: Add knowledge drop. -->
+
+1) "https://rvest.tidyverse.org/articles/starwars.html" 
+
+2) ... |> 
+    read_html() 
+    
+3) ... |> 
+    html_elements("section")
+    
+4) Behind the scenes, we have created an object named `section` which is the result of this pipe. Type `section` in the exercise block and hit "Run Code."
 
 <!-- DK: Turn the below into one or two proper questions. First question, pipe http to read. Second, continue pipe to html_elements(). Third, we report that, behind the scenes, we jave assigned the result of this pipe to an object named "section." Then, we ask the question, "Type `section` and hit Run Code. -->
 
 ### Exercise 6
 
-We can use the same approach to add other variables to this tibble, like the director and release date. To avoid code duplication, create an object called `section`, and set its value to `https://rvest.tidyverse.org/articles/starwars.html`
+Copy https://rvest.tidyverse.org/articles/starwars.html" into the code box and hit `run code`
 
 ```{r web-scaping-examples-6, exercise = TRUE}
 
@@ -644,18 +653,18 @@ We can use the same approach to add other variables to this tibble, like the dir
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r web-scaping-examples-6-hint-1, eval = FALSE}
-...<- "https://rvest.tidyverse.org/articles/starwars.html"
+"https://rvest.tidyverse.org/articles/starwars.html"
 ```
 
 ```{r web-scaping-examples-6-test, include = FALSE}
-section <- "https://rvest.tidyverse.org/articles/starwars.html" 
+"https://rvest.tidyverse.org/articles/starwars.html" 
 ```
 
 ### 
 
 ### Exercise 7
 
- pipe this object to `read_html()`.
+ pipe this to `read_html()`.
 
 ```{r web-scaping-examples-7, exercise = TRUE}
 
@@ -664,13 +673,13 @@ section <- "https://rvest.tidyverse.org/articles/starwars.html"
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r web-scaping-examples-7-hint-1, eval = FALSE}
-...<- "https://rvest.tidyverse.org/articles/starwars.html" |> 
-         read_html() |> 
-         html_elements(...)
+"https://rvest.tidyverse.org/articles/starwars.html" |> 
+         read_html() 
+       
 ```
 
 ```{r web-scaping-examples-7-test, include = FALSE}
-section <- "https://rvest.tidyverse.org/articles/starwars.html" |> 
+"https://rvest.tidyverse.org/articles/starwars.html" |> 
          read_html() 
          
 ```
@@ -679,7 +688,7 @@ section <- "https://rvest.tidyverse.org/articles/starwars.html" |>
 
 ### Exercise 8
 
- COntinue that pipe to `html_elements()` with "section" being its argument.
+Continue that pipe to `html_elements()` with "section" being its argument.
 
 ```{r web-scaping-examples-8, exercise = TRUE}
 
@@ -688,23 +697,22 @@ section <- "https://rvest.tidyverse.org/articles/starwars.html" |>
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r web-scaping-examples-8-hint-1, eval = FALSE}
-...<- "https://rvest.tidyverse.org/articles/starwars.html" |> 
+"https://rvest.tidyverse.org/articles/starwars.html" |> 
          read_html() |> 
          html_elements(...)
 ```
 
 ```{r web-scaping-examples-8-test, include = FALSE}
-section <- "https://rvest.tidyverse.org/articles/starwars.html" |> 
+ "https://rvest.tidyverse.org/articles/starwars.html" |> 
          read_html() |> 
          html_elements("section")
 ```
 
 ### 
 
-Behind the scenes, we have just assigned the result of this pipe to an object called `section`
 ### Exercise 9
 
-Type in `section` and hit run code.
+ Behind the scenes, we have created an object named `section` which is the result of this pipe. Type `section` in the exercise block and hit "Run Code."
 
 ```{r web-scaping-examples-9, exercise = TRUE}
 
@@ -727,7 +735,9 @@ section
 
 ### Exercise 10
 
-Now that we have an object, we can use it for our tibble. Create a tibble using `title` and `director` for its arguments. set title equal to `section |>  html_elements("h2") |>   html_text2()`, and director to `section |>html_element(".director") |>  html_text2()`.
+DK: Copy the code from above which created a tibble with one column, `title`. Change the code so that blah. blah, bpah, is replaced with just `section`.
+
+Now that we have an object, we can use it for our tibble. Copy the code from above which created a tibble with one column, `title`. Change the code so that "https://rvest.tidyverse.org/articles/starwars.html", is replaced with just `section`.
 
 ```{r web-scaping-examples-10, exercise = TRUE}
 
@@ -737,28 +747,24 @@ Now that we have an object, we can use it for our tibble. Create a tibble using 
 
 ```{r web-scaping-examples-10-hint-1, eval = FALSE}
 
-       director = section |> 
-         html_element(".director") |> 
+
+       
+
+tibble(title = s... |> 
+         html_elements("h2") |> 
          html_text2())
 ```
 
 ```{r web-scaping-examples-10-test, include = FALSE}
-section <- "https://rvest.tidyverse.org/articles/starwars.html" |> 
-         read_html() |> 
-         html_elements("section")
+
 
 tibble(title = section |> 
          html_elements("h2") |> 
-         html_text2(),
-       director = section |> 
-         html_element(".director") |> 
          html_text2())
+
 ```
 
 ### 
-
-<!-- DK: Fix formatting. -->
-
 
 ### Exercise 11
 
@@ -801,7 +807,7 @@ The key element is a table, which is often the case with web scraping exercises.
 
 ```{r web-scaping-examples-12-test, include = FALSE}
 "data/imdb.html" |>
-  read_html()|> 
+  read_html() |> 
   html_element(".chart")
 ```
 
@@ -859,9 +865,9 @@ Continue the pipe to a `select()` call which renames the second column to `rank_
 
 ```{r web-scaping-examples-14-test, include = FALSE}
 "data/imdb.html" |> 
-  read_html()|> 
+  read_html() |> 
   html_element(".chart")|> 
-  html_table()|> 
+  html_table() |> 
   select(rank_title_year = `Rank & Title`,
       rating = `IMDb Rating`)
 ```
@@ -889,12 +895,12 @@ Continue the pipe with a call to `mutate()` which runs `str_squish()` on `rank_t
 ```
 
 ```{r web-scaping-examples-15-test, include = FALSE}
-"data/imdb.html"|> 
-  read_html()|> 
-  html_element(".chart")|> 
-  html_table()|> 
+"data/imdb.html" |> 
+  read_html() |> 
+  html_element(".chart") |> 
+  html_table() |> 
   select(rank_title_year = `Rank & Title`,
-      rating = `IMDb Rating`)|> 
+      rating = `IMDb Rating`) |> 
   mutate( rank_title_year = str_squish(rank_title_year))
 ```
 
@@ -919,11 +925,11 @@ Continue the call to `mutate()`, creating a new variable called `rank` which is 
 
 ```{r web-scaping-examples-16-test, include = FALSE}
 "data/imdb.html" |> 
-  read_html()|> 
-  html_element(".chart")|> 
-  html_table()|> 
-  select(rank_title_year = `Rank & Title`,rating = `IMDb Rating`)|> 
-  mutate(rank_title_year = str_squish(rank_title_year))|> 
+  read_html() |> 
+  html_element(".chart") |> 
+  html_table() |> 
+  select(rank_title_year = `Rank & Title`,rating = `IMDb Rating`) |> 
+  mutate(rank_title_year = str_squish(rank_title_year)) |> 
   mutate(rank = parse_number(rank_title_year))
 ```
 
@@ -951,11 +957,11 @@ Continue the pipe to `mutate()`, creating a new variable `title` which is the re
 
 ```{r web-scaping-examples-17-test, include = FALSE}
 "data/imdb.html" |> 
-  read_html()|> 
-  html_element(".chart")|> 
-  html_table()|> 
-  select(rank_title_year = `Rank & Title`,rating = `IMDb Rating`)|> 
-  mutate( rank_title_year = str_squish(rank_title_year))|> 
+  read_html() |> 
+  html_element(".chart") |> 
+  html_table() |> 
+  select(rank_title_year = `Rank & Title`,rating = `IMDb Rating`) |> 
+  mutate( rank_title_year = str_squish(rank_title_year)) |> 
   mutate(rank = parse_number(rank_title_year)) |> 
   mutate(title = str_extract(rank_title_year, 
                              pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))"))
