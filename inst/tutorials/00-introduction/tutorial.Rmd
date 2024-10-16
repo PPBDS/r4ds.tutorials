@@ -1,6 +1,6 @@
 ---
 title: Introduction
-author: David Kane
+author: David Kane and Gia Khang
 tutorial:
   id: introduction
 output:
@@ -21,6 +21,15 @@ knitr::opts_chunk$set(out.width = '90%')
 options(tutorial.exercise.timelimit = 60, 
         tutorial.storage = "local") 
 
+scat_p <- ggplot(data = mpg, 
+                 mapping = aes(x = displ, 
+                               y = hwy)) +
+  geom_point(alpha = 0.5, color = "steelblue") +
+  labs(title = "Measurements for Engine Displacement and Highway Fuel Efficiency of Select Car Models",
+       subtitle = "Cars with greater engineer displacement are less fuel efficient",
+        x = "Engine Displacement (L)",
+        y = "Highway Efficiency (mpg)", 
+       caption = "EPA (2008)")
 ```
 
 ```{r copy-code-chunk, child = system.file("child_documents/copy_button.Rmd", package = "tutorial.helpers")}
@@ -28,8 +37,6 @@ options(tutorial.exercise.timelimit = 60,
 
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
-
-<!-- DK: Add yourself as author. -->
 
 <!-- Took students 42 minutes on average, so could add a lot more material. 60 minutes is a good target. -->
 
@@ -47,7 +54,7 @@ options(tutorial.exercise.timelimit = 60,
 
 <!-- A little introduction to R scripts. At the end, after the plot. Simple! Just create script. Paste the code from the plot. Run the script. Cool! Ask a question which requires show_file(). That way, we could use them in the first class. -->
 
-<!-- Code Blocks are not code chunks. Not teaching about code chunks here.  -->
+<!-- Code Blocks are not code chunks. Not teaching about code chunks here. DONE  -->
 
 ## Introduction
 ### 
@@ -79,7 +86,6 @@ knitr::include_graphics("images/base.png")
 
 Looking at the graphic above, the first step in a data science project is to import your data into R. This typically means that you take data stored in a file, database, or web application programming interface (API) and load it into a data frame in R. If you can’t get your data into R, you can’t do data science on it!
 
-
 ### Exercise 2
 
 Before you start doing data science, you must load the packages you are going to use. Use the function `library()` to load the **tidyverse** package.
@@ -98,121 +104,239 @@ library(tidyverse)
 
 ### 
 
-<!-- DK: Change what you want. -->
-
 Nothing is returned, which is often the case with R code. But note the check mark which has appeared next to "Exercise 2" above. This indicates that you have only submitted your answer and doesn't verify if you have answered the question correctly.
-
-### 
-
-Note that "library" and "package" mean the same things in R. We have different words for historical reasons. However, only the `library()` command will load a package/library, giving us access to the functions and data which it contains.
-
-
 
 ### Exercise 3
 
-If you are ever stuck while coding, R has *help pages*. Let's say we want to know what the function `sqrt()` does. Open the help page for `sqrt()` by typing `?sqrt` below.
+Data frames, also referred to as "tibbles", are spreadsheet-type data sets. In data science, it's always a good idea to explore the data before you use it. You can simply examine a data set by typing its name. Let's examine the contents of `diamonds` data set. Type `diamonds` in the line below.
 
 ```{r what-you-will-learn-3, exercise = TRUE}
 
 ```
 
 ```{r what-you-will-learn-3-hint-1, eval = FALSE}
-?...
+diamonds
+```
+
+```{r what-you-will-learn-3-test, include = FALSE}
+diamonds
 ```
 
 ### 
 
-After importing your data, it is a good idea to **tidy** it. Tidying your data means storing it in a consistent form that matches the semantics of the dataset with how it is stored. In brief, when your data is tidy, each column is a variable and each row is an observation. Tidy data is important because the consistent structure lets you focus your efforts on answering questions about the data, not fighting to get the data into the right form for different functions. 
+After importing your data, it is a good idea to **tidy** it. Tidying your data means storing it in a consistent form that matches the semantics of the dataset with how it is stored. In brief, when your data is tidy, each column is a variable and each row is an observation. Tidy data is important because the consistent structure lets you focus your efforts on answering questions about the data, not fighting to get the data into the right form for different functions. Note that the `diamonds` data set is already tidy.
 
 ### Exercise 4
 
-Assign the value of `sqrt(144)` to the variable `x`. Remember to use the assignment operator `<-`.
+**Visualization** is a fundamentally human activity. A good visualization will show you things you did not expect or raise new questions about the data. 
 
-```{r what-you-will-learn-4, exercise = TRUE}
-
-```
-
-```{r what-you-will-learn-4-hint-1, eval = FALSE}
-x <- ...(144)
-```
-
-```{r what-you-will-learn-4-test, include = FALSE}
-x <- sqrt(144)
+```{r}
+plot <- ggplot(data = diamonds, 
+               mapping = aes(x = carat, 
+                             y = price)) +
+  geom_point(alpha = 0.5, color = "steelblue") +
+  labs(title = "Price of Diamonds by Carat",
+       x = "Carat",
+       y = "Price",
+       caption = "Diamonds (2008)")
 ```
 
 ### 
 
-Once you have tidy data, a common next step is to **transform** it. Transformation includes narrowing in on observations of interest (like all people in one city or all data from the last year), creating new variables that are functions of existing variables (like computing speed from distance and time), and calculating a set of summary statistics (like counts or means). Together, tidying and transforming are called **wrangling** because getting your data in a form that’s natural to work with often feels like a fight! 
-
-<!-- The pipe operator `<-` is used to assign values to variables. The left side of the operator is the variable name, and the right side is the value to be assigned. The value can be a number, a string, a logical value, or the result of a function. -->
+A good visualization might also hint that you’re asking the wrong question or that you need to collect different data. Visualizations can surprise you, but they don’t scale particularly well because they require a human to interpret them. 
 
 ### Exercise 5
 
-Type `x` in the exercise code block below. Note that it will return an error. 
+Once you have tidy data, a common next step is to **transform** it. Transformation includes narrowing in on observations of interest (like all people in one city or all data from the last year), creating new variables that are functions of existing variables (like computing speed from distance and time), and calculating a set of summary statistics (like counts or means). Here is an example of a data set after it has been transformed:
 
-```{r what-you-will-learn-5, exercise = TRUE}
+```{r}
+trans <- diamonds %>%
+  filter(cut == "Ideal") %>%
+  select(carat, price) %>%
+  arrange(desc(price)) %>%
+  head(10)
 
-```
-
-```{r what-you-will-learn-5-hint-1, eval = FALSE}
-x
+trans
 ```
 
 ### 
 
-This is because the variable `x` is only available in the code chunk where it was created. If you want to use `x` in another code chunk, you must assign it again.
+This is a small data set of the 10 most expensive diamonds with an "Ideal" cut. Together, tidying and transforming are called **wrangling** because getting your data in a form that’s natural to work with often feels like a fight! 
 
 ### Exercise 6
 
-Data frames, also referred to as "tibbles", are spreadsheet-type data sets. In data science, it's always a good idea to explore the data before you use it. You can simply examine a data set by typing its name. Let's examine the contents of `diamonds` data set. Type `diamonds` in the line below.
+Run `summary()` on `diamonds`. This function provides a quick statistics overview of each variable in the data set. 
 
 ```{r what-you-will-learn-6, exercise = TRUE}
 
 ```
 
 ```{r what-you-will-learn-6-hint-1, eval = FALSE}
-diamonds
+summary(...)
 ```
 
 ```{r what-you-will-learn-6-test, include = FALSE}
-diamonds
+summary(diamonds)
 ```
 
 ### 
 
-**Visualization** is a fundamentally human activity. A good visualization will show you things you did not expect or raise new questions about the data. A good visualization might also hint that you’re asking the wrong question or that you need to collect different data. Visualizations can surprise you, but they don’t scale particularly well because they require a human to interpret them. 
+**Models** are complementary tools to visualization. Once you have made your questions sufficiently precise, you can use a model to answer them. Models are fundamentally mathematical or computational tools, so they generally scale well. Even when they don’t, it’s usually cheaper to buy more computers than it is to buy more brains! But every model makes assumptions, and by its very nature, a model cannot question its own assumptions. That means a model cannot fundamentally surprise you. 
 
-<!-- DK: Make the below three questions. -->
+<!-- DK: Make below two questions. Two knowledge drops would be the Models paragraph split into two parts. DONE, I modified it a bit-->
 
 ### Exercise 7
 
-Print out the first three rows of `diamonds`. You can choose how many rows to display by using the `n` argument in the `print()` function, and how many columns to display by using the `width` argument.
+Run `slice_sample()` on `diamonds`. This selects a random row from the data set.
 
 ```{r what-you-will-learn-7, exercise = TRUE}
 
 ```
 
 ```{r what-you-will-learn-7-hint-1, eval = FALSE}
-print(..., n = 3)
+slice_sample(...)
 ```
 
 ```{r what-you-will-learn-7-test, include = FALSE}
-print(diamonds, n = 3)
+slice_sample(diamonds)
 ```
 
-### 
-
-This returns the first 3 rows of the `diamonds` data set. The `diamonds` data set is a tibble that contains 53,940 rows and 10 columns. Each row represents a single diamond, and each column represents a different characteristic of the diamond. 
+Referring again to our graphic, the last step of data science is **communication**, an absolutely critical part of any data analysis project. It doesn’t matter how well your models and visualization have led you to understand the data unless you can also communicate your results to others.
 
 ### Exercise 8
 
-Type `?diamonds` to look up the help page for the `diamonds` tibble from the **ggplot2** package, which is one of the core packages in the *Tidyverse*.
+Copy paste the code above, but add the argument `n = 50` to `slice_sample()`. This will return 50 random rows from the `diamonds` data set.
 
 ```{r what-you-will-learn-8, exercise = TRUE}
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r what-you-will-learn-8-hint-1, eval = FALSE}
+slice_sample(..., n = 50)
+```
+
+```{r what-you-will-learn-8-test, include = FALSE}
+slice_sample(diamonds, n = 50)
+```
+
+### 
+
+Surrounding all these tools is **programming**. Programming is a cross-cutting tool that you use in nearly every part of a data science project. You don’t need to be an expert programmer to be a successful data scientist, but learning more about programming pays off because becoming a better programmer allows you to automate common tasks and solve new problems with greater ease.
+
+### Exercise 9
+
+If you are ever stuck while coding, R has *help pages*. Let's say we want to know what the function `sqrt()` does. Open the help page for `sqrt()` by typing `?sqrt` below.
+
+```{r what-you-will-learn-9, exercise = TRUE}
+
+```
+
+```{r what-you-will-learn-9-hint-1, eval = FALSE}
+?...
+```
+
+### 
+
+Note that "library" and "package" mean the same things in R. We have different words for historical reasons. However, only the `library()` command will load a package/library, giving us access to the functions and data which it contains.
+
+### Exercise 10
+
+Assign the value of `sqrt(144)` to the variable `x`. Remember to use the assignment operator `<-`.
+
+```{r what-you-will-learn-10, exercise = TRUE}
+
+```
+
+```{r what-you-will-learn-10-hint-1, eval = FALSE}
+x <- ...(144)
+```
+
+```{r what-you-will-learn-10-test, include = FALSE}
+x <- sqrt(144)
+```
+
+### 
+
+The pipe operator `<-` is used to assign values to variables. The left side of the operator is the variable name, and the right side is the value to be assigned. The value can be a number, a string, a logical value, or the result of a function. 
+
+### Exercise 11
+
+Type `x` in the exercise code block below. Note that it will return an error. 
+
+```{r what-you-will-learn-11, exercise = TRUE}
+
+```
+
+```{r what-you-will-learn-11-hint-1, eval = FALSE}
+x
+```
+
+### 
+
+This is because the variable `x` is only available in the code block where it was created. If you want to use `x` in another code block, you must assign it again.
+
+### Exercise 12
+
+*Code comments* are text placed after a `#` symbol. Nothing will be run after a `#` symbol, which is useful if you want to write human readable comments in your code.
+
+### 
+
+Press "Run Code." Afterwards, add the `#` and re-run the code block. You should no longer see a result.
+
+```{r what-you-will-learn-12, exercise = TRUE}
+sqrt(144)
+```
+
+### Exercise 13
+
+Run `print()` on `diamonds`. This returns the same result as typing `diamonds` in the code block. 
+
+```{r what-you-will-learn-13, exercise = TRUE}
+
+```
+
+```{r what-you-will-learn-13-hint-1, eval = FALSE}
+...(diamonds)
+```
+
+```{r what-you-will-learn-13-test, include = FALSE}
+print(diamonds)
+```
+
+### 
+
+You can choose how many rows to display by using the `n` argument in the `print()` function, and how many columns to display by using the `width` argument.
+
+### Exercise 14
+
+Run `print()` on `diamonds` with the argument `n = 3`. This returns the first 3 rows of the `diamonds` data set.
+
+```{r what-you-will-learn-14, exercise = TRUE}
+
+```
+
+```{r what-you-will-learn-14-hint-1, eval = FALSE}
+print(..., n = 3)
+```
+
+```{r what-you-will-learn-14-test, include = FALSE}
+print(diamonds, n = 3)
+```
+
+### 
+
+The `diamonds` data set contains 53,940 rows and 10 columns. Each row represents a single diamond, and each column represents a different characteristic of the diamond. 
+### Exercise 15
+
+Type `?diamonds` to look up the help page for the `diamonds` tibble from the **ggplot2** package, which is one of the core packages in the *Tidyverse*.
+
+```{r what-you-will-learn-15, exercise = TRUE}
+
+```
+
+```{r what-you-will-learn-15-hint-1, eval = FALSE}
 ?...
 ```
 
@@ -231,24 +355,19 @@ question_text(NULL,
 
 You can find help about an entire package with `help(package = "ggplot2")`. It is confusing, but unavoidable, that package names are sometimes unquoted, as in `library(ggplot2)`, and sometimes quoted, as in `help(package = "ggplot2")`. If one does not work, try the other.
 
-
-<!-- DK: This knowledge drop is good. But does it belong here? Probably not. -->
-
-**Models** are complementary tools to visualization. Once you have made your questions sufficiently precise, you can use a model to answer them. Models are fundamentally mathematical or computational tools, so they generally scale well. Even when they don’t, it’s usually cheaper to buy more computers than it is to buy more brains! But every model makes assumptions, and by its very nature, a model cannot question its own assumptions. That means a model cannot fundamentally surprise you. 
-
-### Exercise 9
+### Exercise 16
 
 Run `glimpse()` on `diamonds`. 
 
-```{r what-you-will-learn-9, exercise = TRUE}
+```{r what-you-will-learn-16, exercise = TRUE}
 
 ```
 
-```{r what-you-will-learn-9-hint-1, eval = FALSE}
+```{r what-you-will-learn-16-hint-1, eval = FALSE}
 ...(diamonds)
 ```
 
-```{r what-you-will-learn-9-test, include = FALSE}
+```{r what-you-will-learn-16-test, include = FALSE}
 glimpse(diamonds)
 ```
 
@@ -257,86 +376,6 @@ glimpse(diamonds)
 `glimpse()` displays columns running down the page and the data running across across. Note how the "type" of each variable is listed next to the variable name. For example, `price` is listed as `<int>`, meaning that it is an integer variable. To learn more about the `glimpse()` function, run `?glimpse`.
 
 `view()` is another useful function, but, just because it is interactive, we should not use it within a tutorial. 
-
-### Exercise 10
-
-Run `summary()` on `diamonds`. This function provides a quick statistics overview of each variable in the data set including number of observations, Min, 1st Qu, Median, Mean, 3rd Qu, and Max. From this you can see the range of values for each. 
-
-```{r what-you-will-learn-10, exercise = TRUE}
-
-```
-
-```{r what-you-will-learn-10-hint-1, eval = FALSE}
-...(diamonds)
-```
-
-```{r what-you-will-learn-10-test, include = FALSE}
-summary(diamonds)
-```
-
-### 
-
-Referring again to our graphic, the last step of data science is **communication**, an absolutely critical part of any data analysis project. It doesn’t matter how well your models and visualization have led you to understand the data unless you can also communicate your results to others.
-
-<!-- DK: Make below two questions. Two knowledge drops would be the Models paragraph split into two parts. -->
-
-### Exercise 11
-
-Run `slice_sample()` on `diamonds` to randomly select 50 rows from the data set using the argument `n = 50`.
-
-```{r what-you-will-learn-11, exercise = TRUE}
-
-```
-
-```{r what-you-will-learn-11-hint-1, eval = FALSE}
-slice_sample(diamonds, n = ...)
-```
-
-```{r what-you-will-learn-11-test, include = FALSE}
-slice_sample(diamonds, n = 50)
-```
-
-### 
-
-In later tutorials, we will often work with large data sets. To make it easier to work with these data sets, we will often use the `slice_sample()` function to randomly select a small number of rows. This allows us to quickly see the structure of the data set and to test our code on a smaller data set before running it on the full data set.
-
-<!-- DK: Pick a different data set. Allows for several questions! First, look at data set. Note row number. Second, run summary on data set, note missing values. Third, pipe data set to drop_na(). Note fewer rows. Move all this to pipe section, where it fits more naturally. -->
-
-### Exercise 12
-
-It's always a good idea to remove missing values from your data set. Use `drop_na()` to remove all rows with missing values from the `diamonds` data set.
-
-```{r what-you-will-learn-12, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r what-you-will-learn-12-hint-1, eval = FALSE}
-drop_na(...)
-```
-
-```{r what-you-will-learn-12-test, include = FALSE}
-drop_na(diamonds)
-```
-
-### 
-
-Having missing values in your data set can cause problems when you try to analyze the data. The `drop_na()` function removes all rows with missing values from the data set.
-
-### Exercise 13
-
-*Code comments* are text placed after a `#` symbol. Nothing will be run after a `#` symbol, which is useful if you want to write human readable comments in your code.
-
-### 
-
-Press "Run Code." Afterwards, add the `#` and re-run the chunk. You should no longer see a result.
-
-```{r what-you-will-learn-13, exercise = TRUE}
-sqrt(144)
-```
-
-Surrounding all these tools is **programming**. Programming is a cross-cutting tool that you use in nearly every part of a data science project. You don’t need to be an expert programmer to be a successful data scientist, but learning more about programming pays off because becoming a better programmer allows you to automate common tasks and solve new problems with greater ease.
 
 ## How this book is organized
 ### 
@@ -350,16 +389,6 @@ Instead, we’ll start with visualization and transformation of data that’s al
 Let's create the following scatterplot from the `mpg` dataset, which provides measurements of attributes from various car models.
 
 ```{r scat-p}
-scat_p <- ggplot(data = mpg, 
-                 mapping = aes(x = displ, 
-                               y = hwy)) +
-  geom_point(alpha = 0.5, color = "steelblue") +
-  labs(title = "Measurements for Engine Displacement and Highway Fuel Efficiency of Select Car Models",
-       subtitle = "Cars with greater engineer displacement are less fuel efficient",
-        x = "Engine Displacement (L)",
-        y = "Highway Efficiency (mpg)", 
-       caption = "EPA (2008)")
-
 scat_p
 ```
 
@@ -403,24 +432,18 @@ We are going to use `displ` and `hwy` to create the plot.
 
 ### Exercise 3
 
-<!-- DK: If you ask a question which is not copy/paste, you must provide your own excellent answer. -->
-
 Referring to what pops up when you run `?mpg`, describe in your own words what `displ` and `hwy` stand for? 
 
 ```{r how-this-book-is-organized-3}
 question_text(NULL,
+	message = "In the `mpg` data set, `displ` stands for engine displacement, measured in litres while `hwy` stands for highway miles per gallon.",
 	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
+	allow_retry = FALSE,
 	incorrect = NULL,
-	rows = 3)
+	rows = 6)
 ```
 
 ### 
-
-<!-- DK: No rhetorical questions in knowledge drops. -->
-
-It's always necessary to understand the data you are working with. What do the variables represent? What are the units?
 
 ### Exercise 4
 
@@ -439,7 +462,6 @@ ggplot(data = mpg)
 ```
 
 `ggplot()` initializes a ggplot object. Your output should be an empty screen.
-
 
 ### Exercise 5
 
@@ -586,11 +608,11 @@ R has 657 (built in color names)[https://www.nceas.ucsb.edu/sites/default/files/
 
 ### Exercise 10
 
-<!-- Could split this into 5 exercises. . . -->
+Now, use `labs()` to add the title to to the graph using the argument `title`. Reminder: This is what our graph should look like.
 
-Now, use `labs()` to add labeling to the graph. Set the `title` to `"Measurements for Engine Displacement and Highway Fuel Efficiency for Selected Car Models"` and the `subtitle` to `"Cars with greater engine displacement are less fuel efficient"`. To label the axes, set `x` to `"Engine Displacement (L)"` and `y` to `"Highway Efficiency (mpg)"`. Set the `caption` to `"EPA (2008)"`.
-
-The caption is generally used to credit the relevant data source(s).
+```{r}
+scat_p
+```
 
 ```{r how-this-book-is-organized-10, exercise = TRUE }
 
@@ -599,23 +621,153 @@ The caption is generally used to credit the relevant data source(s).
 <button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r how-this-book-is-organized-10-hint-1, eval = FALSE}
-Remember to add a layer with the function labs()
+... + 
+  labs(title = "...")
 ```
 
-```{r how-this-book-is-organized-10-hint-2, eval = FALSE}
+```{r how-this-book-is-organized-10-test, include = FALSE}
+ggplot(data = mpg, 
+       mapping = aes(
+         x = displ,
+         y = hwy)) +
+  geom_point(alpha = .5, 
+             color = "steelblue") +
+  labs(title = "Measurements for Engine Displacement and Highway Fuel Efficiency for Selected Car Models")
+```
+
+### 
+
+<!-- GK: Note to myself, maybe drop knowledge from chapter 1, or drop knowledge about interpreting the graph -->
+
+### Exercise 11
+
+Add the `subtitle` to the graph using the argument `subtitle`. 
+
+```{r how-this-book-is-organized-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r how-this-book-is-organized-11-hint-1, eval = FALSE}
 ... +
-  labs(title = "...",
-       subtitle = "...",
-       x = "...",
-       y = "...",
-       caption = "...") 
+  labs(title = "...", 
+       subtitle = "...")
 ```
 
-Reminder: This is what our graph should look like.
-
-```{r show-scat-p}
-scat_p
+```{r how-this-book-is-organized-11-test, include = FALSE}
+ggplot(data = mpg, 
+       mapping = aes(
+         x = displ,
+         y = hwy)) +
+  geom_point(alpha = .5, 
+             color = "steelblue") +
+  labs(title = "Measurements for Engine Displacement and Highway Fuel Efficiency for Selected Car Models",
+       subtitle = "Cars with greater engine displacement are less fuel efficient")
 ```
+
+### 
+
+Subtitle is a good place to drop the most important information you found about the graph. 
+
+### Exercise 12
+
+Set `x` to `"Engine Displacement (L)"`.
+
+```{r how-this-book-is-organized-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r how-this-book-is-organized-12-hint-1, eval = FALSE}
+... +
+  labs(title = "...", 
+       subtitle = "...", 
+       x = "...")
+```
+
+```{r how-this-book-is-organized-12-test, include = FALSE}
+ggplot(data = mpg, 
+       mapping = aes(
+         x = displ,
+         y = hwy)) +
+  geom_point(alpha = .5, 
+             color = "steelblue") +
+  labs(title = "Measurements for Engine Displacement and Highway Fuel Efficiency for Selected Car Models",
+       subtitle = "Cars with greater engine displacement are less fuel efficient",
+       x = "Engine Displacement (L)")
+```
+
+### 
+
+### Exercise 13
+
+Set `y` to `"Highway Efficiency (mpg)"`. 
+
+```{r how-this-book-is-organized-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r how-this-book-is-organized-13-hint-1, eval = FALSE}
+... +
+  labs(title = "...", 
+       subtitle = "...", 
+       x = "...", 
+       y = "...")
+```
+
+```{r how-this-book-is-organized-13-test, include = FALSE}
+ggplot(data = mpg, 
+       mapping = aes(
+         x = displ,
+         y = hwy)) +
+  geom_point(alpha = .5, 
+             color = "steelblue") +
+  labs(title = "Measurements for Engine Displacement and Highway Fuel Efficiency for Selected Car Models",
+       subtitle = "Cars with greater engine displacement are less fuel efficient",
+       x = "Engine Displacement (L)",
+       y = "Highway Efficiency (mpg)")
+```
+
+### 
+
+### Exercise 14
+
+Finally, set the `caption` to `"EPA (2008)"`. The caption is a place where you credit the source of your data.
+
+```{r how-this-book-is-organized-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r how-this-book-is-organized-14-hint-1, eval = FALSE}
+... +
+  labs(title = "...", 
+       subtitle = "...", 
+       x = "...", 
+       y = "...", 
+       caption = "...")
+```
+
+```{r how-this-book-is-organized-14-test, include = FALSE}
+ggplot(data = mpg, 
+       mapping = aes(
+         x = displ,
+         y = hwy)) +
+  geom_point(alpha = .5, 
+             color = "steelblue") +
+  labs(title = "Measurements for Engine Displacement and Highway Fuel Efficiency for Selected Car Models",
+       subtitle = "Cars with greater engine displacement are less fuel efficient",
+       x = "Engine Displacement (L)",
+       y = "Highway Efficiency (mpg)",
+       caption = "EPA (2008)")
+```
+
+### 
 
 ## What you won’t learn
 ### 
@@ -675,8 +827,9 @@ question_text(NULL,
 
 Although the *Tidyverse* includes hundreds of commands, the most important are `filter()`, `select()`, `arrange()`, `mutate()`, and `summarize()`. Whenever you face a new problem, try to think about which one of these commands might be a good way to start.
 
-
 ### Exercise 1
+
+<!-- DK: Pick a different data set. Allows for several questions! First, look at data set. Note row number. Second, run summary on data set, note missing values. Third, pipe data set to drop_na(). Note fewer rows. Move all this to pipe section, where it fits more naturally. -->
 
 Let's warm up by examining the `gss_cat` tibble from the **forcats** package. Since **forcats** is a core **tidyverse** package, you have already loaded it. Type `gss_cat` and hit "Run Code."
 
