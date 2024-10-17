@@ -54,7 +54,8 @@ scat_p <- ggplot(data = mpg,
 
 <!-- A little introduction to R scripts. At the end, after the plot. Simple! Just create script. Paste the code from the plot. Run the script. Cool! Ask a question which requires show_file(). That way, we could use them in the first class. -->
 
-<!-- Code Blocks are not code chunks. Not teaching about code chunks here. DONE  -->
+<!-- DK: Change intro section to go through diamonds with each single command and then midwest with each command. (Don't have to do all of them again. Example, no need to do print() and then print(x, n = 3) twice. Your discretion.) Split up the knowledge drops. -->
+
 
 ## Introduction
 ### 
@@ -124,14 +125,35 @@ diamonds
 
 ### 
 
-After importing your data, it is a good idea to **tidy** it. Tidying your data means storing it in a consistent form that matches the semantics of the dataset with how it is stored. In brief, when your data is tidy, each column is a variable and each row is an observation. Tidy data is important because the consistent structure lets you focus your efforts on answering questions about the data, not fighting to get the data into the right form for different functions. Note that the `diamonds` data set is already tidy.
+After importing your data, it is a good idea to **tidy** it. Tidying your data means storing it in a consistent form that matches the semantics of the dataset with how it is stored. 
 
 ### Exercise 4
 
+Type `midwest` and hit "Run Code."
+
+```{r what-you-will-learn-4, exercise = TRUE}
+
+```
+
+```{r what-you-will-learn-4-hint-1, eval = FALSE}
+midwest
+```
+
+```{r what-you-will-learn-4-test, include = FALSE}
+midwest
+```
+
+### 
+
+When your data is tidy, each column is a variable and each row is an observation. Tidy data is important because the consistent structure lets you focus your efforts on answering questions about the data, not fighting to get the data into the right form for different functions. Note that the `diamonds` data set is already tidy.
+
+
+### Exercise 5
+
 **Visualization** is a fundamentally human activity. A good visualization will show you things you did not expect or raise new questions about the data. 
 
-```{r}
-plot <- ggplot(data = diamonds, 
+```{r echo = TRUE}
+ggplot(data = diamonds, 
                mapping = aes(x = carat, 
                              y = price)) +
   geom_point(alpha = 0.5, color = "steelblue") +
@@ -145,15 +167,15 @@ plot <- ggplot(data = diamonds,
 
 A good visualization might also hint that you’re asking the wrong question or that you need to collect different data. Visualizations can surprise you, but they don’t scale particularly well because they require a human to interpret them. 
 
-### Exercise 5
+### Exercise 6
 
 Once you have tidy data, a common next step is to **transform** it. Transformation includes narrowing in on observations of interest (like all people in one city or all data from the last year), creating new variables that are functions of existing variables (like computing speed from distance and time), and calculating a set of summary statistics (like counts or means). Here is an example of a data set after it has been transformed:
 
 ```{r}
-trans <- diamonds %>%
-  filter(cut == "Ideal") %>%
-  select(carat, price) %>%
-  arrange(desc(price)) %>%
+trans <- diamonds |>
+  filter(cut == "Ideal") |>
+  select(carat, price) |>
+  arrange(desc(price)) |>
   head(10)
 
 trans
@@ -163,19 +185,19 @@ trans
 
 This is a small data set of the 10 most expensive diamonds with an "Ideal" cut. Together, tidying and transforming are called **wrangling** because getting your data in a form that’s natural to work with often feels like a fight! 
 
-### Exercise 6
+### Exercise 7
 
 Run `summary()` on `diamonds`. This function provides a quick statistics overview of each variable in the data set. 
 
-```{r what-you-will-learn-6, exercise = TRUE}
+```{r what-you-will-learn-7, exercise = TRUE}
 
 ```
 
-```{r what-you-will-learn-6-hint-1, eval = FALSE}
+```{r what-you-will-learn-7-hint-1, eval = FALSE}
 summary(...)
 ```
 
-```{r what-you-will-learn-6-test, include = FALSE}
+```{r what-you-will-learn-7-test, include = FALSE}
 summary(diamonds)
 ```
 
@@ -183,41 +205,40 @@ summary(diamonds)
 
 **Models** are complementary tools to visualization. Once you have made your questions sufficiently precise, you can use a model to answer them. Models are fundamentally mathematical or computational tools, so they generally scale well. Even when they don’t, it’s usually cheaper to buy more computers than it is to buy more brains! But every model makes assumptions, and by its very nature, a model cannot question its own assumptions. That means a model cannot fundamentally surprise you. 
 
-<!-- DK: Make below two questions. Two knowledge drops would be the Models paragraph split into two parts. DONE, I modified it a bit-->
-
-### Exercise 7
-
-Run `slice_sample()` on `diamonds`. This selects a random row from the data set.
-
-```{r what-you-will-learn-7, exercise = TRUE}
-
-```
-
-```{r what-you-will-learn-7-hint-1, eval = FALSE}
-slice_sample(...)
-```
-
-```{r what-you-will-learn-7-test, include = FALSE}
-slice_sample(diamonds)
-```
-
-Referring again to our graphic, the last step of data science is **communication**, an absolutely critical part of any data analysis project. It doesn’t matter how well your models and visualization have led you to understand the data unless you can also communicate your results to others.
 
 ### Exercise 8
 
-Copy paste the code above, but add the argument `n = 50` to `slice_sample()`. This will return 50 random rows from the `diamonds` data set.
+Run `slice_sample()` on `diamonds`. This selects a random row from the data set.
 
 ```{r what-you-will-learn-8, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r what-you-will-learn-8-hint-1, eval = FALSE}
-slice_sample(..., n = 50)
+slice_sample(...)
 ```
 
 ```{r what-you-will-learn-8-test, include = FALSE}
+slice_sample(diamonds)
+```
+
+Referring again to our graphic, the last step of data science is **communication**, an absolutely critical part of any data analysis project. It doesn’t matter how well your models and visualization have led you to understand the data unless you can also communicate your results to others.
+
+### Exercise 9
+
+Copy paste the code above, but add the argument `n = 50` to `slice_sample()`. This will return 50 random rows from the `diamonds` data set.
+
+```{r what-you-will-learn-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r what-you-will-learn-9-hint-1, eval = FALSE}
+slice_sample(..., n = 50)
+```
+
+```{r what-you-will-learn-9-test, include = FALSE}
 slice_sample(diamonds, n = 50)
 ```
 
@@ -225,15 +246,15 @@ slice_sample(diamonds, n = 50)
 
 Surrounding all these tools is **programming**. Programming is a cross-cutting tool that you use in nearly every part of a data science project. You don’t need to be an expert programmer to be a successful data scientist, but learning more about programming pays off because becoming a better programmer allows you to automate common tasks and solve new problems with greater ease.
 
-### Exercise 9
+### Exercise 10
 
 If you are ever stuck while coding, R has *help pages*. Let's say we want to know what the function `sqrt()` does. Open the help page for `sqrt()` by typing `?sqrt` below.
 
-```{r what-you-will-learn-9, exercise = TRUE}
+```{r what-you-will-learn-10, exercise = TRUE}
 
 ```
 
-```{r what-you-will-learn-9-hint-1, eval = FALSE}
+```{r what-you-will-learn-10-hint-1, eval = FALSE}
 ?...
 ```
 
@@ -241,35 +262,35 @@ If you are ever stuck while coding, R has *help pages*. Let's say we want to kno
 
 Note that "library" and "package" mean the same things in R. We have different words for historical reasons. However, only the `library()` command will load a package/library, giving us access to the functions and data which it contains.
 
-### Exercise 10
-
-Assign the value of `sqrt(144)` to the variable `x`. Remember to use the assignment operator `<-`.
-
-```{r what-you-will-learn-10, exercise = TRUE}
-
-```
-
-```{r what-you-will-learn-10-hint-1, eval = FALSE}
-x <- ...(144)
-```
-
-```{r what-you-will-learn-10-test, include = FALSE}
-x <- sqrt(144)
-```
-
-### 
-
-The pipe operator `<-` is used to assign values to variables. The left side of the operator is the variable name, and the right side is the value to be assigned. The value can be a number, a string, a logical value, or the result of a function. 
-
 ### Exercise 11
 
-Type `x` in the exercise code block below. Note that it will return an error. 
+Assign the value of `sqrt(144)` to the variable `x`. Remember to use the assignment operator `<-`.
 
 ```{r what-you-will-learn-11, exercise = TRUE}
 
 ```
 
 ```{r what-you-will-learn-11-hint-1, eval = FALSE}
+x <- ...(144)
+```
+
+```{r what-you-will-learn-11-test, include = FALSE}
+x <- sqrt(144)
+```
+
+### 
+
+The assignment operator `<-` is used to assign values to variables. The left side of the operator is the variable name, and the right side is the value to be assigned. The value can be a number, a string, a logical value, or the result of a function. 
+
+### Exercise 12
+
+Type `x` in the exercise code block below. Note that it will return an error. 
+
+```{r what-you-will-learn-12, exercise = TRUE}
+
+```
+
+```{r what-you-will-learn-12-hint-1, eval = FALSE}
 x
 ```
 
@@ -277,7 +298,7 @@ x
 
 This is because the variable `x` is only available in the code block where it was created. If you want to use `x` in another code block, you must assign it again.
 
-### Exercise 12
+### Exercise 13
 
 *Code comments* are text placed after a `#` symbol. Nothing will be run after a `#` symbol, which is useful if you want to write human readable comments in your code.
 
@@ -285,23 +306,23 @@ This is because the variable `x` is only available in the code block where it wa
 
 Press "Run Code." Afterwards, add the `#` and re-run the code block. You should no longer see a result.
 
-```{r what-you-will-learn-12, exercise = TRUE}
+```{r what-you-will-learn-13, exercise = TRUE}
 sqrt(144)
 ```
 
-### Exercise 13
+### Exercise 14
 
 Run `print()` on `diamonds`. This returns the same result as typing `diamonds` in the code block. 
 
-```{r what-you-will-learn-13, exercise = TRUE}
+```{r what-you-will-learn-14, exercise = TRUE}
 
 ```
 
-```{r what-you-will-learn-13-hint-1, eval = FALSE}
+```{r what-you-will-learn-14-hint-1, eval = FALSE}
 ...(diamonds)
 ```
 
-```{r what-you-will-learn-13-test, include = FALSE}
+```{r what-you-will-learn-14-test, include = FALSE}
 print(diamonds)
 ```
 
@@ -309,34 +330,34 @@ print(diamonds)
 
 You can choose how many rows to display by using the `n` argument in the `print()` function, and how many columns to display by using the `width` argument.
 
-### Exercise 14
-
-Run `print()` on `diamonds` with the argument `n = 3`. This returns the first 3 rows of the `diamonds` data set.
-
-```{r what-you-will-learn-14, exercise = TRUE}
-
-```
-
-```{r what-you-will-learn-14-hint-1, eval = FALSE}
-print(..., n = 3)
-```
-
-```{r what-you-will-learn-14-test, include = FALSE}
-print(diamonds, n = 3)
-```
-
-### 
-
-The `diamonds` data set contains 53,940 rows and 10 columns. Each row represents a single diamond, and each column represents a different characteristic of the diamond. 
 ### Exercise 15
 
-Type `?diamonds` to look up the help page for the `diamonds` tibble from the **ggplot2** package, which is one of the core packages in the *Tidyverse*.
+Run `print()` on `diamonds` with the argument `n = 3`. This returns the first 3 rows of the `diamonds` data set.
 
 ```{r what-you-will-learn-15, exercise = TRUE}
 
 ```
 
 ```{r what-you-will-learn-15-hint-1, eval = FALSE}
+print(..., n = 3)
+```
+
+```{r what-you-will-learn-15-test, include = FALSE}
+print(diamonds, n = 3)
+```
+
+### 
+
+The `diamonds` data set contains 53,940 rows and 10 columns. Each row represents a single diamond, and each column represents a different characteristic of the diamond. 
+### Exercise 16
+
+Type `?diamonds` to look up the help page for the `diamonds` tibble from the **ggplot2** package, which is one of the core packages in the *Tidyverse*.
+
+```{r what-you-will-learn-16, exercise = TRUE}
+
+```
+
+```{r what-you-will-learn-16-hint-1, eval = FALSE}
 ?...
 ```
 
@@ -355,19 +376,19 @@ question_text(NULL,
 
 You can find help about an entire package with `help(package = "ggplot2")`. It is confusing, but unavoidable, that package names are sometimes unquoted, as in `library(ggplot2)`, and sometimes quoted, as in `help(package = "ggplot2")`. If one does not work, try the other.
 
-### Exercise 16
+### Exercise 17
 
 Run `glimpse()` on `diamonds`. 
 
-```{r what-you-will-learn-16, exercise = TRUE}
+```{r what-you-will-learn-17, exercise = TRUE}
 
 ```
 
-```{r what-you-will-learn-16-hint-1, eval = FALSE}
+```{r what-you-will-learn-17-hint-1, eval = FALSE}
 ...(diamonds)
 ```
 
-```{r what-you-will-learn-16-test, include = FALSE}
+```{r what-you-will-learn-17-test, include = FALSE}
 glimpse(diamonds)
 ```
 
@@ -668,7 +689,7 @@ ggplot(data = mpg,
 
 ### 
 
-Subtitle is a good place to drop the most important information you found about the graph. 
+The subtitle should be the one sentence of information about the graph with which you would hope a reader walks away. What is the most important fact demonstrated in the graphic? 
 
 ### Exercise 12
 
