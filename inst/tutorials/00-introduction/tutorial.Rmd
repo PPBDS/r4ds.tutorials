@@ -41,20 +41,15 @@ scat_p <- ggplot(data = mpg,
 <!-- Took students 42 minutes on average, so could add a lot more material. 60 minutes is a good target. -->
 
 
-<!-- Fix introduction and summary. -->
+<!-- Fix introduction and summary. DONE-->
 
-<!-- Should the data pipe come before the plot? -->
+<!-- Should the data pipe come before the plot? No need, I also add some plot excersises to the pipe-->
 
 <!-- Make this tutorial better. Make sure there are no mistakes. Make sure it is clear. Drop a bunch of knowledge from Chapter 1. But also do some reminding of stuff from Getting Started from tutorial.helpers. -->
 
-<!-- Explain to students how to move border pane around.  In the introduction to the setting of RStudio, there could be more information on how to manipulate the size of each pane (ex. to view the content of the tutorial, to have more space for coding). Necessary? -->
+<!-- Explain to students how to move border pane around.  In the introduction to the setting of RStudio, there could be more information on how to manipulate the size of each pane (ex. to view the content of the tutorial, to have more space for coding). Necessary? Maybe no?-->
 
-<!-- Need to make sure the early tutorials cover things like scale_x_log10(labels = scales::comma_format()) since we use it in class in weeks 1 and 2. -->
-
-
-<!-- A little introduction to R scripts. At the end, after the plot. Simple! Just create script. Paste the code from the plot. Run the script. Cool! Ask a question which requires show_file(). That way, we could use them in the first class. -->
-
-<!-- DK: Change intro section to go through diamonds with each single command and then midwest with each command. (Don't have to do all of them again. Example, no need to do print() and then print(x, n = 3) twice. Your discretion.) Split up the knowledge drops. -->
+<!-- DK: Change intro section to go through diamonds with each single command and then midwest with each command. (Don't have to do all of them again. Example, no need to do print() and then print(x, n = 3) twice. Your discretion.) Split up the knowledge drops. DONE -->
 
 
 ## Introduction
@@ -62,7 +57,7 @@ scat_p <- ggplot(data = mpg,
 
 This tutorial covers the [Introduction](https://r4ds.hadley.nz/intro.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
 
-<!-- DK: What will they learn? Revisit: https://ppbds.github.io/tutorial.helpers/articles/books.html -->
+<!-- DK: What will they learn? Revisit: https://ppbds.github.io/tutorial.helpers/articles/books.html DONE-->
 
 ### 
 
@@ -72,7 +67,7 @@ This tutorial assumes that you have already completed the "Getting Started with 
 ## What you will learn
 ### 
 
-In this tutorial, we will only work within the Exercise Code Blocks. However, you can also put the commands into the Console tab in the lower left. 
+You will learn how to work with data sets from the [ggplot2](https://ggplot2.tidyverse.org) using the pipe command and make some cool plots to visualize the data. Then, you will learn how to create an Rscript file to store your code.
 
 
 ### Exercise 1
@@ -109,7 +104,7 @@ Nothing is returned, which is often the case with R code. But note the check mar
 
 ### Exercise 3
 
-Data frames, also referred to as "tibbles", are spreadsheet-type data sets. In data science, it's always a good idea to explore the data before you use it. You can simply examine a data set by typing its name. Let's examine the contents of `diamonds` data set. Type `diamonds` in the line below.
+Data frames, also referred to as "tibbles", are spreadsheet-type data sets. Type `diamonds` in the line below.
 
 ```{r what-you-will-learn-3, exercise = TRUE}
 
@@ -129,23 +124,23 @@ After importing your data, it is a good idea to **tidy** it. Tidying your data m
 
 ### Exercise 4
 
-Type `midwest` and hit "Run Code."
+Run `summary()` on `diamonds`. This function provides a quick statistics overview of each variable in the data set. 
 
 ```{r what-you-will-learn-4, exercise = TRUE}
 
 ```
 
 ```{r what-you-will-learn-4-hint-1, eval = FALSE}
-midwest
+summary(...)
 ```
 
 ```{r what-you-will-learn-4-test, include = FALSE}
-midwest
+summary(diamonds)
 ```
 
 ### 
 
-When your data is tidy, each column is a variable and each row is an observation. Tidy data is important because the consistent structure lets you focus your efforts on answering questions about the data, not fighting to get the data into the right form for different functions. Note that the `diamonds` data set is already tidy.
+When your data is tidy, each column is a variable and each row is an observation. Tidy data is important because the consistent structure lets you focus your efforts on answering questions about the data, not fighting to get the data into the right form for different functions. 
 
 
 ### Exercise 5
@@ -169,92 +164,135 @@ A good visualization might also hint that you’re asking the wrong question or 
 
 ### Exercise 6
 
-Once you have tidy data, a common next step is to **transform** it. Transformation includes narrowing in on observations of interest (like all people in one city or all data from the last year), creating new variables that are functions of existing variables (like computing speed from distance and time), and calculating a set of summary statistics (like counts or means). Here is an example of a data set after it has been transformed:
+Run `slice_sample()` on `diamonds`. This selects a random row from the data set.
 
-```{r}
-trans <- diamonds |>
-  filter(cut == "Ideal") |>
-  select(carat, price) |>
-  arrange(desc(price)) |>
-  head(10)
+```{r what-you-will-learn-6, exercise = TRUE}
 
-trans
 ```
 
-### 
+```{r what-you-will-learn-6-hint-1, eval = FALSE}
+slice_sample(...)
+```
 
-This is a small data set of the 10 most expensive diamonds with an "Ideal" cut. Together, tidying and transforming are called **wrangling** because getting your data in a form that’s natural to work with often feels like a fight! 
+```{r what-you-will-learn-6-test, include = FALSE}
+slice_sample(diamonds)
+```
+
+Once you have tidy data, a common next step is to **transform** it. Transformation includes narrowing in on observations of interest (like all people in one city or all data from the last year), creating new variables that are functions of existing variables (like computing speed from distance and time), and calculating a set of summary statistics (like counts or means). 
 
 ### Exercise 7
 
-Run `summary()` on `diamonds`. This function provides a quick statistics overview of each variable in the data set. 
+Copy paste the code above, but add the argument `n = 50` to `slice_sample()`. This will return 50 random rows from the `diamonds` data set.
 
 ```{r what-you-will-learn-7, exercise = TRUE}
 
 ```
 
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
 ```{r what-you-will-learn-7-hint-1, eval = FALSE}
-summary(...)
+slice_sample(..., n = 50)
 ```
 
 ```{r what-you-will-learn-7-test, include = FALSE}
-summary(diamonds)
+slice_sample(diamonds, n = 50)
 ```
 
 ### 
 
-**Models** are complementary tools to visualization. Once you have made your questions sufficiently precise, you can use a model to answer them. Models are fundamentally mathematical or computational tools, so they generally scale well. Even when they don’t, it’s usually cheaper to buy more computers than it is to buy more brains! But every model makes assumptions, and by its very nature, a model cannot question its own assumptions. That means a model cannot fundamentally surprise you. 
-
+Together, tidying and transforming are called **wrangling** because getting your data in a form that’s natural to work with often feels like a fight! 
 
 ### Exercise 8
 
-Run `slice_sample()` on `diamonds`. This selects a random row from the data set.
+Type `midwest` and hit "Run Code."
 
 ```{r what-you-will-learn-8, exercise = TRUE}
 
 ```
 
 ```{r what-you-will-learn-8-hint-1, eval = FALSE}
-slice_sample(...)
+midwest
 ```
 
 ```{r what-you-will-learn-8-test, include = FALSE}
-slice_sample(diamonds)
+midwest
 ```
 
-Referring again to our graphic, the last step of data science is **communication**, an absolutely critical part of any data analysis project. It doesn’t matter how well your models and visualization have led you to understand the data unless you can also communicate your results to others.
+### 
+
+**Models** are complementary tools to visualization. Once you have made your questions sufficiently precise, you can use a model to answer them. Models are fundamentally mathematical or computational tools, so they generally scale well. 
 
 ### Exercise 9
 
-Copy paste the code above, but add the argument `n = 50` to `slice_sample()`. This will return 50 random rows from the `diamonds` data set.
+Run `summary()` on `midwest`. 
 
 ```{r what-you-will-learn-9, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r what-you-will-learn-9-hint-1, eval = FALSE}
-slice_sample(..., n = 50)
+summary(...)
 ```
 
 ```{r what-you-will-learn-9-test, include = FALSE}
-slice_sample(diamonds, n = 50)
+summary(midwest)
 ```
 
 ### 
 
-Surrounding all these tools is **programming**. Programming is a cross-cutting tool that you use in nearly every part of a data science project. You don’t need to be an expert programmer to be a successful data scientist, but learning more about programming pays off because becoming a better programmer allows you to automate common tasks and solve new problems with greater ease.
+Even when they don’t, it’s usually cheaper to buy more computers than it is to buy more brains! But every model makes assumptions, and by its very nature, a model cannot question its own assumptions. That means a model cannot fundamentally surprise you. 
 
 ### Exercise 10
 
-If you are ever stuck while coding, R has *help pages*. Let's say we want to know what the function `sqrt()` does. Open the help page for `sqrt()` by typing `?sqrt` below.
+Run `slice_sample()` on `midwest`. 
 
 ```{r what-you-will-learn-10, exercise = TRUE}
 
 ```
 
 ```{r what-you-will-learn-10-hint-1, eval = FALSE}
+slice_sample(...)
+```
+
+```{r what-you-will-learn-10-test, include = FALSE}
+slice_sample(midwest)
+```
+
+### 
+
+Referring again to our graphic, the last step of data science is **communication**, an absolutely critical part of any data analysis project. It doesn’t matter how well your models and visualization have led you to understand the data unless you can also communicate your results to others.
+
+### Exercise 11
+
+Copy paste the code above, but add the argument `n = 50` to `slice_sample()`. 
+
+```{r what-you-will-learn-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r what-you-will-learn-11-hint-1, eval = FALSE}
+slice_sample(..., n = 50)
+```
+
+```{r what-you-will-learn-11-test, include = FALSE}
+slice_sample(midwest, n = 50)
+```
+
+### 
+
+Surrounding all these tools is **programming**. Programming is a cross-cutting tool that you use in nearly every part of a data science project. You don’t need to be an expert programmer to be a successful data scientist, but learning more about programming pays off because becoming a better programmer allows you to automate common tasks and solve new problems with greater ease.
+
+### Exercise 12
+
+If you are ever stuck while coding, R has *help pages*. Let's say we want to know what the function `sqrt()` does. Open the help page for `sqrt()` by typing `?sqrt` below.
+
+```{r what-you-will-learn-12, exercise = TRUE}
+
+```
+
+```{r what-you-will-learn-12-hint-1, eval = FALSE}
 ?...
 ```
 
@@ -262,19 +300,19 @@ If you are ever stuck while coding, R has *help pages*. Let's say we want to kno
 
 Note that "library" and "package" mean the same things in R. We have different words for historical reasons. However, only the `library()` command will load a package/library, giving us access to the functions and data which it contains.
 
-### Exercise 11
+### Exercise 13
 
 Assign the value of `sqrt(144)` to the variable `x`. Remember to use the assignment operator `<-`.
 
-```{r what-you-will-learn-11, exercise = TRUE}
+```{r what-you-will-learn-13, exercise = TRUE}
 
 ```
 
-```{r what-you-will-learn-11-hint-1, eval = FALSE}
+```{r what-you-will-learn-13-hint-1, eval = FALSE}
 x <- ...(144)
 ```
 
-```{r what-you-will-learn-11-test, include = FALSE}
+```{r what-you-will-learn-13-test, include = FALSE}
 x <- sqrt(144)
 ```
 
@@ -282,15 +320,15 @@ x <- sqrt(144)
 
 The assignment operator `<-` is used to assign values to variables. The left side of the operator is the variable name, and the right side is the value to be assigned. The value can be a number, a string, a logical value, or the result of a function. 
 
-### Exercise 12
+### Exercise 14
 
 Type `x` in the exercise code block below. Note that it will return an error. 
 
-```{r what-you-will-learn-12, exercise = TRUE}
+```{r what-you-will-learn-14, exercise = TRUE}
 
 ```
 
-```{r what-you-will-learn-12-hint-1, eval = FALSE}
+```{r what-you-will-learn-14-hint-1, eval = FALSE}
 x
 ```
 
@@ -298,7 +336,7 @@ x
 
 This is because the variable `x` is only available in the code block where it was created. If you want to use `x` in another code block, you must assign it again.
 
-### Exercise 13
+### Exercise 15
 
 *Code comments* are text placed after a `#` symbol. Nothing will be run after a `#` symbol, which is useful if you want to write human readable comments in your code.
 
@@ -306,23 +344,23 @@ This is because the variable `x` is only available in the code block where it wa
 
 Press "Run Code." Afterwards, add the `#` and re-run the code block. You should no longer see a result.
 
-```{r what-you-will-learn-13, exercise = TRUE}
+```{r what-you-will-learn-15, exercise = TRUE}
 sqrt(144)
 ```
 
-### Exercise 14
+### Exercise 16
 
 Run `print()` on `diamonds`. This returns the same result as typing `diamonds` in the code block. 
 
-```{r what-you-will-learn-14, exercise = TRUE}
+```{r what-you-will-learn-16, exercise = TRUE}
 
 ```
 
-```{r what-you-will-learn-14-hint-1, eval = FALSE}
+```{r what-you-will-learn-16-hint-1, eval = FALSE}
 ...(diamonds)
 ```
 
-```{r what-you-will-learn-14-test, include = FALSE}
+```{r what-you-will-learn-16-test, include = FALSE}
 print(diamonds)
 ```
 
@@ -330,34 +368,35 @@ print(diamonds)
 
 You can choose how many rows to display by using the `n` argument in the `print()` function, and how many columns to display by using the `width` argument.
 
-### Exercise 15
+### Exercise 17
 
 Run `print()` on `diamonds` with the argument `n = 3`. This returns the first 3 rows of the `diamonds` data set.
 
-```{r what-you-will-learn-15, exercise = TRUE}
+```{r what-you-will-learn-17, exercise = TRUE}
 
 ```
 
-```{r what-you-will-learn-15-hint-1, eval = FALSE}
+```{r what-you-will-learn-17-hint-1, eval = FALSE}
 print(..., n = 3)
 ```
 
-```{r what-you-will-learn-15-test, include = FALSE}
+```{r what-you-will-learn-17-test, include = FALSE}
 print(diamonds, n = 3)
 ```
 
 ### 
 
 The `diamonds` data set contains 53,940 rows and 10 columns. Each row represents a single diamond, and each column represents a different characteristic of the diamond. 
-### Exercise 16
+
+### Exercise 18
 
 Type `?diamonds` to look up the help page for the `diamonds` tibble from the **ggplot2** package, which is one of the core packages in the *Tidyverse*.
 
-```{r what-you-will-learn-16, exercise = TRUE}
+```{r what-you-will-learn-18, exercise = TRUE}
 
 ```
 
-```{r what-you-will-learn-16-hint-1, eval = FALSE}
+```{r what-you-will-learn-18-hint-1, eval = FALSE}
 ?...
 ```
 
@@ -376,25 +415,43 @@ question_text(NULL,
 
 You can find help about an entire package with `help(package = "ggplot2")`. It is confusing, but unavoidable, that package names are sometimes unquoted, as in `library(ggplot2)`, and sometimes quoted, as in `help(package = "ggplot2")`. If one does not work, try the other.
 
-### Exercise 17
+### Exercise 19
 
 Run `glimpse()` on `diamonds`. 
 
-```{r what-you-will-learn-17, exercise = TRUE}
+```{r what-you-will-learn-19, exercise = TRUE}
 
 ```
 
-```{r what-you-will-learn-17-hint-1, eval = FALSE}
+```{r what-you-will-learn-19-hint-1, eval = FALSE}
 ...(diamonds)
 ```
 
-```{r what-you-will-learn-17-test, include = FALSE}
+```{r what-you-will-learn-19-test, include = FALSE}
 glimpse(diamonds)
 ```
 
 ### 
 
 `glimpse()` displays columns running down the page and the data running across across. Note how the "type" of each variable is listed next to the variable name. For example, `price` is listed as `<int>`, meaning that it is an integer variable. To learn more about the `glimpse()` function, run `?glimpse`.
+
+### Exercise 20
+
+Run `glimpse()` on `midwest`. 
+
+```{r what-you-will-learn-20, exercise = TRUE}
+
+```
+
+```{r what-you-will-learn-20-hint-1, eval = FALSE}
+glimpse(...)
+```
+
+```{r what-you-will-learn-20-test, include = FALSE}
+glimpse(midwest)
+```
+
+### 
 
 `view()` is another useful function, but, just because it is interactive, we should not use it within a tutorial. 
 
@@ -658,7 +715,7 @@ ggplot(data = mpg,
 
 ### 
 
-<!-- GK: Note to myself, maybe drop knowledge from chapter 1, or drop knowledge about interpreting the graph -->
+This book proudly and primarily focuses on small, in-memory datasets. This is the right place to start because you can’t tackle big data unless you have experience with small data.
 
 ### Exercise 11
 
@@ -722,6 +779,8 @@ ggplot(data = mpg,
 
 ### 
 
+The tools you’ll learn throughout the majority of this book and thue tutorials will easily handle hundreds of megabytes of data, and with a bit of care, you can typically use them to work with a few gigabytes of data.
+
 ### Exercise 13
 
 Set `y` to `"Highway Efficiency (mpg)"`. 
@@ -754,6 +813,8 @@ ggplot(data = mpg,
 ```
 
 ### 
+
+We’ll also show you how to get data out of databases and parquet files, both of which are often used to store big data. You won’t necessarily be able to work with the entire dataset, but that’s not a problem because you only need a subset or subsample to answer the question that you’re interested in.
 
 ### Exercise 14
 
@@ -790,11 +851,12 @@ ggplot(data = mpg,
 
 ### 
 
+Large data sets (10-100GB, say), uses a different interface than the tidyverse and requires you to learn some different conventions. If you are interested, we recommend learning more about [data.table](https://github.com/Rdatatable/data.table)
+
 ## What you won’t learn
 ### 
 
 [*R for Data Science (2e)*](https://r4ds.hadley.nz/) and these associated tutorials cover a lot of material. But we can't cover everything. In particular, the book and these tutorials do not cover modeling, big data, or other programming languages like Python and Julia.
-
 
 ## Prerequisites
 ### 
@@ -850,8 +912,6 @@ Although the *Tidyverse* includes hundreds of commands, the most important are `
 
 ### Exercise 1
 
-<!-- DK: Pick a different data set. Allows for several questions! First, look at data set. Note row number. Second, run summary on data set, note missing values. Third, pipe data set to drop_na(). Note fewer rows. Move all this to pipe section, where it fits more naturally. -->
-
 Let's warm up by examining the `gss_cat` tibble from the **forcats** package. Since **forcats** is a core **tidyverse** package, you have already loaded it. Type `gss_cat` and hit "Run Code."
 
 ```{r running-r-code-1, exercise = TRUE}
@@ -878,11 +938,57 @@ You can also see the variable type under each of the column names.
 
 ### Exercise 2
 
+Run `summary()` on `gss_cat`. 
+
+```{r running-r-code-2, exercise = TRUE}
+
+```
+
+```{r running-r-code-2-hint-1, eval = FALSE}
+summary(...)
+```
+
+```{r running-r-code-2-test, include = FALSE}
+summary(gss_cat)
+```
+
+### 
+
+Note that there are missing values in some columns. The word `NA` stands for "Not Available" and is used to represent missing data in R.
+
+### Exercise 3
+
+Pipe `gss_cat` to `drop_na()`. This function removes rows with missing values. 
+
+```{r running-r-code-3, exercise = TRUE}
+
+```
+
+```{r running-r-code-3-hint-1, eval = FALSE}
+... |> 
+  drop_na()
+```
+
+```{r running-r-code-3-test, include = FALSE}
+gss_cat |> 
+  drop_na()
+```
+
+### 
+
+Note the number of rows in the tibble after `drop_na()`. Since `drop_na()` removes rows with missing values, the number of rows in the tibble will be less than the original number of rows.
+
+````
+A tibble: 11,299 × 9
+````
+
+### Exercise 4
+
 Run `?forcats::gss_cat` in the Console. This should work even if you have not loaded the **forcats** package. The double colon --- `::` --- notation allows us to access the inside of a package even if we have not loaded it.
 
 Copy/paste the Description.
 
-```{r running-r-code-2}
+```{r running-r-code-4}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -901,23 +1007,23 @@ Other R objects (such as data or function arguments) are in a code font, without
 
 Sometimes, to make it clear which package an object comes from, we’ll use the package name followed by two colons, like `dplyr::mutate()` or `nycflights13::flights`. This is also valid R code.
 
-### Exercise 3
+### Exercise 5
 
 Recall that the `+` sign is used to **"chain"** different pieces of plot creation code together. When doing data analysis, we use the "pipe" symbol --- `|>` --- to do the same thing between different pieces code which manipulate the data.
 
 As a simple example, "pipe" the `gss_cat` tibble to the `print()` command.  
 
 
-```{r running-r-code-3, exercise = TRUE}
+```{r running-r-code-5, exercise = TRUE}
 
 ```
 
-```{r running-r-code-3-hint-1, eval = FALSE}
+```{r running-r-code-5-hint-1, eval = FALSE}
 ... |> 
   print()
 ```
 
-```{r running-r-code-3-test, include = FALSE}
+```{r running-r-code-5-test, include = FALSE}
 gss_cat |> 
   print()
 ```
@@ -927,20 +1033,20 @@ gss_cat |>
 Note the language. We write "pipe this to that." That is, we pipe the `gss_cat` tibble to the `print()` command. This accomplishes the same effect as simply running `print(gss_cat)`, but allows us to string together several commands in a row.
 
 
-### Exercise 4
+### Exercise 6
 
-Pipe `gss_cat` to `filter()` using the `|>`.  Within `filter()`, use the argument `age > 88`. In the same way that the `+` sign is used to "chain" different pieces of plot creation code together, the "pipe" --- `|>` --- is used to chain different pieces of data analysis code together.
+Pipe `gss_cat` to `filter()`.  Within `filter()`, use the argument `age > 88`. 
 
-```{r running-r-code-4, exercise = TRUE}
+```{r running-r-code-6, exercise = TRUE}
 
 ```
 
-```{r running-r-code-4-hint-1, eval = FALSE}
+```{r running-r-code-6-hint-1, eval = FALSE}
 gss_cat |> 
   ...(age > 88)
 ```
 
-```{r running-r-code-4-test, include = FALSE}
+```{r running-r-code-6-test, include = FALSE}
 gss_cat |> 
   filter(age > 88)
 ```
@@ -951,23 +1057,23 @@ This workflow --- in which we pipe a tibble to a function, which then outputs an
 
 The resulting tibble has the same number of columns --- `filter()` only affects the rows --- as `gss_cat` but many fewer rows, because there are only 150 people in the data older than 88.
 
-### Exercise 5
+### Exercise 7
 
 Continue the code and pipe with `select()`, using the argument `age, marital, race, relig, tvhours`.
 
 
-```{r running-r-code-5, exercise = TRUE}
+```{r running-r-code-7, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r running-r-code-5-hint-1, eval = FALSE}
+```{r running-r-code-7-hint-1, eval = FALSE}
 ... |> 
   select(age, ..., race, ..., tvhours)
 ```
 
-```{r running-r-code-5-test, include = FALSE}
+```{r running-r-code-7-test, include = FALSE}
 gss_cat |> 
   filter(age > 88) |> 
   select(age, marital, race, relig, tvhours)
@@ -977,27 +1083,105 @@ gss_cat |>
 
 Note how the Hint only gives the most recent line of the pipe. Because `select()` does not affect the rows, we have the same number as after `filter()`. But we only have 5 columns now, consistent with what we told `select()` to do.
 
-<!-- DK: Add the three drop_na() questions here. -->
+### Exercise 8
 
-### Exercise 6
+Copy previous code. Continue the pipe with `summary()`
 
-Use the "Copy previous code" button to place a copy of the pipe from the last question into the Exercise Code Block. Extend the code and pipe with `arrange()`, using `desc(tvhours)` as the argument.
-
-```{r running-r-code-6, exercise = TRUE}
+```{r running-r-code-8, exercise = TRUE}
 
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
-```{r running-r-code-6-hint-1, eval = FALSE}
+```{r running-r-code-8-hint-1, eval = FALSE}
+... |> 
+  summary()
+```
+
+```{r running-r-code-8-test, include = FALSE}
+gss_cat |> 
+  filter(age > 88) |> 
+  select(age, marital, race, relig, tvhours) |>
+  summary()
+```
+
+### 
+
+Note that there are missing values in the `tvhours` column. Let's remove them.
+
+### Exercise 9
+
+Copy previous code. Replace the `summary()` with `drop_na()`.
+
+```{r running-r-code-9, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r running-r-code-9-hint-1, eval = FALSE}
+... |> 
+  drop_na()
+```
+
+```{r running-r-code-9-test, include = FALSE}
+gss_cat |> 
+  filter(age > 88) |> 
+  select(age, marital, race, relig, tvhours) |>
+  drop_na()
+```
+
+### 
+
+Note that the number of rows has decreased as we removed rows with missing values.
+
+### Exercise 10
+
+Continue the pipe with `arrange()`, using `tvhours` as the argument.
+
+```{r running-r-code-10, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r running-r-code-10-hint-1, eval = FALSE}
+... |> 
+  arrange(...)
+```
+
+```{r running-r-code-10-test, include = FALSE}
+gss_cat |> 
+  filter(age > 88) |> 
+  select(age, marital, race, relig, tvhours) |>
+  drop_na() |>
+  arrange(tvhours)
+```
+
+### 
+
+The `arrange()` function sorts the rows of a tibble. By default, it sorts in ascending order.
+
+### Exercise 11
+
+Copy the previous code. Put `desc()` around `tvhours` to sort in descending order.
+
+```{r running-r-code-11, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r running-r-code-11-hint-1, eval = FALSE}
 ... |> 
   arrange(desc(...))
 ```
 
-```{r running-r-code-6-test, include = FALSE}
+```{r running-r-code-11-test, include = FALSE}
 gss_cat |> 
   filter(age > 88) |> 
-  select(age, marital, race, relig, tvhours) |> 
+  select(age, marital, race, relig, tvhours) |>
+  drop_na() |>
   arrange(desc(tvhours))
 ```
 
@@ -1005,12 +1189,172 @@ gss_cat |>
 
 Got to respect someone who watches TV 18 hours a day!
 
+### Exercise 12
 
+Let's make a plot. Copy the previous code, and pipe to `ggplot()`. Set `aes(x = tvhours, y = age)`.
+
+```{r running-r-code-12, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r running-r-code-12-hint-1, eval = FALSE}
+... |> 
+  ggplot(mapping = aes(x = ..., y = ...))
+```
+
+```{r running-r-code-12-test, include = FALSE}
+gss_cat |> 
+  filter(age > 88) |> 
+  select(age, marital, race, relig, tvhours) |>
+  drop_na() |>
+  arrange(desc(tvhours)) |>
+  ggplot(aes(x = tvhours, y = age))
+```
+
+### 
+
+Note that this will return a plain graph as we have not mapped any data to the graph yet.
+
+### Exercise 13
+
+Add another layer with `geom_point()` using the `+` sign. 
+
+```{r running-r-code-13, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r running-r-code-13-hint-1, eval = FALSE}
+... + 
+  geom_point()
+```
+
+```{r running-r-code-13-test, include = FALSE}
+gss_cat |> 
+  filter(age > 88) |> 
+  select(age, marital, race, relig, tvhours) |>
+  drop_na() |>
+  arrange(desc(tvhours)) |>
+  ggplot(aes(x = tvhours, y = age)) + 
+  geom_point()
+```
+
+### 
+
+This is a scatterplot of `tvhours` versus `age`. The x-axis is the number of hours of TV watched per day, and the y-axis is the age of the person.
+
+### Exercise 14
+
+Let's rescale the `y` axes. Add `scale_y_continuous(breaks = c(89), limits = c(89, 89))` to the code. 
+
+```{r running-r-code-14, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r running-r-code-14-hint-1, eval = FALSE}
+
+```
+
+```{r running-r-code-14-test, include = FALSE}
+gss_cat |> 
+  filter(age > 88) |> 
+  select(age, marital, race, relig, tvhours) |>
+  drop_na() |>
+  arrange(desc(tvhours)) |>
+  ggplot(aes(x = tvhours, y = age)) + 
+  geom_point() + 
+  scale_y_continuous(breaks = c(89), limits = c(89, 89))
+```
+
+### 
+
+By looking at the graph, we can see that most people watch TV for less than 10 hours a day. However, there is one person who watches TV for 18 hours a day.
+
+### Exercise 15
+
+Finally, add a title, subtitle, labels for x and y axes using `labs()`. Remember this is what your graph should look like.
+
+```{r}
+gss_cat |> 
+  filter(age > 88) |> 
+  select(age, marital, race, relig, tvhours) |>
+  drop_na() |>
+  arrange(desc(tvhours)) |>
+  ggplot(aes(x = tvhours, y = age)) + 
+  geom_point() + 
+  scale_y_continuous(breaks = c(89), limits = c(89, 89)) +
+  labs(title = "TV Hours Watched by Age", 
+       subtitle = "Got to respect someone who watches TV 18 hours a day!", 
+       x = "TV Hours", 
+       y = "Age")
+```
+
+```{r running-r-code-15, exercise = TRUE}
+
+```
+
+<button onclick = "transfer_code(this)">Copy previous code</button>
+
+```{r running-r-code-15-hint-1, eval = FALSE}
+... + 
+  labs(title = "...", 
+       subtitle = "...", 
+       x = "...", 
+       y = "...")
+```
+
+```{r running-r-code-15-test, include = FALSE}
+gss_cat |> 
+  filter(age > 88) |> 
+  select(age, marital, race, relig, tvhours) |>
+  drop_na() |>
+  arrange(desc(tvhours)) |>
+  ggplot(aes(x = tvhours, y = age)) + 
+  geom_point() + 
+  scale_y_continuous(breaks = c(89), limits = c(89, 89)) +
+  labs(title = "TV Hours Watched by Age", 
+       subtitle = "Got to respect someone who watches TV 18 hours a day!", 
+       x = "TV Hours", 
+       y = "Age")
+```
+
+### 
+
+Note that the code in the code block is not saved. If you want to save the code, you can copy/paste it into an R script file.
+
+### Exercise 16
+
+On top of your RStudio window, click on "File" and then "New File." Choose "R Script." Copy/paste the code from the plot into the script. Save the script as `analysis.R`. 
+
+On the Console, run:
+
+```
+show_file("analysis.R")
+```
+
+CP/PR.
+
+```{r running-r-code-16}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
 
 ## Summary
 ### 
 
-This tutorial covered the [Introduction](https://r4ds.hadley.nz/intro.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
+This tutorial covers the [Introduction](https://r4ds.hadley.nz/intro.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You have learned how to work with data sets from the [ggplot2](https://ggplot2.tidyverse.org) using the pipe command and make some cool plots to visualize the data. You also learned how to create an Rscript file to store your code.
+
 
 ```{r download-answers, child = system.file("child_documents/download_answers.Rmd", package = "tutorial.helpers")}
 ```
