@@ -16,7 +16,7 @@ library(learnr)
 library(tutorial.helpers)
 library(tidyverse)
 library(palmerpenguins)
-library(ggthemes)
+library(ggthemes) # Does not seem that ggthemes is actually used in the tutorial.
 
 knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(out.width = '90%')
@@ -38,6 +38,8 @@ plot_geom <- penguins |>
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- Hitting Run Document results in the creation of penguin_plot.png. Shouldn't we clean that up? DK: Please investigate. -->
+
 <!-- This tutorial stinks! It does not actually cover the material in the chapter! It is mostly a compilation of material from elsewhere. Note how the Sections don't even match R4DS! -->
 
 <!-- Tutorial is sloppy because, instead of copy/pasting the most relevant/important portions of the chapter as knowledge drops, it mostly adds its own thoughts. Bad author! -->
@@ -51,13 +53,11 @@ plot_geom <- penguins |>
 <!-- Make hint code follow style guide and be consistent question to question. -->
 
 ## Introduction
-
 ### 
 
 This tutorial covers [Chapter 1: Data visualization](https://r4ds.hadley.nz/data-visualize.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn about the key functions from the [**ggplot2**](https://ggplot2.tidyverse.org/index.html) package for data visualization, including [`geom_point()`](https://ggplot2.tidyverse.org/reference/geom_point.html), [`geom_line()`](https://ggplot2.tidyverse.org/reference/geom_path.html), [`geom_bar()`](https://ggplot2.tidyverse.org/reference/geom_bar.html), [`geom_boxplot()`](https://ggplot2.tidyverse.org/reference/geom_boxplot.html), [`geom_histogram()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html), and more.
 
 ## Creating your first ggplot
-
 ### 
 
 R has several systems for making graphs, but [**ggplot2**](https://ggplot2.tidyverse.org/index.html) is one of the most elegant and most versatile. **ggplot2** implements the *grammar of graphics*, a coherent system for describing and building graphs. With **ggplot2**, you can do more and faster by learning one system and applying it in many places.
@@ -86,15 +86,15 @@ intro_p
 
 Load the **tidyverse** library using `library()`.
 
-```{r creating-first-ggplot-1, exercise = TRUE}
+```{r creating-your-first-ggplot-1, exercise = TRUE}
 
 ```
 
-```{r creating-first-ggplot-1-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-1-hint-1, eval = FALSE}
 library(...)
 ```
 
-```{r creating-first-ggplot-1-test, include = FALSE}
+```{r creating-your-first-ggplot-1-test, include = FALSE}
 library(tidyverse)
 ```
 
@@ -106,15 +106,15 @@ We almost always begin our work by loading the **tidyverse** package. Note that 
 
 Load the **palmerpenguins** package using `library()`. This is the package which holds the data we'll be using.
 
-```{r creating-first-ggplot-2, exercise = TRUE}
+```{r creating-your-first-ggplot-2, exercise = TRUE}
 
 ```
 
-```{r creating-first-ggplot-2-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-2-hint-1, eval = FALSE}
 library(...)
 ```
 
-```{r creating-first-ggplot-2-test, include = FALSE}
+```{r creating-your-first-ggplot-2-test, include = FALSE}
 library(palmerpenguins)
 ```
 
@@ -128,7 +128,7 @@ In the Console, run `library(palmerpenguins)`. The Console and the Tutorial are 
 
 Run `?palmerpenguins` in the Console after loading in the package. After doing so, copy and paste the description here. (As a reminder, running `?something` in the console will open the help page for `something`. Running `??something`, though, will search for help pages with `something`). 
 
-```{r creating-first-ggplot-3}
+```{r creating-your-first-ggplot-3}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -143,19 +143,17 @@ The data includes size measurements, clutch observations, and blood isotope rati
 
 ### Exercise 4
 
-<!-- MP: Why do we need ggthemes here? It doesn't seem to be used in any way by the graph we're making.  -->
-
 Run the `library()` command with `ggthemes` as the argument. We can infer from the name of the package that `ggthemes` is used to make plots created with the **ggplot2** package look nicer.
 
-```{r creating-first-ggplot-4, exercise = TRUE}
+```{r creating-your-first-ggplot-4, exercise = TRUE}
 
 ```
 
-```{r creating-first-ggplot-4-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-4-hint-1, eval = FALSE}
 library(...)
 ```
 
-```{r creating-first-ggplot-4-test, include = FALSE}
+```{r creating-your-first-ggplot-4-test, include = FALSE}
 library(ggthemes)
 ```
 
@@ -163,21 +161,19 @@ library(ggthemes)
 
 Type `penguins` and hit Run Code. `penguins` is the table that holds the data we'll be using to make the plot.
 
-```{r creating-first-ggplot-5, exercise = TRUE}
+```{r creating-your-first-ggplot-5, exercise = TRUE}
 
 ```
 
-```{r creating-first-ggplot-5-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-5-hint-1, eval = FALSE}
 penguins
 ```
 
-```{r creating-first-ggplot-5-test, include = FALSE}
+```{r creating-your-first-ggplot-5-test, include = FALSE}
 penguins
 ```
 
 ### 
-
-<!-- MP: Added a brief spiel about tidy data.  -->
 
 **Tabular data** is data organized in a table. A table is a group of cells, organized in rows and columns. Tabular data is considered *tidy* if and only if it satisfies the following rules:
 
@@ -195,15 +191,15 @@ knitr::include_graphics("images/tidy-data.png")
 
 Run `glimpse()` with `penguins` as its argument.
 
-```{r creating-first-ggplot-6, exercise = TRUE}
+```{r creating-your-first-ggplot-6, exercise = TRUE}
 
 ```
 
-```{r creating-first-ggplot-6-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-6-hint-1, eval = FALSE}
 glimpse(...)
 ```
 
-```{r creating-first-ggplot-6-test, include = FALSE}
+```{r creating-your-first-ggplot-6-test, include = FALSE}
 glimpse(penguins)
 ```
 
@@ -219,21 +215,19 @@ Among the variables in `penguins` are:
 
 ### Exercise 7
 
-<!-- MP: Added a brief spiel about the function of the `ggplot()` function and ggplot objects.  -->
-
 `ggplot()` is the core function of the **ggplot2** package in R, creating a *ggplot object* that serves as a canvas for visualizations, like scatter and box plots. 
 
 Run `ggplot(data = penguins)`.
 
-```{r creating-first-ggplot-7, exercise = TRUE}
+```{r creating-your-first-ggplot-7, exercise = TRUE}
 
 ```
 
-```{r creating-first-ggplot-7-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-7-hint-1, eval = FALSE}
 ggplot(...)
 ```
 
-```{r creating-first-ggplot-7-test, include = FALSE}
+```{r creating-your-first-ggplot-7-test, include = FALSE}
 ggplot(data = penguins)
 ```
 
@@ -243,7 +237,7 @@ You should see a blank, grey square. R has set up the area in which it can place
 
 ### 
 
-<!-- MP: This needs to be re-ordered. Maybe have this paragraph be closer to the one about tidy data?  -->
+<!-- DK: Reorder knowledge drops as you see fit. -->
 
 In the realm of data analysis, a fundamental concept is the notion of a variable. A variable represents a quantity, quality, or property that can be measured or observed. Variables can take different forms, depending on the nature of the data being studied. They can be numeric or categorical, continuous or discrete, qualitative or quantitative.
 
@@ -251,33 +245,31 @@ In the realm of data analysis, a fundamental concept is the notion of a variable
 
 Run `sqrt(16)`. `sqrt(x)` takes the square root of `x`. 
 
-```{r creating-first-ggplot-8, exercise = TRUE}
+```{r creating-your-first-ggplot-8, exercise = TRUE}
 
 ```
 
-```{r creating-first-ggplot-8-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-8-hint-1, eval = FALSE}
 sqrt(...)
 ```
 
-```{r creating-first-ggplot-8-test, include = FALSE}
+```{r creating-your-first-ggplot-8-test, include = FALSE}
 sqrt(16)
 ```
 
 ### Exercise 9
 
-<!-- MP: added a few sentences of spiel about the pipe.  -->
+The pipe operator, `|>`, allows for cleaner, more readable code by passing the output of one function directly into the next. Run `16 |> sqrt()` (passing the value 16 into the function `sqrt()`).
 
-The pipe operator, `|>`, allows for cleaner, more readable code by passing the output of one function directly into the next. Run `16 |> sqrt()` (passing the value 16 into the function `sqrt()`)
-
-```{r creating-first-ggplot-9, exercise = TRUE}
+```{r creating-your-first-ggplot-9, exercise = TRUE}
 
 ```
 
-```{r creating-first-ggplot-9-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-9-hint-1, eval = FALSE}
 16 |> ...
 ```
 
-```{r creating-first-ggplot-9-test, include = FALSE}
+```{r creating-your-first-ggplot-9-test, include = FALSE}
 16 |> sqrt()
 ```
 
@@ -291,18 +283,16 @@ Typically, when we use the pipe, we read `x |> y` as "`x` being piped into `y`".
 
 Pipe `penguins` into `ggplot()`. 
 
-```{r creating-first-ggplot-10, exercise = TRUE}
+```{r creating-your-first-ggplot-10, exercise = TRUE}
 
 ```
 
-<!-- MP: The "copy code" button is not needed here. -->
-
-```{r creating-first-ggplot-10-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-10-hint-1, eval = FALSE}
 penguins |> 
   ...
 ```
 
-```{r creating-first-ggplot-10-test, include = FALSE}
+```{r creating-your-first-ggplot-10-test, include = FALSE}
 penguins |>
   ggplot()
 ```
@@ -311,13 +301,12 @@ penguins |>
 
 `penguins`, on the left of the pipe, becomes the input to `ggplot()`, on the right side. This generates the same output as `ggplot(data = penguins)`. While indentation may not affect code, it is a good habit to do because it helps go through the code much faster. We start each command in a pipe on a new line. Each line of code in a pipe ends with the pipe itself: `|>`.
 
-<!-- MP: Having partially been brought up on Art of Problem Solving math textbooks, I get the idea here with having the student try it out first, but from my other experience I know it feels strange to type code knowing nothing about what it does. Rearranging this to provide a brief intro about `aes()` before the exercise.  -->
 
-###
+### 
 
 When you're working with `ggplot()`, you typically won't be using just the `data` **parameter** (input into a function). You'll be using the `mapping` parameter as well. The `mapping` parameter lets you set, among other things, variables for the x- and y-axis.
 
-<!-- MP: Not sure if the below 2 sentences and code chunk are the best way to explain `aes()`. Needs input.  -->
+<!-- MP: Not sure if the below 2 sentences and code chunk are the best way to explain `aes()`. Needs input.  DK: Use your judgment. How does the book to it? -->
 
 To use the `mapping` parameter, you have to give `ggplot()` an *aesthetic*, which you get by calling the `aes()` function. For example, if you wanted to set the variable for the x-axis to be `foo`, you would add `mapping = aes(x = foo)` in your call to `ggplot()`. 
 
@@ -325,7 +314,7 @@ To use the `mapping` parameter, you have to give `ggplot()` an *aesthetic*, whic
 
 Copy the previous code. Within the call to `ggplot()`, set the mapping to an aesthetic and set the `x` parameter to be `flipper_length_mm` and run your code. 
 
-```{r creating-first-ggplot-11, exercise = TRUE}
+```{r creating-your-first-ggplot-11, exercise = TRUE}
 
 ```
 
@@ -335,17 +324,17 @@ Copy previous code
 
 </button>
 
-```{r creating-first-ggplot-11-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-11-hint-1, eval = FALSE}
 penguins |>
   ggplot(... = aes(x = ...))
 ```
 
-```{r creating-first-ggplot-11-test, include = FALSE}
+```{r creating-your-first-ggplot-11-test, include = FALSE}
 penguins |>
   ggplot(mapping = aes(x = flipper_length_mm))
 ```
 
-###
+### 
 
 `mapping = aes(x = flipper_length_mm)` specifies that the variable `flipper_length_mm` is mapped to the x-axis of a plot. This allows the length of the penguin's flipper to be plotted on the x-axis.
 
@@ -353,7 +342,7 @@ penguins |>
 
 Copy the previous code. Within the `aes()` set `y` equal to `body_mass_g` and run the code.
 
-```{r creating-first-ggplot-12, exercise = TRUE}
+```{r creating-your-first-ggplot-12, exercise = TRUE}
 
 ```
 
@@ -363,13 +352,13 @@ Copy previous code
 
 </button>
 
-```{r creating-first-ggplot-12-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-12-hint-1, eval = FALSE}
 penguins |>
   ggplot(mapping = aes(x = flipper_length_mm, 
                        y = ...))
 ```
 
-```{r creating-first-ggplot-12-test, include = FALSE}
+```{r creating-your-first-ggplot-12-test, include = FALSE}
 penguins |>
   ggplot(mapping = aes(x = flipper_length_mm, 
                        y = body_mass_g))
@@ -383,7 +372,7 @@ To display the data points, we need to add a geometric object, or, in ggplot ter
 
 The function `geom_point()` adds a layer of points to your plot, which creates a scatterplot. Copy the previous code and add `+ geom_point()`. 
 
-```{r creating-first-ggplot-13, exercise = TRUE}
+```{r creating-your-first-ggplot-13, exercise = TRUE}
 
 ```
 
@@ -393,14 +382,14 @@ Copy previous code
 
 </button>
 
-```{r creating-first-ggplot-13-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-13-hint-1, eval = FALSE}
 penguins |>
   ggplot(mapping = aes(x = flipper_length_mm, 
                        y = body_mass_g)) +
   ...
 ```
 
-```{r creating-first-ggplot-13-test, include = FALSE}
+```{r creating-your-first-ggplot-13-test, include = FALSE}
 penguins |>
   ggplot(mapping = aes(x = flipper_length_mm, 
                        y = body_mass_g)) +
@@ -417,7 +406,7 @@ Note the warning message. There are two problematic data points in the `penguins
 
 Insert `drop_na() |>` (`drop_na()` with a pipe) in between the expressions, `penguins |>` and `ggplot(mapping = ...)`.
 
-```{r creating-first-ggplot-14, exercise = TRUE}
+```{r creating-your-first-ggplot-14, exercise = TRUE}
 
 ```
 
@@ -427,7 +416,7 @@ Copy previous code
 
 </button>
 
-```{r creating-first-ggplot-14-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-14-hint-1, eval = FALSE}
 penguins |>
   ... |> 
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -435,7 +424,7 @@ penguins |>
     geom_point() 
 ```
 
-```{r creating-first-ggplot-14-test, include = FALSE}
+```{r creating-your-first-ggplot-14-test, include = FALSE}
 penguins |>
   drop_na() |> 
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -443,7 +432,7 @@ penguins |>
     geom_point() 
 ```
 
-###
+### 
 
 The aesthetic function, `aes()`, has more parameters than just `x` and `y`. `aes()` has parameters like `color`, `shape`, and `size` as well! You can add them in the same way you added the `x` and `y` parameters: add `color = foo` or `shape = bar(baz)` to your `aes()` call in `ggplot()`. 
 
@@ -451,7 +440,7 @@ The aesthetic function, `aes()`, has more parameters than just `x` and `y`. `aes
 
 Copy your previous code. Set the `color` to `species` and run your code. 
 
-```{r creating-first-ggplot-15, exercise = TRUE}
+```{r creating-your-first-ggplot-15, exercise = TRUE}
 
 ```
 
@@ -461,7 +450,7 @@ Copy previous code
 
 </button>
 
-```{r creating-first-ggplot-15-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-15-hint-1, eval = FALSE}
 penguins |>
   drop_na() |> 
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -470,7 +459,7 @@ penguins |>
     geom_point()
 ```
 
-```{r creating-first-ggplot-15-test, include = FALSE}
+```{r creating-your-first-ggplot-15-test, include = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -479,13 +468,13 @@ penguins |>
     geom_point() 
 ```
 
-###
+### 
 
 Scatter plots are useful for displaying relationships between `x` and `y` but it is also helpful to ask yourself if there are other variables which might contribute to the relationship. For example, does the relationship between `x` and `y` differ for different species of penguins?
 
 When you ran it, you saw that the data points differ by the color of the species, thereby creating a more interesting plot. Color isn't just the only aesthetic. See [aesthetic mappings](https://ggplot2.tidyverse.org/reference/aes.html) for more examples.
 
-###
+### 
 
 Let's add another geom, `geom_smooth()`. `geom_smooth()` "smoothes out" data into a line or curve to make patterns easier to see. `geom_smooth()`, though, is a geom that requires you to give it another parameter. In this case, it's `method`: the method used to smooth the data. Different methods are used for different purposes. You'll learn about them later on. 
 
@@ -493,7 +482,7 @@ Let's add another geom, `geom_smooth()`. `geom_smooth()` "smoothes out" data int
 
 Add the `geom_smooth()` layer using `+`. Set `method` to `"lm"` within the call to `geom_smooth()`.
 
-```{r creating-first-ggplot-16, exercise = TRUE}
+```{r creating-your-first-ggplot-16, exercise = TRUE}
 
 ```
 
@@ -503,7 +492,7 @@ Copy previous code
 
 </button>
 
-```{r creating-first-ggplot-16-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-16-hint-1, eval = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -513,7 +502,7 @@ penguins |>
   geom_smooth(...)
 ```
 
-```{r creating-first-ggplot-16-test, include = FALSE}
+```{r creating-your-first-ggplot-16-test, include = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -533,7 +522,7 @@ Note that warning about "`geom_smooth()` using formula = 'y ~ x'". Since we fail
 
 Address the warning by adding `formula = y ~ x` to the call to `geom_smooth()`. As always, different arguments to a function must be separated by a comma.
 
-```{r creating-first-ggplot-17, exercise = TRUE}
+```{r creating-your-first-ggplot-17, exercise = TRUE}
 
 ```
 
@@ -543,12 +532,12 @@ Copy previous code
 
 </button>
 
-```{r creating-first-ggplot-17-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-17-hint-1, eval = FALSE}
 ... +
   geom_smooth(method = "lm", ...) 
 ```
 
-```{r creating-first-ggplot-17-test, include = FALSE}
+```{r creating-your-first-ggplot-17-test, include = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -566,7 +555,7 @@ penguins |>
 
 We have added new lines to the plot, but it does not match the original plot, which displayed only one line for the entire data set instead of separate lines for each penguin species. To accomplish this effect, delete the `color` aesthetic within `ggplot()` and add it to `geom_point()` by running `geom_point(mapping = aes(color = species))`.
 
-```{r creating-first-ggplot-18, exercise = TRUE}
+```{r creating-your-first-ggplot-18, exercise = TRUE}
 
 ```
 
@@ -576,7 +565,7 @@ Copy previous code
 
 </button>
 
-```{r creating-first-ggplot-18-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-18-hint-1, eval = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -585,7 +574,7 @@ penguins |>
   geom_smooth(method = "lm", formula = y ~ x)
 ```
 
-```{r creating-first-ggplot-18-test, include = FALSE}
+```{r creating-your-first-ggplot-18-test, include = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -603,7 +592,7 @@ In **ggplot2**, when aesthetic mappings are defined at the global level, they ar
 
 Not all individuals perceive colors the same due to color blindness or other color vision differences. To help, we can map `species` to the `shape` aesthetic, in addition to the `color` aesthetic, within `geom_point()`.
 
-```{r creating-first-ggplot-19, exercise = TRUE}
+```{r creating-your-first-ggplot-19, exercise = TRUE}
 
 ```
 
@@ -613,7 +602,7 @@ Copy previous code
 
 </button>
 
-```{r creating-first-ggplot-19-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-19-hint-1, eval = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -622,7 +611,7 @@ penguins |>
   geom_smooth(method = "lm", formula = y ~ x)
 ```
 
-```{r creating-first-ggplot-19-test, include = FALSE}
+```{r creating-your-first-ggplot-19-test, include = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -640,7 +629,7 @@ In addition to the built-in shapes, `ggplot()` also allows for custom shapes to 
 
 Now that we have the data points, lets add the title, subtitle, labels, *et cetera*. Copy the previous code, add a new layer using `+` and add `labs()`. Within labs, set `title` equal to `"Body Mass and Flipper Length"`.
 
-```{r creating-first-ggplot-20, exercise = TRUE}
+```{r creating-your-first-ggplot-20, exercise = TRUE}
 
 ```
 
@@ -650,7 +639,7 @@ Copy previous code
 
 </button>
 
-```{r creating-first-ggplot-20-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-20-hint-1, eval = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -660,7 +649,7 @@ penguins |>
     labs(...)
 ```
 
-```{r creating-first-ggplot-20-test, include = FALSE}
+```{r creating-your-first-ggplot-20-test, include = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -679,7 +668,7 @@ The `labs()` function takes in several arguments to modify the plot labels, incl
 
 Copy the previous code. Add the subtitle by adding `subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins"` after the title in the call to `labs()` (separated by a comma).
 
-```{r creating-first-ggplot-21, exercise = TRUE}
+```{r creating-your-first-ggplot-21, exercise = TRUE}
 
 ```
 
@@ -689,7 +678,7 @@ Copy previous code
 
 </button>
 
-```{r creating-first-ggplot-21-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-21-hint-1, eval = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -700,7 +689,7 @@ penguins |>
        ...)
 ```
 
-```{r creating-first-ggplot-21-test, include = FALSE}
+```{r creating-your-first-ggplot-21-test, include = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -720,7 +709,7 @@ The `labs()` function can also be used with the `ggtitle()` function to modify t
 
 Lets modify the x and y axes. In the call to `labs()`, type a comma, then add the `x` parameter and set it to `"Flipper Length (mm)"` Type another comma and a `y`, then set it equal to `"Body Mass (g)"` in quotes.
 
-```{r creating-first-ggplot-22, exercise = TRUE}
+```{r creating-your-first-ggplot-22, exercise = TRUE}
 
 ```
 
@@ -730,7 +719,7 @@ Copy previous code
 
 </button>
 
-```{r creating-first-ggplot-22-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-22-hint-1, eval = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -742,7 +731,7 @@ penguins |>
         ...)
 ```
 
-```{r creating-first-ggplot-22-test, include = FALSE}
+```{r creating-your-first-ggplot-22-test, include = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -768,7 +757,7 @@ Finally, it's worth noting that the `labs()` function is just one way to modify 
 
 You might see that it looks the same as the one in the beginning but we forgot one minor thing which is capitalizing the legend, we can do so by typing a comma and setting both `color` and `shape` equal to `"Species"` (in quotes).
 
-```{r creating-first-ggplot-23, exercise = TRUE}
+```{r creating-your-first-ggplot-23, exercise = TRUE}
 
 ```
 
@@ -778,7 +767,7 @@ Copy previous code
 
 </button>
 
-```{r creating-first-ggplot-23-hint-1, eval = FALSE}
+```{r creating-your-first-ggplot-23-hint-1, eval = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -791,7 +780,7 @@ penguins |>
        ...)
 ```
 
-```{r creating-first-ggplot-23-test, include = FALSE}
+```{r creating-your-first-ggplot-23-test, include = FALSE}
 penguins |>
   drop_na() |>
   ggplot(mapping = aes(x = flipper_length_mm, 
@@ -814,7 +803,6 @@ intro_p
 ```
 
 ## Geom point
-
 ### 
 
 To practice the new skills we learned from the plot we made in the previous exercises, we will make another plot which displays the relationship between `bill_depth_mm` and `bill_length_mm`.
@@ -1056,11 +1044,7 @@ In addition to color, we can also map species to the shape aesthetic. Map the `s
 
 ```
 
-<button onclick="transfer_code(this)">
-
-Copy previous code
-
-</button>
+<button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geom-point-8-hint-1, eval = FALSE}
 penguins |>   
@@ -1098,11 +1082,7 @@ Now that we have the data points, lets add the title, subtitle, labels and etc. 
 
 ```
 
-<button onclick="transfer_code(this)">
-
-Copy previous code
-
-</button>
+<button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r geom-point-9-hint-1, eval = FALSE}
 penguins |>   
@@ -1143,14 +1123,13 @@ exercise_scatterplot_p
 ```
 
 ## Geom bar
-
 ### 
 
 To examine the distribution of a categorical variable, variables that represent categories or groups of items, we can use the bar chart to do so.
 
 Our ultimate goal in this chapter is to recreate the following visualization displaying the relationship between the islands and the species population.
 
-<!-- MP: This plot uses `drop_na()`, but the exercises leading up to the student making the plot don't.  -->
+<!-- MP: This plot uses `drop_na()`, but the exercises leading up to the student making the plot don't. DK: You're right. Add an exercise which uses drop_na(). But when?  -->
 
 ```{r}
 geom_bar_p <- penguins |>  
@@ -1349,7 +1328,6 @@ geom_bar_p
 ```
 
 ## Geom histogram
-
 ### 
 
 To visualize the distribution of a continuous variable, we will be using `geom_histogram()`. We will construct this plot:
@@ -1428,7 +1406,7 @@ This just adds the x-axis to out plot. We have still not told `ggplot()` which t
 
 ### 
 
-<!-- MP: This section has no relation to the content around it. This needs to be rearranged.  -->
+<!-- DK Rearranged as you see fit.  -->
 
 A continuous variable is a variable that can take on any value within a certain range or interval. Examples include time, distance, weight, height, temperature, or any other quantity that can be measured on a numerical scale.
 
@@ -1497,10 +1475,6 @@ penguins |>
 ```
 
 ### 
-
-<!-- DK: Confusing use of bins and binwidth. -->
-
-<!-- MP: Fixed. (Input wanted on wording/phrasing) -->
 
 The `binwidth` parameter changes the *width* of the bins used. There is another parameter, `bins`, that changes *how many* bins are used. Be careful; this is known to be a bit confusing. 
 
@@ -1577,7 +1551,6 @@ hist_p
 ```
 
 ## Geom density
-
 ### 
 
 An alternate way to visualize the distributions of data on a continuous variable is to use `geom_density()`, which is smoothed-out-version of a histogram.
@@ -1831,7 +1804,6 @@ density_p
 ```
 
 ## Geom boxplot
-
 ### 
 
 To visualize the relationship between a numerical and a categorical variable we can use `geom_boxplot()`. A box plot is a type of visual shorthand for measures of position (percentiles) that describe a distribution.
@@ -2025,7 +1997,6 @@ box_plot_p
 ```
 
 ## Facet Wrap
-
 ### 
 
 As we saw in `geom_point()` plot, we can incorporate more variables into a plot by mapping them to additional aesthetics. However adding too many aesthetic mappings to a plot makes it cluttered and difficult to make sense of. Another way, which is particularly useful for categorical variables, is to split your plot into *facets*, subplots that each display one subset of the data.
@@ -2072,7 +2043,7 @@ penguins |>
 
 ### 
 
-<!-- MP: Misplaced; should be placed *after* the first use of `facet_wrap()`.  -->
+<!-- DK: Misplaced; should be placed *after* the first use of `facet_wrap()`.  -->
 
 You can use the scales argument to control the scale of the y-axis in each panel of the grid. For example, you can use `scales = free_y` to allow each panel to have its own y-axis scale.
 
@@ -2104,7 +2075,7 @@ penguins |>
 
 ### 
 
-<!-- MP: Also misplaced. Needs to be further down.  -->
+<!-- DK: Also misplaced. Needs to be further down.  -->
 
 `facet_wrap()` can be combined with other **ggplot2** functions like `geom_point()`, `geom_line()`, `geom_bar()`, and `geom_histogram()` to create a wide range of visualizations that explore different aspects of the data.
 
@@ -2137,7 +2108,7 @@ penguins |>
 
 ### 
 
-<!-- MP: Is this misplaced? Not entirely sure.  -->
+<!-- DK: Is this misplaced? Not entirely sure.  -->
 
 When using `facet_wrap()` it's important to consider the purpose of the visualization and the audience that will be viewing it. Choosing the right combination of input variables and customizing the appearance of the panels can help to convey the message more effectively and make the visualization more engaging for the viewer.
 
@@ -2244,7 +2215,7 @@ Fun Fact: Data visualization has a rich history dating back centuries. One of th
 
 ### Exercise 7
 
-<!-- MP: Not too sure about the below paragraph.  -->
+<!-- DK: This is too much prose in the question section.  -->
 
 To facet your plot, add the `facet_wrap()` function to your pipe with a `+`. But that's not enough to facet your plot: you also need to provide a *categorical variable* (a variable that can only take on certain values and thus can be fitted into categories) as a parameter to `facet_wrap()`. To specify the variable you're inputting into the function, add a tilde (`~`) before it. 
 
@@ -2254,11 +2225,7 @@ Add `facet_wrap()` to your pipe with `+`. Set the `facets` parameter to `~island
 
 ```
 
-<button onclick="transfer_code(this)">
-
-Copy previous code
-
-</button>
+<button onclick="transfer_code(this)">Copy previous code</button>
 
 ```{r facet-wrap-7-hint-1, eval = FALSE}
 penguins |>
@@ -2333,7 +2300,6 @@ facet_p
 The argument `labeller` can be used to customize the labels for the facet panels. By default, `facet_wrap()` uses the names of the categorical variables to label each panel. However, it is possible to create custom labels using functions like `label_parsed()` or `label_bquote()`.
 
 ## Saving Plots
-
 ### 
 
 Once you’ve made a plot, you might want to get it out of R by saving it as an image that you can use elsewhere. That’s the job of `ggsave()`, which will save the plot most recently created to disk.
@@ -2474,18 +2440,14 @@ ggsave(...)
 
 ```{r saving-plots-5-test, include = FALSE}
 ggsave(filename = 'penguin_plot.png', plot = plot_geom)
+unlink('penguin_plot.png')
 ```
-
-<!-- DK: Test case here? -->
-
-<!-- MP: Added.  -->
 
 ### 
 
 If you don’t specify the width and height they will be taken from the dimensions of the current plotting device.
 
 ## Summary
-
 ### 
 
 This tutorial covered [Chapter 1: Data visualization](https://r4ds.hadley.nz/data-visualize.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You learned about the key functions from the [**ggplot2**](https://ggplot2.tidyverse.org/index.html) package for data visualization, including [`geom_point()`](https://ggplot2.tidyverse.org/reference/geom_point.html), [`geom_line()`](https://ggplot2.tidyverse.org/reference/geom_path.html), [`geom_bar()`](https://ggplot2.tidyverse.org/reference/geom_bar.html), [`geom_boxplot()`](https://ggplot2.tidyverse.org/reference/geom_boxplot.html), [`geom_histogram()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html), and more.
