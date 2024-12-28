@@ -28,23 +28,15 @@ options(tutorial.exercise.timelimit = 60,
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- Make sure that everything now works on Windows. Note all the DK comments which mention Windows. -->
+<!-- See the Files section. It requires students to download the TODO.txt file. It is somewhat dangerous that this file is not guaranteed to always exist. But using DESCRIPTION was annoying because a .txt suffix was added when I, at least, download the file. Maybe add a test to ensure that TODO.txt exists? Just download.file() . . . -->
 
-<!-- Add an exercise which downloads a file from the web, and then moves it to a new directory. This is good practice for the class session doing the same. Put it after Options. Call it "Files". -->
+<!-- Make sure that everything makes sense to a student using Windows. Note all the DK comments which mention adding Windows explanations. -->
 
-<!-- Paths topic needs work. -->
-
-<!-- Paths and Options topics are both (too?) long. -->
-
-<!-- Change Terminal and Paths to not use any symbols? Save all those for the Symbols topic. Not sure if this is possible. How do you move one directory up without `..`? -->
+<!-- Several discussions about `..` are redundant. -->
 
 <!-- Lots of opportunities for knowledge drops. See Chapter 7 in R4DS. -->
 
-<!-- Chapter 7 includes some discussion about relative and absolute paths. Include some of that stuff here? Certainly we should emphasize that you should only ever use relative paths, not absolute paths. -->
-
 <!-- Consider using and teaching the **here** package. -->
-
-<!-- Instead of the bs about the defaults being Mac/Linux mentioned in the introduction, incorporate Windows nomenclature throughout. -->
 
 ## Introduction
 ### 
@@ -139,7 +131,7 @@ Davids-MacBook-Pro-2:averages dkane$ pwd
 Davids-MacBook-Pro-2:averages dkane$ 
 ````
 
-Notice how the last directory (folder) in the **path** is included in the prompt.
+Notice how the last directory (folder) in the path is included in the prompt.
 
 
 ### Exercise 3
@@ -157,7 +149,7 @@ question_text(NULL,
 
 ### 
 
-Note how, if you do not give any more information, `ls` assumes that you want a list of what is in your current working directory.
+If you do not give it any more information, `ls` assumes that you want a list of what is in your current working directory.
 
 ### Exercise 4
 
@@ -257,7 +249,7 @@ Davids-MacBook-Pro-2:example dkane$
 
 We rename files with the `mv` command, which is derived from **m**o**v**e. The first argument is the file we want to rename, the second argument is the new name
 
-Let's rename `my.txt` to `fake.txt`. Run `mv my.txt fake.txt`. Run `ls` to confirm. CP/CR.
+Rename `my.txt` to `fake.txt` by running `mv my.txt fake.txt`. Run `ls` to confirm. CP/CR.
 
 ```{r terminal-8}
 question_text(NULL,
@@ -281,7 +273,7 @@ Davids-MacBook-Pro-2:example dkane$
 
 ### 
 
-From the computer's point of view, **renaming** a file is the same thing as **moving** a file. In fact, moving is more general since it allows to change both the name **and** the location of a file.
+From the computer's point of view, **renaming** a file is the same thing as **moving** a file. In fact, moving is more general since it allows us to change both the name *and* the location of a file.
 
 
 ### Exercise 9
@@ -299,13 +291,22 @@ question_text(NULL,
 
 ### 
 
-**Be careful** with the `rm` command in the Terminal. Unlike moving files to Trash on your computer, it is (usually) **irreversible**.
+Your answer should look like:
+
+````
+Davids-MacBook-Pro-2:example dkane$ rm fake.txt
+Davids-MacBook-Pro-2:example dkane$ ls
+my_2.text
+Davids-MacBook-Pro-2:example dkane$ 
+````
+
+Be careful with the `rm` command in the Terminal. Unlike moving files to Trash on your computer, it is (usually) irreversible.
 
 ### Exercise 10
 
 We want to remove the `example` directory. But we can't do that while we are "located" in that directory. That is, the computer is aware that our Terminal process --- the entity which is executing our commands like `ls` and `cp` --- is currently working from the `example` directory. 
 
-Run `cd ..`. Run `pwd` to confirm. CP/CR.
+Run `cd ..`. The "dot-dot" symbol --- `..` --- references the directory which contains the current directory. Run `pwd` to confirm. CP/CR.
 
 ```{r terminal-10}
 question_text(NULL,
@@ -332,7 +333,7 @@ Again, note how the prompt changed because we moved directories. The `..` symbol
 
 ### Exercise 11
 
-Run `rm -r example` to emove the directory `example`. CP/CR.
+Run `rm -r example` to remove the directory `example`. CP/CR.
 
 ```{r terminal-11}
 question_text(NULL,
@@ -343,7 +344,7 @@ question_text(NULL,
     rows = 3)
 ```
 
-`-r` is an **option** that allows us to delete a directory. We will learn more about options later. The `r` stands for **r**ecursive because, when you delete a directory, you are also (recursively) deleting everything within that directory.
+`-r` is an **option** that allows us to delete a directory. The `r` stands for **r**ecursive because, in order to delete a directory, you must also (recursively) deleting every directory and file within that directory.
 
 It is good to clean up. Don't leave junk files lying around.
 
@@ -655,7 +656,7 @@ lessons tbd
 Davids-MacBook-Pro-2:paths dkane$ 
 ````
 
-When using `mv`, there is not difference between moving a directory and moving a file.
+When using `mv`, there is no difference between moving a directory and moving a file.
 
 ### Exercise 13
 
@@ -674,6 +675,7 @@ question_text(NULL,
 Your answer should look like:
 
 ````
+Davids-MacBook-Pro-2:paths dkane$ cd ..
 Davids-MacBook-Pro-2:averages dkane$ pwd
 /Users/dkane/Desktop/projects/averages
 Davids-MacBook-Pro-2:averages dkane$ rm -r paths
@@ -687,15 +689,16 @@ In olden times, professional programmers would spend a lot of time learning the 
 ## Important symbols
 ### 
 
-We have seen one important symbol --- `..` --- already. This section will explore it along with `.` and `~`.
+<!-- DK: Worth including environmental variables? Change name to "Variables"? Is .. a variable? -->
 
-It would be tedious to have to use `..` every time we wanted to refer to anywhere outside of our working directory. To refer to a specific folder outside of the working directory, we can instead use an **absolute path**. An absolute path, as opposed to the relative paths we have been using, describes a place on your computer without respect to a working directory. An absolute path begins with the root directory, which is represented by a lone `/`, at least in Mac/Linux. The command `pwd` returns an absolute path.
+We have seen one important symbol --- `..` --- already. This section will explore it along with `.` and `~`.  The most common English terms for these symbols are "dot" or `.`, "dot dot" for `..`, and "tilde" for `~`. The `.` symbol indicates the current directory. The `..` symbol is for the directory one above the current directory. The `~` symbol is for your "home" directory.
 
-<!-- DK: Edit above to explain Windows. -->
 
 ### Exercise 1
 
-Run `pwd`. This returns the current working directory, which should be the same location from which you began this tutorial. Note thatthe return value is an **absolute path**. It tells you exactly where you --- meaning your Terminal instance --- are located on the computer.
+Use `mkdir symbols` to create a new directory called `symbols`. `cd` into that directory by running `cd symbols`. Confirm the change with `pwd`. Confirm that the directory is empty by running `ls`.
+
+CP/CR.
 
 ```{r important-symbols-1}
 question_text(NULL,
@@ -708,13 +711,141 @@ question_text(NULL,
 
 ### 
 
+Your answer should look like:
+
+````
+Davids-MacBook-Pro-2:averages dkane$ mkdir symbols
+Davids-MacBook-Pro-2:averages dkane$ cd symbols
+Davids-MacBook-Pro-2:symbols dkane$ pwd
+/Users/dkane/Desktop/projects/averages/symbols
+Davids-MacBook-Pro-2:symbols dkane$ ls
+Davids-MacBook-Pro-2:symbols dkane$ 
+````
+
+The more practice we get with command line commands --- often called "shell" comamnds --- the easier it is to string together several of them in a row.
+
 ### Exercise 2
 
-<!-- DK: Could do more here. Perhaps discuss environment variables, including GITHUB_PAT and where it lives. -->
+But is the `symbols` directory really empty? Run `ls -a` to check. The `-` indicates an "option" to the `ls` command. The `a` option tells `ls` to return *a*ll the members of the directory.
 
-Run `cd` alone. Now, use `pwd` to check where you are. This is called the **home directory**, within which all an user's directories and files are contained. Run `ls` to see what is inside your home directory. CP/CR.
+CP/CR.
 
 ```{r important-symbols-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+Davids-MacBook-Pro-2:symbols dkane$ ls -a
+.       ..
+Davids-MacBook-Pro-2:symbols dkane$ 
+````
+
+Every directory, even an "empty" one includes `.` and `..`. The `.` is link to the current directory, i.e., to the `symbols` directory in which we are currently located. The `..` is a link to the directory one level up, which is the `averages` directory in my case.
+
+### Exercise 3
+
+Run `ls ..` to examine the contents of the directory one level above the current directory. CP/CR.
+
+```{r important-symbols-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+My answer looks like this:
+
+````
+Davids-MacBook-Pro-2:symbols dkane$ ls ..
+R               averages.Rproj  theory.html     theory_files
+README.md       symbols         theory.qmd
+Davids-MacBook-Pro-2:symbols dkane$ 
+````
+
+Your answer will look different because you started this tutorial in a different directory, with different contents, then I did.
+
+### Exercise 4
+
+Run `ls ../..` to examine the contents of the directory two levels above the current directory. CP/CR.
+
+```{r important-symbols-4}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+My answer looks like this:
+
+````
+Davids-MacBook-Pro-2:symbols dkane$ ls ../..
+GBBO-Analysis                   mtc                             simmons
+averages                        ncf                             soccer_player_birth_months
+bootcamp                        numerai                         syllabi
+boston-college                  organization                    tidycensus.tutorials
+coordination                    primer                          tidymodels.tutorials
+...
+Davids-MacBook-Pro-2:symbols dkane$ 
+````
+
+I cut off the long list of directories in my `projects` directory. The `symbols` directory, in which we are current located, is in in that longer list.
+
+Your answer will look different because you have a different collection of projects, presumably many fewer.
+
+
+### Exercise 5
+
+Run `pwd` again. This returns the current working directory. Note that the return value is an **absolute path**. It tells you exactly where you --- meaning your Terminal session or instance --- are located on your computer.
+
+```{r important-symbols-5}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+My answer looks like this:
+
+````
+Davids-MacBook-Pro-2:symbols dkane$ pwd
+/Users/dkane/Desktop/projects/averages/symbols
+Davids-MacBook-Pro-2:symbols dkane$ 
+````
+
+The absolute path for my current location, meaning my current working directory, contains these locations. 
+
+* The starting `/` --- which would be a `\` in Windows --- indicates the root, or origin of the file systems. There is no directory higher than the root directory.
+
+* `Users` followed by my user name, `dkane`. Most Mac/Linux machines follow this organization. 
+
+* The next three directories are, first, `projects`, which is where I store all my R projects, second, `averages`, which just happens to be the name of the directory in which I started this tutorial, and, third, `symbols`, which is the directory we just created.
+
+### Exercise 6
+
+Run `cd` without any argument. Doing so changes your current directory to your home directory because that is the default behavior for `cd`. Run `pwd` to confirm where you are. CP/CR.
+
+```{r important-symbols-6}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -723,11 +854,24 @@ question_text(NULL,
     rows = 3)
 ```
 
-### Exercise 3
+My answer looks like this:
 
-Use `cd` to change the the working directory back to your default working directory. You can again use the absolute path from the `pwd` in Exercise 1. CP/CR.
+````
+Davids-MacBook-Pro-2:symbols dkane$ cd
+Davids-MacBook-Pro-2:~ dkane$ pwd
+/Users/dkane
+Davids-MacBook-Pro-2:~ dkane$ 
+````
 
-```{r important-symbols-3}
+In Mac/Linux, the most common location for a user's home directory is within the `Users` directory. Note how, after we run `cd`, the prompt changes to report `~` as the current working directory. `~` is the symbol for the current user's home directory.
+
+<!-- DK: Add stuff like whoami? -->
+
+### Exercise 7
+
+Use `cd`, along with the full path to the `symbols` directory which you determined above, to change the the working directory back to the `symbols` directory. Run `pwd` to confirm. CP/CR.
+
+```{r important-symbols-7}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -738,14 +882,25 @@ question_text(NULL,
 
 ### 
 
-Since the default working directory is within the home directory, the full absolute path was not necessary. We could have omitted the user-name and everything before it.
+My answer looks like this:
 
-### Exercise 4
+````
+Davids-MacBook-Pro-2:~ dkane$ cd /Users/dkane/Desktop/projects/averages/symbols
+Davids-MacBook-Pro-2:symbols dkane$ pwd
+/Users/dkane/Desktop/projects/averages/symbols
+Davids-MacBook-Pro-2:symbols dkane$ 
+````
 
-Run `ls ~`. The list should be identical to the list you generated above in the home directory. Because the home directory is used in the absolute path of so many files, its path (`/Users/your-user-name-here`) can be written with the shorthand `~`, which is a tilde, pronounced TIL-D. CP/CR.
+This is an example of using a "absolute" path to change locations.
 
 
-```{r important-symbols-4}
+
+### Exercise 8
+
+Run `ls ~`. The list should be identical to the list you generated above in the home directory. Because the home directory is used in the absolute path of so many files, its path --- generally something like `/Users/your-user-name-here` --- can be written with the shorthand `~`, which is a tilde, pronounced TIL-D. CP/CR.
+
+
+```{r important-symbols-8}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -758,44 +913,32 @@ question_text(NULL,
 
 The shorthands we have learned so far, `.`, `..`, `~`, stand for the text of the paths for the corresponding directory. They are not specific to any function and can be used in any situation where the text of the relevant path could be used.
 
-### Exercise 5
+### Exercise 9
 
-<!-- DK: Awkward. Maybe mention tab completion. -->
+Confirm that you are currently located in the `symbols` directory by running `pwd`. Run `cd ..` to move one directory up, out of the `symbols` directory. Delete the `symbols` directory with `rm -rf symbols`. CP/CR.
 
-Let's change the working directory to a directory of your choice within the home directory using the shorthand `~`. Run, for example, `cd ~/Desktop`.
-
-
-```{r important-symbols-5}
+```{r important-symbols-9}
 question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
 ```
 
 ### 
 
-Here, unlike above, an absolute path was useful because `Desktop`, for example, is not within our working directory.
+Your answer should look like:
 
-### Exercise 6
+````
+Davids-MacBook-Pro-2:symbols dkane$ pwd
+/Users/dkane/Desktop/projects/averages/symbols
+Davids-MacBook-Pro-2:symbols dkane$ cd ..
+Davids-MacBook-Pro-2:averages dkane$ rm -rf symbols
+Davids-MacBook-Pro-2:averages dkane$ 
+````
 
-Use `cd` to change back to the default working directory using the shorthand for the home directory to write its absolute path. CP/CR.
-
-<!-- DK: huh? -->
-
-```{r important-symbols-6}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-
-### 
-
-Depending on whether the folder you chose contains the default working directory, an absolute path may or may not have been necessary.
+Note that `rm -rf symbols` and `rm -rf symbols/`, with the trailing forward slash, have the same effect. Except in rare circumstances --- although see an example before --- including the trailing forward slash in the name of a directory has no effect.
 
 
 
@@ -1277,7 +1420,7 @@ Your fake is not great because your name is likely not placed in correct alphabe
 
 ### Exercise 23
 
-Use `cd` and `..` to change your directory to the default working directory. Use `rm -r` to remove the `options` directory. CP/CR.
+Run `cd ..` to change your directory to the directory in which you started the tutorial. Run `rm -r options` to remove the `options` directory. CP/CR.
 
 ```{r options-23}
 question_text(NULL,
@@ -1290,7 +1433,16 @@ question_text(NULL,
 
 ### 
 
-<!-- DK? -->
+Your answer should look like:
+
+````
+Davids-MacBook-Pro-2:options dkane$ cd ..
+Davids-MacBook-Pro-2:averages dkane$ rm -r options
+Davids-MacBook-Pro-2:averages dkane$ 
+````
+
+As usual, note how the prompt changes from `Davids-MacBook-Pro-2:options dkane$` to `Davids-MacBook-Pro-2:averages dkane$` as we move from the `options` directory to directory from which we started this tutorial, which is the `averages` directory in my case.
+
 
 ## Wildcards
 ### 
@@ -1594,10 +1746,211 @@ question_text(NULL,
 
 Note that both `wildcards` and `wildcards/` refer to the same entity, the `wildcards` directory. The Terminal often "adds" a forward slash (`/`) --- or, on Windows, a backward slash (`\`) --- to the end of directory names to indicate that the object is a directory, not simply a file.
 
+## Files
+### 
+
+Downloading files and moving them to a sensible location is a core skill for data scientists.
+
+### Exercise 1
+
+Confirm your location with `pwd`. Run `mkdir files` to create in a temporary directory in which to work. `cd` to that directory with `cd files`. Confirm that it is empty with `ls`. CP/CR.
+
+```{r files-1}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+Davids-MacBook-Pro-2:averages dkane$ pwd
+/Users/dkane/Desktop/projects/averages
+Davids-MacBook-Pro-2:averages dkane$ mkdir files
+Davids-MacBook-Pro-2:averages dkane$ cd files/
+Davids-MacBook-Pro-2:files dkane$ ls
+Davids-MacBook-Pro-2:files dkane$ 
+````
+
+We often, as here, move to the directory in which we will be working. But we could have stayed in the starting directory, which is `/Users/dkane/Desktop/projects/averages` for me, and then worked from there, using `files/` in the various commands to come.
+
+### Exercise 2
+
+Every computer has a default directory in which files are downloaded. The most common name for this directory is `Downloads` and its most common location is your home directory.
+
+Run `ls ~/Downloads` to examine the most likely location for that directory. 
+
+CP/CR.
+
+If this command fails for you, then figure out where your default download location is and then adjust this command, and future commands, accordingly.
+
+If, for some reason, you can't locate your `Downloads` directory, then just answer all the exercises in this section of the tutorial with "I could not find my Downloads directory."
+
+
+```{r files-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+My answer looks like:
+
+````
+Davids-MacBook-Pro-2:files dkane$ ls ~/Downloads/
+113-6439507-9501836.pdf
+113-6441072-0767436.pdf
+2024_11_06_10_29_42.pdf
+223591000809.JPEG
+Bassett.jpg
+...
+````
+
+The `...` indicates that there are many more files in this directory. I am not as organized as I ought to be. Try not to have your `Downloads` directory overrun with old files.
+
+### Exercise 3
+
+In your browser, go to `https://github.com/PPBDS/r4ds.tutorials`. 
+
+This is the location for the R package which contains this tutorial. Click on the `TODO.txt` file, which should bring you to this URL:
+
+`https://github.com/PPBDS/r4ds.tutorials/blob/main/TODO.txt`. 
+
+Click on the "Download raw file" symbol to download the `DESCRIPTION` file to your computer.  
+
+```{r echo = FALSE}
+knitr:: include_graphics("images/download.png")
+```
+
+Run `ls ~/Dowloads/T*`. CP/CR.
+
+
+```{r files-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+My answer looks like:
+
+````
+Davids-MacBook-Pro-2:files dkane$ ls ~/Downloads/T*
+/Users/dkane/Downloads/TODO.txt         /Users/dkane/Downloads/Toronto.jpg
+/Users/dkane/Downloads/TOM.pdf
+Davids-MacBook-Pro-2:files dkane$ 
+````
+
+The `*` is a wildcard character, meaning that the `ls` command should return all the files which begin with a capital `D`. For me, there are three such files in my `Downloads` directory. 
+
+Note that, depending on your computer/setup, the file `DESCRIPTION` might or might not have a `.txt` suffix. The original file, located on Github, does not have one, but some computers, including mine, add the suffix automatically. If your downloaded file does not have the suffix, use `DESCRIPTION` in place of `DESCRIPTION.txt` in the upcoming exercises.
+
+
+### Exercise 4
+
+Run `ls ~/Downloads/TODO.txt`. CP/CR.
+
+```{r files-4}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+Davids-MacBook-Pro-2:files dkane$ ls ~/Downloads/TODO.txt
+/Users/dkane/Downloads/TODO.txt
+Davids-MacBook-Pro-2:files dkane$
+````
+
+I often use `ls` to confirm that a file exists in the location in which I think it should. `ls` also returns the absolute path to the file.
+
+### Exercise 5
+
+Run ` mv /Users/dkane/Downloads/TODO.txt .`. Run `ls` to confirm that you have moved the `TODO.txt` file from the `Downloads` directory to the current working directory. CP/CR.
+
+```{r files-5}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+Davids-MacBook-Pro-2:files dkane$ mv /Users/dkane/Downloads/TODO.txt .
+Davids-MacBook-Pro-2:files dkane$ ls
+TODO.txt
+Davids-MacBook-Pro-2:files dkane$ 
+````
+
+Recall that the `.` symbol indicates the current directory. Since we did not give a new name for the file, the old name is retained. We could have give the file a new name by using:
+
+````
+mv /Users/dkane/Downloads/TODO.txt TODO_2.txt
+````
+
+We also could gave used `~` to avoid providing the absolute path by running:
+
+````
+mv ~/Downloads/TODO.txt .
+````
+
+<!-- DK: Could use `cp` instead of `mv` and turn this into several questions. Start by copying the file to a new name. Then just use `.` to understand the default behavior.  -->
+
+### Exercise 6
+
+Delete the file by running `rm TODO.txt`. Go one level up with `cd ..`. Delete the `files` directory with `rm -r files`. CP/CR.
+
+```{r files-6}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Your answer should look like:
+
+````
+Davids-MacBook-Pro-2:files dkane$ rm TODO.txt 
+Davids-MacBook-Pro-2:files dkane$ cd ..
+Davids-MacBook-Pro-2:averages dkane$ rm -r files/
+Davids-MacBook-Pro-2:averages dkane$ 
+````
+
+
 ## grep
 ### 
 
-In the previous section, we used **wildcards** to create **regular expressions** in order to generate lists of file names which matched a specific pattern. In this section, we will use `grep` to look for words inside of files. Fortunately, wildcards and regular expressions work the same with `grep`.
+In a previous section, we used **wildcards** to create **regular expressions** in order to generate lists of file names which matched a specific pattern. In this section, we will use `grep` to look for words inside of files. Fortunately, wildcards and regular expressions work the same with `grep`.
 
 ### Exercise 1
 
