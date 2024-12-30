@@ -46,7 +46,7 @@ library(quarto)
 ## Introduction
 ### 
 
-This tutorial covers material from [Chapter 28 Quarto](https://r4ds.hadley.nz/quarto.html) and [Chapter 29 Quarto formats](https://r4ds.hadley.nz/quarto-formats.html) in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund, although much of the information from Chapter 28 has already appeared in the "RStudio and Github" tutorial in this package. You will
+This tutorial covers material from [Chapter 28 Quarto](https://r4ds.hadley.nz/quarto.html) and [Chapter 29 Quarto formats](https://r4ds.hadley.nz/quarto-formats.html) in [*R for Data Science (2e)*](https://r4ds.hadley.nz/quarto.html) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund, although much of the information from Chapter 28 has already appeared in the "RStudio and Github Introduction" tutorial in this package. You will
 learn the process of creating and organizing the [Quarto websites](https://quarto.org/docs/websites/) using the [Quarto CLI](https://quarto.org/docs/get-started/) (command line interface) and commands like `quarto create project`, `quarto render`, `quarto preview` and `quarto publish`.
 
 ## Creating files
@@ -76,7 +76,7 @@ Davids-MBP:r4ds.tutorials dkane$ quarto --version
 bash: quarto: command not found
 ```
 
-If it works for you, don't worry.
+If it works for you --- i.e., if this command returns a Quarto version number --- then don't worry.
 
 This failure is somewhat surprising since RStudio comes bundled with a version of Quarto, but that version is tucked away in a hard-to-use location, usually (on a Mac) something like:
 
@@ -174,7 +174,11 @@ In the Terminal, run `quarto create project website .`.  Don't forget the `.` at
 
 <!-- DK: Should make this more clear, even screen shots. -->
 
-Depending on your computer setup, this command will generate require you to answer some questions. Do so as best you can. If given a choice, choose "rstudio" rather than "vscode." 
+Depending on your computer setup, this command will generate require you to answer some questions. Do so as best you can. 
+
+If you are asked for a "Title," use `A New Website`.
+
+If given a choice, choose "rstudio" rather than "vscode." 
 
 This command will usually result in a restart of your RStudio instance. Or it might create a second R instance, also located in the `first-website` directory. If so, close one of the instances. It does not matter which.
 
@@ -196,14 +200,15 @@ question_text(NULL,
 Your answer should look like this:
 
 ````
-Davids-MacBook-Pro:first-website dkane$ quarto create project website .
+Davids-MacBook-Pro-2:first-website dkane$ quarto create project website .
+? Title (website) › A New Website
 Creating project at /Users/dkane/Desktop/projects/first-website:
   - Created _quarto.yml
   - Created .gitignore
   - Created index.qmd
   - Created about.qmd
   - Created styles.css
-Davids-MacBook-Pro:first-website dkane$ 
+Davids-MacBook-Pro-2:first-website dkane$ 
 ````
 
 Quarto is telling you what it did: creating 5 new files and placing them in the *current* directory. Recall that, on the command line, a `.` refers to the current directory. 
@@ -265,7 +270,7 @@ You would get the same set of files if, in the Terminal, you ran `ls -a`. The `-
 
 ### 
 
-In general, we do not touch/manipulate "dot" directories, meaning directories whose names begin with a dot or period. Such directories are meant to be used by the operating system and other programs. For example, the program Git uses the `.git` directory to store information about changes in all the files in the project. 
+In general, we do not touch/manipulate "dot" directories, meaning directories whose names begin with a period. Such directories are meant to be used by the operating system and other programs. For example, the program Git uses the `.git` directory to store information about changes in all the files in the project. 
 
 
 ## Examining files
@@ -283,7 +288,7 @@ show_file("_quarto.yml")
 
 CP/CR.
 
-Did you get an error when you ran this? Something about 'could not find function "show_file"'? This is because you need to `library(tutorial.helpers)` to have direct acccess to `show_file()`, which is a function in the **tutorial.helpers** package. Of course, you could use the double colon notation --- `tutorial.helpers::show_file("_quarto.yml")` --- as we did in previous tutorials. But, at this stage in your R education, we want/hope you to be getting more comfortable with packages, and knowing yourself when they need to be loaded.
+Did you get an error when you ran this? Something about 'could not find function "show_file"'? This is because you need to `library(tutorial.helpers)` to have direct acccess to `show_file()`, which is a function in the **tutorial.helpers** package. Of course, you could use the double colon notation --- `tutorial.helpers::show_file("_quarto.yml")` --- as we did in previous tutorials. But, at this stage in your R education, we want you to become more comfortable with packages, and knowing yourself when they need to be loaded.
 
 
 ```{r examining-files-1}
@@ -331,7 +336,7 @@ These lines provide meta-information about the website and its organization.
 
 ````
 website:
-  title: "."
+  title: "A New Website"
   navbar:
     left:
       - href: index.qmd
@@ -343,7 +348,7 @@ Indents and other whitespace matter in the interpretation of a YAML file.
 
 ### Exercise 3
 
-In the Source pane, open the `_quarto.yml` file. Replace `title: "."` with `title: "A New Website"`. Save the file. The indentation before `title` should be the same extent as before `navbar` below it.
+In the Source pane, open the `_quarto.yml` file. If the `title` field is not correct, often because it just contains a `.`, replace `title: "."` with `title: "A New Website"`. Save the file. 
 
 In the Console, run:
 
@@ -365,7 +370,11 @@ question_text(NULL,
 
 ### 
 
-With luck, future versions of `quarto create project` will use a `dir` argument to specify the location of the new files, thereby allowing the `name` argument to be used for a sensible title for a newly-created project. In the meantime, we need to set our title by hand.
+The indentation before `title` should match that for`navbar` below it.
+
+<!-- DK: I don't think that the below makes sense any more. Delete it? -->
+
+<!-- With luck, future versions of `quarto create project` will use a `dir` argument to specify the location of the new files, thereby allowing the `name` argument to be used for a sensible title for a newly-created project. In the meantime, we need to set our title by hand. -->
 
 ### Exercise 4
 
@@ -426,8 +435,8 @@ The answer should look like:
 
 ````
 > show_file("index.qmd")
----                               
-title: "."
+---
+title: "A New Website"
 ---
 
 This is a Quarto website.
@@ -438,35 +447,11 @@ To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
 
 Whenever a web browser goes to a directory on the internet, it looks for an `index.html` file. If found, that file is displayed. So, the `index.qmd` file, which we will soon render as `index.html`, is important.
 
-### Exercise 6
-
-Open the `index.qmd` file in the Source pane. Replace `title: "."` with `title: "My First Website"`. Save the file.
-
-In the Console, run:
-
-````
-show_file("index.qmd")
-````
-
-CP/CR.
-
-
-```{r examining-files-6}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
 ### 
 
-Yes, it is a bother to have to replace `"."` twice. Very annoying! With luck, Quarto will soon allow us to specify a title when we first create these files. In the meantime, it is good to have an occasion to look closely at the files which help us to create a website.
+Note that the `title` (`"A New Website"`) in `_quarto.yml` has no necessary connection to the `title` (`"A New Website"`) in `index.qmd`. The former is the title for the entire website. The latter is the title for just the (yet-to-be-created) `index.html` page. They are set to the same values by default when we use `quarto create project website .` and answer the question about the title. 
 
-### 
-
-Note that the `title` (`"A New Website"`) in `_quarto.yml` has no necessary connection to the `title` (`"My First Website"`) in `index.qmd`. The former is the title for the entire website. The latter is the title for just the (yet-to-be-created) `index.html` page.
+If you do not answer the question or if you are using an old version of Quarto which does not ask the question, then the title will be `.` in both locations.
 
 ### Exercise 7
 
@@ -510,7 +495,12 @@ In fact, the `.quarto` directory does not yet exist. But the `quarto create proj
 
 ### Exercise 8
 
-We don't want to put all the files on Github. So, add `*Rproj` to the `.gitignore` file. Save the file. 
+We don't want to put all the files on Github. So, let's make two changes to the `.gitignore` file: 
+
+* Add `*Rproj` to exclude the `first-website.Rproj` file.
+* Add an empty last line.
+
+Save the file. 
 
 In the Console, run:
 
@@ -585,7 +575,7 @@ Output created: _site/index.html
 Davids-MBP:first-website dkane$ 
 ````
 
-Quarto reports to us what it has done, working on our two `qmd` files and creating a new directory, `_site`, in which it has placed an `index.html` file. 
+Quarto reports to us what it has done, working on our two QMD files and creating a new directory, `_site`, in which it has placed an `index.html` file. 
 
 
 
@@ -683,7 +673,7 @@ Browse at http://localhost:7412/
 GET: /
 ````
 
-The `quarto preview` command does two things. First, it renders the `qmd` files, just like `quarto render` does. Second, it sets up a viewer --- probably your default web browser but possibly the "Viewer" tab in the Output pane  --- so that you can see what the website looks like. Click around and check it out!
+The `quarto preview` command does two things. First, it renders the QMD files, just like `quarto render` does. Second, it sets up a viewer --- probably your default web browser but possibly the "Viewer" tab in the Output pane  --- so that you can see what the website looks like. Click around and check it out!
 
 The message at the end indicates that Quarto is now "watching" your files to see if you make any changes. If you do, it will automatically update the website.
 
