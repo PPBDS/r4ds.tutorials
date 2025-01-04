@@ -49,9 +49,17 @@ repetition <- tibble(
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
+<!-- There is a lot of general sloppiness here, like with the Code copy buttons placed where they do not belong. Also, lack of spaces around code chunks. -->
+
 <!-- In 2024, this took 80 minutes. Any way to shorten it some?  -->
 
+<!-- Major issue is that there are a lot of questions kept over from previous versions --- good questions! --- but which are not in the actual chapter. Keep them? Or be ruthless and delete them? -->
+
 <!-- Lots of questions have no knowledge drops. Maybe drop some questions, moving the relevant material to a knowledge drop nearby? -->
+
+<!-- Material to use? -->
+
+<!-- The functions `add_count()` and `add_tally()` are equivalents to `count()` and `tally()` but use `mutate()` instead of `summarise()` so that they add a new column with group-wise counts. -->
 
 ## Introduction
 ### 
@@ -59,21 +67,17 @@ repetition <- tibble(
 This tutorial covers [Chapter 13: Numbers](https://r4ds.hadley.nz/numbers.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. We will be utilizing two core packages of Tidyverse, [**readr**](https://readr.tidyverse.org/) and [**dplyr**](https://dplyr.tidyverse.org/). Key commands of this section will include [`parse_double()`](https://readr.tidyverse.org/reference/parse_atomic.html) for parsing numbers directly from strings, [`parse_number()`](https://readr.tidyverse.org/reference/parse_number.html) for removing useless characters and parsing numbers from strings, [`count()`](https://dplyr.tidyverse.org/reference/count.html) which counts the unique values of one or more variables, [`pmin()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Extremes.html) which take one or more vectors in and returns the minima or maxima of these vectors, 
 [`round()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Round.html) which rounds values in its first argument to the specified number of decimal places, and [`min_rank()`](https://dplyr.tidyverse.org/reference/row_number.html) which gives every tie the same value and ranks an inputted vector.
 
-The goal of this chapter is to learn how to parse numbers from strings, utilize numeric transformations on variables within datasets, and learn new ways to numerically summarize data. 
-
 
 ## Making Numbers
 ### 
 
-Our ultimate goal in this section is to make use of the functions `parse_double()` and `parse_number()` to get specific values of a variable from a certain dataset.
+In most cases, you’ll get numbers already recorded in one of R’s numeric types: integer or double. In some cases, however, you’ll encounter them as strings, possibly because you’ve created them by pivoting from column headers or because something has gone wrong in your data import process.
 
 ### Exercise 1
 
-This chapter mostly uses functions from base R, which are available without loading any packages. But we still need the tidyverse because we’ll use these base R functions inside of tidyverse functions like mutate() and filter(). 
+This chapter mostly uses functions from base R, which are available without loading any packages. But we still need **tidyverse** functions like `mutate()` and `filter()`. 
 
-### 
-
-Use `library()` let's load in the **tidyverse** package.
+Use `library()` to load in the **tidyverse** package.
 
 ```{r making-numbers-1, exercise = TRUE}
 
@@ -93,130 +97,87 @@ The [**readr**](https://readr.tidyverse.org/) package is one of the nine core pa
 
 ### Exercise 2
 
-Define a vector `x` that has the following values within it `"1.2"`, `"5.6"`, `"1e3"`. These values are strings for now.
+In many of the exercises in this tutorial, we will provide the code for creating an example object. You will then just add code for working with that object. Don't delete the object creation code! Below, we create an object `x`.
+
+On the next line, run `parse_double()` on `x`. 
 
 ```{r making-numbers-2, exercise = TRUE}
+x <- c("1.2", "5.6", "1e3")
 
 ```
 
 ```{r making-numbers-2-hint-1, eval = FALSE}
-x <- c(..., ..., ...)
-```
-
-```{r making-numbers-2-test, include = FALSE}
-x <- c("1.2", "5.6", "1e3")
-```
-
-### 
-
-In most cases, you’ll get numbers already recorded in one of R’s numeric types: integer or double. In some cases, however, you’ll encounter them as strings.
-
-### Exercise 3
-
-When you have numbers that have been written as strings we should use `parse_double()`. So let's use use `parse_double()` on `x` we just created. 
-
-```{r making-numbers-3, exercise = TRUE}
-x <- c("1.2", "5.6", "1e3")
-
-```
-
-```{r making-numbers-3-hint-1, eval = FALSE}
 x <- c("1.2", "5.6", "1e3")
 parse_double(...)
 ```
 
-```{r making-numbers-3-test, include = FALSE}
+```{r making-numbers-2-test, include = FALSE}
 x <- c("1.2", "5.6", "1e3")
 parse_double(x)
 ```
 
 ### 
 
-This should return an output of: `#> [1]    1.2    5.6 1000.0`.
-
-### Exercise 4
-
-Use `parse_number()` when the string contains non-numeric text that you want to ignore. This is particularly useful for currency data and percentages. Let's first make a vector `y` that has the string values: `"$1,234"`, `"USD 3,513"`, `"59%"`
-
-```{r making-numbers-4, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r making-numbers-4-hint-1, eval = FALSE}
-y <- c(..., ..., ...)
-```
-
-```{r making-numbers-4-test, include = FALSE}
-y <- c("$1,1234", "USD 3,513", "59%")
-```
-
-### 
-
-As you can see, in this vector `y` there are non-numeric text that we would normally want to ignore if we were to see this in a dataset. 
+This should return an output of: `#> [1]    1.2    5.6 1000.0`. `parse_double()` works well on regular numbers. You can use `parse_integer()` if all the inputs are integers.
 
 
-### Exercise 5
+### Exercise 3
 
-Let's use `parse_number()` with `y` as the argument to ignore this non-numeric text.
+Use `parse_number()` when the string contains non-numeric text that you want to ignore. This is particularly useful for currency data and percentages. 
 
-```{r making-numbers-5, exercise = TRUE}
+Use `parse_number()` with `y` as the argument to ignore this non-numeric text.
+
+```{r making-numbers-3, exercise = TRUE}
 y <- c("$1,234", "USD 3,513", "59%")
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r making-numbers-5-hint-1, eval = FALSE}
+```{r making-numbers-3-hint-1, eval = FALSE}
 y <- c("$1,234", "USD 3,513", "59%")
 parse_number(y)
 ```
 
-```{r making-numbers-5-test, include = FALSE}
+```{r making-numbers-3-test, include = FALSE}
 y <- c("$1,234", "USD 3,513", "59%")
 parse_number(y)
 ```
 
 ### 
 
-The result you should've received is `#> [1] 1234 3513   59`
+The result is `#> [1] 1234 3513   59`. Note how `parse_number()` returns only the underling number, ignoring the all the other characters in the inputs.
 
 ## Counts
 ### 
 
-In this section, we will be reviewing how to use `count()` and other similar functions to make data analysis easier. 
+It’s surprising how much data science you can do with just counts and a little basic arithmetic, so the **dplyr** package strives to make counting as easy as possible with `count()`. This function is great for quick exploration and checks during analysis.
 
 ### Exercise 1
 
-Run `help(package = "dplyr")` at the Console. Find the help page for `count()`. Click on it. Copy/paste the Description below. (Don't worry about formatting.)
+Use `library()` to load the **nycflights13** package.
 
-```{r counts-1}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
+```{r counts-1, exercise = TRUE}
+
+```
+
+```{r counts-1-hint-1, eval = FALSE}
+library(...)
+```
+
+```{r counts-1-test, include = FALSE}
+library(nycflights13)
 ```
 
 ### 
 
-The functions `add_count()` and `add_tally()` are equivalents to `count()` and `tally()` but use `mutate()` instead of `summarise()` so that they add a new column with group-wise counts.
+This dataset from the contains information about all flights that departed from NYC (e.g. EWR, JFK and LGA) to destinations in the United States, Puerto Rico, and the American Virgin Islands) in 2013.
 
 
 ### Exercise 2
 
-Now let's load in the dataset, `flights` that we will be making use of. This dataset contains information about all flights that departed from NYC (e.g. EWR, JFK and LGA) to destinations in the United States, Puerto Rico, and the American Virgin Islands) in 2013: 336,776 flights in total. To help understand what causes delays, it also includes a number of other useful datasets.
-
-### 
-
-Type in `flights` and hit "Run Code".
+Type in `flights` and hit "Run Code."
 
 ```{r counts-2, exercise = TRUE}
 
 ```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r counts-2-hint-1, eval = FALSE}
 flights
@@ -226,9 +187,14 @@ flights
 flights
 ```
 
+### 
+
+Run `?flights` to pull up the help page in order to learn more about the data. 
+
+
 ### Exercise 3
 
-Let's count the number of planes of which departed from a certain destination. Pipe `flights` to the `count()` function. Within the call to `count()`, put an argument of `dest`.
+Let's count the number of planes of which departed from a certain destination. Pipe `flights` to the `count()` function. Within the call to `count()`, put `dest`.
 
 ```{r counts-3, exercise = TRUE}
 
@@ -268,35 +234,35 @@ flights |> count(dest, sort = TRUE)
 
 ### 
 
-And remember that if you want to see all the values, you can use `|> View()` or `|> print(n = Inf)`.
+To see all the values, you can use `|> View()` or `|> print(n = Inf)`.
 
 ### Exercise 5
 
-Create a new pipeline. Pipe flights to the `mutate()` function. Within the `mutate()` function, create a new variable `carriers` and set it to `n_distinct(carrier)`.
+Pipe `flights` to `summarize()` wthin which set the argument `n` equal to `n()`.
 
 ```{r counts-5, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r counts-5-hint-1, eval = FALSE}
 flights |> 
-  mutate(carriers = n_distinct(...)) 
+  ...(
+    n = n())
 ```
 
 ```{r counts-5-test, include = FALSE}
 flights |> 
-  mutate(carriers = n_distinct(carrier)) 
+  summarize(
+    n = n())
 ```
 
 ### 
 
-The function `n_distinct()` counts the number of distinct (unique) values of one or more variables. For example, we could figure out which destinations are served by the most carriers. 
+We are using two totally different `n`'s here. The first `n` is the number of a variable which we are creating. We could use any variable name we want. The second `n` --- in `n()` --- is the name of a function which does the same thing as `count()`.
 
 ### Exercise 6
 
-Using your previous code, within your call to `mutate()` add a the `.by` argument and set it to `dest`.
+Using the same code, add another argument to `summarize()`: `delay = mean(arr_delay, na.rm = TRUE)`. 
 
 ```{r counts-6, exercise = TRUE}
 
@@ -306,22 +272,25 @@ Using your previous code, within your call to `mutate()` add a the `.by` argumen
 
 ```{r counts-6-hint-1, eval = FALSE}
 flights |> 
-  mutate(carriers =  n_distinct(carrier), .by = ...)
+  summarize(
+    n = n(),
+    delay = ...(arr_delay, ... = TRUE))
 ```
 
 ```{r counts-6-test, include = FALSE}
 flights |> 
-  mutate(carriers = n_distinct(carrier), .by = dest)
+  summarize(
+    n = n(),
+    delay = mean(arr_delay, na.rm = TRUE))
 ```
 
 ### 
 
-Setting `.by` to `dest` lets us group by the destination.
-
+`n()` is a special summary function that doesn’t take any arguments and instead accesses information about the “current” group. This means that it only works inside **dplyr** verbs like `summarize()`.
 
 ### Exercise 7
 
-Continue the pipe to `select()`, with the columns `dest` and `carriers` as arguments.
+Using the same code, add another argument to `summarize()`: `carriers = n_distinct(carrier)`. Don't forget to separate out each of the arguments in `summarize()` using a comma.
 
 ```{r counts-7, exercise = TRUE}
 
@@ -330,23 +299,24 @@ Continue the pipe to `select()`, with the columns `dest` and `carriers` as argum
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r counts-7-hint-1, eval = FALSE}
-... |>
-  select(..., carriers)
+
 ```
 
 ```{r counts-7-test, include = FALSE}
 flights |> 
-  mutate(carriers = n_distinct(carrier), .by = dest) |>
-  select(dest, carriers)
+  summarize(
+    n = n(),
+    delay = mean(arr_delay, na.rm = TRUE),
+    carriers = ...(carrier))
 ```
 
 ### 
 
-This selects the column `dest` from our original data and our newly-created `carriers` column.
+`n_distinct(x)` counts the number of distinct (unique) values of one or more variables. It is part of the same family of functions as `count()` and `n()`.
 
 ### Exercise 8
 
-Continuing the pipe, add the `arrange()` function to your pipeline. Within the function `arrange()` add the argument of `carriers`. 
+Using the same code, add another argument to `summarize()`: `.by = dest`.
 
 ```{r counts-8, exercise = TRUE}
 
@@ -355,24 +325,30 @@ Continuing the pipe, add the `arrange()` function to your pipeline. Within the f
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r counts-8-hint-1, eval = FALSE}
-... |> 
-  arrange(...)
+flights |> 
+  summarize(
+    n = n(),
+    delay = mean(arr_delay, na.rm = TRUE),
+    carriers = n_distinct(carrier),
+    ... = dest)
 ```
 
 ```{r counts-8-test, include = FALSE}
 flights |> 
-  mutate(carriers = n_distinct(carrier), .by = dest) |>
-  select(dest, carriers) |>
-  arrange(carriers)
+  summarize(
+    n = n(),
+    delay = mean(arr_delay, na.rm = TRUE),
+    carriers = n_distinct(carrier),
+    .by = dest)
 ```
 
 ### 
 
-We can see that the dataframe is only showing the destinations with the least carriers. Let's try and show the destinations with the most carriers.
+The `.by` argument modifies `summarize()` so that it does the same calculation for each value of `.dest`. Until now, it has been showing us the results for the entire data set.
 
 ### Exercise 9
 
-Using your previous code, within your call to `arrange()`, use the argument `desc(carriers)` so that it arranges the carriers in descending order.
+Continue the pipe by adding `arrange(desc(carriers))`.
 
 ```{r counts-9, exercise = TRUE}
 
@@ -381,182 +357,95 @@ Using your previous code, within your call to `arrange()`, use the argument `des
 <button onclick = "transfer_code(this)">Copy previous code</button>
 
 ```{r counts-9-hint-1, eval = FALSE}
-... |> 
-  arrange(desc(...))
+flights |> 
+  summarize(
+    n = n(),
+    delay = mean(arr_delay, na.rm = TRUE),
+    carriers = n_distinct(carrier),
+    .by = dest) |> 
+  ...(desc(...))
 ```
 
 ```{r counts-9-test, include = FALSE}
 flights |> 
-  mutate(carriers = n_distinct(carrier), .by = dest) |>
-  select(dest, carriers) |>
+  summarize(
+    n = n(),
+    delay = mean(arr_delay, na.rm = TRUE),
+    carriers = n_distinct(carrier),
+    .by = dest) |> 
   arrange(desc(carriers))
 ```
 
 ### 
 
-`desc(x)` gives the largest values the smallest ranks.
+Keep track of variable names. `carrier` is the variable in `flights` which tells us the individual `carrier` for a specific flight. `carriers` is a variable we created within `summarize()`. If we did not create it, it would not be available for use by `desc()` and `arrange()`.
+
 
 ### Exercise 10
 
-With a new pipeline, pipe `flights` to the `count()` function. Within the call to `count`, add the `tailnum` argument.
+Start a new pipe by starting with `flights` again and then adding `summarize(miles = sum(distance), .by = tailnum)`.
+
 
 ```{r counts-10, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r counts-10-hint-1, eval = FALSE}
-flights |> 
-  count(...)
+
 ```
 
 ```{r counts-10-test, include = FALSE}
 flights |> 
-  count(tailnum)
+  summarize(miles = sum(distance), .by = tailnum)
 ```
 
 ### 
 
-A weighted count is a sum. For example you could “count” the number of miles each plane flew by using the `sum()` function. 
+This is the distance that each plane flew. In a sense, we have `count()`'d those miles by using `sum()`.
 
 ### Exercise 11
 
-Within your call to `count()` add the `wt` argument and set it to `distance`. 
+We can accomplish the same goal by using the `wt` argument to `count()`. Pipe `flights` to `count(tailnum, wt = distance)`.
 
 ```{r counts-11, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r counts-11-hint-1, eval = FALSE}
-flights |> 
-  count(tailnum, wt = ...)
+
 ```
 
 ```{r counts-11-test, include = FALSE}
-flights |> 
-  count(tailnum, wt = distance)
+flights |> count(tailnum, wt = distance)
 ```
 
 ### 
 
-Weighted counts are a common problem so count() has the `wt` argument that does the same thing.
+<!-- DK: This is sloppy. Maybe use arrange(), or select out some specific planes? -->
+
+The answers are the same, although to confirm that claim you would need to compare the resulting tibbles since the two commands output the data in different orders. 
 
 ### Exercise 12
 
-Now, count the number of cancelled flights or missing values of each destination. With a new pipeline, pipe `flights` to the `mutate()` function. Within the call to `mutate()`, create a new variable called `n_cancelled` and set it equal to `sum(is.na(dep_time)`.
+Pipe `flights` to `summarize(n_cancelled = sum(is.na(dep_time)))`.
 
 ```{r counts-12, exercise = TRUE}
 
 ```
 
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
 ```{r counts-12-hint-1, eval = FALSE}
-flights |> 
-  mutate(n_cancelled = ...(is.na(dep_...)))
+
 ```
 
 ```{r counts-12-test, include = FALSE}
 flights |> 
-  mutate(n_cancelled = sum(is.na(dep_time)))
+  summarize(n_cancelled = sum(is.na(dep_time)),
+            .by = dest)
 ```
 
 ### 
 
-You can count missing values by combining sum() and is.na(). In the flights dataset this represents flights that are cancelled.
-
-### Exercise 13
-
-Within your call to the `mutate()` function, add the `.by` argument and set it to `dest`.
-
-```{r counts-13, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r counts-13-hint-1, eval = FALSE}
-flights |> 
-  mutate(n_cancelled = sum(is.na(dep_time)), .by = ...)
-```
-
-```{r counts-13-test, include = FALSE}
-flights |> 
-  mutate(n_cancelled = sum(is.na(dep_time)), .by = dest)
-```
-
-### Exercise 14
-
-Continue the pipe to `select()`, with the columns `dest` and `n_cancelled` as our arguments.
-
-```{r counts-14, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r counts-14-hint-1, eval = FALSE}
-... |>
-  select(..., n_cancelled)
-```
-
-```{r counts-14-test, include = FALSE}
-flights |> 
-  mutate(n_cancelled = sum(is.na(dep_time)), .by = dest) |>
-  select(dest, n_cancelled)
-```
-
-### Exercise 15
-
-Now continue the pipe to `distinct()`.
-
-```{r counts-15, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r counts-15-hint-1, eval = FALSE}
-... |>
-  distinct()
-```
-
-```{r counts-15-test, include = FALSE}
-flights |> 
-  mutate(n_cancelled = sum(is.na(dep_time)), .by = dest) |>
-  select(dest, n_cancelled) |>
-  distinct()
-```
-
-### 
-
-The job of the `distinct()` function is to remove any duplicates, so every entry is unique and not duplicated. Two models ago, we used the function `n_distinct()`, which had the `distinct()` function built-in to it.
-
-
-### Exercise 16
-
-Let's finalize our model by piping it to `arrange()`, with the arguments 
-
-```{r counts-16, exercise = TRUE}
-
-```
-
-<button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r counts-16-hint-1, eval = FALSE}
-
-```
-
-```{r counts-16-test, include = FALSE}
-
-```
-
-### 
-
-Our final model now shows us the number of cancelled flights in each airport, and in descending order. It's good to know that Chicago O'Hare (ORD) had the highest number of cancelled flights!
+This code counts the missing values by combining `sum()` and `is.na()`. In the flights dataset this represents flights that are cancelled.
 
 
 ## Numeric transformations
@@ -686,7 +575,7 @@ Most arithmetic functions work with pairs of variables. Two closely related func
 
 ### 
 
-Let's utilize a premade dataframe `df`. Type in `df` and hit "Run Code".
+Let's utilize a premade dataframe `df`. Type in `df` and hit "Run Code."
 
 ```{r numeric-transformations-5, exercise = TRUE}
 
@@ -871,7 +760,7 @@ We can also find the remainder using `%%`.
 
 ### Exercise 12
 
-Compute the remainder of the vector `z` divided by `3` by typing in `z %% 3` and hitting "Run Code". 
+Compute the remainder of the vector `z` divided by `3` by typing in `z %% 3` and hitting "Run Code." 
 
 ```{r numeric-transformations-12, exercise = TRUE}
 z <- 1:10
@@ -1381,7 +1270,7 @@ Logarithms are an incredibly useful transformation for dealing with data that ra
 
 ### Exercise 2
 
-Use the function `round()` with the argument `123.456` and hit "Run Code".
+Use the function `round()` with the argument `123.456` and hit "Run Code."
 
 ```{r other-number-functions-2, exercise = TRUE}
 
@@ -1447,7 +1336,7 @@ The *-2* argument in the `round()` function will round the number `123.456` to t
 
 ### Exercise 5
 
-Type in `round(c(1.5, 2.5))` and hit "Run Code".
+Type in `round(c(1.5, 2.5))` and hit "Run Code."
 
 ```{r other-number-functions-5, exercise = TRUE}
 
@@ -1533,7 +1422,7 @@ The `floor()` and `ceiling()` functions don’t have a digits argument, so you c
 
 ### Exercise 9
 
-Let's round down to the nearest two digits. Type in `floor(x / 0.01) * 0.01` and hit "Run Code".
+Let's round down to the nearest two digits. Type in `floor(x / 0.01) * 0.01` and hit "Run Code."
 
 ```{r other-number-functions-9, exercise = TRUE}
 x <- 123.456
@@ -1553,7 +1442,7 @@ floor(x / 0.01) * 0.01
 
 ### Exercise 10
 
-Let's round up to the nearest two digits. Type in `ceiling(x / 0.01) * 0.01` and hit "Run Code". 
+Let's round up to the nearest two digits. Type in `ceiling(x / 0.01) * 0.01` and hit "Run Code." 
 ```{r other-number-functions-10, exercise = TRUE}
 x <- 123.456
 ```
@@ -1576,7 +1465,7 @@ You can use the same technique if you want to round() to a multiple of some othe
 
 ### Exercise 11
 
-Let's round to the nearest multiple of 4. Type in `round(x / 4) * 4` and hit "Run Code".
+Let's round to the nearest multiple of 4. Type in `round(x / 4) * 4` and hit "Run Code."
 ```{r other-number-functions-11, exercise = TRUE}
 x <- 123.456
 ```
@@ -1595,7 +1484,7 @@ round(x/4) * 4
 
 ### Exercise 12
 
-This time let's round to the nearest 0.25. Type in `round(x / 0.25) * 0.25` and hit "Run Code".
+This time let's round to the nearest 0.25. Type in `round(x / 0.25) * 0.25` and hit "Run Code."
 ```{r other-number-functions-12, exercise = TRUE}
 x <- 123.456
 ```
@@ -1822,7 +1711,7 @@ If min_rank() doesn’t do what you need, look at the variants `dplyr::row_numbe
 
 ### Exercise 4
 
-Type in `ranktypes` and hit "Run Code".
+Type in `ranktypes` and hit "Run Code."
 
 ```{r general-transformations-4, exercise = TRUE}
 
@@ -1948,7 +1837,7 @@ You can achieve many of the same results by picking the appropriate ties.method 
 
 ### Exercise 9
 
-Type in `numbers` and hit "Run Code". 
+Type in `numbers` and hit "Run Code." 
 
 ```{r general-transformations-9, exercise = TRUE}
 
@@ -2142,7 +2031,7 @@ Note that `z` represents any variable, and must be changed in every situation to
 
 ### Exercise 17
 
-Type in `x == lag(x)` and hit "Run Code".
+Type in `x == lag(x)` and hit "Run Code."
 
 ```{r general-transformations-17, exercise = TRUE}
 x <- c(2, 5, 11, 11, 19, 35)
@@ -2169,7 +2058,7 @@ When you’re looking at website data, it’s common to want to break up events 
 
 ### 
 
-Type in `times_visited` and hit "Run Code".
+Type in `times_visited` and hit "Run Code."
 
 ```{r general-transformations-18, exercise = TRUE}
 
@@ -2265,7 +2154,7 @@ When `has_gap` is `TRUE`, `cumsum()` will increment `group` by `1`.
 
 ### Exercise 22
 
-Imagine you have a dataframe with a bunch of repeated values. Type in `repetition` and hit "Run Code".
+Imagine you have a dataframe with a bunch of repeated values. Type in `repetition` and hit "Run Code."
 
 ```{r general-transformations-22, exercise = TRUE}
 
@@ -2378,7 +2267,7 @@ This section will introduce more useful summary functions that will help to summ
 
 ### Exercise 1
 
-Type in `flights` and hit "Run Code".
+Type in `flights` and hit "Run Code."
 
 ```{r numeric-summaries-1, exercise = TRUE}
 
@@ -2739,7 +2628,6 @@ Create a new pipeline. Pipe `flights` to the `mutate()` function. Within the `mu
 ```{r numeric-summaries-14, exercise = TRUE}
 
 ```
-
 
 ```{r numeric-summaries-14-hint-1, eval = FALSE}
 flights |> 
