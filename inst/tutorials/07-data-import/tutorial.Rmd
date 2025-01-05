@@ -233,7 +233,7 @@ library(janitor)
 library(janitor)
 ```
 
-###
+### 
 
 **janitor** has several useful functions, including `make_clean_names()`, which does the same thing as `clean_names()` but can be used directly during data import rather than as part of a pipe.
 
@@ -1251,7 +1251,7 @@ read_csv("data/ex_2.csv",
 )
 ```
 
-###
+### 
 
 This is not what we want. But it is often convenient to read in a new file as all character variables. It is then easier to examine its contents directly.
 
@@ -1397,7 +1397,7 @@ read_csv("data/ex_3.csv") |>
   mutate(z = parse_number(z))
 ```
 
-###
+### 
 
 `parse_number()` is good at dealing with currency signs and other detritus. 
 
@@ -1492,7 +1492,6 @@ cat(readLines("data/similar_2.csv"), sep = "\n")
 cat(readLines("data/similar_3.csv"), sep = "\n")
 ```
 
-
 Let's combine the files by piping the last call to `list_files()` directly to `read_csv()`!
 
 ```{r reading-data-from-multiple-fil-4, exercise = TRUE}
@@ -1549,7 +1548,6 @@ The result when your code is run should look like this:
 list.files("data", pattern = "similar", full.names = TRUE) |> 
   read_csv(na = ".")
 ```
-
 
 Because the "." is gone, column `b`'s type is `dbl` now. 
 
@@ -1669,7 +1667,7 @@ This is especially helpful in circumstances where the files you’re reading in 
 
 ### Exercise 1
 
-Let's first create a new R object, `students2` which is the result of the clean up we did above on the original "students.csv" file. Press Run Code.
+Let's first create a new R object, `students2` which is the result of the clean up we did above on the original "students.csv" file. Press "Run Code."
 
 ```{r writing-to-a-file-1, exercise = TRUE}
 students2 <- students |> 
@@ -1679,6 +1677,7 @@ students2 <- students |>
     age = if_else(age == "five", "5", age),
     age = parse_number(age)
   )
+
 students2
 ```
 
@@ -1690,16 +1689,17 @@ students2 <- students |>
     age = if_else(age == "five", "5", age),
     age = parse_number(age)
   )
+
 students2
 ```
 
 ### 
 
-This workflow is very common. First, we interactively add code, line-by-line, to a pipe, running the entire pipe each time, examining the output as it is "spat" back to the screen. Second, once the pipe produces what we want, then we add an object, `students2` in this case, to the front of the pipe and create a permanent object which we can then work with.
+This workflow is very common. First, we interactively add code, line-by-line, to a pipe, running the entire pipe each time, examining the output as it is "spat" back to the screen. Second, once the pipe produces what we want, then we add an object, `students2` in this case, to the front of the pipe, allowing us to create a permanent object with which we can then work.
 
 ### Exercise 2
 
-Type `students2` and hit Run Code. This will produce the same output as `print(students2)`. That is, hitting Return on an R object is the same thing as explicitly printing that object.
+Type `students2` and hit "Run Code." This will produce the same output as `print(students2)`. 
 
 ```{r writing-to-a-file-2, exercise = TRUE}
 
@@ -1715,7 +1715,7 @@ students2
 
 ### 
 
-`students2` has been cleaned up from the original "students.csv", most importantly in terms the variable names. Note that `mean_plan` is a `<fct>`, meaning a factor.
+`students2` has been cleaned up from the original "students.csv", most importantly in terms the variable names. Note that `meal_plan` is a `<fct>`, meaning a factor.
 
 
 
@@ -1765,7 +1765,7 @@ read_csv("data/students2.csv")
 
 Note that variable type information is lost when you save to CSV because you’re starting over by reading from a plain text file again. `meal_plan` is now `<chr>`, meaning a character variable.
 
-This makes CSVs a little unreliable for caching interim results --- you need to recreate the column specification every time you load in. There are two main alternative: `write_rds()` with`read_rds()` and `write_parquet()`
+This makes CSVs a little unreliable for caching interim results --- you need to recreate the column specification every time you load in. There are two main alternative: `write_rds()`/`read_rds()` and `write_parquet()`/`read_parquet()`.
 
 ### Exercise 5
 
@@ -1794,6 +1794,7 @@ iris_p <- iris |>
   labs(title = "Sepal Dimensions of Various Species of Iris",
        x = "Sepal Length",
        y = "Sepal Width")
+
 
 ```
 
@@ -1828,7 +1829,7 @@ write_rds(iris_p,
 
 ### 
 
-The big advantage of creating an rds file is that we can reload the object it contains later, without re-running the code which created it.  
+The big advantage of creating an RDS file is that we can reload the object it contains later, without re-running the code which created it.  
 
 ### Exercise 6
 
@@ -1868,7 +1869,7 @@ read_rds(file = "data/test_1.rds")
 
 ### 
 
-Plots are just one example of what we can store in a rds file. We can also store datasets.
+Plots are just one example of what we can store in a RDS file. We can also store datasets.
 
 ### Exercise 8
 
@@ -1904,7 +1905,7 @@ write_rds(mtcars, "data/test_2.rds")
 
 ### 
 
-You are not limited to just one object in an rds file. You can save multiple objects!
+You are not limited to just one object in an RDS file. You can save multiple objects!
 
 ### Exercise 9
 
@@ -1972,7 +1973,7 @@ Parquet tends to be much faster than RDS and is usable outside of R, but does re
 ## Data entry
 ### 
 
-Sometimes you’ll need to assemble a tibble “by hand” doing a little data entry in your R script. There are two useful functions to help you do this which differ in whether you layout the tibble by columns (`tibble()`) or by rows (`tribble()`).
+Sometimes you’ll need to assemble a tibble “by hand,” doing a little data entry in your R script. There are two useful functions to help you do this which differ in whether you layout the tibble by columns (`tibble()`) or by rows (`tribble()`).
 
 ### Exercise 1
 
@@ -2005,7 +2006,7 @@ Laying out the data by column can make it hard to see how the rows are related, 
 
 ### Exercise 2
 
-Use `tribble()` to create the same tibble as in the previous question. Use the Hint to get started.
+Use `tribble()` to create the same tibble as in the previous question. The first argument will be a row containing `~x, ~y, ~z`. The second argument, on a new row, will be `1, "h", 0.08`. And so on. Don't forget to all a comma at the end of each row.
 
 ```{r data-entry-2, exercise = TRUE}
 
