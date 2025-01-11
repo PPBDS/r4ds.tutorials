@@ -31,9 +31,9 @@ library(usethis)
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- Only edit the .gitignore one time, for each website? --><!-- Figure out what is happening at the start of the Adding a plot section wrt background jobs. Not sure what this refers to. -->
+<!-- Should we explain what usethis::use_github_pages() pages id doing, perhaps spreading out the information various knowledge drops? -->
 
-<!-- Should Website 3 be different? Start from the IDE and makes a new directory with git box checked, and then use `usethis::use_github()` to connect to Github. It is useful to see this work, even if it is not our default strategy. Or should we just make sure students understand one approach well? If so, we could explain this approach in a knowledge drop. -->
+<!-- Consider adding more information in knowledge drops about alternate ways to make a website from the IDE, making new directory with git box checked, and then using `usethis::use_github()` to connect to Github. It is useful to see this work, even if it is not our default strategy.  -->
 
 
 ## Introduction
@@ -101,16 +101,9 @@ Davids-MBP:website-1 dkane$
 
 In the Terminal, run `quarto create project website .`.  Don't forget the `.` at the end of the command.
 
-<!-- DK: Should make this more clear, even screen shots. -->
-
 Depending on your computer setup, this command will require you to answer some questions. Do so as best you can. When asked what to open the website with choose "rstudio".
 
-<!-- DK: Does rstudio versus vcode come up anymore? -->
-<!-- SU: I think generally it will ask you if you want to use rstudio or to not open it. If you have vscode installed and running on your laptop, vscode should be an option as well. -->
-
 This command will usually result in a restart of your RStudio instance. Or it might create a second R instance, also located in the `website-1` directory. If so, close one of the instances. It does not matter which.
-
-<!-- DK: The above is hacky! Is there a better approach? -->
 
 CP/CR.
 
@@ -213,7 +206,7 @@ question_text(NULL,
 
 ### 
 
-<!-- DK:? -->
+Quarto offers a wide range of output formats. You can find the complete list at https://quarto.org/docs/output-formats/all-formats.html. Many formats share some output options (e.g., `toc: true` for including a table of contents), but others have options that are format specific (e.g., `code-fold: true` collapses code chunks into a `<details>` tag for HTML output so the user can display it on demand, it’s not applicable in a PDF or Word document).
 
 ### Exercise 7
 
@@ -417,7 +410,7 @@ question_text(NULL,
 
 ### 
 
-<!-- DK? -->
+You can also use Quarto to produce presentations. You get less visual control than with a tool like Keynote or PowerPoint, but automatically inserting the results of your R code into a presentation can save a huge amount of time. Presentations work by dividing your content into slides, with a new slide beginning at each second (`##`) level header. Additionally, first (`#`) level headers indicate the beginning of a new section with a section title slide that is, by default, centered in the middle.
 
 ### Exercise 15
 
@@ -436,7 +429,7 @@ question_text(NULL,
 
 ### 
 
-<!-- DK: -->
+We recommend that you use an RStudio project for your websites and books. Based on the `_quarto.yml` file, RStudio will recognize the type of project you’re working on, and add a Build tab to the IDE that you can use to render and preview your websites and books. Both websites and books can also be rendered using `quarto::quarto_render()`.
 
 ## Website 2
 ### 
@@ -1933,7 +1926,6 @@ First, it reads the tibble from `clean_data.rds` and assigns that tibble to `x`.
 
 Second, it starts a new pipe with `x` and then creates our plot. Because the plot is not assigned to an object, it is just spat back out, and then shows up in the Plots tab.
 
-<!-- DK: Does it show up in the Plot tab or the Viewer tab? Why? -->
 
 ### Exercise 4
 
@@ -1992,6 +1984,24 @@ question_text(NULL,
 
 ### 
 
+You answer should look like this:
+
+````
+library(tidyverse)
+x <- read_rds("clean_data.rds")
+
+D_plot <- x |> 
+  ggplot(aes(x = carat, y = price, color = cut)) + 
+    geom_point() +
+    scale_y_continuous(labels = scales::dollar) +
+    labs(title = "Prices and Sizes for Diamonds of Color D",
+         subtitle = "'Round' carat values like 1, 1.5 and 2 are more common.",
+         x = "Carat",
+         y = "Price")
+         
+ggsave("size_v_weight.png", D_plot)
+````
+
 As with `clean_data.R`, we have created a script which encapsulates, from start-to-finish, a discrete part of our analysis. In this case, we start from the tibble saved in `clean_data.rds` and finish by saving a graphic in `size_v_weight.png`.
 
 ### Exercise 6
@@ -2008,8 +2018,6 @@ question_text(NULL,
 ```
 
 ### 
-
-<!-- DK: Insert example. -->
 
 There are a lot of files! Note the new script `make_plot.R`, the object with which it starts, `clean_data.rds`, and the object which it creates, `size_v_weight.png`. 
 
