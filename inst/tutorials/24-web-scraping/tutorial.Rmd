@@ -62,13 +62,12 @@ section <- "https://rvest.tidyverse.org/articles/starwars.html" |>
 <!-- DK: Add all missing knowledge drops. -->
 
 ## Introduction
-### 
 
 This tutorial covers [Chapter 24: Web scraping](https://r4ds.hadley.nz/webscraping.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. We will learn how to use the [**rvest**](https://rvest.tidyverse.org/), along with associated functions like `read_html()` and `html_table()` to download and organize data from the web.
 
 
 ## Web scaping basics
-### 
+
 
 Web scraping in R is a method of extracting data from websites using R programming language. It can be a valuable skill for students in data-related fields, allowing them to collect and analyze large amounts of data quickly and efficiently.
 
@@ -90,7 +89,7 @@ library(rvest)
 library(rvest)
 ```
 
-### 
+
 
 The "Web Scraping 101" [article](https://rvest.tidyverse.org/articles/rvest.html) from the **rvest** [homepage](https://rvest.tidyverse.org/) provides useful background. 
 
@@ -110,7 +109,7 @@ help(package = "...")
 help(package = "rvest")
 ```
 
-### 
+q
 
 The help page for a package provides a listing of all the functions in a package. Note that there are both `html_text()` and `html_text2()` functions. You should always use `html_text2()` unless you have a good reason not to.
 
@@ -127,7 +126,7 @@ question_text(NULL,
 	rows = 3)
 ```
 
-### 
+
 
 As the DESCRIPTION file mentions, **rvest** is mostly supplying wrappers for the more lower level (but harder to use) **xml2** and **httr** packages. (As always, note how we, and everyone else uses the words "package" and "library" interchangeably.)
 
@@ -147,7 +146,7 @@ minimal_html("test")
 minimal_html("test")
 ```
 
-### 
+
 
 HTML stands for **H**yper**T**ext **M**arkup **L**anguage, the underlying text of the web. The main difference between HTML and plain text is the use of various "elements" and "attributes" which tell your browser how to display the text.
 
@@ -171,7 +170,7 @@ class(html_1)
 class(html_1)
 ```
 
-### 
+
 
 HTML documents are an example from the broader class of XML objects. Recall that **rvest** is mostly a wrapper for the **xml2** package, which allows us to work with XML objects.
 
@@ -204,7 +203,7 @@ html_2
 html_2
 ```
 
-### 
+
 
 Just typing/returning `html_2` produces the same result as `print(html_2)`. By design, the `print()` function should provide the key information about the object being printed. The first line tells us that `html_2` is an HTML document. The two listed elements ("head" and "body") are the two key parts of every HTML document. The "body" is the more important part since it contains all the information.
 
@@ -226,7 +225,7 @@ html_2 |>
   html_elements("p")
 ```
 
-### 
+
 
 `html_elements()` pulls out all the elements that match the selector, which is provided to the `css` argument. "Elements" consist of a start tag (e.g. \<p\>), optional attributes (id='first'), an end tag4 (like \</p\>). The "contents" of an element are everything in between the start and end tag.
 
@@ -251,7 +250,7 @@ html_2 |>
   html_elements(".important")
 ```
 
-### 
+
 
 When using `html_elements()` to select nodes on the basis of the class attribute rather than a tags we need a leading dot. Tags, on the other hand, are provided as is. Notice that the result of a call to `html_elements()` is an "xml_nodeset" rather than a full HTML document.
 
@@ -273,7 +272,7 @@ html_2 |>
   html_elements("#first")
 ```
 
-### 
+
 
 Id attributes must be unique within a document, so this will only ever select a single element.
 
@@ -306,7 +305,7 @@ print(html_3)
 print(html_3)
 ```
 
-### 
+
 
 Notice how the "body" portion of the html_document includes the raw html text, especially the nested list. The `<ul>` tag starts an **u**nordered **l**ist. The `<li>` tag starts an ordered **li**st.
 
@@ -328,7 +327,7 @@ html_3 |>
   html_elements("li")
 ```
 
-### 
+
 
 There’s an important difference between `html_element()` and `html_elements()` when you use a selector that doesn’t match any elements. `html_elements()` returns a vector of length 0, whereas `html_element()` returns a missing value. 
 
@@ -353,7 +352,7 @@ html_3 |>
   html_element("b")
 ```
 
-### 
+
 
 We are using clues in the HTML formatting --- bolding, in this case --- to determine a substantive issue, which are the names of the characters. Nothing guarantees that this two things are connected. They don't have to be! And, if the HTML document itself is sloppy or inconsistent, they won't be. 
 
@@ -381,7 +380,7 @@ html_3 |>
   html_text2()
 ```
 
-### 
+
 
 The last step of a web scrape is often `html_text2()`, since we (almost always) want to get rid of any weird formatting.
 
@@ -415,7 +414,7 @@ print(html_4)
 print(html_4)
 ```
 
-### 
+
 
 Note how the `<body>` section of the html_document begins with the `<table>` element. Also, note how the class of the table object is "mytable".
 
@@ -438,7 +437,7 @@ html_4 |>
   html_element(".mytable")
 ```
 
-### 
+
 
 We are using the fact that the object has class "mytable." Recall that, when accessing objects using their class, you must place a `.` in front of the name of the class.
 
@@ -463,7 +462,7 @@ html_4 |>
   html_table()
 ```
 
-### 
+
 
 You won't always be lucky enough to have the data you want in a table, but, if you are, `html_table()` is magic.
 
@@ -472,7 +471,7 @@ With tools like  `html_element(s)()`, `html_text2()` and `html_table()`, you are
 
 
 ## Web scaping examples
-### 
+
 
 Consider two examples of material we might want to scrape. The [first](https://rvest.tidyverse.org/articles/starwars.html) is information about 7 Star Wars films from a vignette from the **rvest** package. The second involves the [250 highest rated films](https://www.imdb.com/chart/top) from IMDB. In this section, we will scrape and organize information from both.
 
@@ -497,7 +496,7 @@ Examine the [webpage](https://rvest.tidyverse.org/articles/starwars.html) for th
   read_html()
 ```
 
-### 
+ 
 
 Before we talk much about web scraping, we should talk about whether it is legal and ethical to do so. Overall, the situation is complicated. Legalities depend a lot on whre you live. However, as a general rule of thumb, is the data a public, non-personal, and factual, you're most likely ok. These three factors connect to the site’s terms and conditions, personally identifiable information, and copyright, hence their importance.
 If these factors are false, or you're scraping the web to make money, it's a good idea to talk to a lawyer, but in any case of web scraping, be respectful of the resources of the server hosting the page(s). This means that if you're scraping many pages, you should wait a bit in between each request.
@@ -540,7 +539,7 @@ Continue the pipe with `html_elements("section")`.
   html_elements("section")
 ```
 
-### 
+
 
 We almost always begin scraping by creating an HTML document which can then be manipulated with functions like `html_elements()`. Note that `html_elements()` is not the same thing as `html_element()`, without the "s".
 
@@ -566,7 +565,7 @@ Continue the pipe with `html_element("h2")`. We want to pull out just the title 
   html_element("h2")
 ```
 
-### 
+
 
 Note that we used `html_element()` in this example, as opposed to `html_elements()` (with the "s") last time. In this case, both functions produce the same answer.
 
@@ -594,7 +593,7 @@ Continue the pipe with `html_text2()`. We almost always want to clean up the und
   html_text2()
 ```
 
-### 
+
 
 `html_text2()` differs from `html_text()` slightly. while `html_text()` collapses all the text into a single string, `html_text2()` preserves the white space between elements, allowing you to retain the structure and formatting of the text as it appears on the web page.
 
@@ -629,7 +628,7 @@ tibble(title =
 
 ```
 
-### 
+
 
 A tibble is a data frame, but it tweaks some older behaviors to make life easier. R is an old language, and some features useful then now get in your way. The tibble package allows you to make data frames in a more streamlined and cleaner way compared to R's traditional data frames.
 
@@ -664,7 +663,6 @@ now we're going to learn how to streamline this process. Copy https://rvest.tidy
 "https://rvest.tidyverse.org/articles/starwars.html" 
 ```
 
-### 
 What we're attempting to do here is rather than piping the web page every time we web scrape, we make an object to hold the results of the pipe, which we can call when needed.
 ### Exercise 7
 
@@ -688,7 +686,7 @@ Pipe this to `read_html()`.
          
 ```
 
-### 
+
 you can notice that the steps are currently similar right now, but there will be less steps needed to pull this off.
  
 ### Exercise 8
@@ -713,7 +711,7 @@ Continue that pipe to `html_elements()` with "section" being its argument.
          html_elements("section")
 ```
 
-###     
+ 
 ### Exercise 9
 
  Behind the scenes, we have created an object named `section` which is the result of this pipe. Type `section` in the exercise block and hit "Run Code."
@@ -732,7 +730,7 @@ section
 section
 ```
 
-## 
+
 
 Creating an object like this is helpful when you need to web scrape the same page multiple times. It allows you to save on typing and makes the code easier to read and process.
 
@@ -768,7 +766,7 @@ tibble(title = section |>
 
 ```
 
-### 
+
 we've now just created a tibble thats identical to the one above, but it was easier to write and will save time if we need to do so multiple times.
 
 ### Exercise 11
@@ -789,7 +787,7 @@ Consider [the highest rated movies](https://www.imdb.com/chart/top) on [IMDb](ht
   read_html()
 ```
 
-### 
+
 
 Note that `read_html()` takes longer to run than the previous example because the underlying webpage is much more complex.
 
@@ -816,7 +814,7 @@ The key element is a table, which is often the case with web scraping exercises.
   html_element(".chart")
 ```
 
-### 
+
 
 The result is no longer an "html_document". Instead, it is an "html_node". 
 
@@ -847,7 +845,7 @@ Continue the pipe to `html_table()`.
 #data/star_wars.html
 ```
 
-### 
+
 
 The result is a tibble with 250 rows and 5 columns. But, as you can see, the column names are a mess, as our the values in many of the cells. We need to clean it up.
 
@@ -878,7 +876,6 @@ Continue the pipe to a `select()` call which renames the second column to `rank_
       rating = `IMDb Rating`)
 ```
 
-### 
 
 `select()` does two things: it keeps only two columns, both of which it renames. But the `rank_title_year` is a mess because it really includes three different variables, all mashed together.
 
@@ -910,7 +907,7 @@ Continue the pipe with a call to `mutate()` which runs `str_squish()` on `rank_t
   mutate( rank_title_year = str_squish(rank_title_year))
 ```
 
-### 
+
 
 [`str_squish()`](https://stringr.tidyverse.org/reference/str_trim.html) removes whitespace at the start and end or a character variable, and replaces all internal whitespace with a single space.
 
@@ -939,7 +936,7 @@ Continue the call to `mutate()`, creating a new variable called `rank` which is 
   mutate(rank = parse_number(rank_title_year))
 ```
 
-### 
+
 
 This approach depends on the fact that [`parse_number()`](https://readr.tidyverse.org/reference/parse_number.html) grabs the first number it can find in the string. It ignores characters and numbers which come after.
 
@@ -973,7 +970,7 @@ Continue the pipe to `mutate()`, creating a new variable `title` which is the re
                              pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))"))
 ```
 
-### 
+
 
 We gave [ChatGPT](https://chat.openai.com/) this prompt:
 
@@ -1026,13 +1023,13 @@ Complete the pipe with a `select()` statement which keeps `rank`, `title` and `r
   select(rank, title, rating)
 ```
 
-### 
+
 
 You now understand web scraping. 
 
 
 ## Summary
-### 
+
 
 This tutorial covered [Chapter 24: Web scraping](https://r4ds.hadley.nz/webscraping.html) from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.
 
