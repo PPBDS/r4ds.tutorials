@@ -479,7 +479,6 @@ With tools like  `html_element(s)()`, `html_text2()` and `html_table()`, you are
 
 Consider two examples of material we might want to scrape. The [first](https://rvest.tidyverse.org/articles/starwars.html) is information about 7 Star Wars films from a vignette from the **rvest** package. The second involves the [250 highest rated films](https://www.imdb.com/chart/top) from IMDB. In this section, we will scrape and organize information from both.
 
-If you do not have access to the internet while doing this tutorial, you can replace "https://rvest.tidyverse.org/articles/starwars.html" with "data/star_wars.html" in all the questions below and everything should work.
 
 ### Exercise 1
 
@@ -494,10 +493,6 @@ Examine the [webpage](https://rvest.tidyverse.org/articles/starwars.html) for th
   read_..()
 ```
 
-```{r web-scaping-examples-1-test, include = FALSE}
-"data/star_wars.html" |> 
-  read_html()
-```
 
 Before we talk much about web scraping, we should talk about whether it is legal and ethical to do so. Overall, the situation is complicated. Legalities depend a lot on where you live. However, as a general rule of thumb, if the data is public, non-personal, and factual, you're most likely ok. These three factors connect to the site’s terms and conditions, personally identifiable information, and copyright, hence their importance.
 If these factors are false, or you're scraping the web to make money, it's a good idea to talk to a lawyer, but in any case of web scraping, be respectful of the resources of the server hosting the page(s). This means that if you're scraping many pages, you should wait a bit in between each request.
@@ -538,12 +533,6 @@ Continue the pipe with `html_elements("section")`.
 
 ```
 
-```{r web-scaping-examples-2-test, include = FALSE}
-"data/star_wars.html" |> 
-  read_html() |> 
-  html_elements("section")
-```
-
 ### 
 
 We almost always begin scraping by creating an HTML document which can then be manipulated with functions like `html_elements()`. Note that `html_elements()` is not the same thing as `html_element()`, without the "s".
@@ -563,12 +552,6 @@ Continue the pipe with `html_element("h2")`. We want to pull out just the title 
   html_element("h2")
 ```
 
-```{r web-scaping-examples-3-test, include = FALSE}
-"data/star_wars.html" |> 
-  read_html() |> 
-  html_elements("section") |> 
-  html_element("h2")
-```
 
 ### 
 
@@ -590,13 +573,6 @@ Continue the pipe with `html_text2()`. We almost always want to clean up the und
   html_...()
 ```
 
-```{r web-scaping-examples-4-test, include = FALSE}
-"data/star_wars.html" |> 
-  read_html() |> 
-  html_elements("section") |> 
-  html_element("h2") |> 
-  html_text2()
-```
 
 ### 
 
@@ -621,16 +597,6 @@ Place the above chunk of code into the middle of a call to `tibble()` in which y
          html_elements("section") |> 
          html_elements("h2") |> 
          html_text2())
-```
-
-```{r web-scaping-examples-5-test, include = FALSE}
-tibble(title = 
-         "data/star_wars.html" |> 
-         read_html() |> 
-         html_elements("section") |> 
-         html_elements("h2") |> 
-         html_text2())
-
 ```
 
 ### 
@@ -796,11 +762,6 @@ Consider [the highest rated movies](https://www.imdb.com/chart/top) on [IMDb](ht
   ...
 ```
 
-```{r web-scaping-examples-11-test, include = FALSE}
-"data/imdb.html" |> 
-  read_html()
-```
-
 ### 
 
 Note that `read_html()` takes longer to run than the previous example because the underlying webpage is much more complex.
@@ -820,12 +781,6 @@ The key element is a table, which is often the case with web scraping exercises.
 ```{r web-scaping-examples-12-hint-1, eval = FALSE}
 ... |> 
   html_element("...")
-```
-
-```{r web-scaping-examples-12-test, include = FALSE}
-"data/imdb.html" |>
-  read_html() |> 
-  html_element(".chart")
 ```
 
 ### 
@@ -850,14 +805,6 @@ Continue the pipe to `html_table()`.
   html_table()
 ```
 
-```{r web-scaping-examples-13-test, include = FALSE}
-"data/imdb.html" |> 
-  read_html() |> 
-  html_element(".chart") |> 
-  html_table()
-
-#data/star_wars.html
-```
 
 ### 
 
@@ -881,14 +828,6 @@ Continue the pipe to a `select()` call which renames the second column to `rank_
     )
 ```
 
-```{r web-scaping-examples-14-test, include = FALSE}
-"data/imdb.html" |> 
-  read_html() |> 
-  html_element(".chart")|> 
-  html_table() |> 
-  select(rank_title_year = `Rank & Title`,
-      rating = `IMDb Rating`)
-```
 
 ### 
 
@@ -912,15 +851,6 @@ Continue the pipe with a call to `mutate()` which runs `str_squish()` on `rank_t
   )
 ```
 
-```{r web-scaping-examples-15-test, include = FALSE}
-"data/imdb.html" |> 
-  read_html() |> 
-  html_element(".chart") |> 
-  html_table() |> 
-  select(rank_title_year = `Rank & Title`,
-      rating = `IMDb Rating`) |> 
-  mutate( rank_title_year = str_squish(rank_title_year))
-```
 
 ### 
 
@@ -938,16 +868,6 @@ Continue the call to `mutate()`, creating a new variable called `rank` which is 
 
 ```{r web-scaping-examples-16-hint-1, eval = FALSE}
 ... |> 
-  mutate(rank = parse_number(rank_title_year))
-```
-
-```{r web-scaping-examples-16-test, include = FALSE}
-"data/imdb.html" |> 
-  read_html() |> 
-  html_element(".chart") |> 
-  html_table() |> 
-  select(rank_title_year = `Rank & Title`,rating = `IMDb Rating`) |> 
-  mutate(rank_title_year = str_squish(rank_title_year)) |> 
   mutate(rank = parse_number(rank_title_year))
 ```
 
@@ -973,17 +893,6 @@ Continue the pipe to `mutate()`, creating a new variable `title` which is the re
                              pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))"))
 ```
 
-```{r web-scaping-examples-17-test, include = FALSE}
-"data/imdb.html" |> 
-  read_html() |> 
-  html_element(".chart") |> 
-  html_table() |> 
-  select(rank_title_year = `Rank & Title`,rating = `IMDb Rating`) |> 
-  mutate( rank_title_year = str_squish(rank_title_year)) |> 
-  mutate(rank = parse_number(rank_title_year)) |> 
-  mutate(title = str_extract(rank_title_year, 
-                             pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))"))
-```
 
 ### 
 
@@ -1006,37 +915,6 @@ Complete the pipe with a `select()` statement which keeps `rank`, `title` and `r
 ```
 
 <button onclick = "transfer_code(this)">Copy previous code</button>
-
-```{r web-scaping-examples-18-hint-1, eval = FALSE}
-"data/imdb.html"  |> 
-  read_html() |> 
-  html_element(".chart") |> 
-  html_table() |>   
-  select(
-    rank_title_year = `Rank & Title`,
-    rating = `IMDb Rating`
-) |> 
-  mutate(
-    rank_title_year = str_squish(rank_title_year)
-) |> 
-  mutate(rank = parse_number(rank_title_year)) |>   
-  mutate(title = 
-           str_extract(rank_title_year, 
-                       pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))")) |> 
-  select(rank, title, rating)
-```
-
-```{r web-scaping-examples-18-test, include = FALSE}
-"data/imdb.html"  |> 
-  read_html() |> 
-  html_element(".chart") |> 
-  html_table() |>   
-  select( rank_title_year = `Rank & Title`, rating = `IMDb Rating`) |> 
-  mutate(rank_title_year = str_squish(rank_title_year)) |> 
-  mutate(rank = parse_number(rank_title_year)) |>   
-  mutate(title = str_extract(rank_title_year,  pattern = "(?<=\\d\\.\\s)(.*)(?=\\s\\(\\d{4}\\))")) |> 
-  select(rank, title, rating)
-```
 
 ### 
 
