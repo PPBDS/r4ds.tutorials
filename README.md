@@ -80,12 +80,17 @@ You can access the tutorials via the Tutorial tab in the top right
 If either of the following is happening to you
 
 <ul>
+
 <li>
+
 Cannot find the Tutorial pane
 </li>
+
 <li>
+
 Cannot find any r4ds tutorials
 </li>
+
 </ul>
 
 Then **remember to restart your R session** after installing the
