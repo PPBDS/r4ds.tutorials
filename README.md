@@ -40,11 +40,23 @@ the class to do these tutorials and half to simply complete the reading,
 the half completing the tutorials would perform much better for the rest
 of the course.
 
+## Extra material
+
 Note that most of the tutorials follow the associated chapters from [*R
 for Data Science (2e)*](https://r4ds.hadley.nz/). This is *not* true,
-however, for these tutorials: Introduction, RStudio and Code, RStudio
-and Github, Terminal, and Quarto. In those tutorials, we cover material
-which we feel belongs in any introductory data science course.
+however, for several other tutorials like Introduction, RStudio and
+Code, Quarto Websites Introduction, Terminal, et cetera. In those
+tutorials, we cover material which we feel belongs in any introductory
+data science course which uses RStudio.
+
+However, the future of data science belongs to
+[Positron](https://positron.posit.co/), so we recommend that teachers
+use Positron rather than RStudio. In that case, you should assign the
+tutorials from the
+**[positron.tutorials](https://ppbds.github.io/positron.tutorials/)**
+package in place of the similar tutorials in **r4ds.tutorials**. We no
+longer actively maintain these extra RStudio tutorials in this package.
+In the next version, we will delete them.
 
 ## Installation
 
@@ -66,7 +78,20 @@ For packages that need compilation, feel free to answer “no.”
 
 Then **restart your R session** or **restart RStudio**.
 
-## Accessing tutorials
+## Positron users
+
+Positron user should be aware of two things. First, tutorials in
+Positron must be run “by hand,” using the `run_tutorial()` function from
+the **learnr** package. Example:
+
+    learnr::run_tutorial(name = "00-introduction", package = "r4ds.tutorials")
+
+Second, many of the **r4ds.tutorials** were written specifically for
+RStudio. Fortunately, the
+**[positron.tutorials](https://ppbds.github.io/positron.tutorials/)**
+package includes versions of those tutorials written for Positron.
+
+## RStudio users
 
 In order to access the tutorials, start by loading the package.
 
