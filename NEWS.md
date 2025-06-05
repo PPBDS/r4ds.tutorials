@@ -1,5 +1,7 @@
 # r4ds.tutorials (development version)
 
+* Update Introduction tutorial.
+
 # r4ds.tutorials 0.3.1
 
 * Clean up tutorials. Remove junk files.
