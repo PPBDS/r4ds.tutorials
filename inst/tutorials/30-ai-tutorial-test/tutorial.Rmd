@@ -32,15 +32,6 @@ options(tutorial.exercise.timelimit = 600,
 
 This tutorial covers [R for Datas Science (2e)](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to plot data from the **babynames** dataset.
 
-## Using String Functions on Babynames
-###
-
-In this section we are going to focus on generating code to create a graph based on our dataset called babynames. The `babynames` is a data set which contained names used for babies from 1880 to 2017. If you want to explore the data set, checkout [popular baby names](https://www.ssa.gov/oact/babynames/limits.html). 
-
-### Exercise 1
-
-
-
 
 ## Plotting Babynames
 ### 
@@ -84,7 +75,6 @@ question_text(NULL,
 
 Professionals keep their data science work in the cloud because laptops fail.
 
-###
 
 ### Exercise 2
 
@@ -104,7 +94,6 @@ question_text(NULL,
 
 Tidyverse is a package that allows us to do datascience in R.
 
-###
 
 ### Exercise 3
 
@@ -124,6 +113,7 @@ question_text(NULL,
 
 Babynames is the dataset that we will be working with today. 
 
+
 ### Exercise 4
 
 Load the **babynames** dataset in your QMD. CP/CR
@@ -141,6 +131,7 @@ question_text(NULL,
 ###
 
 We load babynames into our current QMD so it is accessible to use with the rest of the code in the document.
+
 
 ### Exercise 5
 
@@ -160,7 +151,6 @@ question_text(NULL,
 
 Typing out babynames is the same as typing out print(babynames). Either way, we can see the same tibble. Look around and try to understand each column.
 
-###
 
 ### Exercise 6
 
@@ -178,13 +168,12 @@ question_text(NULL,
 
 ###
 
-The filter() function is used for subsetting data frames by selecting rows that satisfy specific conditions. In this case, it takes rows using str_starts(), which essentially takes a column (name), and selects the rows where the string of name starts with A.
+The filter() function is used for subsetting data frames by selecting rows that satisfy specific conditions. In this case, it takes rows using str_starts() () (a string function we covered earlier), which essentially takes a column (name), and selects the rows where the string of name starts with A.
 
 ###
 
 Replace your code with ours to follow along with the tutorial.
 
-###
 
 ### Exercise 7
 
@@ -205,7 +194,6 @@ question_text(NULL,
 
 The function group_by() allows us to split a data frame into groups based on one or more variables, and then apply a function to each group to manipulate our data. Then, summarize() creates a new data frame with rows, in this case each row is a year and sex combination with the total proportion of names starting with A.
 
-###
 
 ### Exercise 8
 
@@ -234,8 +222,7 @@ ggplot(a_summary, aes(x = year, y = total_prop, color = sex)) +
 ###
 
 Take the code we have provided you, and add it to your QMD. Now you should have a code chunk that loads **babynames**, filters it, and creates a plot based off of it. Render it to check that it works. We will now dissect the code that plots the data.
- 
-###
+
 
 ### Exercise 9
 
@@ -255,7 +242,6 @@ question_text(NULL,
 
 **ggplot()** creates the basis for the graph while **aes()** maps the arguments x and y to the axis. Changing the variables set to x and y will change what is plotted.
 
-###
 
 ### Exercise 10
 
@@ -275,7 +261,6 @@ question_text(NULL,
 
 Arguments within geom_line() change the appearance of the graph, but will not change the type of graph. The function geom_line() is what gives the plotted line on the graph. To make it a histogram, use geom_histogram(), to make a scatterplot, use geom_point(), etc.
 
-###
 
 ### Exercise 11
 
@@ -294,6 +279,214 @@ question_text(NULL,
 ###
 
 The title should capture the purpose of your graph, the subtitle should be a noticeable takeaway, the x and y axis should be fitting labels with units, and the caption should give the source of the data.
+
+
+## Using Other String Functions on Babynames
+###
+
+In this section we are going to focus on generating code to create a graph based on our dataset called babynames. The `babynames` is a data set which contained names used for babies from 1880 to 2017. If you want to explore the data set, checkout [popular baby names](https://www.ssa.gov/oact/babynames/limits.html). 
+
+### Exercise 1
+
+Make a new code cell, using AI, get code that pipes **babynames** to filter() with name and str_starts() to find all names beginning with a certain string. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-1}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>% filter(str_starts(name, \"A\"))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 3)
+``` 
+
+###
+
+The function str_starts() returns TRUE if each string starts with the given pattern.
+
+
+### Exercise 2
+
+Next, get code that pipes **babynames** to filter() with name and str_ends() to find all names ending with a certain string. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-2}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>% filter(str_ends(name, \"y\"))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 3)
+``` 
+
+###
+
+The function str_ends() returns TRUE if each string ends with the given pattern.
+
+
+### Exercise 3
+
+Next, get code that pipes **babynames** to filter() with name and str_detect() to find all names containing a certain string. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-3}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>% filter(str_detect(name, \"lex\"))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 3)
+``` 
+
+###
+
+The function str_detect() returns TRUE if each string contains the given pattern somewhere inside.
+
+
+### Exercise 4
+
+Next, get code that pipes **babynames** to mutate() with str_to_lower() and str_to_upper() to make new columns in the dataset that convert the string names to different cases. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-4}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  mutate(lowercase = str_to_lower(name),
+         uppercase = str_to_upper(name))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 5)
+``` 
+
+###
+
+The functions str_to_lower() and str_to_upper() convert all characters in the string to their respective case.
+
+
+### Exercise 5
+
+Next, get code that pipes **babynames** to mutate() with str_length() and then filter() to get all names that are X letters long. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-5}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  mutate(length = str_length(name)) %>%
+  filter(length == 10)",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 5)
+``` 
+
+###
+
+The function str_length() returns the number of characters in each string.
+
+
+### Exercise 6
+
+Next, get code that pipes **babynames** to mutate() with str_sub() twice to obtain the first and last letter of each name. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-6}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  mutate(first_letter = str_sub(name, 1, 1),
+         last_letter = str_sub(name, -1, -1))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 5)
+``` 
+
+###
+
+The function str_sub() extracts a substring from a string by position.
+
+
+### Exercise 7
+
+Next, get code that pipes **babynames** to filter() and detect all names with an "a", then pipe it to mutate() with str_replace_all() to create a new column that replaces all the "a"s with an "x". Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-7}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  filter(str_detect(name, \"a\")) %>%
+  mutate(modified = str_replace_all(name, \"ph\", \"f\"))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 5)
+``` 
+
+###
+
+The functions str_replace() and str_replace_all() replace the first match of a pattern in each string.
+
+
+### Exercise 8
+
+Next, get code that pipes **babynames** to mutate() with str_count() to make a new column that counts how many "a"s each name have. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-8}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  mutate(num_a = str_count(name, \"a\"))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 3)
+``` 
+
+###
+
+The function str_count() counts the number of times a pattern appears in each string.
+
+
+### Exercise 9
+
+Next, get code that pipes **babynames** to distinct() and then to mutate() with str_sort() to changes the name column so that it orders the distinct names alphabetically. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-9}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  distinct(name) %>%
+  mutate(name = str_sort(name, locale = \"en\", decreasing = FALSE))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 5)
+``` 
+
+###
+
+The function str_sort() sorts strings alphabetically, optionally by locale or in reverse. Locale refers to the language rules to follow for sorting.
+
+
+### Exercise 10
+
+Next, get code that pipes **babynames** to mutate() with str_trim() to create a new column with trimmed names. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-10}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  mutate(clean_name = str_trim(name))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 3)
+``` 
+
+###
+
+The function str_trim() removes whitespace from the start and/or end of strings.
+
 
 ## Summary
 ### 
