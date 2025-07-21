@@ -97,7 +97,7 @@ Tidyverse is a package that allows us to do datascience in R.
 
 ### Exercise 3
 
-Install the dataset we will use today: **babynames**. Add install.packages(babynames) to your QMD. CP/CR
+Install the dataset we will use today: **babynames**. Run install.packages(babynames) in your console. CP/CR
 
 ```{r ai-usage-3}
 question_text(NULL,
@@ -116,7 +116,7 @@ Babynames is the dataset that we will be working with today.
 
 ### Exercise 4
 
-Load the **babynames** dataset in your QMD. CP/CR
+Load the **babynames** dataset in your QMD with the library() function. CP/CR
 
 ```{r ai-usage-4}
 question_text(NULL,
@@ -279,6 +279,89 @@ question_text(NULL,
 ###
 
 The title should capture the purpose of your graph, the subtitle should be a noticeable takeaway, the x and y axis should be fitting labels with units, and the caption should give the source of the data.
+
+
+### Exercise 12
+
+Now, we are going to create a new title using string functions. Using AI, ask it to generate code for creating the title of your plot using the the function str_c() and assign it to the variable title1. The title should stay the same, but they way it is made should be through str_c().
+
+```{r ai-usage-12}
+question_text(NULL,
+    message = "Here is our generated code:\ntitle1 <- str_c(\"Proportion of Babies with Names Starting with \", \"'A'\", \" Over Time\")
+",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 3)
+``` 
+
+###
+
+The function str_c() takes any number of vectors as arguments and returns a character vector. It essentially combines arguments of the same type into a string. Add this code to your code chunk before the graph, and within the call to labs() in your graph, set title = "title1".
+
+
+###
+
+If you were to not use str_c(), double quotes "" or single quotes '' will also create a string. You can add a quote within the string by typing a backslash '\'. To add a backslash, just type another backslash before the backslash you want to add.
+
+### Exercise 13
+
+Now, we are going to do the same, but for a subtitle, and we will use str_glue(). Using AI, ask it to generate code for creating the subtitle of your plot using the the function str_glue() and assign it to the variable subtitle1. The subtitle should stay the same, but they way it is made should be through str_glue(). Our subtitle is: Data from 1880 to 2017 shows that the proportion was lowest around the 1950s.
+
+```{r ai-usage-13}
+question_text(NULL,
+    message = "Here is our generated code:\nsubtitle1 <- str_glue(
+  \"Data from {min(a_summary$year)} to {max(a_summary$year)} shows that the proportion was lowest around the 1950s\"
+)",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 4)
+``` 
+
+###
+
+The function str_glue() is an alternative to str_c() that evaluates anything inside {} like it’s outside of the quotes. However, it currently converts missing values to the string "NA."
+
+
+### Exercise 14
+
+Using the same AI, ask it to generate code for creating an insight of your plot. Here is the prompt: using str_flatten() on the babynames dataset, make another unique insight related to the plot we have already made. Insert your plot code if needed.
+
+```{r ai-usage-14}
+question_text(NULL,
+    message = "Here is our generated code:\n# Step 1: Filter names starting with \"A\" in 1950
+top_a_1950 <- babynames %>%
+  filter(year == 1950, str_starts(name, \"A\")) %>%
+  arrange(desc(prop)) %>%
+  slice_head(n = 5)
+
+# Step 2: Use str_flatten to create a readable insight
+insight_text <- top_a_1950 %>%
+  pull(name) %>%
+  str_flatten(collapse = \", \", last = \" and \")
+
+# Step 3: Create final sentence
+insight <- str_c(
+  \"In 1950, the most common 'A' names were \", insight_text, 
+  \", which drove the total proportion for that year.\"
+)
+
+# Print the insight
+insight
+",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 12)
+``` 
+
+###
+
+The function str_flatten() takes a character vector and combines each element of the vector into a single string. It works well with the function summarize().
 
 
 ## Using String Functions on Babynames
