@@ -32,16 +32,55 @@ options(tutorial.exercise.timelimit = 600,
 
 This tutorial covers [R for Datas Science (2e)](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You will learn how to plot data from the **babynames** dataset.
 
+
 ## Plotting Babynames
 ### 
 
-In this section we are going to focus on generating code to create a graph based on our dataset called babynames. We will be using AI to generate the code for us and then we will break down the functions within the code and how they work.
+In this section we are going to focus on generating code to create a graph based on our dataset called babynames. The `babynames` is a data set which contained names used for babies from 1880 to 2017. If you want to explore the data set, checkout [popular baby names](https://www.ssa.gov/oact/babynames/limits.html). We will be using AI to generate the code for us and then we will break down the functions within the code and how they work.
+
+###
 
 ### Exercise 1
 
-Let's load the **tidyverse** library. CP/CR
+Create a Github repo called `babynames`. Make sure to click the "Add a README file" check box.
+
+Connect the repo to a project on your computer using `File -> New Folder from Git ...`. Make sure to select the "Open in a new window" box. 
+
+You need two Positon windows: this one for running the tutorial and the one you just created for writing your code and interacting with the Console.
+
+Select `File -> New File -> Quarto Document ...`. Provide a title -- `"Babynames"` -- and an author (you). Render the document and save it as `analysis.qmd`.
+
+Create a `.gitignore` file with `analysis_files` on the first line and then a blank line. Save and push.
+
+In the Console, run:
+
+```         
+show_file(".gitignore")
+```
+
+If that fails, it is probably because you have not yet loaded `library(tutorial.helpers)` in the Console.
+
+CP/CR.
 
 ```{r ai-usage-1}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Professionals keep their data science work in the cloud because laptops fail.
+
+
+### Exercise 2
+
+Load the **tidyverse** library in your QMD. CP/CR
+
+```{r ai-usage-2}
 question_text(NULL,
     message = "library(tidyverse)",          
     answer(NULL, 
@@ -51,11 +90,16 @@ question_text(NULL,
     rows = 2)
 ``` 
 
-### Exercise 2
+###
 
-Let's install the dataset we will use today: **babynames**. CP/CR
+Tidyverse is a package that allows us to do datascience in R.
 
-```{r ai-usage-2}
+
+### Exercise 3
+
+Install the dataset we will use today: **babynames**. Run `install.packages(babynames)` in your console. CP/CR
+
+```{r ai-usage-3}
 question_text(NULL,
     message = "install.packages(babynames)",          
     answer(NULL, 
@@ -65,11 +109,16 @@ question_text(NULL,
     rows = 2)
 ``` 
 
-### Exercise 3
+###
 
-Let's load the dataset we will use today: **babynames**. CP/CR
+Babynames is the dataset that we will be working with today. 
 
-```{r ai-usage-3}
+
+### Exercise 4
+
+Load the **babynames** dataset in your QMD with the `library()` function. CP/CR
+
+```{r ai-usage-4}
 question_text(NULL,
     message = "library(babynames)",          
     answer(NULL, 
@@ -79,11 +128,16 @@ question_text(NULL,
     rows = 2)
 ``` 
 
-### Exercise 4
+###
+
+We load babynames into our current QMD so it is accessible to use with the rest of the code in the document.
+
+
+### Exercise 5
 
 Print out **babynames** to view the dataset. CP/CR
 
-```{r ai-usage-4}
+```{r ai-usage-5}
 question_text(NULL,
     message = "print(babynames)",          
     answer(NULL, 
@@ -93,67 +147,90 @@ question_text(NULL,
     rows = 10)
 ``` 
 
-### Exercise 5
+###
 
-Using your favorite AI, ask it to generate R code that plots a basic graph showing the relationship between 2 variables within our **babynames** dataset. Make sure to provide a tibble for the AI to use. CP/CR your code.
+Typing out babynames is the same as typing out `print(babynames)`. Either way, we can see the same tibble. Look around and try to understand each column.
 
-```{r ai-usage-5}
+
+### Exercise 6
+
+Using your favorite AI, prompt it to generate R code that takes the **babynames** and filters out all names that have a first name starting with A. Make sure to provide a tibble of **babynames** for the AI to use. Add the code to your QMD and render to check if it works. CP/CR the code.
+
+```{r ai-usage-6}
+question_text(NULL,
+	message = "Here is our generated code:\na_names <- babynames %>%
+  filter(str_starts(name, \"A\"))",
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	incorrect = NULL,
+	rows = 4)
+```
+
+###
+
+The `filter()` function is used for subsetting data frames by selecting rows that satisfy specific conditions. In this case, it takes rows using `str_starts()` (a string function we covered earlier), which essentially takes a column (name), and selects the rows where the string of name starts with A.
+
+###
+
+Replace your code with ours to follow along with the tutorial.
+
+
+### Exercise 7
+
+Next, prompt AI to generate R code that makes a new subset with the total proportion of babies with first names starting with A for each sex, from each year.
+
+```{r ai-usage-7}
+question_text(NULL,
+	message = "Here is our generated code:\na_summary <- a_names %>%
+  group_by(year, sex) %>%
+  summarise(total_prop = sum(prop), .groups = \"drop\")",
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	incorrect = NULL,
+	rows = 5)
+```
+
+###
+
+The function `group_by()` allows us to split a data frame into groups based on one or more variables, and then apply a function to each group to manipulate our data. Then, `summarize()` creates a new data frame with rows, in this case each row is a year and sex combination with the total proportion of names starting with A.
+
+
+### Exercise 8
+
+Now, using the same AI and the code above, ask it to generate R code that plots a basic graph showing the proportion of names starting with A over the years for each sex. CP/CR your code.
+
+```{r ai-usage-8}
 question_text(NULL,
 	message = "Here is our generated code:\n
-babynames %>%
-  filter(name == \"Mary\", sex == \"F\") %>%
-  ggplot(aes(x = year, y = n)) +
-  geom_line(color = \"blue\", size = 1) +
+ggplot(a_summary, aes(x = year, y = total_prop, color = sex)) +
+  geom_line(size = 1.2) +
   labs(
-    title = \"Popularity of the Name 'Mary' Over Time\",
+    title = \"Proportion of Babies with Names Starting with 'A' Over Time\",
     x = \"Year\",
-    y = \"Number of Babies\"
+    y = \"Proportion\",
+    color = \"Sex\"
   ) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 0.1)) +
   theme_minimal()
 ",
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
 	incorrect = NULL,
-	rows = 15)
+	rows = 10)
 ```
 
 ###
 
-In a separate window, try running the code to see what the plot looks like. Don't forget to load tidyverse and babynames.
+Take the code we have provided you, and add it to your QMD. Now you should have a code chunk that loads **babynames**, filters it, and creates a plot based off of it. Render it to check that it works. We will now dissect the code that plots the data.
 
-### Exercise 6
 
-Isolate the first two lines of code, where we filter the dataset. Change the name to another in the dataset and change the sex accordingly. View the filtered dataset by printing it. Describe the change in the dataset in a sentence or two.
+### Exercise 9
 
-```{r ai-usage-6}
+Find the line with `ggplot()` and `aes()`. Run `?ggplot` and `?aes` within the console to see what the functions do. In a few sentences of your own words, describe what they do and what arguments they take.
+
+```{r ai-usage-9}
 question_text(NULL,
-    message = "Our data looks like:
-        # A tibble: 138 × 5
-    year sex   name      n   prop
-   <dbl> <chr> <chr> <int>  <dbl>
- 1  1880 F     Mary   7065 0.0724
- 2  1881 F     Mary   6919 0.0700
- 3  1882 F     Mary   8148 0.0704
- 4  1883 F     Mary   8012 0.0667
- 5  1884 F     Mary   9217 0.0670",          
-    answer(NULL, 
-           correct = TRUE),
-    allow_retry = TRUE,
-    incorrect = NULL,
-    rows = 10)
-``` 
-
-###
-
-Changing the variables in **filter()**, or objects within those variables, manipulates the dataset we use.
-
-### Exercise 7
-
-Going back to the whole plot code, find the line with ggplot(), and within aes(), change the **y** from **n** to **prop**. View the new plot by running it. Describe the change in the plot in a sentence or two.
-
-```{r ai-usage-7}
-question_text(NULL,
-    message = "You should see that the new plot has the proportion of babies with that name each year instead of the total number of babies with that name.",          
+    message = NULL,          
     answer(NULL, 
            correct = TRUE),
     allow_retry = TRUE,
@@ -163,15 +240,16 @@ question_text(NULL,
 
 ###
 
-**ggplot()** creates the basis for the graph while **aes()** maps the arguments x and y to the axis. Changing the variables set to x and y will change what is plotted.
+`ggplot()` creates the basis for the graph while `aes()` maps the arguments x and y to the axis. Changing the variables set to x and y will change what is plotted.
 
-### Exercise 8
 
-Next, find the line with **geom_line()**. Mess with the arguments, change what they are set to, and search up other arguments to add within **geom_line()**. You can even delete **geom_line()** altogether. Describe changes in a few sentences below.
+### Exercise 10
 
-```{r ai-usage-8}
+Next, find the line with `geom_line()`. Run ?geom_line to find out what it does. Then, using AI or Google, find other geom_*() functions and learn what they do. Pick 3 functions and describe with a sentence each below.
+
+```{r ai-usage-10}
 question_text(NULL,
-    message = "geom_line() is what actually graphs the line using the data. There are many other similar functions, such as geom_point(), geom_histogram(), geom_freqpoly(), and more which plot the data in different ways.",          
+    message = NULL,          
     answer(NULL, 
            correct = TRUE),
     allow_retry = TRUE,
@@ -181,13 +259,14 @@ question_text(NULL,
 
 ###
 
-Arguments within geom_line() change the appearance of the graph, but will not change the type of graph. To make it a histogram, use geom_histogram(), to make a scatterplot, use geom_point(), etc.
+Arguments within `geom_line()` change the appearance of the graph, but will not change the type of graph. The function `geom_line()` is what gives the plotted line on the graph. To make it a histogram, use `geom_histogram()`, to make a scatterplot, `use geom_point()`, etc.
 
-### Exercise 9 
 
-Next, find the line with **labs()** and the lines following it containings its arguments. If not already there, add **caption = ""** and **subtitle = ""**. Change around the names of the titles. CP/CR your complete **labs()** function.
+### Exercise 11
 
-```{r ai-usage-9}
+Next, find the line with `labs()` and the lines following it containings its arguments. If not already there, add `caption = ""` and `subtitle = ""`. Change around the names of the titles. CP/CR your complete `labs()` function.
+
+```{r ai-usage-11}
 question_text(NULL,
     message = "labs() provides titles and labels to the graph.",          
     answer(NULL, 
@@ -200,6 +279,454 @@ question_text(NULL,
 ###
 
 The title should capture the purpose of your graph, the subtitle should be a noticeable takeaway, the x and y axis should be fitting labels with units, and the caption should give the source of the data.
+
+
+### Exercise 12
+
+Now, we are going to create a new title using string functions. Using AI, ask it to generate code for creating the title of your plot using the the function `str_c()` and assign it to the variable title1. The title should stay the same, but they way it is made should be through `str_c()`. CP/CR
+
+```{r ai-usage-12}
+question_text(NULL,
+    message = "Here is our generated code:\ntitle1 <- str_c(\"Proportion of Babies with Names Starting with \", \"'A'\", \" Over Time\")
+",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 3)
+``` 
+
+###
+
+The function `str_c()` takes any number of vectors as arguments and returns a character vector. It essentially combines arguments of the same type into a string. Add this code to your code chunk before the graph, and within the call to `labs()` in your graph, set `title = "title1"`.
+
+
+###
+
+If you were to not use `str_c()`, double quotes "" or single quotes '' will also create a string. You can add a quote within the string by typing a backslash '\'. To add a backslash, just type another backslash before the backslash you want to add.
+
+### Exercise 13
+
+Now, we are going to do the same, but for a subtitle, and we will use str_glue(). Using AI, ask it to generate code for creating the subtitle of your plot using the the function `str_glue()` and assign it to the variable subtitle1. The subtitle should stay the same, but they way it is made should be through `str_glue()`. Our subtitle is: Data from 1880 to 2017 shows that the proportion was lowest around the 1950s. CP/CR
+
+```{r ai-usage-13}
+question_text(NULL,
+    message = "Here is our generated code:\nsubtitle1 <- str_glue(
+  \"Data from {min(a_summary$year)} to {max(a_summary$year)} shows that the proportion was lowest around the 1950s\"
+)",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 4)
+``` 
+
+###
+
+The function `str_glue()` is an alternative to `str_c()` that evaluates anything inside {} like it’s outside of the quotes. However, it currently converts missing values to the string "NA."
+
+
+### Exercise 14
+
+Using the same AI, ask it to generate code for creating an insight of your plot. Here is the prompt: using `str_flatten()` on the babynames dataset, make another unique insight related to the plot we have already made. Insert your plot code if needed. CP/CR
+
+```{r ai-usage-14}
+question_text(NULL,
+    message = "Here is our generated code:\n# Step 1: Filter names starting with \"A\" in 1950
+top_a_1950 <- babynames %>%
+  filter(year == 1950, str_starts(name, \"A\")) %>%
+  arrange(desc(prop)) %>%
+  slice_head(n = 5)
+
+# Step 2: Use str_flatten to create a readable insight
+insight_text <- top_a_1950 %>%
+  pull(name) %>%
+  str_flatten(collapse = \", \", last = \" and \")
+
+# Step 3: Create final sentence
+insight <- str_c(
+  \"In 1950, the most common 'A' names were \", insight_text, 
+  \", which drove the total proportion for that year.\"
+)
+
+# Print the insight
+insight
+",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 12)
+``` 
+
+###
+
+The function `str_flatten()` takes a character vector and combines each element of the vector into a single string. It works well with the function `summarize()`.
+
+### Exercise 15
+
+Using the same AI, ask it to generate code that will find the most common second letters of babynames starting with "A" with the function `separate_longer_delim()`. CP/CR
+
+```{r ai-usage-15}
+question_text(NULL,
+    message = "Here is our generated code:\nbabynames %>%
+  filter(str_starts(name, \"A\")) %>%
+  separate_longer_delim(name, delim = '') %>%
+  group_by(name, year, sex) %>%
+  mutate(pos = row_number()) %>%
+  filter(pos == 2) %>%
+  count(letter = name, sort = TRUE)", 
+  answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 8)
+``` 
+
+###
+
+Try runninig our code! Isolate the part with the relavant function (if needed), and use it to print out the changed dataset to see what happened.
+
+###
+
+The function `separate_longer_delim(col, delim)` makes the input data frame longer through increased rows, with the string split up through a specified deliminator as an argument.
+
+
+### Exercise 16
+
+Using the same AI, ask it to generate similar code that will find the most common second letters of babynames starting with "A" with the function `separate_longer_position()`. CP/CR
+
+```{r ai-usage-16}
+question_text(NULL,
+    message = "Here is our generated code:\nbabynames %>%
+  filter(str_starts(name, \"A\")) %>%
+  separate_longer_position(name, width = 1) %>%
+  group_by(name, year, sex) %>%
+  mutate(pos = row_number()) %>%
+  filter(pos == 2) %>%
+  count(letter = name, sort = TRUE)", 
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 8)
+``` 
+
+###
+
+Try runninig our code! Isolate the part with the relavant function (if needed), and use it to print out the changed dataset to see what happened.
+
+###
+
+The function `separate_longer_position(col, width)` makes the input data frame longer through increased rows, with the string split up with specified widths.
+
+
+### Exercise 17
+
+Using the same AI, ask it to generate code that will combine two columns using `str_c()`, and then separate them again with `separate_wider_delim()`. CP/CR
+
+```{r ai-usage-17}
+question_text(NULL,
+    message = "Here is our generated code:\nbabynames %>%
+       filter(str_starts(name, \"A\")) %>% 
+       mutate(name_sex = str_c(name, sex, sep = \"-\")) %>% 
+       separate_wider_delim(name_sex, delim = \"-\", names = c(\"name_clean\", \"sex_clean\")) %>% 
+       count(sex_clean, name_clean)", 
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 8)
+``` 
+
+###
+
+Try runninig our code! Isolate the part with the relavant function (if needed), and use it to print out the changed dataset to see what happened. For this one, print out the change after the first mutate, and then print out what happens after the separate_wider_delim().
+
+###
+
+The function `separate_wider_delim(col, delim, names)` makes the input data frame wider through increased columns, with the string split up with a specified deliminator.
+
+
+### Exercise 18
+
+Using the same AI, ask it to generate code that will combine two columns using `str_c()`, and then separate them again with `separate_wider_position()`. CP/CR
+
+```{r ai-usage-18}
+question_text(NULL,
+    message = "Here is our generated code:\nbabynames %>% 
+       filter(str_starts(name, \"A\")) %>% 
+       mutate(name_sex = str_c(str_pad(name, width = 10, side = \"right\"), sex)) %>% 
+       separate_wider_position(name_sex, positions = c(10), names = c(\"name_clean\", \"sex_clean\")) %>% 
+       select(name_clean, sex_clean)", 
+  answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 8)
+``` 
+
+###
+
+Try runninig our code! Isolate the part with the relavant function (if needed), and use it to print out the changed dataset to see what happened. For this one, print out the change after the first mutate, and then print out what happens after the `separate_wider_position()`.
+
+###
+
+The function `separate_wider_position(col, widths, names)` makes the input data frame wider through increased columns, with the string split up with a specified widths. Note how because the character length for names varied, we had to pad it with 10 extra characters so we could for sure separate the columns by width.
+
+
+## String Functions on Babynames
+###
+
+In this section we are going to focus on generating code to manipulate our dataset called babynames. The `babynames` is a data set which contained names used for babies from 1880 to 2017. If you want to explore the data set, checkout [popular baby names](https://www.ssa.gov/oact/babynames/limits.html). 
+
+### Exercise 1
+
+Make a new code cell, using AI, ask it to generate code that pipes **babynames** to `count()` with `str_length()` to find the distribution of lengths of US babynames. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-1}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  count(length = str_length(name), sort = TRUE)",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 3)
+``` 
+
+###
+
+The function `str_length()` tells you the number of letters in the string.
+
+
+### Exercise 2
+
+Next, get code that pipes **babynames** to `mutate()` and use `str_sub()` to find the first and last letter of each name. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-2}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  mutate(
+    first_letter = str_sub(name, 1, 1),
+    last_letter = str_sub(name, -1, -1)
+  ) %>%
+  select(name, first_letter, last_letter)
+",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 5)
+``` 
+
+###
+
+The function `str_sub(string, start, end)` can extract parts of a string. The start and end are the positions where the substring should start and end, and the start and end arguments are inclusive.
+
+
+### Exercise 3
+
+Make a new code cell, using AI, get code that pipes **babynames** to `filter()` with name and `str_starts()` to find all names beginning with a certain string. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-3}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>% filter(str_starts(name, \"A\"))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 3)
+``` 
+
+
+###
+
+The function `str_starts()` returns TRUE if each string starts with the given pattern. We have used this function earlier in this tutorial!
+
+
+### Exercise 4
+
+Next, get code that pipes **babynames** to `filter()` with name and `str_ends()` to find all names ending with a certain string. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-4}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>% filter(str_ends(name, \"y\"))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 3)
+``` 
+
+###
+
+The function `str_ends()` returns TRUE if each string ends with the given pattern.
+
+
+### Exercise 5
+
+Next, get code that pipes **babynames** to `filter()` with name and `str_detect()` to find all names containing a certain string. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-5}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>% filter(str_detect(name, \"lex\"))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 3)
+``` 
+
+###
+
+The function `str_detect()` returns TRUE if each string contains the given pattern somewhere inside.
+
+
+### Exercise 6
+
+Next, get code that pipes **babynames** to `mutate()` with `str_to_lower()` and `str_to_upper()` to make new columns in the dataset that convert the string names to different cases. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-6}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  mutate(lowercase = str_to_lower(name),
+         uppercase = str_to_upper(name))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 5)
+``` 
+
+###
+
+The functions `str_to_lower()` and `str_to_upper()` convert all characters in the string to their respective case.
+
+
+### Exercise 7
+
+Next, get code that pipes **babynames** to `mutate()` with `str_length()` and then `filter()` to get all names that are X letters long. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-7}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  mutate(length = str_length(name)) %>%
+  filter(length == 10)",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 5)
+``` 
+
+###
+
+The function `str_length()` returns the number of characters in each string.
+
+
+### Exercise 8
+
+Next, get code that pipes **babynames** to `mutate()` with `str_sub()` twice to obtain the first and last letter of each name. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-8}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  mutate(first_letter = str_sub(name, 1, 1),
+         last_letter = str_sub(name, -1, -1))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 5)
+``` 
+
+###
+
+The function `str_sub()` extracts a substring from a string by position.
+
+
+### Exercise 9
+
+Next, get code that pipes **babynames** to `filter()` and detect all names with an "a", then pipe it to `mutate()` with `str_replace_all()` to create a new column that replaces all the "a"s with an "x". Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-9}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  filter(str_detect(name, \"a\")) %>%
+  mutate(modified = str_replace_all(name, \"ph\", \"f\"))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 5)
+``` 
+
+###
+
+The functions `str_replace()` and `str_replace_all()` replace the first match of a pattern in each string.
+
+
+### Exercise 10
+
+Next, get code that pipes **babynames** to `mutate()` with `str_count()` to make a new column that counts how many "a"s each name have. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-10}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  mutate(num_a = str_count(name, \"a\"))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 3)
+``` 
+
+###
+
+The function `str_count()` counts the number of times a pattern appears in each string.
+
+
+### Exercise 11
+
+Next, get code that pipes **babynames** to `distinct()` and then to `mutate()` with `str_sort()` to changes the name column so that it orders the distinct names alphabetically. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-11}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  distinct(name) %>%
+  mutate(name = str_sort(name, locale = \"en\", decreasing = FALSE))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 5)
+``` 
+
+###
+
+The function `str_sort()` sorts strings alphabetically, optionally by locale or in reverse. Locale refers to the language rules to follow for sorting.
+
+
+### Exercise 12
+
+Next, get code that pipes **babynames** to `mutate()` with `str_trim()` to create a new column with trimmed names. Run the code to get a new subset of data and print it out. CP/CR
+
+```{r string-functions-12}
+question_text(NULL,
+    message = "Here's our code:\nbabynames %>%
+  mutate(clean_name = str_trim(name))",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 3)
+``` 
+
+###
+
+The function `str_trim()` removes whitespace from the start and/or end of strings.
+
 
 ## Summary
 ### 
