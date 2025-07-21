@@ -363,6 +363,117 @@ insight
 
 The function str_flatten() takes a character vector and combines each element of the vector into a single string. It works well with the function summarize().
 
+### Exercise 15
+
+Using the same AI, ask it to generate code that will find the most common second letters of babynames starting with "A" with the function separate_longer_delim().
+
+```{r ai-usage-15}
+question_text(NULL,
+    message = "Here is our generated code:\nbabynames %>%
+  filter(str_starts(name, \"A\")) %>%
+  separate_longer_delim(name, delim = "") %>%
+  group_by(name, year, sex) %>%
+  mutate(pos = row_number()) %>%
+  filter(pos == 2) %>%
+  count(letter = name, sort = TRUE)",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 8)
+``` 
+
+###
+
+Try runninig our code! Isolate the part with the relavant function (if needed), and use it to print out the changed dataset to see what happened.
+
+###
+
+The function separate_longer_delim(col, delim) makes the input data frame longer through increased rows, with the string split up through a specified deliminator as an argument.
+
+
+### Exercise 16
+
+Using the same AI, ask it to generate similar code that will find the most common second letters of babynames starting with "A" with the function separate_longer_position().
+
+```{r ai-usage-16}
+question_text(NULL,
+    message = "Here is our generated code:\nbabynames %>%
+  filter(str_starts(name, \"A\")) %>%
+  separate_longer_position(name, width = 1) %>%
+  group_by(name, year, sex) %>%
+  mutate(pos = row_number()) %>%
+  filter(pos == 2) %>%
+  count(letter = name, sort = TRUE)",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 8)
+``` 
+
+###
+
+Try runninig our code! Isolate the part with the relavant function (if needed), and use it to print out the changed dataset to see what happened.
+
+###
+
+The function separate_longer_position(col, width) makes the input data frame longer through increased rows, with the string split up with specified widths.
+
+
+### Exercise 17
+
+Using the same AI, ask it to generate code that will combine two columns using str_c(), and then separate them again with separate_wider_delim().
+
+```{r ai-usage-17}
+question_text(NULL,
+    message = "Here is our generated code:\nbabynames %>%
+  filter(str_starts(name, \"A\")) %>%
+  mutate(name_sex = str_c(name, sex, sep = "-")) %>%
+  separate_wider_delim(name_sex, delim = \"-\", names = c(\"name_clean\", \"sex_clean\")) %>%
+  count(sex_clean, name_clean, sort = TRUE)",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 8)
+``` 
+
+###
+
+Try runninig our code! Isolate the part with the relavant function (if needed), and use it to print out the changed dataset to see what happened. For this one, print out the change after the first mutate, and then print out what happens after the separate_wider_delim().
+
+###
+
+The function separate_wider_delim(col, delim, names) makes the input data frame wider through increased columns, with the string split up with a specified deliminator.
+
+
+### Exercise 18
+
+Using the same AI, ask it to generate code that will combine two columns using str_c(), and then separate them again with separate_wider_position().
+
+```{r ai-usage-18}
+question_text(NULL,
+    message = "Here is our generated code:\nbabynames %>%
+  filter(str_starts(name, \"A\")) %>%
+  mutate(name_sex = str_c(str_pad(name, width = 10, side = \"right\"), sex)) %>%
+  separate_wider_position(name_sex, positions = c(10), names = c(\"name_clean\", \"sex_clean\")) %>%
+  select(name_clean, sex_clean)",          
+    answer(NULL, 
+           correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = NULL,
+    rows = 8)
+``` 
+
+###
+
+Try runninig our code! Isolate the part with the relavant function (if needed), and use it to print out the changed dataset to see what happened. For this one, print out the change after the first mutate, and then print out what happens after the separate_wider_position().
+
+###
+
+The function separate_wider_position(col, widths, names) makes the input data frame wider through increased columns, with the string split up with a specified widths. Note how because the character length for names varied, we had to pad it with 10 extra characters so we could for sure separate the columns by width.
+
 
 ## Using String Functions on Babynames
 ###
@@ -386,7 +497,7 @@ question_text(NULL,
 
 ###
 
-The function str_starts() returns TRUE if each string starts with the given pattern.
+The function str_starts() returns TRUE if each string starts with the given pattern. We have used this function earlier in this tutorial!
 
 
 ### Exercise 2
