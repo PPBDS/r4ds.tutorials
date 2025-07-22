@@ -927,3 +927,150 @@ You learned about some of the power of the [**stringr**](https://stringr.tidyver
 
 
 <!-- DK: List of knowledge drops you plan on moving over from current tutorials. -->
+```
+### 1
+
+You might be wondering what tibble is, A tibble is a new form of a data frame in R that is part of the tidyverse library, and Tibbles print the data in a more efficient format than a data frame, showing the values of the columns, their datatype, and the size of the dataset.
+
+### 2
+
+The `babynames` is a data set which contained names used for babies from 1880 to 2017. If you want to explore the data set, checkout [popular baby names](https://www.ssa.gov/oact/babynames/limits.html).### 
+
+### 3
+
+To check for `NA` values, use `any()` function with argument `is.na()`, argument of which should be the dataset babynames. 
+
+### 4
+
+We’ve created strings in passing earlier in the book but didn’t discuss the details. Firstly, you can create a string using either single quotes (') or double quotes ("). If you wanted to include single quotes in a string you could put the outer quotes as double quotes.
+
+Now there’s no difference in behavior between the single quotes and double quotes, but in the interests of consistency, the [*Tidyverse*](https://style.tidyverse.org/syntax.html#character-vectors) style guide recommends using `"`, unless the string itself contains double quotes.
+
+### 5
+
+The **stringr** library is a part of the [*Tidyverse*](https://www.tidyverse.org/). We can just load the **tidyverse** library and the **stringr** library will be automatically loaded. 
+
+### 6
+
+The printed representation of a string is not the same as the string itself because the printed representation shows the escapes. To see the raw contents of the string, we use `str_view()`
+
+### 7
+
+There's another way to include quotes in a string. To include a literal single or double quote, you can use the backslash `\` to escape it. For example, `"\""` will return `'"'`. To include a literal backlash in your string, it is pretty simple and all you need to do is have two backslashes in a string to have one literal one. 
+
+### 8
+
+If you find yourself dealing with a complex situation where you have many backslashes and quotes to include, it can become confusing to keep track of them. (This is sometimes called [leaning toothpick syndrome](https://en.wikipedia.org/wiki/Leaning_toothpick_syndrome).)
+
+To solve the issue, we utilized a raw string, which is a specific type of string literal that doesn't interpret any special characters or escape sequences.
+
+Typically, a raw string starts with `r"(, ends with )"`, and allows for any text representation. However, if the string contains )", alternatives like `r"[]"` or `r"{}"` can be used. Furthermore, you can add dashes to ensure unique opening and closing pairs, such as `r"--()--"`, `r"---()---"`, and so on. Raw strings offer flexibility to handle any text without problems.
+
+### 9
+
+Besides `\"`, `\'`, and `\\`, there are a few other special characters that can be useful. The most common ones are `\n` for a new line and `\t` for a tab. If you want to check out a complete list of other special characters, check out in [Quotes](https://rdrr.io/r/base/Quotes.html).
+ 
+### 10
+
+`str_c()` is a function in the `stringr` package in R that combines multiple character vectors into a single character vector. It is similar to the `paste()` function, but it uses `tidyverse` recycling and NA rules. `str_c()` is vectorized, which means it can take multiple arguments and combine them element-wise. 
+
+### 11
+
+If you are mixing many fixed and variable strings with `str_c()`, you’ll notice that you type a lot of `"`s, making it hard to see the overall goal of the code. An alternative approach is provided by the glue package via `str_glue()`. How `str_glue()` works is that if you give it a single string that has a special feature: anything inside `{}` will be evaluated like it’s outside of the quotes. However, `str_glue()` currently converts missing values to the string "NA" unfortunately making it inconsistent with `str_c()`.
+
+### 12
+
+`str_c()` and `str_glue()` are suitable for use with `mutate()` since their output matches the length of their inputs. However, if you need a function that works well with `summarize()` and always returns a single string, `str_flatten()` comes into play. It takes a character vector as input and combines each element of the vector into a single string.
+
+### 13
+
+One variation of `str_flatten()` is `str_flatten_comma()` is a variation designed specifically for flattening with commas. It automatically recognizes if last uses the Oxford comma and handles the special case of 2 elements.
+
+### 14
+
+The `last` argument is an optional string to use in place of the final separator.
+
+### 15
+
+`summarize()` creates a new data frame. It returns one row for each combination of grouping variables; if there are no grouping variables, the output will have a single row summarizing all observations in the input.
+
+### 16
+
+The `.by` arguement is a selection of columns to group by for just this operation, functioning as an alternative to `group_by()`. For details and examples, see `?dplyr_by`.
+
+To review, `mutate()` either changes an existing column or adds a new one. `summarize()` calculates a single value (per group).
+
+### 17
+
+Separating a string into rows tends to be most useful when the number of components varies from row to row. The most common case is requiring `separate_longer_delim()` to split based on a delimiter.
+
+### 18
+
+Just like with `pivot_longer()` and `pivot_wider()`, `_longer` like `separate_longer_delim()` functions make the input data frame longer by creating new rows and `_wider` functions make the input data frame wider by generating new columns.
+
+### 19
+
+If you are wondering what `delim = ","` means, the `delim` argument is used to specify the delimiter character in functions that involve reading or writing delimited data files.
+
+For example, when reading a CSV (Comma-Separated Values) file using the `read_delim()` function from the **readr** package, you can specify `delim = ","` to indicate that the values in the file are separated by commas. 
+
+### 20
+
+As you look at the tibble, notice we can't separate the numbers by commas to make the column longer. That's where `separate_longer_position()` comes into the play.
+
+### 21
+
+If you don't want a column, all we have to do rename to column to be `NA`
+
+### 22
+
+What if you want to separate them by different width in position? `separate_wider_position()` is the function that solves that.
+
+`separate_wider_position()` works a little differently because you typically want to specify the width of each column. So you give it a named integer vector, where the name gives the name of the new column, and the value is the number of characters it occupies. You can omit values from the output by not naming them
+
+### 23
+
+In response to not having the same number of pieces, there are two possible problems, too few or too many pieces, so `separate_wider_delim()` provides two arguments to help: `too_few` and `too_many`.
+
+### 24
+
+When you use the debug mode, you get three extra columns added to the output: `x_ok`, `x_pieces`, and `x_remainder` (if you separate a variable with a different name, you’ll get a different prefix).
+
+`x_pieces` tells us how many pieces were found, compared to the expected 3 (the length of names). `x_remainder` isn’t useful when there are too few pieces, but we’ll see it again shortly
+
+### 25
+
+In other cases, you may want to fill in the missing pieces with `NA`s and move on. That’s the job of `too_few` = `"align_start"` and `too_few` = `"align_end"` which allow you to control where the `NA`s should go.
+
+### 26
+
+You will get an error and get suggestions to use `too_many = "debug"` or `too_many = "drop/merge"`. We will use "debug" to see what being kept and what's being left and after that we will talk about use drop and merge.
+
+When we debug the result, you can see the purpose of `x_remainder`: it shows what was left behind and not inserted into the columns.
+
+As we are already aware by the word `drop`, it has been established that Rstudio will discard the remaining x remainders.
+
+### 27
+
+`str_length()` tells you the number of letters in the string.
+
+`str_length()` not only counts the letters but also the spaces in between the words in a string. If you want to explore more, check out [`str_length()`](https://stringr.tidyverse.org/reference/str_length.html).
+
+### 28
+
+In RStudio, the `==` operator is used to test for equality between two values. It is a comparison operator that returns a logical value of TRUE if the values are equal and FALSE otherwise. 
+
+### 29
+
+You can extract parts of a string using `str_sub(string, start, end)`, where start and end are the positions where the substring should start and end. 
+
+To extract a substring using the `str_sub()` function, specify the following arguments: the first argument should be the variable `y` that we have defined, the second argument should be the starting position (1 in this case), and the third argument should be the ending position (3 in this case).
+
+Looking at results, when using `str_sub()`The start and end arguments are inclusive, so the length of the returned string will be end - start + 1
+
+If you want to look at the end of the string, you can use negative values to count back from the end of the string: -1 is the last character, -2 is the second to last character, etc. Note that `str_sub()` won’t fail if the string is too short: it will just return as much as possible
+
+### 30
+
+If you didnt know, In Python, indexing starts from zero, whereas in RStudio, indexing starts from one, resulting in a slight variation in accessing elements and slicing sequences.
+```
