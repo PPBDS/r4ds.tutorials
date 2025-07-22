@@ -99,29 +99,19 @@ question_text(NULL,
 
 
 
-### Exercise 3
-
-Install the dataset we will use today: **babynames**. Run `install.packages(babynames)` in your Console. CP/CR.
-
-```{r ai-usage-3}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-###
-
-**babynames** is the dataset that we will be working with today. 
-
-
 ### Exercise 4
 
 <!-- DK: CP/CR makes no sense without `Cmd/Ctrl + Enter`. -->
 
-Load `babynames` in your QMD with the `library()` function. CP/CR.
+Load `babynames` in your QMD with the `library()` function. 
+
+In the Console, run:
+
+```         
+show_file("analysis.qmd", chunk = "Last")
+```
+
+CP/CR.
 
 ```{r ai-usage-4}
 question_text(NULL,
@@ -139,7 +129,7 @@ We load **babynames** into our current QMD so it is accessible to use with the r
 
 ### Exercise 5
 
-Print out `babynames` in the Console to view the dataset. CP/CR.
+Type `babynames` in the Console to view the dataset. CP/CR.
 
 ```{r ai-usage-5}
 question_text(NULL,
@@ -159,9 +149,17 @@ Typing out `babynames` is the same as typing out `print(babynames)`. Either way,
 
 <!-- DK: Tell students to tell the AI not to assign the results yet. -->
 
-DK: No CP/CR without `Cmd/Ctrl + Enter`.
+<!-- DK: No CP/CR without `Cmd/Ctrl + Enter`. -->
 
-Using your favorite AI, prompt it to generate R code that takes `babynames` and filters the dataset to show all names that have a first name starting with A. Make sure to provide a tibble of **babynames** for the AI to use. Add the code to your QMD and render to check if it works. CP/CR the code.
+Using your favorite AI, prompt it to generate R code that takes `babynames` and filters the dataset to show all names that have a first name starting with A. Make sure to provide a tibble of **babynames** for the AI to use. If necessary, change the code so that it is not assigned to a variable. Add the code to your QMD in the same chunk and render to check if it works. 
+
+In the Console, run:
+
+```         
+show_file("analysis.qmd", chunk = "Last")
+```
+
+CP/CR.
 
 ```{r ai-usage-6}
 question_text(NULL,
@@ -213,7 +211,7 @@ question_text(NULL,
 
 Here is our generated code:
 
-```
+```{r eval=FALSE}
 a_summary <- a_names %>%
   group_by(year, sex) %>%
   summarise(total_prop = sum(prop), .groups = "drop")
@@ -244,7 +242,7 @@ question_text(NULL,
 
 Here is our generated code:
 
-```
+```{r eval=FALSE}
 ggplot(a_summary, aes(x = year, y = total_prop, color = sex)) +
   geom_line(size = 1.2) +
   labs(
@@ -334,7 +332,7 @@ question_text(NULL,
 
 Here is our generated code:
 
-```
+```{r eval=FALSE}
 title1 <- str_c("Proportion of Babies with Names Starting with ", "'A'", " Over Time")
 ```
 
@@ -369,7 +367,7 @@ question_text(NULL,
 
 Here is our generated code:
 
-```
+```{r eval=FALSE}
 subtitle1 <- str_glue(
   "Data from {min(a_summary$year)} to {max(a_summary$year)} shows that the proportion was lowest around the 1950s"
 )
@@ -400,7 +398,7 @@ question_text(NULL,
 
 Here is our generated code:
 
-```
+```{r eval=FALSE}
 top_a_1950 <- babynames %>%
   filter(year == 1950, str_starts(name, "A")) %>%
   arrange(desc(prop)) %>%
@@ -442,7 +440,7 @@ question_text(NULL,
 
 Here is our generated code:
 
-```
+```{r eval=FALSE}
 babynames %>%
   filter(str_starts(name, "A")) %>%
   separate_longer_delim(name, delim = '') %>%
@@ -478,7 +476,7 @@ question_text(NULL,
 
 Here is our generated code:
 
-```
+```{r eval=FALSE}
 babynames %>%
   filter(str_starts(name, "A")) %>%
   separate_longer_position(name, width = 1) %>%
@@ -513,7 +511,7 @@ question_text(NULL,
 
 Here is our generated code:
 
-```
+```{r eval=FALSE}
 babynames %>%
        filter(str_starts(name, "A")) %>% 
        mutate(name_sex = str_c(name, sex, sep = "-")) %>% 
@@ -546,7 +544,7 @@ question_text(NULL,
 
 Here is our generated code:
 
-```
+```{r eval=FALSE}
 babynames %>% 
        filter(str_starts(name, "A")) %>% 
        mutate(name_sex = str_c(str_pad(name, width = 10, side = "right"), sex)) %>% 
@@ -584,7 +582,7 @@ question_text(NULL,
 
 Here's our code:
 
-```
+```{r eval=FALSE}
 babynames %>%
   count(length = str_length(name), sort = TRUE)
 ```
@@ -614,7 +612,7 @@ question_text(NULL,
 
 Here's our code:
 
-```
+```{r eval=FALSE}
 babynames %>%
   mutate(
     first_letter = str_sub(name, 1, 1),
@@ -648,7 +646,7 @@ question_text(NULL,
 
 Here's our code:
 
-```
+```{r eval=FALSE}
 babynames %>% filter(str_starts(name, "A"))
 ```
 
@@ -677,7 +675,7 @@ question_text(NULL,
 
 Here's our code:
 
-```
+```{r eval=FALSE}
 babynames %>% filter(str_ends(name, "y"))
 ```
 
@@ -706,7 +704,7 @@ question_text(NULL,
 
 Here's our code:
 
-```
+```{r eval=FALSE}
 babynames %>% filter(str_detect(name, "lex"))
 ```
 
@@ -735,7 +733,7 @@ question_text(NULL,
 
 Here's our code:
 
-```
+```{r eval=FALSE}
 babynames %>%
   mutate(lowercase = str_to_lower(name),
          uppercase = str_to_upper(name))
@@ -766,7 +764,7 @@ question_text(NULL,
 
 Here's our code:
 
-```
+```{r eval=FALSE}
 babynames %>%
   mutate(length = str_length(name)) %>%
   filter(length == 10)
@@ -797,7 +795,7 @@ question_text(NULL,
 
 Here's our code:
 
-```
+```{r eval=FALSE}
 babynames %>%
   mutate(first_letter = str_sub(name, 1, 1),
          last_letter = str_sub(name, -1, -1))
@@ -828,7 +826,7 @@ question_text(NULL,
 
 Here's our code:
 
-```
+```{r eval=FALSE}
 babynames %>%
   filter(str_detect(name, "a")) %>%
   mutate(modified = str_replace_all(name, "ph", "f"))
@@ -859,7 +857,7 @@ question_text(NULL,
 
 Here's our code:
 
-```
+```{r eval=FALSE}
 babynames %>%
   mutate(num_a = str_count(name, "a"))
 ```
@@ -889,7 +887,7 @@ question_text(NULL,
 
 Here's our code:
 
-```
+```{r eval=FALSE}
 babynames %>%
   distinct(name) %>%
   mutate(name = str_sort(name, locale = "en", decreasing = FALSE))
@@ -920,7 +918,7 @@ question_text(NULL,
 
 Here's our code:
 
-```
+```{r eval=FALSE}
 babynames %>%
   mutate(clean_name = str_trim(name))
 ```
