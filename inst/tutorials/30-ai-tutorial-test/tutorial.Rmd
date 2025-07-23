@@ -155,7 +155,7 @@ Typing out `babynames` is the same as typing out `print(babynames)`. Either way,
 
 <!-- DK: No CP/CR without `Cmd/Ctrl + Enter`. -->
 
-Using your favorite AI, prompt it to generate R code that takes `babynames` and filters the dataset to show all names that have a first name starting with A. Make sure to provide a tibble of **babynames** for the AI to use. If necessary, change the code so that it is not assigned to a variable. Add the code to your QMD in the same chunk. To view the outcome, place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
+Using your favorite AI, prompt it to generate R code that takes `babynames` and filters the dataset to show all names that have a first name starting with A. Make sure to provide a tibble of **babynames** for the AI to use. If necessary, change the code so that the result of the pipe is not assigned to a variable. Add the code to your QMD in the same chunk. To view the result, place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
 
 In the Console, run:
 
@@ -179,14 +179,16 @@ question_text(NULL,
 
 <!-- DK: New pipes only. -->
 
-<!-- DK: No assignment out till the end. -->
+<!-- DK: No assignment out till the end.  -->
 
-Here's our code:
+Our code:
 
 ```{r, echo=TRUE, eval=FALSE}
 babynames |> 
   filter(str_starts(name, "A"))
 ```
+
+
 
 <!-- DK: Knowledge drops focus on material from the relevant chapters. -->
 
@@ -210,12 +212,13 @@ question_text(NULL,
 
 ###
 
-Knowledge drop.
 
 
 ### Exercise 7
 
-Next, prompt AI to continue the pipe to make a subset that shows the total proportion of babies with first names starting with A for each sex, from each year. Combined with the previous exercise, you can assign the code to a variable like "x", "a", or "a_summary." Add the code to your QMD in the same chunk. To view the outcome, place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
+Next, prompt AI to continue the pipe to make a subset that shows the total proportion of babies with first names starting with A for each sex, from each year. Combined with the previous exercise, you can assign the code to a variable like `x`, "a", or "a_summary." Add the code to your QMD in the same chunk. To view the outcome, place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
+
+<!-- because `group_by()` changes the structure of the resulting tibble in a way which might mess up later steps in the pipe. As a rule, you should not use `group_by()` unless you have a good reason for doing so. -->
 
 In the Console, run:
 
@@ -240,7 +243,7 @@ question_text(NULL,
 Here's our code:
 
 ```{r, echo=TRUE, eval=FALSE}
-a_summary <- babynames |> 
+x <- babynames |> 
   filter(str_starts(name, "A")) |>
   summarize(total_prop = sum(prop), .by = c(year, sex))
 ```
@@ -250,7 +253,11 @@ If AI gave you the function `group_by()`, it is inefficient because then you mus
 
 ### Exercise 8
 
-Now, using the same AI and the code above, ask it to generate R code that plots a basic graph showing the proportion of names starting with A over the years for each sex. Don't assign the code to any variable. Make this in a new code cell. Use `Cmd/Ctrl + Shift + k` to render the plot.
+<!-- https://pkgs.rstudio.com/learnr/articles/exercises.html -->
+
+
+
+Now, using the AI and the code above, ask it to generate R code that plots a basic graph showing the proportion of names starting with A over the years for each sex. Don't assign the code to any variable. Make this in a new code cell. Use `Cmd/Ctrl + Shift + K` to render the QMD.
 
 In the Console, run:
 
@@ -272,18 +279,24 @@ question_text(NULL,
 
 ###
 
-Here's our code:
+Our code:
 
-```{r, echo=TRUE, eval=FALSE}
-ggplot(a_summary, aes(x = year, y = total_prop, color = sex)) +
+```{r echo=FALSE}
+x <- babynames |> 
+  filter(str_starts(name, "A")) |>
+  summarize(total_prop = sum(prop), .by = c(year, sex))
+```
+
+```{r, echo=TRUE}
+ggplot(x, aes(x = year, y = total_prop, color = sex)) +
   geom_line(size = 1.2) +
   labs(
     title = "Proportion of Babies with Names Starting with 'A' Over Time",
-    x = "Year",
-    y = "Proportion",
+    x = NULL,
+    y = NULL,
     color = "Sex"
   ) +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 0.1)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   theme_minimal()
 ```
 
