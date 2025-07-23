@@ -151,7 +151,7 @@ Typing out `babynames` is the same as typing out `print(babynames)`. Either way,
 
 <!-- DK: No CP/CR without `Cmd/Ctrl + Enter`. -->
 
-Using your favorite AI, prompt it to generate R code that takes `babynames` and filters the dataset to show all names that have a first name starting with A. Make sure to provide a tibble of **babynames** for the AI to use. If necessary, change the code so that it is not assigned to a variable. Add the code to your QMD in the same chunk and render to check if it works. 
+Using your favorite AI, prompt it to generate R code that takes `babynames` and filters the dataset to show all names that have a first name starting with A. Make sure to provide a tibble of **babynames** for the AI to use. If necessary, change the code so that it is not assigned to a variable. Add the code to your QMD in the same chunk. To view the outcome, place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
 
 In the Console, run:
 
@@ -177,7 +177,7 @@ question_text(NULL,
 
 <!-- DK: No assignment out till the end. -->
 
-Our code:
+Here's our code:
 
 ```{r, echo=TRUE, eval=FALSE}
 babynames |> 
@@ -188,14 +188,18 @@ babynames |>
 
 The `filter()` function is used for subsetting data frames by selecting rows that satisfy specific conditions. In this case, it takes rows using `str_starts()`, which essentially takes a column (name), and selects the rows where the string of name starts with A.
 
-###
-
-Replace your code with ours to follow along with the tutorial.
-
 
 ### Exercise 7
 
-Next, prompt AI to generate R code that makes a new subset with the total proportion of babies with first names starting with A for each sex, from each year.
+Next, prompt AI to continue the pipe to make a subset that shows the total proportion of babies with first names starting with A for each sex, from each year. Combined with the previous exercise, you can assign the code to a variable like "x", "a", or "a_summary." Add the code to your QMD in the same chunk. To view the outcome, place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
+
+In the Console, run:
+
+```         
+show_file("analysis.qmd", chunk = "Last")
+```
+
+CP/CR.
 
 ```{r ai-usage-7}
 question_text(NULL,
@@ -203,30 +207,34 @@ question_text(NULL,
 	allow_retry = TRUE,
 	try_again_button = "Edit Answer",
 	incorrect = NULL,
-	rows = 5)
+	rows = 7)
 ```
 
 
 ###
 
-Here is our generated code:
+Here's our code:
 
 ```{r, echo=TRUE, eval=FALSE}
-a_summary <- a_names |>
-  group_by(year, sex) |>
-  summarise(total_prop = sum(prop), .groups = "drop")
+a_summary <- babynames |> 
+  filter(str_starts(name, "A")) |>
+  summarize(total_prop = sum(prop), .by = c(year, sex))
 ```
 
-The function `group_by()` allows us to split a data frame into groups based on one or more variables, and then apply a function to each group to manipulate our data. Then, `summarize()` creates a new data frame with rows, in this case each row is a year and sex combination with the total proportion of names starting with A.
-
-###
-
-Replace your code with ours to follow along with the tutorial.
+If AI gave you the function `group_by()`, it is inefficient because then you must make sure that `.group = "drop"` is included as an argument within `summarize`. `.by = c(...)` is more efficient because there is no extra step in the pipe, and is only an argument in `summarize()`. Then, `summarize()` creates a new data frame with rows, in this case each row is a year and sex combination with the total proportion of names starting with A.
 
 
 ### Exercise 8
 
-Now, using the same AI and the code above, ask it to generate R code that plots a basic graph showing the proportion of names starting with A over the years for each sex. CP/CR your code.
+Now, using the same AI and the code above, ask it to generate R code that plots a basic graph showing the proportion of names starting with A over the years for each sex. Don't assign the code to any variable. Make this in a new code cell. Use `Cmd/Ctrl + Shift + k` to render the plot.
+
+In the Console, run:
+
+```         
+show_file("analysis.qmd", chunk = "Last")
+```
+
+CP/CR.
 
 ```{r ai-usage-8}
 question_text(NULL,
@@ -240,7 +248,7 @@ question_text(NULL,
 
 ###
 
-Here is our generated code:
+Here's our code:
 
 ```{r, echo=TRUE, eval=FALSE}
 ggplot(a_summary, aes(x = year, y = total_prop, color = sex)) +
@@ -257,12 +265,19 @@ ggplot(a_summary, aes(x = year, y = total_prop, color = sex)) +
 
 ###
 
-Take the code we have provided you, and add it to your QMD. Now you should have a code chunk that loads our dataset **babynames**, filters it, and creates a plot based off of it. Render it to check that it works. We will now dissect the code that plots the data.
 
 
 ### Exercise 9
 
-Find the line with `ggplot()` and `aes()`. Run `?ggplot` and `?aes` within the Console to see what the functions do. In a few sentences of your own words, describe what they do and what arguments they take.
+Now that we have filtered our dataset and created a plot, we need to be on track with the same, correct, code. Replace your code with our code in your QMD.
+
+In the Console, run:
+
+```         
+show_file("analysis.qmd", chunk = "Last")
+```
+
+CP/CR.
 
 ```{r ai-usage-9}
 question_text(NULL,
@@ -270,53 +285,21 @@ question_text(NULL,
 	allow_retry = TRUE,
 	try_again_button = "Edit Answer",
 	incorrect = NULL,
-	rows = 3)
+	rows = 12)
 ```
-
-###
-
-`ggplot()` creates the basis for the graph while `aes()` maps the arguments x and y to the axis. Changing the variables set to x and y will change what is plotted.
-
-
-### Exercise 10
-
-Next, find the line with `geom_line()`. Run ?geom_line to find out what it does. Then, using AI or Google, find other geom_*() functions and learn what they do. Pick 3 functions and describe with a sentence each below.
-
-```{r ai-usage-10}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 5)
-```
-
-###
-
-Arguments within `geom_line()` change the appearance of the graph, but will not change the type of graph. The function `geom_line()` is what gives the plotted line on the graph. To make it a histogram, use `geom_histogram()`, to make a scatterplot, `use geom_point()`, etc.
-
-
-### Exercise 11
-
-Next, find the line with `labs()` and the lines following it containings its arguments. If not already there, add `caption = ""` and `subtitle = ""`. Change around the names of the titles. CP/CR your complete `labs()` function.
-
-```{r ai-usage-11}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 5)
-```
-
-###
-
-The function `labs()` provides titles and labels to the graph. The title should capture the purpose of your graph, the subtitle should be a noticeable takeaway, the x and y axis should be fitting labels with units, and the caption should give the source of the data.
 
 
 ### Exercise 12
 
-Now, we are going to create a new title using string functions. Using AI, ask it to generate code for creating the title of your plot using the the function `str_c()` and assign it to the variable title1. The title should stay the same, but they way it is made should be through `str_c()`. CP/CR.
+Now, we are going to create a new title using string functions. Using AI, ask it to generate code for creating the title of your plot using the function `str_c()` and assign it to the variable `title1`. The title should stay the same, but they way it is made should be through `str_c()`. Add this code to a the same code cell with the plot, but before the code for the plot. Then, set the argument `title` equal to `title1` within the call to `labs()`.
+
+In the Console, run:
+
+```         
+show_file("analysis.qmd", chunk = "Last")
+```
+
+CP/CR.
 
 ```{r ai-usage-12}
 question_text(NULL,
@@ -324,25 +307,19 @@ question_text(NULL,
 	allow_retry = TRUE,
 	try_again_button = "Edit Answer",
 	incorrect = NULL,
-	rows = 3)
+	rows = 10)
 ```
 
 
 ###
 
-Here is our generated code:
+Here's our code:
 
 ```{r, echo=TRUE, eval=FALSE}
 title1 <- str_c("Proportion of Babies with Names Starting with ", "'A'", " Over Time")
 ```
 
 The function `str_c()` takes any number of vectors as arguments and returns a character vector. It essentially combines arguments of the same type into a string. 
-
-
-###
-
-Copy and paste our generated code into your QMD. Insert it right before the call to `ggplot()`. Then, set the argument `title` equal to `title1` within the call to `labs()`.
-
 
 ###
 
@@ -351,7 +328,15 @@ If you were to not use `str_c()`, double quotes "" or single quotes '' will also
 
 ### Exercise 13
 
-Now, we are going to do the same, but for a subtitle, and we will use str_glue(). Using AI, ask it to generate code for creating the subtitle of your plot using the the function `str_glue()` and assign it to the variable subtitle1. The subtitle should stay the same, but they way it is made should be through `str_glue()`. Our subtitle is: Data from 1880 to 2017 shows that the proportion was lowest around the 1950s. CP/CR.
+Now, we are going to do the same, but for a subtitle, and we will use str_glue(). Using AI, ask it to generate code for creating the subtitle of your plot using the the function `str_glue()` and assign it to the variable `subtitle1`. The subtitle we use is: `"Data from 1880 to 2017 shows that the proportion was lowest around the 1950s"`. Add this code to a the same code cell with the plot, but before the code for the plot. Then, set the argument `subtitle` equal to `subtitle1` within the call to `labs()`.
+
+In the Console, run:
+
+```         
+show_file("analysis.qmd", chunk = "Last")
+```
+
+CP/CR.
 
 ```{r ai-usage-13}
 question_text(NULL,
@@ -359,13 +344,13 @@ question_text(NULL,
 	allow_retry = TRUE,
 	try_again_button = "Edit Answer",
 	incorrect = NULL,
-	rows = 4)
+	rows = 10)
 ```
 
 
 ###
 
-Here is our generated code:
+Here's our code:
 
 ```{r, echo=TRUE, eval=FALSE}
 subtitle1 <- str_glue(
@@ -375,14 +360,17 @@ subtitle1 <- str_glue(
 
 The function `str_glue()` is an alternative to `str_c()` that evaluates anything inside {} like it’s outside of the quotes. However, the function converts missing values to the string "NA."
 
-###
-
-Copy and paste our generated code into your QMD. Insert it right before the call to `ggplot()`. Then, set the argument `subtitle` equal to `subtitle1` within the call to `labs()`.
-
-
 ### Exercise 14
 
-Using the same AI, ask it to generate code for creating an insight of your plot. Here is the prompt we used: using `str_flatten()` on the **babynames** dataset, make another unique insight related to the plot we have already made. Insert your plot code if needed. CP/CR.
+Using the same AI, ask it to generate code for creating an insight of your plot. Here is the prompt we used: using `str_flatten()` on the **babynames** dataset, make another unique insight related to the plot we have already made. Insert your plot code if needed. In a new code chunk after the graph, copy and paste our generated code into your QMD. Render it with `Cmd/Ctrl + K` or run it in the Console to ensure it works.
+
+In the Console, run:
+
+```         
+show_file("analysis.qmd", chunk = "Last")
+```
+
+CP/CR.
 
 ```{r ai-usage-14}
 question_text(NULL,
@@ -396,7 +384,7 @@ question_text(NULL,
 
 ###
 
-Here is our generated code:
+Here's our code:
 
 ```{r, echo=TRUE, eval=FALSE}
 top_a_1950 <- babynames |>
@@ -417,14 +405,12 @@ insight
 
 The function `str_flatten()` takes a character vector and combines each element of the vector into a single string. It works well with the function `summarize()`.
 
-###
-
-In a new code chunk after the graph, copy and paste our generated code into your QMD. Render it with `Cmd/Ctrl + K` to ensure it works.
-
 
 ### Exercise 15
 
-Using the same AI, ask it to generate code that will find the most common second letters of **babynames** starting with "A" with the function `separate_longer_delim()`. CP/CR.
+Using the same AI, ask it to generate code that will find the most common second letters of **babynames** starting with "A" with the function `separate_longer_delim()`. In a new code cell below the previous cells, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. Then, isolate the part with the relavant function `separate_longer_delim()`, and only run the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
+
+CP/CR.
 
 ```{r ai-usage-15}
 question_text(NULL,
@@ -438,29 +424,25 @@ question_text(NULL,
 
 ###
 
-Here is our generated code:
+Here's our code:
 
 ```{r, echo=TRUE, eval=FALSE}
 babynames |>
   filter(str_starts(name, "A")) |>
   separate_longer_delim(name, delim = '') |>
-  group_by(name, year, sex) |>
-  mutate(pos = row_number()) |>
+  mutate(pos = row_number(), .by = c(name, year, sex)) |>
   filter(pos == 2) |>
   count(letter = name, sort = TRUE)
 ```
 
 The function `separate_longer_delim(col, delim)` makes the input data frame longer through increased rows, with the string split up through a specified deliminator as an argument.
 
-###
-
-In a new code cell below the previous cells, copy and paste our generated code. Then, try runninig our code in the Console using `Cmd/Ctrl + Shift + Enter`! If needed, isolate the part with the relavant function, and only run the code up to that section with `Cmd/Ctrl + Enter` to see what the function changed.
-
-
 
 ### Exercise 16
 
-Using the same AI, ask it to generate similar code that will find the most common second letters of **babynames** starting with "A" with the function `separate_longer_position()`. CP/CR.
+Using the same AI, ask it to generate similar code that will find the most common second letters of **babynames** starting with "A" with the function `separate_longer_position()`. Using the same code cell from the previous exercise, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. Then, isolate the part with the relavant function `separate_longer_position()`, and only run the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
+
+CP/CR.
 
 ```{r ai-usage-16}
 question_text(NULL,
@@ -474,28 +456,25 @@ question_text(NULL,
 
 ###
 
-Here is our generated code:
+Here's our code:
 
 ```{r, echo=TRUE, eval=FALSE}
 babynames |>
   filter(str_starts(name, "A")) |>
   separate_longer_position(name, width = 1) |>
-  group_by(name, year, sex) |>
-  mutate(pos = row_number()) |>
+  mutate(pos = row_number(), .by = c(name, year, sex)) |>
   filter(pos == 2) |>
   count(letter = name, sort = TRUE)
 ```
 
 The function `separate_longer_position(col, width)` makes the input data frame longer through increased rows, with the string split up with specified widths.
 
-###
-
-Continuing in the same code cell, copy and paste our generated code. Then, try runninig our code in the Console using `Cmd/Ctrl + Shift + Enter`! If needed, isolate the part with the relavant function, and only run the code up to that section with `Cmd/Ctrl + Enter` to see what the function changed.
-
 
 ### Exercise 17
 
-Using the same AI, ask it to generate code that will combine two columns using `str_c()`, and then separate them again with `separate_wider_delim()`. CP/CR.
+Using the same AI, ask it to generate code that will combine two columns using `str_c()`, and then separate them again with `separate_wider_delim()`. Using the same code cell from the previous exercise, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. For this one, run and print out the change after the first `mutate()`, and then run and print out what happens after the `separate_wider_delim()`. Do this by only running the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
+
+CP/CR.
 
 ```{r ai-usage-17}
 question_text(NULL,
@@ -509,7 +488,7 @@ question_text(NULL,
 
 ###
 
-Here is our generated code:
+Here's our code:
 
 ```{r, echo=TRUE, eval=FALSE}
 babynames |>
@@ -521,14 +500,11 @@ babynames |>
 
 The function `separate_wider_delim(col, delim, names)` makes the input data frame wider through increased columns, with the string split up with a specified deliminator.
 
-###
-
-Continuing in the same code cell, copy and paste our generated code. Then, try runninig our code in the Console using `Cmd/Ctrl + Shift + Enter`! If needed, isolate the part with the relavant function, and only run the code up to that section with `Cmd/Ctrl + Enter` to see what the function changed. For this one, run and print out the change after the first `mutate()`, and then run and print out what happens after the `separate_wider_delim()`.
-
 
 ### Exercise 18
 
-Using the same AI, ask it to generate code that will combine two columns using `str_c()`, and then separate them again with `separate_wider_position()`. CP/CR.
+Using the same AI, ask it to generate code that will combine two columns using `str_c()`, and then separate them again with `separate_wider_position()`. Using the same code cell from the previous exercise, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. For this one, run and print out the change after the first `mutate()`, and then run and print out what happens after the `separate_wider_positions()`. Do this by only running the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
+
 
 ```{r ai-usage-18}
 question_text(NULL,
@@ -542,7 +518,7 @@ question_text(NULL,
 
 ###
 
-Here is our generated code:
+Here's our code:
 
 ```{r, echo=TRUE, eval=FALSE}
 babynames |> 
@@ -554,10 +530,6 @@ babynames |>
 
 The function `separate_wider_position(col, widths, names)` makes the input data frame wider through increased columns, with the string split up with a specified widths. Note how because the character length for names varied, we had to pad it with 10 extra characters so we could for sure separate the columns by width.
 
-###
-
-Continuing in the same code cell, copy and paste our generated code. Then, try runninig our code in the Console using `Cmd/Ctrl + Shift + Enter`! If needed, isolate the part with the relavant function, and only run the code up to that section with `Cmd/Ctrl + Enter` to see what the function changed. For this one, run and print out the change after the first `mutate()`, and then run and print out what happens after the `separate_wider_position()`.
-
 
 ## String functions on **babynames**
 ###
@@ -566,7 +538,9 @@ In this section we are going to focus on generating code to manipulate our datas
 
 ### Exercise 1
 
-Make a new code cell, using AI, ask it to generate code that pipes **babynames** to `count()` with `str_length()` to find the distribution of lengths of US baby names. CP/CR.
+Make a new code cell after the plot, and using AI, ask it to generate code that pipes **babynames** to `count()` with `str_length()` to find the distribution of lengths of US baby names. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
 
 ```{r string-functions-1}
 question_text(NULL,
@@ -589,14 +563,12 @@ babynames |>
 
 The function `str_length()` tells you the number of letters in the string.
 
-###
-
-Copy and paste our generated code into the Console, and then run the code to get a new subset of data.
-
 
 ### Exercise 2
 
-Next, get code that pipes `babynames` to `mutate()` and use `str_sub()` to find the first and last letter of each name. CP/CR.
+Next, get code that pipes `babynames` to `mutate()` and use `str_sub()` to find the first and last letter of each name. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
 
 ```{r string-functions-2}
 question_text(NULL,
@@ -623,14 +595,12 @@ babynames |>
 
 The function `str_sub(string, start, end)` can extract parts of a string. The start and end are the positions where the substring should start and end, and the start and end arguments are inclusive.
 
-###
-
-Copy and paste our generated code into the Console, and then run the code to get a new subset of data.
-
 
 ### Exercise 3
 
-Make a new code cell, using AI, get code that pipes `babynames` to `filter()` with name and `str_starts()` to find all names beginning with a certain string. CP/CR.
+Next, get code that pipes `babynames` to `filter()` with name and `str_starts()` to find all names beginning with a certain string. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
 
 ```{r string-functions-3}
 question_text(NULL,
@@ -652,14 +622,12 @@ babynames |> filter(str_starts(name, "A"))
 
 The function `str_starts()` returns TRUE if each string starts with the given pattern. We have used this function earlier in this tutorial!
 
-###
-
-Copy and paste our generated code into the Console, and then run the code to get a new subset of data.
-
 
 ### Exercise 4
 
-Next, get code that pipes `babynames` to `filter()` with name and `str_ends()` to find all names ending with a certain string. CP/CR.
+Next, get code that pipes `babynames` to `filter()` with name and `str_ends()` to find all names ending with a certain string. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
 
 ```{r string-functions-4}
 question_text(NULL,
@@ -681,14 +649,12 @@ babynames |> filter(str_ends(name, "y"))
 
 The function `str_ends()` returns TRUE if each string ends with the given pattern.
 
-###
-
-Copy and paste our generated code into the Console, and then run the code to get a new subset of data.
-
 
 ### Exercise 5
 
-Next, get code that pipes `babynames` to `filter()` with name and `str_detect()` to find all names containing a certain string. CP/CR.
+Next, get code that pipes `babynames` to `filter()` with name and `str_detect()` to find all names containing a certain string. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
 
 ```{r string-functions-5}
 question_text(NULL,
@@ -710,14 +676,12 @@ babynames |> filter(str_detect(name, "lex"))
 
 The function `str_detect()` returns TRUE if each string contains the given pattern somewhere inside.
 
-###
-
-Copy and paste our generated code into the Console, and then run the code to get a new subset of data.
-
 
 ### Exercise 6
 
-Next, get code that pipes `babynames` to `mutate()` with `str_to_lower()` and `str_to_upper()` to make new columns in the dataset that convert the string names to different cases. CP/CR.
+Next, get code that pipes `babynames` to `mutate()` with `str_to_lower()` and `str_to_upper()` to make new columns in the dataset that convert the string names to different cases. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
 
 ```{r string-functions-6}
 question_text(NULL,
@@ -741,14 +705,12 @@ babynames |>
 
 The functions `str_to_lower()` and `str_to_upper()` convert all characters in the string to their respective case.
 
-###
-
-Copy and paste our generated code into the Console, and then run the code to get a new subset of data.
-
 
 ### Exercise 7
 
-Next, get code that pipes `babynames` to `mutate()` with `str_length()` and then `filter()` to get all names that are X letters long. CP/CR.
+Next, get code that pipes `babynames` to `mutate()` with `str_length()` and then `filter()` to get all names that are X letters long. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
 
 ```{r string-functions-7}
 question_text(NULL,
@@ -772,14 +734,12 @@ babynames |>
 
 The function `str_length()` returns the number of characters in each string.
 
-###
-
-Copy and paste our generated code into the Console, and then run the code to get a new subset of data.
-
 
 ### Exercise 8
 
-Next, get code that pipes `babynames` to `mutate()` with `str_sub()` twice to obtain the first and last letter of each name. CP/CR.
+Next, get code that pipes `babynames` to `mutate()` with `str_sub()` twice to obtain the first and last letter of each name. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
 
 ```{r string-functions-8}
 question_text(NULL,
@@ -803,14 +763,12 @@ babynames |>
 
 The function `str_sub()` extracts a substring from a string by position.
 
-###
-
-Copy and paste our generated code into the Console, and then run the code to get a new subset of data.
-
 
 ### Exercise 9
 
-Next, get code that pipes `babynames` to `filter()` and detect all names with an "a", then pipe it to `mutate()` with `str_replace_all()` to create a new column that replaces all the "a"s with an "x". CP/CR.
+Next, get code that pipes `babynames` to `filter()` and detect all names with an "a", then pipe it to `mutate()` with `str_replace_all()` to create a new column that replaces all the "a"s with an "x". Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
 
 ```{r string-functions-9}
 question_text(NULL,
@@ -834,14 +792,12 @@ babynames |>
 
 The functions `str_replace()` and `str_replace_all()` replace the first match of a pattern in each string.
 
-###
-
-Copy and paste our generated code into the Console, and then run the code to get a new subset of data.
-
 
 ### Exercise 10
 
-Next, get code that pipes `babynames` to `mutate()` with `str_count()` to make a new column that counts how many "a"s each name have. CP/CR.
+Next, get code that pipes `babynames` to `mutate()` with `str_count()` to make a new column that counts how many "a"s each name have. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
 
 ```{r string-functions-10}
 question_text(NULL,
@@ -864,14 +820,12 @@ babynames |>
 
 The function `str_count()` counts the number of times a pattern appears in each string.
 
-###
-
-Copy and paste our generated code into the Console, and then run the code to get a new subset of data.
-
 
 ### Exercise 11
 
-Next, get code that pipes `babynames` to `distinct()` and then to `mutate()` with `str_sort()` to changes the name column so that it orders the distinct names alphabetically. CP/CR.
+Next, get code that pipes `babynames` to `distinct()` and then to `mutate()` with `str_sort()` to changes the name column so that it orders the distinct names alphabetically. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
 
 ```{r string-functions-11}
 question_text(NULL,
@@ -895,14 +849,12 @@ babynames |>
 
 The function `str_sort()` sorts strings alphabetically, optionally by locale or in reverse. Locale refers to the language rules to follow for sorting.
 
-###
-
-Copy and paste our generated code into the Console, and then run the code to get a new subset of data.
-
 
 ### Exercise 12
 
-Next, get code that pipes `babynames` to `mutate()` with `str_trim()` to create a new column with trimmed names. CP/CR.
+Next, get code that pipes `babynames` to `mutate()` with `str_trim()` to create a new column with trimmed names. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
 
 ```{r string-functions-12}
 question_text(NULL,
@@ -925,10 +877,27 @@ babynames |>
 
 The function `str_trim()` removes whitespace from the start and/or end of strings.
 
-###
 
-Copy and paste our generated code into the Console, and then run the code to get a new subset of data.
+### Exercise 13
 
+Now that we have all these functions in the same code cell, we can see all of the functions we have learned, and we can run any of them at will with `Cmd/Ctrl + Enter`.
+
+In the Console, run:
+
+```         
+show_file("analysis.qmd", chunk = "Last")
+```
+
+CP/CR.
+
+```{r string-functions-13}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 15)
+``` 
 
 ## Summary
 ### 
