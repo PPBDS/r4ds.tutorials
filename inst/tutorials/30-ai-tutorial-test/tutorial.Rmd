@@ -81,14 +81,9 @@ Professionals keep their data science work in the cloud because laptops fail.
 
 ### Exercise 2
 
-In your QMD, put `library(tidyverse)` in a new code chunk. 
-Render the file.
+In your QMD, put `library(tidyverse)` in a new code chunk. Render the file.
 
-Notice that the file does not look good because the code 
-is visible and there are annoying messages. To take care 
-of this, add `#| message: false` to remove all the messages 
-in this `setup` chunk. Also add the following to the YAML 
-header to remove all code echos from the HTML:
+Notice that the file does not look good because the code is visible and there are annoying messages. To take care of this, add `#| message: false` to remove all the messages in this `setup` chunk. Also add the following to the YAML header to remove all code echos from the HTML:
 
 ```         
 execute: 
@@ -117,11 +112,9 @@ question_text(NULL,
 
 ### Exercise 3
 
-Place your cursor in the QMD file on the `library(tidyverse)` 
-line. Use `Cmd/Ctrl + Enter` to execute that line.
+Place your cursor in the QMD file on the `library(tidyverse)` line. Use `Cmd/Ctrl + Enter` to execute that line.
 
-Note that this causes `library(tidyverse)` to be copied down 
-to the Console and then executed. 
+Note that this causes `library(tidyverse)` to be copied down to the Console and then executed. 
 
 CP/CR.
 
@@ -136,6 +129,7 @@ question_text(NULL,
 
 ###
 
+The **stringr** library is a part of the [*Tidyverse*](https://www.tidyverse.org/). We can just load the **tidyverse** library and the **stringr** library will be automatically loaded. 
 
 
 ### Exercise 4
@@ -161,7 +155,8 @@ question_text(NULL,
 
 ###
 
-We load **babynames** into our current QMD so it is accessible to use with the rest of the code in the document.
+We load **babynames** into our current QMD so it is accessible to use with the rest of the code in the document. The `babynames` is a data set which contained names used for babies from 1880 to 2017. If you want to explore the data set, checkout [popular baby names](https://www.ssa.gov/oact/babynames/limits.html).
+
 
 
 ### Exercise 5
@@ -179,7 +174,7 @@ question_text(NULL,
 
 ###
 
-Typing out `babynames` is the same as typing out `print(babynames)`. Either way, we can see the same tibble. Look around and try to understand each column.
+Typing out `babynames` is the same as typing out `print(babynames)`. You might be wondering what tibble is, A tibble is a new form of a data frame in R that is part of the tidyverse library, and Tibbles print the data in a more efficient format than a data frame, showing the values of the columns, their datatype, and the size of the dataset.
 
 
 ### Exercise 6
@@ -216,7 +211,7 @@ babynames |>
 
 <!-- DK: Knowledge drops focus on material from the relevant chapters. -->
 
-The `filter()` function is used for subsetting data frames by selecting rows that satisfy specific conditions. In this case, it takes rows using `str_starts()`, which essentially takes a column (name), and selects the rows where the string of name starts with A.
+The `filter()` function is used for subsetting data frames by selecting rows that satisfy specific conditions. In this case, it takes rows using `str_starts()`, which essentially takes a column (name), and selects the rows where the string of name starts with A. To check for `NA` values, use `any()` function with argument `is.na()`, argument of which should be the dataset babynames. 
 
 
 ### Exercise 7
@@ -242,6 +237,11 @@ Our code:
 babynames |> 
   filter(str_starts(name, "As"))
 ```
+
+Strings can be created using either single quotes (') or double quotes ("). If you wanted to include single quotes in a string you could put the outer quotes as double quotes.
+
+Now there’s no difference in behavior between the single quotes and double quotes, but in the interests of consistency, the [*Tidyverse*](https://style.tidyverse.org/syntax.html#character-vectors) style guide recommends using `"`, unless the string itself contains double quotes.
+
 
 ###
 
@@ -449,15 +449,18 @@ title1 <- str_c("Proportion of Babies with Names Starting with ", "'A'", " Over 
 title1
 ```
 
-The function `str_c()` takes any number of vectors as arguments and returns a character vector. It essentially combines arguments of the same type into a string. 
+`str_c()` is a function in the `stringr` package in R that combines multiple character vectors into a single character vector. It is similar to the `paste()` function, but it uses `tidyverse` recycling and NA rules. `str_c()` is vectorized, which means it can take multiple arguments and combine them element-wise. 
 
 ###
 
-If you were to not use `str_c()`, double quotes "" or single quotes '' will also create a string. You can add a quote within the string by typing a backslash '\'. To add a backslash, just type another backslash before the backslash you want to add.
+If you were to not use `str_c()`, double quotes "" or single quotes '' will also create a string. To include a literal single or double quote, you can use the backslash `\` to escape it. For example, `"\""` will return `'"'`. To include a literal backlash in your string, it is pretty simple and all you need to do is have two backslashes in a string to have one literal one. 
+
 
 ### Exercise 14
 
-Once again, place your cursor on the line with the new `str_c()` code and hit `Cmd/Ctrl + Enter`, but don't run it yet. Now edit the code so that within `str_c()`, the strings include a backslash `\` at the start and doublequotes `""` at the end. Remove the variable `title1` it is assigned to and press `Enter` to run the code.
+Once again, place your cursor on the line with the new `str_c()` code and hit `Cmd/Ctrl + Enter`, but don't run it yet. Now edit the code so that within `str_c()`, the strings include a backslash `\` at the start and doublequotes `""` at the end. Change the assigned variable to `title2` and press `Enter` to run the code. 
+
+Then, type `str_view(title2)` in the Console, and press `Enter` to view the string.
 
 CP/CR.
 
@@ -473,12 +476,19 @@ question_text(NULL,
 ###
 
 ```{r, echo=TRUE}
-str_c("\\Proportion of Babies with Names Starting with ", "'A'", " Over Time\"\"")
+title2 <- str_c("\\Proportion of Babies with Names Starting with ", "'A'", " Over Time\"\"")
+str_view(title2)
 ```
 
+The printed representation of a string is not the same as the string itself because the printed representation shows the escapes. To see the raw contents of the string, we use `str_view()`
 
+###
 
-Knowledge drop.
+If you find yourself dealing with a complex situation where you have many backslashes and quotes to include, it can become confusing to keep track of them. (This is sometimes called [leaning toothpick syndrome](https://en.wikipedia.org/wiki/Leaning_toothpick_syndrome).)
+
+To solve the issue, we utilized a raw string, which is a specific type of string literal that doesn't interpret any special characters or escape sequences.
+
+Typically, a raw string starts with `r"(, ends with )"`, and allows for any text representation. However, if the string contains )", alternatives like `r"[]"` or `r"{}"` can be used. Furthermore, you can add dashes to ensure unique opening and closing pairs, such as `r"--()--"`, `r"---()---"`, and so on. Raw strings offer flexibility to handle any text without problems.
 
 
 ### Exercise 15
@@ -508,11 +518,13 @@ subtitle1 <- str_glue("Data from {min(x$year)} to {max(x$year)} shows that the p
 subtitle1
 ```
 
-The function `str_glue()` is an alternative to `str_c()` that evaluates anything inside {} like it’s outside of the quotes. However, the function converts missing values to the string "NA."
+If you are mixing many fixed and variable strings with `str_c()`, you’ll notice that you type a lot of `"`s, making it hard to see the overall goal of the code. An alternative approach is provided by the glue package via `str_glue()`. How `str_glue()` works is that if you give it a single string that has a special feature: anything inside `{}` will be evaluated like it’s outside of the quotes. However, `str_glue()` currently converts missing values to the string "NA" unfortunately making it inconsistent with `str_c()`.
 
 ### Exercise 16
 
-Copy and paste the new `str_glue()` code into the Console, but don't run it yet. Now edit the code so that within `str_glue()`, the string includes the `str_c()` line from earlier at the end. Now remove the variable `subtitle1` it is assigned to and press `Enter` to run the code.
+Copy and paste the new `str_glue()` code into the Console, but don't run it yet. Now manually edit the code so that at the start, there is `\t`, and there is `\n` before the final word. Change the assigned variable to `subtitle2` and press `Enter` to run the code.
+
+Then, type `str_view(subtitle2)` in the Console, and press `Enter` to view the string.
 
 CP/CR.
 
@@ -528,16 +540,16 @@ question_text(NULL,
 ###
 
 ```{r, echo=TRUE}
-str_glue("Data from {min(x$year)} to {max(x$year)} shows that the proportion of names starting with 'A' was lowest around the 1950s {str_c(\"Proportion of Babies with Names Starting with \", \"'A'\", \" Over Time\")}")
+subtitle2 <- str_glue("\tData from {min(x$year)} to {max(x$year)} shows that the proportion of names starting with 'A' was lowest around the \n1950s")
+str_view(subtitle2)
 ```
 
-Knowledge drop (about glue and backslashes)
+Besides `\"`, `\'`, and `\\`, there are a few other special characters that can be useful. The most common ones are `\n` for a new line and `\t` for a tab. If you want to check out a complete list of other special characters, check out in [Quotes](https://rdrr.io/r/base/Quotes.html).
 
 
 ### Exercise 17
 
 <!-- DK: Awk: creating an insight of your plot. DONE-->
-
 
 Using the same AI, ask it to generate code for finding the top five most common names beginning with 'A' in 1950. 
 
@@ -586,8 +598,11 @@ insight <- str_c(
 insight
 ```
 
-The function `str_flatten()` takes a character vector and combines each element of the vector into a single string. It works well with the function `summarize()`.
+<!-- LL: make this also use `summarize` -->
 
+`str_c()` and `str_glue()` are suitable for use with `mutate()` since their output matches the length of their inputs. However, if you need a function that works well with `summarize()` and always returns a single string, `str_flatten()` comes into play. It takes a character vector as input and combines each element of the vector into a single string.
+
+One variation of `str_flatten()` is `str_flatten_comma()` is a variation designed specifically for flattening with commas. It automatically recognizes if last uses the Oxford comma and handles the special case of 2 elements.
 
 <!-- LL: These following 4 exercises need fixing on the AI generated code to make it work properly, and they need 4 more exercises where students edit code -->
 
@@ -804,43 +819,16 @@ Our code:
 babynames |> filter(str_starts(name, "A"))
 ```
 
-The function `str_starts()` returns TRUE if each string starts with the given pattern. We have used this function earlier in this tutorial! Also, the function `str_ends()` returns TRUE if each string ends with the given pattern.
+The function `str_starts()` returns TRUE if each string starts with the given pattern. We have used this function earlier in this tutorial! Also, the function `str_ends()` returns TRUE if each string ends with the given pattern. The function `str_detect()` returns TRUE if each string contains the given pattern anywhere inside.
 
 
 ### Exercise 25
-
-Next, get code that pipes `babynames` to `filter()` with name and `str_detect()` to find all names containing a certain string. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
-
-CP/CR.
-
-```{r ai-usage-25}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-``` 
-
-
-###
-
-Our code:
-
-```{r, echo=TRUE, eval=FALSE}
-babynames |> filter(str_detect(name, "lex"))
-```
-
-The function `str_detect()` returns TRUE if each string contains the given pattern somewhere inside.
-
-
-### Exercise 26
 
 Next, get code that pipes `babynames` to `filter()` and detect all names with an "a", then pipe it to `mutate()` with `str_replace_all()` to create a new column that replaces all the "a"s with an "x". Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
 
 CP/CR.
 
-```{r ai-usage-26}
+```{r ai-usage-25}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -863,7 +851,7 @@ babynames |>
 The functions `str_replace()` and `str_replace_all()` replace the first match of a pattern in each string.
 
 
-### Exercise 27
+### Exercise 26
 
 Now that we have all these functions in the same code cell, we can see all of the functions we have learned, and we can run any of them at will with `Cmd/Ctrl + Enter`.
 
@@ -875,7 +863,7 @@ show_file("analysis.qmd", chunk = "Last")
 
 CP/CR.
 
-```{r ai-usage-27}
+```{r ai-usage-26}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
