@@ -1095,11 +1095,12 @@ insight
 
 One variation of `str_flatten()` is `str_flatten_comma()` is a variation designed specifically for flattening with commas. It automatically recognizes if last uses the Oxford comma and handles the special case of 2 elements.
 
-<!-- LL: These following 4 exercises need fixing on the AI generated code to make it work properly, and they need 4 more exercises where students edit code -->
 
 ### Exercise 18
 
-Using the same AI, ask it to generate code that will find the most common second letters of **babynames** starting with "A" with the function `separate_longer_delim()`. In a new code cell below the previous cells, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. Then, isolate the part with the relavant function `separate_longer_delim()`, and only run the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
+Using the same AI, ask it to generate code that will find the most common second letters of **babynames** starting with "A" with the function `separate_longer_delim()`. In a new code cell below the previous cells, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. 
+
+Then, isolate the part with the relavant function `separate_longer_delim()`, and only run the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
 
 CP/CR.
 
@@ -1128,76 +1129,14 @@ babynames |>
 
 The function `separate_longer_delim(col, delim)` makes the input data frame longer through increased rows, with the string split up through a specified deliminator as an argument.
 
-
-### Exercise 19
-
-Using the same AI, ask it to generate similar code that will find the most common second letters of **babynames** starting with "A" with the function `separate_longer_position()`. Using the same code cell from the previous exercise, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. Then, isolate the part with the relavant function `separate_longer_position()`, and only run the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
-
-CP/CR.
-
-```{r strings-19}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 8)
-```
-
-
-###
-
-Our code:
-
-```{r, echo=TRUE, eval=FALSE}
-babynames |>
-  filter(str_starts(name, "A")) |>
-  separate_longer_position(name, width = 1) |>
-  mutate(pos = row_number(), .by = c(name, year, sex)) |>
-  filter(pos == 2) |>
-  count(letter = name, sort = TRUE)
-```
-
 The function `separate_longer_position(col, width)` makes the input data frame longer through increased rows, with the string split up with specified widths.
 
-
-### Exercise 20
-
-Using the same AI, ask it to generate code that will combine two columns using `str_c()`, and then separate them again with `separate_wider_delim()`. Using the same code cell from the previous exercise, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. For this one, run and print out the change after the first `mutate()`, and then run and print out what happens after the `separate_wider_delim()`. Do this by only running the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
-
-CP/CR.
-
-```{r strings-20}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 8)
-```
-
-
-###
-
-Our code:
-
-```{r, echo=TRUE, eval=FALSE}
-babynames |>
-       filter(str_starts(name, "A")) |> 
-       mutate(name_sex = str_c(name, sex, sep = "-")) |> 
-       separate_wider_delim(name_sex, delim = "-", names = c("name_clean", "sex_clean")) |> 
-       count(sex_clean, name_clean)
-```
-
-The function `separate_wider_delim(col, delim, names)` makes the input data frame wider through increased columns, with the string split up with a specified deliminator.
-
-
-### Exercise 21
+### Exercise 19
 
 Using the same AI, ask it to generate code that will combine two columns using `str_c()`, and then separate them again with `separate_wider_position()`. Using the same code cell from the previous exercise, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. For this one, run and print out the change after the first `mutate()`, and then run and print out what happens after the `separate_wider_positions()`. Do this by only running the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
 
 
-```{r strings-21}
+```{r strings-19}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -1221,18 +1160,20 @@ babynames |>
 
 The function `separate_wider_position(col, widths, names)` makes the input data frame wider through increased columns, with the string split up with a specified widths. Note how because the character length for names varied, we had to pad it with 10 extra characters so we could for sure separate the columns by width.
 
+The function `separate_wider_delim(col, delim, names)` makes the input data frame wider through increased columns, with the string split up with a specified deliminator.
+
 
 <!-- LL: Now this section (or the next) could also use an image of a plot, and students ask AI to create code to replicate plot. Students then edit the code and work through the functions we already mentioned. Could be redundant and too long though? -->
 
 <!-- LL: This following section could use another exercise for each existing one where students edit the code. Could be too long though? --> 
 
-### Exercise 22
+### Exercise 20
 
 Make a new code cell after the plot, and using AI, ask it to generate code that pipes **babynames** to `count()` with `str_length()` to find the distribution of lengths of US baby names. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
 
 CP/CR.
 
-```{r strings-22}
+```{r strings-20}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -1254,13 +1195,13 @@ babynames |>
 The function `str_length()` tells you the number of letters in the string.
 
 
-### Exercise 23
+### Exercise 21
 
 Next, get code that pipes `babynames` to `mutate()` and use `str_sub()` to find the first and last letter of each name. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
 
 CP/CR.
 
-```{r strings-23}
+```{r strings-21}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -1286,13 +1227,13 @@ babynames |>
 The function `str_sub(string, start, end)` can extract parts of a string. The start and end are the positions where the substring should start and end, and the start and end arguments are inclusive.
 
 
-### Exercise 24
+### Exercise 22
 
 Next, get code that pipes `babynames` to `filter()` with name and `str_starts()` to find all names beginning with a certain string. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
 
 CP/CR.
 
-```{r strings-24}
+```{r strings-22}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -1313,7 +1254,7 @@ babynames |> filter(str_starts(name, "A"))
 The function `str_starts()` returns TRUE if each string starts with the given pattern. We have used this function earlier in this tutorial! Also, the function `str_ends()` returns TRUE if each string ends with the given pattern. The function `str_detect()` returns TRUE if each string contains the given pattern anywhere inside.
 
 
-### Exercise 26
+### Exercise 23
 
 Now that we have all these functions in the same code cell, we can see all of the functions we have learned, and we can run any of them at will with `Cmd/Ctrl + Enter`.
 
@@ -1325,7 +1266,7 @@ show_file("analysis2.qmd", chunk = "Last")
 
 CP/CR.
 
-```{r strings-26}
+```{r strings-23}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
