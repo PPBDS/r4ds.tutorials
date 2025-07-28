@@ -425,9 +425,7 @@ ggplot(x, aes(x = sched_hour, y = dep_hour, fill = total_delay)) +
 
 ### Exercise 12
 
-Now, we are going to create a new title using string functions. Using AI, ask it to generate code that rounds the `total_delay` column to the hundreds place using `round()`.
-
-Place your cursor on the line with the code, and then run `Cmd/Ctrl + Enter`.
+Now, using AI, ask it to generate code that rounds the `total_delay` column to the hundreds place using `round()`. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into a new code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
 
 CP/CR.
 
@@ -452,9 +450,7 @@ x |>
 
 ### Exercise 13
 
-Now, we are going to create a new title using string functions. Using AI, ask it to generate code that applies `min_rank()` to the `total_delay` column in `x` to see the ranks of the highest total delay times per combination of scheduled departure hour and actual departure hour.
-
-Place your cursor on the line with the code, and then run `Cmd/Ctrl + Enter`.
+Now, using AI, ask it to generate code that applies `min_rank()` to the `total_delay` column in `x` to see the ranks of the highest total delay times per combination of scheduled departure hour and actual departure hour. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
 
 CP/CR.
 
@@ -476,6 +472,66 @@ Our code:
 x |>
   mutate(rank_total_delay = min_rank(desc(total_delay)))
 ```
+
+### Exercise 14
+
+Now, using AI, ask it to generate code that uses summarize() in your `x` dataset to calculate the mean, median, and 95th percentile (quantile) of `true_dep_delay`. In this case, copy and paste the pipe that is assigned to `x`, change it to `y`, and then remove the `count()`. Then, run the AI generated code on `y`. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into same the code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
+
+```{r numbers-14}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 5)
+```
+
+
+###
+
+Our code:
+
+```{r echo=TRUE}
+y <- flights |>
+  mutate(
+    sched_hour = sched_dep_time %/% 100,
+    sched_minute = sched_dep_time %% 100,
+    dep_hour = dep_time %/% 100,
+    dep_minute = dep_time %% 100) |>
+      mutate(true_dep_delay = pmax(dep_delay, 0))
+```
+
+```{r, echo=TRUE}
+y |>
+  summarize(
+    mean_delay   = mean(true_dep_delay, na.rm = TRUE),
+    median_delay = median(true_dep_delay, na.rm = TRUE),
+    q95_delay    = quantile(true_dep_delay, 0.95, na.rm = TRUE)
+  )
+```
+
+### Exercise 15
+
+Now that we have all these functions in the same code cell, we can see all of the functions we have learned, and we can run any of them at will with `Cmd/Ctrl + Enter`.
+
+In the Console, run:
+
+```         
+show_file("analysis1.qmd", chunk = "Last")
+```
+
+CP/CR.
+
+```{r numbers-15}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 15)
+``` 
 
 
 <!-- LL: What other functions from Chpt 13: Numbers should I include? -->
