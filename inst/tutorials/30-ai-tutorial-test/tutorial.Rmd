@@ -34,26 +34,46 @@ options(tutorial.exercise.timelimit = 600,
 ### 
 
 This tutorial covers [Chapter 12: Logical vectors](https://r4ds.hadley.nz/logicals.html), [Chapter 13: Numbers](https://r4ds.hadley.nz/numbers.html), [Chapter 14: Strings](https://r4ds.hadley.nz/strings.html), [Chapter 15: Regular expressions](https://r4ds.hadley.nz/regexps.html), and [Chapter 16: Factors](https://r4ds.hadley.nz/factors.html), from [*R for Data Science (2e)*](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. 
+
+Using theYou will learn how to parse numbers, count values and variables, find minimua and maxima of vectors, and round values with the commands [`parse_double()`](https://readr.tidyverse.org/reference/parse_atomic.html), [`parse_number()`](https://readr.tidyverse.org/reference/parse_number.html), [`count()`](https://dplyr.tidyverse.org/reference/count.html), [`pmin()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Extremes.html), 
+[`round()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Round.html), and [`min_rank()`](https://dplyr.tidyverse.org/reference/row_number.html).
+
 You will learn about some of the power of the [**stringr**](https://stringr.tidyverse.org/) package: how to create, combine, and extract strings with the **babynames** package.
-
-
-## Plotting **babynames**
-### 
-
-In this section we are going to focus on generating code to create a graph based on a dataset called `babynames`. The `babynames` is a dataset which contained names used for American babies from 1880 to 2017. If you want to explore related data, checkout [popular baby names](https://www.ssa.gov/oact/babynames/limits.html). We will be using AI to generate the code for us and then we will break down the functions within the code and how they work.
-
 
 ### Exercise 1
 
-Create a Github repo called `plotting-babynames`. Make sure to click the "Add a README file" check box.
+Create a Github repo called `transformation`. Make sure to click the "Add a README file" check box.
 
 Connect the repo to a project on your computer using `File -> New Folder from Git ...`. Make sure to select the "Open in a new window" box. 
 
 You need two Positon windows: this one for running the tutorial and the one you just created for writing your code and interacting with the Console.
 
-Select `File -> New File -> Quarto Document ...`. Provide a title -- `"Baby Names"` -- and an author (you). Render the document and save it as `analysis.qmd`.
+Paste the link to your Github repo down below.
 
-Create a `.gitignore` file with `analysis_files` on the first line and then a blank line. Save and push.
+```{r introduction-1}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Professionals keep their data science work in the cloud because laptops fail.
+
+
+<!-- LL: This tutorial format will end up being too long to complete within 1 hour per 5 chapters. Should we remove questions that ask students to play around and edit arguments in functions? Or, should we cut down on the number of functions a student needs to learn? (Only include whats necessary) -->
+
+## Plotting **flights**
+###
+
+### Exercise 1
+
+Select `File -> New File -> Quarto Document ...`. Provide a title -- `"Flights"` -- and an author (you). Render the document and save it as `analysis1.qmd`.
+
+Create a `.gitignore` file with `analysis1_files` on the first line and then a blank line. Save and push.
 
 In the Console, run:
 
@@ -65,7 +85,504 @@ If that fails, it is probably because you have not yet loaded `library(tutorial.
 
 CP/CR.
 
-```{r ai-usage-1}
+```{r numbers-1}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+###
+
+
+
+### Exercise 2
+
+In your QMD, put `library(tidyverse)` in a new code chunk. Render the file.
+
+Notice that the file does not look good because the code is visible and there are annoying messages. To take care of this, add `#| message: false` to remove all the messages in this `setup` chunk. Also add the following to the YAML header to remove all code echos from the HTML:
+
+```         
+execute: 
+  echo: false
+```
+
+In the Console, run:
+
+```         
+show_file("analysis1.qmd", chunk = "Last")
+```
+
+CP/CR.
+
+```{r numbers-2}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+###
+
+
+### Exercise 3
+
+Place your cursor in the QMD file on the `library(tidyverse)` line. Use `Cmd/Ctrl + Enter` to execute that line.
+
+Note that this causes `library(tidyverse)` to be copied down to the Console and then executed. 
+
+CP/CR.
+
+```{r numbers-3}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 3)
+```
+
+###
+
+
+
+### Exercise 4
+
+Load `nycflights13` in your QMD with the `library()` function. 
+
+In the Console, run:
+
+```         
+show_file("analysis1.qmd", chunk = "Last")
+```
+
+CP/CR.
+
+```{r numbers-4}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+This dataset from the contains information about all flights that departed from NYC (e.g. EWR, JFK and LGA) to destinations in the United States, Puerto Rico, and the American Virgin Islands) in 2013.
+
+### Exercise 5
+
+Type `flights` in the Console to view the dataset. Copy and paste the resulting tibble.
+
+```{r numbers-5}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 8)
+```
+
+###
+
+Typing out `flights` is the same as typing out `print(flights)`. You might be wondering what tibble is, A tibble is a new form of a data frame in R that is part of the tidyverse library, and Tibbles print the data in a more efficient format than a data frame, showing the values of the columns, their datatype, and the size of the dataset.
+
+### Exercise 6
+
+Using your favorite AI, prompt it to generate R code that takes `flights` and breaks scheduled and actual departure times into hours and minutes using %/% and %%. Make sure to provide a tibble of **flights** for the AI to use. If necessary, change the code so that the result of the pipe is not assigned to a variable. Add the code to your QMD in a new chunk. Save the file. Place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
+
+In the Console, run:
+
+```         
+show_file("analysis1.qmd", chunk = "Last")
+```
+
+CP/CR.
+
+```{r numbers-6}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 4)
+```
+
+
+###
+
+Our code:
+
+```{r, echo=TRUE}
+library(nycflights13)
+flights |>
+  mutate(
+    sched_hour = sched_dep_time %/% 100,
+    sched_minute = sched_dep_time %% 100,
+    dep_hour = dep_time %/% 100,
+    dep_minute = dep_time %% 100)
+```
+
+
+### Exercise 7
+
+Next, prompt the AI to generate R code that continues the pipe and adds a new column `true_dep_delay`, treating early departures (negative values) as 0 using `mutate()` and `pmax()`. If necessary, change the code so that the result of the pipe is not assigned to a variable. Add the code to your QMD in the same chunk. Save the file. Place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
+
+In the Console, run:
+
+```         
+show_file("analysis1.qmd", chunk = "Last")
+```
+
+CP/CR.
+
+```{r numbers-7}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 6)
+```
+
+
+###
+
+Our code:
+
+```{r, echo=TRUE}
+flights |>
+  mutate(
+    sched_hour = sched_dep_time %/% 100,
+    sched_minute = sched_dep_time %% 100,
+    dep_hour = dep_time %/% 100,
+    dep_minute = dep_time %% 100) |>
+      mutate(true_dep_delay = pmax(dep_delay, 0))
+```
+
+### Exercise 8
+
+Next, prompt the AI to generate R code that finishes the pipe and collapses the dataset, grouping by hour pairs and summing delay using `count(..., wt=...)`. Essentially, we want to sum the total number of minutes of positive departure delay for each combination of scheduled hour and actual departure hour.
+If necessary, change the code so that the result of the pipe is not assigned to a variable. Add the code to your QMD in the same chunk. Place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
+
+In the Console, run:
+
+```         
+show_file("analysis1.qmd", chunk = "Last")
+```
+
+CP/CR.
+
+```{r numbers-8}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 7)
+```
+
+
+###
+
+Our code:
+
+```{r, echo=TRUE}
+flights |>
+  mutate(
+    sched_hour = sched_dep_time %/% 100,
+    sched_minute = sched_dep_time %% 100,
+    dep_hour = dep_time %/% 100,
+    dep_minute = dep_time %% 100) |>
+      mutate(true_dep_delay = pmax(dep_delay, 0))|>
+        count(sched_hour, dep_hour, wt = true_dep_delay, name = "total_delay")
+```
+
+### Exercise 9
+
+Now assign the pipe to the variable `x`. Place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
+
+In the Console, run:
+
+```         
+show_file("analysis1.qmd", chunk = "Last")
+```
+
+CP/CR.
+
+```{r numbers-9}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 6)
+```
+
+
+###
+
+Our code:
+
+```{r, echo=TRUE}
+x <- flights |>
+  mutate(
+    sched_hour = sched_dep_time %/% 100,
+    sched_minute = sched_dep_time %% 100,
+    dep_hour = dep_time %/% 100,
+    dep_minute = dep_time %% 100) |>
+      mutate(true_dep_delay = pmax(dep_delay, 0)) |>
+        count(sched_hour, dep_hour, wt = true_dep_delay, name = "total_delay")
+```
+
+### Exercise 10
+
+Now that we have filtered our dataset through a pipe, we need to be on track with the same, correct, code. Replace your code with our code in your QMD.
+
+In the Console, run:
+
+```         
+show_file("analysis1.qmd", chunk = "Last")
+```
+
+CP/CR.
+
+```{r numbers-10}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 6)
+```
+
+###
+
+<!-- XX: Insert a knowledge drop related to this project. -->
+
+
+### Exercise 11
+
+Go to the AI and ask it to generate R code that plots a clean and insightful heatmap that shows where delays tend to cluster by scheduled vs. actual departure hour. Mention you want to use the data from `x` and copy and paste the `x` you ran in the Console with the resulting tibble. You only need the top 3 lines, mainly to include column names.
+
+Within `labs()` edit or add a proper title, subtitle, and caption. If axis labels are appropriate, add them, but if unnecessary, don't bother. Don't assign the code for the plot to any variable. Add this code to a new code cell. Run `Cmd/Ctrl + Shift + K`.
+
+In the Console, run:
+
+```         
+show_file("analysis1.qmd", chunk = "Last")
+```
+
+CP/CR.
+
+```{r numbers-11}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 12)
+```
+
+
+###
+
+Our code:
+
+```{r echo=FALSE}
+x <- flights |>
+  mutate(
+    sched_hour = sched_dep_time %/% 100,
+    sched_minute = sched_dep_time %% 100,
+    dep_hour = dep_time %/% 100,
+    dep_minute = dep_time %% 100) |>
+      mutate(true_dep_delay = pmax(dep_delay, 0)) |>
+        count(sched_hour, dep_hour, wt = true_dep_delay, name = "total_delay")
+```
+
+```{r, echo=TRUE}
+ggplot(x, aes(x = sched_hour, y = dep_hour, fill = total_delay)) +
+  geom_tile(color = "white") +
+  scale_fill_viridis_c(option = "plasma", name = "Total Delay (min)") +
+  labs(
+    title = "Total Departure Delay by Scheduled Hour and Actual Hour",
+    subtitle = "The most total delay time occurs around 5 PM with a 1 hour delay",
+    x = "Scheduled Departure Hour",
+    y = "Actual Departure Hour",
+    caption = "Source: nycflights13::flights"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    panel.grid = element_blank(),
+    plot.title = element_text(face = "bold", size = 18),
+    axis.text = element_text(face = "bold")
+  )
+```
+
+### Exercise 12
+
+Now, using AI, ask it to generate code that rounds the `total_delay` column to the hundreds place using `round()`. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into a new code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
+
+```{r numbers-12}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+
+###
+
+Our code:
+
+```{r, echo=TRUE}
+x |>
+  mutate(total_delay = round(total_delay, -2))
+```
+
+### Exercise 13
+
+Now, using AI, ask it to generate code that applies `min_rank()` to the `total_delay` column in `x` to see the ranks of the highest total delay times per combination of scheduled departure hour and actual departure hour. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
+
+```{r numbers-13}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+
+###
+
+Our code:
+
+```{r, echo=TRUE}
+x |>
+  mutate(rank_total_delay = min_rank(desc(total_delay)))
+```
+
+### Exercise 14
+
+Now, using AI, ask it to generate code that uses summarize() in your `x` dataset to calculate the mean, median, and 95th percentile (quantile) of `true_dep_delay`. In this case, copy and paste the pipe that is assigned to `x`, change it to `y`, and then remove the `count()`. Then, run the AI generated code on `y`. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into same the code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
+
+```{r numbers-14}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 5)
+```
+
+
+###
+
+Our code:
+
+```{r echo=TRUE}
+y <- flights |>
+  mutate(
+    sched_hour = sched_dep_time %/% 100,
+    sched_minute = sched_dep_time %% 100,
+    dep_hour = dep_time %/% 100,
+    dep_minute = dep_time %% 100) |>
+      mutate(true_dep_delay = pmax(dep_delay, 0))
+```
+
+```{r, echo=TRUE}
+y |>
+  summarize(
+    mean_delay   = mean(true_dep_delay, na.rm = TRUE),
+    median_delay = median(true_dep_delay, na.rm = TRUE),
+    q95_delay    = quantile(true_dep_delay, 0.95, na.rm = TRUE)
+  )
+```
+
+### Exercise 15
+
+Now that we have all these functions in the same code cell, we can see all of the functions we have learned, and we can run any of them at will with `Cmd/Ctrl + Enter`.
+
+In the Console, run:
+
+```         
+show_file("analysis1.qmd", chunk = "Last")
+```
+
+CP/CR.
+
+```{r numbers-15}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 15)
+``` 
+
+<!-- LL: What other functions from Chpt 13: Numbers should I include? -->
+
+### Exercise 16
+
+Publish your rendered QMD to GitHub Pages. In the Terminal --- not the Console! --- run:
+
+````
+quarto publish gh-pages analysis1.qmd
+````
+
+Copy/paste the resulting URL below.
+
+```{r numbers-16}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Commit/push everything.
+
+
+## Plotting **babynames**
+### 
+
+In this section we are going to focus on generating code to create a graph based on a dataset called `babynames`. The `babynames` is a dataset which contained names used for American babies from 1880 to 2017. If you want to explore related data, checkout [popular baby names](https://www.ssa.gov/oact/babynames/limits.html). We will be using AI to generate the code for us and then we will break down the functions within the code and how they work.
+
+
+### Exercise 1
+
+Select `File -> New File -> Quarto Document ...`. Provide a title -- `"Baby Names"` -- and an author (you). Render the document and save it as `analysis2.qmd`.
+
+Create a `.gitignore` file with `analysis2_files` on the first line and then a blank line. Save and push.
+
+In the Console, run:
+
+```         
+show_file(".gitignore")
+```
+
+If that fails, it is probably because you have not yet loaded `library(tutorial.helpers)` in the Console.
+
+CP/CR.
+
+```{r strings-1}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -93,12 +610,12 @@ execute:
 In the Console, run:
 
 ```         
-show_file("analysis.qmd", chunk = "Last")
+show_file("analysis2.qmd", chunk = "Last")
 ```
 
 CP/CR.
 
-```{r ai-usage-2}
+```{r strings-2}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -118,7 +635,7 @@ Note that this causes `library(tidyverse)` to be copied down to the Console and 
 
 CP/CR.
 
-```{r ai-usage-3}
+```{r strings-3}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -139,12 +656,12 @@ Load `babynames` in your QMD with the `library()` function.
 In the Console, run:
 
 ```         
-show_file("analysis.qmd", chunk = "Last")
+show_file("analysis2.qmd", chunk = "Last")
 ```
 
 CP/CR.
 
-```{r ai-usage-4}
+```{r strings-4}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -163,7 +680,7 @@ We load **babynames** into our current QMD so it is accessible to use with the r
 
 Type `babynames` in the Console to view the dataset. Copy and paste the resulting tibble.
 
-```{r ai-usage-5}
+```{r strings-5}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -184,12 +701,12 @@ Using your favorite AI, prompt it to generate R code that takes `babynames` and 
 In the Console, run:
 
 ```         
-show_file("analysis.qmd", chunk = "Last")
+show_file("analysis2.qmd", chunk = "Last")
 ```
 
 CP/CR.
 
-```{r ai-usage-6}
+```{r strings-6}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -209,9 +726,9 @@ babynames |>
 ```
 
 
-<!-- DK: Knowledge drops focus on material from the relevant chapters. -->
+<!-- DK: Knowledge drops focus on material from the relevant chapters. DONE -->
 
-The `filter()` function is used for subsetting data frames by selecting rows that satisfy specific conditions. In this case, it takes rows using `str_starts()`, which essentially takes a column (name), and selects the rows where the string of name starts with A. To check for `NA` values, use `any()` function with argument `is.na()`, argument of which should be the dataset babynames. 
+The function `str_starts()` takes a column (in this case it is `name`), and selects the rows where the string of name starts with A. To check for `NA` values, use `any()` function with argument `is.na()`, argument of which should be the dataset babynames. 
 
 
 ### Exercise 7
@@ -220,7 +737,7 @@ Now edit the previous code so that the letter is not `"A"`, but rather `"As"`. P
 
 CP/CR.
 
-```{r ai-usage-7}
+```{r strings-7}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -258,12 +775,12 @@ If your AI uses `group_by()`, get rid of it and add `.by = c(...)` as an argumen
 In the Console, run:
 
 ```         
-show_file("analysis.qmd", chunk = "Last")
+show_file("analysis2.qmd", chunk = "Last")
 ```
 
 CP/CR.
 
-```{r ai-usage-8}
+```{r strings-8}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -292,12 +809,12 @@ Now that we have filtered our dataset through a pipe, we need to be on track wit
 In the Console, run:
 
 ```         
-show_file("analysis.qmd", chunk = "Last")
+show_file("analysis2.qmd", chunk = "Last")
 ```
 
 CP/CR.
 
-```{r ai-usage-9}
+```{r strings-9}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -321,7 +838,7 @@ Place your cursor on the line where the pipe is assigned to x, run `Cmd/Ctrl + E
 
 CP/CR.
 
-```{r ai-usage-10}
+```{r strings-10}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -348,7 +865,7 @@ and ran in the Console. Hit `Enter`.
 
 CP/CR.
 
-```{r ai-usage-11}
+```{r strings-11}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -379,12 +896,12 @@ Within `labs()` edit or add a proper title, subtitle, and caption. If axis label
 In the Console, run:
 
 ```         
-show_file("analysis.qmd", chunk = "Last")
+show_file("analysis2.qmd", chunk = "Last")
 ```
 
 CP/CR.
 
-```{r ai-usage-12}
+```{r strings-12}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -430,7 +947,7 @@ Place your cursor on the line with the code, and then run `Cmd/Ctrl + Enter`. Th
 
 CP/CR.
 
-```{r ai-usage-13}
+```{r strings-13}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -464,7 +981,7 @@ Then, type `str_view(title2)` in the Console, and press `Enter` to view the stri
 
 CP/CR.
 
-```{r ai-usage-14}
+```{r strings-14}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -499,7 +1016,7 @@ Place your cursor on the line with the code, and then run `Cmd/Ctrl + Enter`. Th
 
 CP/CR.
 
-```{r ai-usage-15}
+```{r strings-15}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -528,7 +1045,7 @@ Then, type `str_view(subtitle2)` in the Console, and press `Enter` to view the s
 
 CP/CR.
 
-```{r ai-usage-16}
+```{r strings-16}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -560,12 +1077,12 @@ In a new code chunk after the graph, copy and paste our generated code into your
 In the Console, run:
 
 ```         
-show_file("analysis.qmd", chunk = "Last")
+show_file("analysis2.qmd", chunk = "Last")
 ```
 
 CP/CR.
 
-```{r ai-usage-17}
+```{r strings-17}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -596,27 +1113,26 @@ insight <- str_c(
 insight
 ```
 
-<!-- LL: make this also use `summarize` -->
-
 `str_c()` and `str_glue()` are suitable for use with `mutate()` since their output matches the length of their inputs. However, if you need a function that works well with `summarize()` and always returns a single string, `str_flatten()` comes into play. It takes a character vector as input and combines each element of the vector into a single string.
 
 One variation of `str_flatten()` is `str_flatten_comma()` is a variation designed specifically for flattening with commas. It automatically recognizes if last uses the Oxford comma and handles the special case of 2 elements.
 
-<!-- LL: These following 4 exercises need fixing on the AI generated code to make it work properly, and they need 4 more exercises where students edit code -->
 
 ### Exercise 18
 
-Using the same AI, ask it to generate code that will find the most common second letters of **babynames** starting with "A" with the function `separate_longer_delim()`. In a new code cell below the previous cells, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. Then, isolate the part with the relavant function `separate_longer_delim()`, and only run the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
+Using the same AI, ask it to generate code that will find the most common second letters of **babynames** starting with "A" with the function `separate_longer_delim()`. In a new code cell below the previous cells, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. 
+
+Then, isolate the part with the relavant function `separate_longer_delim()`, and only run the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
 
 CP/CR.
 
-```{r ai-usage-18}
+```{r strings-18}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
 	try_again_button = "Edit Answer",
 	incorrect = NULL,
-	rows = 8)
+	rows = 6)
 ```
 
 
@@ -635,82 +1151,22 @@ babynames |>
 
 The function `separate_longer_delim(col, delim)` makes the input data frame longer through increased rows, with the string split up through a specified deliminator as an argument.
 
+The function `separate_longer_position(col, width)` makes the input data frame longer through increased rows, with the string split up with specified widths.
 
 ### Exercise 19
 
-Using the same AI, ask it to generate similar code that will find the most common second letters of **babynames** starting with "A" with the function `separate_longer_position()`. Using the same code cell from the previous exercise, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. Then, isolate the part with the relavant function `separate_longer_position()`, and only run the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
+Using the same AI, ask it to generate code that will combine two columns using `str_c()`, and then separate them again with `separate_wider_position()`. Using the same code cell from the previous exercise, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. 
 
-CP/CR.
+For this one, run and print out the change after the first `mutate()`, and then run and print out what happens after the `separate_wider_positions()`. Do this by only running the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
 
-```{r ai-usage-19}
+
+```{r strings-19}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
 	try_again_button = "Edit Answer",
 	incorrect = NULL,
-	rows = 8)
-```
-
-
-###
-
-Our code:
-
-```{r, echo=TRUE, eval=FALSE}
-babynames |>
-  filter(str_starts(name, "A")) |>
-  separate_longer_position(name, width = 1) |>
-  mutate(pos = row_number(), .by = c(name, year, sex)) |>
-  filter(pos == 2) |>
-  count(letter = name, sort = TRUE)
-```
-
-The function `separate_longer_position(col, width)` makes the input data frame longer through increased rows, with the string split up with specified widths.
-
-
-### Exercise 20
-
-Using the same AI, ask it to generate code that will combine two columns using `str_c()`, and then separate them again with `separate_wider_delim()`. Using the same code cell from the previous exercise, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. For this one, run and print out the change after the first `mutate()`, and then run and print out what happens after the `separate_wider_delim()`. Do this by only running the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
-
-CP/CR.
-
-```{r ai-usage-20}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 8)
-```
-
-
-###
-
-Our code:
-
-```{r, echo=TRUE, eval=FALSE}
-babynames |>
-       filter(str_starts(name, "A")) |> 
-       mutate(name_sex = str_c(name, sex, sep = "-")) |> 
-       separate_wider_delim(name_sex, delim = "-", names = c("name_clean", "sex_clean")) |> 
-       count(sex_clean, name_clean)
-```
-
-The function `separate_wider_delim(col, delim, names)` makes the input data frame wider through increased columns, with the string split up with a specified deliminator.
-
-
-### Exercise 21
-
-Using the same AI, ask it to generate code that will combine two columns using `str_c()`, and then separate them again with `separate_wider_position()`. Using the same code cell from the previous exercise, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. For this one, run and print out the change after the first `mutate()`, and then run and print out what happens after the `separate_wider_positions()`. Do this by only running the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
-
-
-```{r ai-usage-21}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 8)
+	rows = 6)
 ```
 
 
@@ -728,18 +1184,20 @@ babynames |>
 
 The function `separate_wider_position(col, widths, names)` makes the input data frame wider through increased columns, with the string split up with a specified widths. Note how because the character length for names varied, we had to pad it with 10 extra characters so we could for sure separate the columns by width.
 
+The function `separate_wider_delim(col, delim, names)` makes the input data frame wider through increased columns, with the string split up with a specified deliminator.
+
 
 <!-- LL: Now this section (or the next) could also use an image of a plot, and students ask AI to create code to replicate plot. Students then edit the code and work through the functions we already mentioned. Could be redundant and too long though? -->
 
 <!-- LL: This following section could use another exercise for each existing one where students edit the code. Could be too long though? --> 
 
-### Exercise 22
+### Exercise 20
 
 Make a new code cell after the plot, and using AI, ask it to generate code that pipes **babynames** to `count()` with `str_length()` to find the distribution of lengths of US baby names. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
 
 CP/CR.
 
-```{r ai-usage-22}
+```{r strings-20}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -761,13 +1219,13 @@ babynames |>
 The function `str_length()` tells you the number of letters in the string.
 
 
-### Exercise 23
+### Exercise 21
 
 Next, get code that pipes `babynames` to `mutate()` and use `str_sub()` to find the first and last letter of each name. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
 
 CP/CR.
 
-```{r ai-usage-23}
+```{r strings-21}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -793,13 +1251,13 @@ babynames |>
 The function `str_sub(string, start, end)` can extract parts of a string. The start and end are the positions where the substring should start and end, and the start and end arguments are inclusive.
 
 
-### Exercise 24
+### Exercise 22
 
 Next, get code that pipes `babynames` to `filter()` with name and `str_starts()` to find all names beginning with a certain string. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
 
 CP/CR.
 
-```{r ai-usage-24}
+```{r strings-22}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -820,48 +1278,19 @@ babynames |> filter(str_starts(name, "A"))
 The function `str_starts()` returns TRUE if each string starts with the given pattern. We have used this function earlier in this tutorial! Also, the function `str_ends()` returns TRUE if each string ends with the given pattern. The function `str_detect()` returns TRUE if each string contains the given pattern anywhere inside.
 
 
-### Exercise 25
-
-Next, get code that pipes `babynames` to `filter()` and detect all names with an "a", then pipe it to `mutate()` with `str_replace_all()` to create a new column that replaces all the "a"s with an "x". Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
-
-CP/CR.
-
-```{r ai-usage-25}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 5)
-``` 
-
-
-###
-
-Our code:
-
-```{r, echo=TRUE, eval=FALSE}
-babynames |>
-  filter(str_detect(name, "a")) |>
-  mutate(modified = str_replace_all(name, "ph", "f"))
-```
-
-The functions `str_replace()` and `str_replace_all()` replace the first match of a pattern in each string.
-
-
-### Exercise 26
+### Exercise 23
 
 Now that we have all these functions in the same code cell, we can see all of the functions we have learned, and we can run any of them at will with `Cmd/Ctrl + Enter`.
 
 In the Console, run:
 
 ```         
-show_file("analysis.qmd", chunk = "Last")
+show_file("analysis2.qmd", chunk = "Last")
 ```
 
 CP/CR.
 
-```{r ai-usage-26}
+```{r strings-23}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -869,6 +1298,30 @@ question_text(NULL,
 	incorrect = NULL,
 	rows = 15)
 ``` 
+
+### Exercise 24
+
+Publish your rendered QMD to GitHub Pages. In the Terminal --- not the Console! --- run:
+
+````
+quarto publish gh-pages analysis2.qmd
+````
+
+Copy/paste the resulting URL below.
+
+```{r strings-24}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+### 
+
+Commit/push everything.
+
 
 ## Summary
 ### 
