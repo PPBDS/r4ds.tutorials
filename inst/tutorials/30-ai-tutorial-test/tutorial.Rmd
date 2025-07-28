@@ -199,7 +199,7 @@ Using your favorite AI, prompt it to generate R code that takes `flights` and br
 In the Console, run:
 
 ```         
-show_file("analysis2.qmd", chunk = "Last")
+show_file("analysis1.qmd", chunk = "Last")
 ```
 
 CP/CR.
@@ -235,7 +235,7 @@ Next, prompt the AI to generate R code that continues the pipe and adds a new co
 In the Console, run:
 
 ```         
-show_file("analysis2.qmd", chunk = "Last")
+show_file("analysis1.qmd", chunk = "Last")
 ```
 
 CP/CR.
@@ -272,7 +272,7 @@ If necessary, change the code so that the result of the pipe is not assigned to 
 In the Console, run:
 
 ```         
-show_file("analysis2.qmd", chunk = "Last")
+show_file("analysis1.qmd", chunk = "Last")
 ```
 
 CP/CR.
@@ -304,12 +304,12 @@ flights |>
 
 ### Exercise 9
 
-Now, remove the `count()` part of the pipe, and assign the pipe to the variable `x`. Place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
+Now assign the pipe to the variable `x`. Place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
 
 In the Console, run:
 
 ```         
-show_file("analysis2.qmd", chunk = "Last")
+show_file("analysis1.qmd", chunk = "Last")
 ```
 
 CP/CR.
@@ -336,8 +336,92 @@ x <- flights |>
     dep_hour = dep_time %/% 100,
     dep_minute = dep_time %% 100) |>
       mutate(true_dep_delay = pmax(dep_delay, 0))
+        count(sched_hour, dep_hour, wt = true_dep_delay, name = "total_delay")
 ```
 
+### Exercise 10
+
+Now that we have filtered our dataset through a pipe, we need to be on track with the same, correct, code. Replace your code with our code in your QMD.
+
+In the Console, run:
+
+```         
+show_file("analysis1.qmd", chunk = "Last")
+```
+
+CP/CR.
+
+```{r numbers-10}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 6)
+```
+
+###
+
+<!-- XX: Insert a knowledge drop related to this project. -->
+
+
+### Exercise 11
+
+Go to the AI and ask it to generate R code that plots a clean and insightful heatmap that shows where delays tend to cluster by scheduled vs. actual departure hour. Mention you want to use the data from `x` and copy and paste the `x` you ran in the Console with the resulting tibble. You only need the top 3 lines, mainly to include column names.
+
+Within `labs()` edit or add a proper title, subtitle, and caption. If axis labels are appropriate, add them, but if unnecessary, don't bother. Don't assign the code for the plot to any variable. Add this code to a new code cell. Run `Cmd/Ctrl + Shift + K`.
+
+In the Console, run:
+
+```         
+show_file("analysis1.qmd", chunk = "Last")
+```
+
+CP/CR.
+
+```{r numbers-11}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 12)
+```
+
+
+###
+
+Our code:
+
+```{r echo=FALSE}
+x <- flights |>
+  mutate(
+    sched_hour = sched_dep_time %/% 100,
+    sched_minute = sched_dep_time %% 100,
+    dep_hour = dep_time %/% 100,
+    dep_minute = dep_time %% 100) |>
+      mutate(true_dep_delay = pmax(dep_delay, 0))
+        count(sched_hour, dep_hour, wt = true_dep_delay, name = "total_delay")
+```
+
+```{r, echo=TRUE}
+ggplot(x, aes(x = sched_hour, y = dep_hour, fill = total_delay)) +
+  geom_tile(color = "white") +
+  scale_fill_viridis_c(option = "plasma", name = "Total Delay (min)") +
+  labs(
+    title = "Total Departure Delay by Scheduled Hour and Actual Hour",
+    subtitle = "The most total delay time occurs around 5 PM with a 1 hour delay",
+    x = "Scheduled Departure Hour",
+    y = "Actual Departure Hour",
+    caption = "Source: nycflights13::flights"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    panel.grid = element_blank(),
+    plot.title = element_text(face = "bold", size = 18),
+    axis.text = element_text(face = "bold")
+  )
+```
 
 ## Plotting **babynames**
 ### 
