@@ -1054,11 +1054,11 @@ One variation of `str_flatten()` is `str_flatten_comma()` is a variation designe
 
 ### Exercise 15
 
-Using the same AI, ask it to generate code that will find the most common second letters of **babynames** starting with "A" with the function `separate_longer_delim()`. In a new code cell below the previous cells, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. 
+Using the same AI, ask it to generate code that will collapse our previously made `top_a_1950`, and then split the names into separate rows with `separate_longer_delim()`. In a new code cell below the previous cells, copy and paste the generated code.
 
-Then, isolate the part with the relavant function `separate_longer_delim()`, and only run the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
+Then, isolate the part where `top_a_1950` is collapsed, and either run it in the Console to view the tibble. Then, run the whole thing with the relavant function `separate_longer_delim()` by placing your cursor at the top and pressing `Cmd/Ctrl + Enter`.
 
-CP/CR.
+CP/CR both tibbles.
 
 ```{r strings-15}
 question_text(NULL,
@@ -1074,13 +1074,15 @@ question_text(NULL,
 
 Our code:
 
-```{r, echo=TRUE, eval=FALSE}
-babynames |>
-  filter(str_starts(name, "A")) |>
-  separate_longer_delim(name, delim = '') |>
-  mutate(pos = row_number(), .by = c(name, year, sex)) |>
-  filter(pos == 2) |>
-  count(letter = name, sort = TRUE)
+```{r, echo=TRUE}
+collapsed <- top_a_1950 |>
+  summarize(name_list = str_c(name, collapse = ","))
+collapsed
+```
+
+```{r, echo=TRUE}
+collapsed |>
+  separate_longer_delim(name_list, delim = ",")
 ```
 
 The function `separate_longer_delim(col, delim)` makes the input data frame longer through increased rows, with the string split up through a specified deliminator as an argument.
@@ -1089,10 +1091,11 @@ The function `separate_longer_position(col, width)` makes the input data frame l
 
 ### Exercise 16
 
-Using the same AI, ask it to generate code that will combine two columns using `str_c()`, and then separate them again with `separate_wider_position()`. Using the same code cell from the previous exercise, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. 
+Using the same AI, ask it to generate code that will separate the first letter of a name from `top_a_1950` from the rest of the name using `separate_wider_position()`. Using the same code cell from the previous exercise, copy and paste the generated code. Then, place your cursor on any line of the code and press `Cmd/Ctrl + Shift + Enter` to run it in the Console. 
 
-For this one, run and print out the change after the first `mutate()`, and then run and print out what happens after the `separate_wider_positions()`. Do this by only running the code up to that section by placing your cursor at the top, and then run the code line by line with `Cmd/Ctrl + Enter` to see what the function changed in the dataset.
+CP/CR.
 
+If there is an error, plug it back into AI and see what it says.
 
 ```{r strings-16}
 question_text(NULL,
@@ -1109,14 +1112,15 @@ question_text(NULL,
 Our code:
 
 ```{r, echo=TRUE, eval=FALSE}
-babynames |> 
-       filter(str_starts(name, "A")) |> 
-       mutate(name_sex = str_c(str_pad(name, width = 10, side = "right"), sex)) |> 
-       separate_wider_position(name_sex, positions = c(10), names = c("name_clean", "sex_clean")) |> 
-       select(name_clean, sex_clean)
+top_a_1950 |>
+  separate_wider_position(
+    name,
+    widths = c(first_letter = 1, rest_of_name = 100),
+    too_few = "align_start"
+  )
 ```
 
-The function `separate_wider_position(col, widths, names)` makes the input data frame wider through increased columns, with the string split up with a specified widths. Note how because the character length for names varied, we had to pad it with 10 extra characters so we could for sure separate the columns by width.
+The function `separate_wider_position(col, widths)` makes the input data frame wider through increased columns, with the string split up with a specified widths. Note how because the character length for names varied, we had to pad it with 10 extra characters so we could for sure separate the columns by width.
 
 The function `separate_wider_delim(col, delim, names)` makes the input data frame wider through increased columns, with the string split up with a specified deliminator.
 
