@@ -193,6 +193,33 @@ Typing out `flights` is the same as typing out `print(flights)`. You might be wo
 
 ### Exercise 3
 
+Now, ask your favorite  AI to generate R code that creates a new column from `flights` that just contains the numbers from the `tailnum` column. Then, only show that new column. Copy the code into the Console and hit `Enter` to run it.
+
+CP/CR.
+
+```{r numbers-3}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 4)
+```
+
+###
+
+Our code:
+
+```{r, echo=TRUE}
+flights |>
+  mutate(tailnum_num = parse_number(tailnum)) |> 
+  select(tailnum_num)
+```
+
+Knowledge drop on parse_number(), parse_integer(), and parse_double().
+
+### Exercise 4
+
 Now, ask your favorite AI to use `select()` on `flights` to obtain only the columns `dep_time`, `sched_dep_time`, and `dep_delay`.
 Make sure to provide a tibble of **flights** for the AI to use.
 
@@ -202,7 +229,7 @@ Then, type `flights_clean` in the Console and hit `Enter`.
 
 CP/CR the resulting tibble.
 
-```{r numbers-3}
+```{r numbers-4}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -221,13 +248,13 @@ flights_clean <- flights |>
 flights_clean
 ```
 
-### Exercise 4
-
 <!-- DK: You need some guided poking. Pipe flights to select() ... Probably just one question. DONE
 
 flights |> 
 	select(year:dep_delay)
 -->
+
+### Exercise 5
 
 Next, prompt the AI to generate R code that takes `flights` and breaks scheduled and actual departure times into hours and minutes using %/% and %%. If you have not done so before, provide a tibble of **flights** for the AI to use. If necessary, change the code so that the result of the pipe is not assigned to a variable. Add the code to your QMD in a new chunk. Save the file. Place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
 
@@ -239,7 +266,7 @@ show_file("analysis.qmd", chunk = "Last")
 
 CP/CR.
 
-```{r numbers-4}
+```{r numbers-5}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -263,7 +290,7 @@ flights_clean |>
 ```
 
 
-### Exercise 5
+### Exercise 6
 
 Next, prompt the AI to generate R code that continues the pipe and adds a new column `true_dep_delay`, treating early departures (negative values) as 0 using `mutate()` and `pmax()`. If necessary, change the code so that the result of the pipe is not assigned to a variable. Add the code to your QMD in the same chunk. Save the file. Place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
 
@@ -275,7 +302,7 @@ show_file("analysis.qmd", chunk = "Last")
 
 CP/CR.
 
-```{r numbers-5}
+```{r numbers-6}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -299,7 +326,7 @@ flights_clean |>
       mutate(true_dep_delay = pmax(dep_delay, 0))
 ```
 
-### Exercise 6
+### Exercise 7
 
 Next, prompt the AI to generate R code that finishes the pipe and collapses the dataset, grouping by hour pairs and summing delay using `count(..., wt=...)`. Essentially, we want to sum the total number of minutes of positive departure delay for each combination of scheduled hour and actual departure hour.
 If necessary, change the code so that the result of the pipe is not assigned to a variable. Add the code to your QMD in the same chunk. Place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
@@ -312,7 +339,7 @@ show_file("analysis.qmd", chunk = "Last")
 
 CP/CR.
 
-```{r numbers-6}
+```{r numbers-7}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -337,7 +364,7 @@ flights_clean |>
         count(sched_hour, dep_hour, wt = true_dep_delay, name = "total_delay")
 ```
 
-### Exercise 7
+### Exercise 8
 
 Now assign the pipe to the variable `x`. Place your cursor on the first line of the code and run `Cmd/Ctrl + Enter`.
 
@@ -349,7 +376,7 @@ show_file("analysis.qmd", chunk = "Last")
 
 CP/CR.
 
-```{r numbers-7}
+```{r numbers-8}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -374,7 +401,7 @@ x <- flights_clean |>
         count(sched_hour, dep_hour, wt = true_dep_delay, name = "total_delay")
 ```
 
-### Exercise 8
+### Exercise 9
 
 Now that we have filtered our dataset through a pipe, we need to be on track with the same, correct, code. Replace your code with our code in your QMD.
 
@@ -386,7 +413,7 @@ show_file("analysis.qmd", chunk = "Last")
 
 CP/CR.
 
-```{r numbers-8}
+```{r numbers-9}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -400,7 +427,7 @@ question_text(NULL,
 <!-- XX: Insert a knowledge drop related to this project. -->
 
 
-### Exercise 9
+### Exercise 10
 
 Go to the AI and ask it to generate R code that plots a clean and insightful heatmap that shows where delays tend to cluster by scheduled vs. actual departure hour. Mention you want to use the data from `x` and copy and paste the `x` you ran in the Console with the resulting tibble. You only need the top 3 lines, mainly to include column names.
 
@@ -414,7 +441,7 @@ show_file("analysis.qmd", chunk = "Last")
 
 CP/CR.
 
-```{r numbers-9}
+```{r numbers-10}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -458,34 +485,9 @@ ggplot(x, aes(x = sched_hour, y = dep_hour, fill = total_delay)) +
   )
 ```
 
-### Exercise 10
-
-Now, using AI, ask it to generate code that rounds the `total_delay` column to the hundreds place using `round()`. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into a new code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
-
-CP/CR.
-
-```{r numbers-10}
-question_text(NULL,
-	answer(NULL, correct = TRUE),
-	allow_retry = TRUE,
-	try_again_button = "Edit Answer",
-	incorrect = NULL,
-	rows = 3)
-```
-
-
-###
-
-Our code:
-
-```{r, echo=TRUE}
-x |>
-  mutate(total_delay = round(total_delay, -2))
-```
-
 ### Exercise 11
 
-Now, using AI, ask it to generate code that applies `min_rank()` to the `total_delay` column in `x` to see the ranks of the highest total delay times per combination of scheduled departure hour and actual departure hour. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+Now, using AI, ask it to generate code that rounds the `total_delay` column to the hundreds place using `round()`. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into a new code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
 
 CP/CR.
 
@@ -505,16 +507,41 @@ Our code:
 
 ```{r, echo=TRUE}
 x |>
-  mutate(rank_total_delay = min_rank(desc(total_delay)))
+  mutate(total_delay = round(total_delay, -2))
 ```
 
 ### Exercise 12
+
+Now, using AI, ask it to generate code that applies `min_rank()` to the `total_delay` column in `x` to see the ranks of the highest total delay times per combination of scheduled departure hour and actual departure hour. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into the same code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
+
+CP/CR.
+
+```{r numbers-12}
+question_text(NULL,
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
+```
+
+
+###
+
+Our code:
+
+```{r, echo=TRUE}
+x |>
+  mutate(rank_total_delay = min_rank(desc(total_delay)))
+```
+
+### Exercise 13
 
 Now, using AI, ask it to generate code that uses summarize() in your `x` dataset to calculate the mean, median, and 95th percentile (quantile) of `true_dep_delay`. In this case, copy and paste the pipe that is assigned to `x`, change it to `y`, and then remove the `count()`. Then, run the AI generated code on `y`. Make sure that the pipe is not assigned to any variable so it is easier to run. Copy and paste the code into same the code cell. Place your cursor on the line with the code, and press `Cmd/Ctrl + Enter` to run the code in the Console.
 
 CP/CR.
 
-```{r numbers-12}
+```{r numbers-13}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -547,7 +574,7 @@ y |>
   )
 ```
 
-### Exercise 13
+### Exercise 14
 
 Now that we have all these functions in the same code cell, we can see all of the functions we have learned, and we can run any of them at will with `Cmd/Ctrl + Enter`.
 
@@ -559,7 +586,7 @@ show_file("analysis.qmd", chunk = "Last")
 
 CP/CR.
 
-```{r numbers-13}
+```{r numbers-14}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
